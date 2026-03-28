@@ -1,0 +1,394 @@
+﻿@using Microsoft.AspNetCore.Components;
+@using Microsoft.JSInterop;
+@using System.ComponentModel;
+@implements IAsyncDisposable;
+
+<script id='timeline-script-tag' type="text/javascript" src="jscript/timeline/js/timeline.js"></script>
+<link rel="stylesheet" href="Jscript/timeline/css/timeline.css">
+<script type="text/javascript"> var static_url = "Jscript/timeline/"; </script>
+
+<style type="text/css">
+    html,
+    body
+    {
+    width: 100%;
+    height: 100%;
+    padding: 0px;
+    margin: 0px;
+    }
+
+    #timeline-embed
+    {
+    height: 100%;
+    }
+</style>
+
+<div id='timeline-embed' style="width: 100%; height: 500px">
+    @ChildContent
+</div>
+
+@code {
+    /// <summary>
+    /// In a Blazor App, you would wrap a BECanvas element
+    /// in the CanvasHelper
+    /// </summary>
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    /// <summary>
+    /// JS Interop module used to call JavaScript
+    /// </summary>
+    private Lazy<Task<IJSObjectReference>> _moduleTask;
+
+    /// <summary>
+    /// Used to calculate the frames per second
+    /// </summary>
+    private DateTime _lastRender;
+
+    /// <summary>
+    /// JS Runtime
+    /// </summary>
+    [Inject]
+    protected IJSRuntime _jsRuntime { get; set; }
+
+    /// <summary>
+    /// Event called when the browser (and therefore the canvas) is resized
+    /// </summary>
+    [Parameter]
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+    public EventCallback<Size> CanvasResized { get; set; }
+
+    /// <summary>
+    /// Event called every time a frame can be redrawn
+    /// </summary>
+    [Parameter]
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+    public EventCallback<double> RenderFrame { get; set; }
+
+    /// <summary>
+    /// Event called on mouse down
+    /// </summary>
+    [Parameter]
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+    public EventCallback<CanvasMouseArgs> MouseDown { get; set; }
+
+    /// <summary>
+    /// Event called on mouse up
+    /// </summary>
+    [Parameter]
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+    public EventCallback<CanvasMouseArgs> MouseUp { get; set; }
+
+    /// <summary>
+    /// Event called on mouse move
+    /// </summary>
+    [Parameter]
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+    public EventCallback<CanvasMouseArgs> MouseMove { get; set; }
+
+    /// <summary>
+    /// Call this in your Blazor app's OnAfterRenderAsync method when firstRender is true
+    /// </summary>
+    /// <returns></returns>
+    public async Task Initialize()
+    {
+        string jsonString = "";
+
+        try
+        {
+            // We need to specify the .js file path relative to this code
+            _moduleTask = new(() => _jsRuntime.InvokeAsync<IJSObjectReference>(
+            "import", "./Jscript/TimeLineHelper.js").AsTask());
+
+            // Load the module
+            var module = await _moduleTask.Value;
+
+            // Initialize
+            await module.InvokeVoidAsync("startTimeLine", DotNetObjectReference.Create(this));
+
+            // Dispose the module
+            //    await module.DisposeAsync();
+        }
+        catch (Exception ex)
+        {
+            string message = ex.Message;
+        }
+    }
+
+    public class EventData
+    {
+        public string? Headline { get; set; }
+        public string? Text { get; set; }
+        public DateTime StartDate { get; set; }
+        public DateTime EndDate { get; set; }
+        public string? MediaUrl { get; set; }
+        public string? MediaCaption { get; set; }
+        public string? MediaCredit { get; set; }
+    }
+
+    public class TimeLineData
+    {
+        public string? Title { get; set; }
+        public string? MediaUrl { get; set; }
+        public string? MediaCaption { get; set; }
+        public string? MediaCredit { get; set; }
+        public List<EventData> Events { get; set; } = new();
+    }
+
+    public async Task deserializeData()
+    {
+        List<EventData> Events = new List<EventData>();
+
+        EventData eventData = new EventData();
+        eventData.Headline = "Event 1";
+        eventData.Text = "This is the first event.";
+        eventData.StartDate = new DateTime(2023, 1, 1);
+        eventData.EndDate = new DateTime(2023, 1, 2);
+        eventData.MediaUrl = "https://example.com/image1.jpg";
+        eventData.MediaCaption = "Image 1 caption";
+        eventData.MediaCredit = "Image 1 credit";
+        Events.Add(eventData);
+
+        eventData = new EventData();
+        eventData.Headline = "Event 2";
+        eventData.Text = "This is the second event.";
+        eventData.StartDate = new DateTime(2023, 2, 4);
+        eventData.EndDate = new DateTime(2023, 2, 5);
+        eventData.MediaUrl = "https://example.com/image2.jpg";
+        eventData.MediaCaption = "Image 2 caption";
+        eventData.MediaCredit = "Image 2 credit";
+        Events.Add(eventData);
+
+        TimeLineData timeLineData = new TimeLineData();
+        timeLineData.Title = "Timeline Title";
+        timeLineData.MediaUrl = "https://example.com/timeline.jpg";
+        timeLineData.MediaCaption = "Timeline caption";
+        timeLineData.MediaCredit = "Timeline credit";
+        timeLineData.Events = Events;
+
+        string jsonString1 = @"
+        {
+            ""Id"": 1,
+            ""Name"": ""Alice"",
+            ""Details"": {
+                ""Age"": 25,
+                ""Address"": {
+                    ""Street"": ""123 Main St"",
+                    ""City"": ""New York""
+                },
+                ""Hobbies"": [""Reading"", ""Traveling"", ""Coding""]
+            }
+        }";
+
+        // Convert to JSON
+
+        string jsonString = System.Text.Json.JsonSerializer.Serialize(timeLineData);
+
+        jsonString = @"
+        {
+            ""title"": {
+            ""media"": {
+                ""url"": ""//www.flickr.com/photos/tm_10001/2310475988/"",
+                ""caption"": ""Whitney Houston performing on her My Love is Your Love Tour in Hamburg."",
+                ""credit"": ""flickr/<a href='http://www.flickr.com/photos/tm_10001/'>tm_10001</a>""
+        },
+            ""text"": {
+                ""headline"": ""Whitney Houston<br/> 1963 - 2012"",
+                ""text"": ""<p>Houston's voice caught the imagination of the world propelling her to superstardom at an early age becoming one of the most awarded performers of our time. This is a look into the amazing heights she achieved and her personal struggles with substance abuse and a tumultuous marriage.</p>""
+        }
+        },
+        ""events"": [
+            {
+            ""media"":
+                {
+                ""url"": ""{{ static_url }}/img/examples/houston/family.jpg"",
+                    ""caption"": ""Houston's mother and Gospel singer, Cissy Houston (left) and cousin Dionne Warwick."",
+                    ""credit"": ""Cissy Houston photo:<a href='http://www.flickr.com/photos/11447043@N00/418180903/'>Tom Marcello</a><br/><a href='http://commons.wikimedia.org/wiki/File%3ADionne_Warwick_television_special_1969.JPG'>Dionne Warwick: CBS Television via Wikimedia Commons</a>""
+                },
+                ""start_date"":
+                {
+                ""month"": ""8"",
+                    ""day"": ""9"",
+                    ""year"": ""1963""
+                },
+                ""text"":
+                {
+                ""headline"": ""A Musical Heritage"",
+                    ""text"": ""<p>Born in New Jersey on August 9th, 1963, Houston grew up surrounded by the music business. Her mother is gospel singer Cissy Houston and her cousins are Dee Dee and Dionne Warwick.</p>""
+                }
+        },
+            {
+            ""media"":
+                {
+                ""url"": ""https://youtu.be/fSrO91XO1Ck"",
+                    ""caption"": "",
+                    ""credit"": ""<a href=\""http://unidiscmusic.com\"">Unidisc Music</a>""
+                },
+                ""start_date"":
+                {
+                ""year"": ""1978""
+                },
+                ""text"":
+                {
+                ""headline"": ""First Recording"",
+                    ""text"": ""At the age of 15 Houston was featured on Michael Zager's song, Life's a Party.""
+                }
+        },
+            {
+            ""media"": {
+                ""url"": ""//twitter.com/Blavity/status/851872780949889024"",
+                    ""caption"": ""Houston, performing on Good Morning America in 2009."",
+                    ""credit"": ""<a href='http://commons.wikimedia.org/wiki/File%3AFlickr_Whitney_Houston_performing_on_GMA_2009_4.jpg'>Asterio Tecson</a> via Wikimedia""
+        },
+                ""start_date"": {
+                ""month"": ""2"",
+                    ""day"": ""11"",
+                    ""year"": ""2012""
+        },
+                ""text"": {
+                ""headline"": ""Whitney Houston<br/> 1963-2012"",
+                    ""text"": ""<p>Houston, 48, was discovered dead at the Beverly Hilton Hotel on  on Feb. 11, 2012. She is survived by her daughter, Bobbi Kristina Brown, and mother, Cissy Houston.</p>""
+        }
+            }
+            ]
+        }";
+
+        // Deserialize the JSON data
+
+        var data = System.Text.Json.JsonSerializer.Deserialize<TimeLineData>(jsonString1);
+
+        // Do something with the data
+
+        if (data != null)
+        {
+            // Example: Access the title
+            string? title = data.Title;
+
+            // Process the events, etc.
+            await UpDateData(jsonString);
+        }
+    }
+
+    public string convertToJSON(TimeLineData timeLineData)
+    {
+        // Convert to JSON
+        string jsonString = System.Text.Json.JsonSerializer.Serialize(timeLineData);
+
+        // Deserialize the JSON data
+        var data = System.Text.Json.JsonSerializer.Deserialize<TimeLineData>(jsonString);
+        // Do something with the data
+        if (data != null)
+        {
+            // Example: Access the title
+            string title = data.Title;
+            // Process the events, etc.
+        }
+
+        return jsonString;
+    }
+
+    /// <summary>
+    /// this is called from the TimeLineComp component.
+    /// Hire we invoke the JavaScript function to update the data in TimeLineHelper.js
+    public async Task UpDateData(string message)
+    {
+        try
+        {
+            if (_moduleTask == null)
+                return;
+
+            // Load the module
+            var module = await _moduleTask.Value;
+
+            // Initialize
+            await module.InvokeVoidAsync("UpdateDataChange", message);
+
+            // Dispose the module
+           // await module.DisposeAsync();
+        }
+        catch (Exception ex)
+        {
+            string mee = ex.Message;
+        }
+    }
+     
+    /// <summary>
+    /// Handle the JavaScript event called when the browser/canvas is resized
+    /// </summary>
+    /// <param name="width"></param>
+    /// <param name="height"></param>
+    /// <returns></returns>
+    [JSInvokable]
+    public async Task ResizeInBlazor(int width, int height)
+    {
+        var size = new Size(width, height);
+        // Raise the CanvasResized event to the Blazor app
+        await CanvasResized.InvokeAsync(size);
+    }
+
+    /// <summary>
+    /// Handle the JavaScript event when a frame is ready to render
+    /// </summary>
+    /// <param name="timeStamp"></param>
+    /// <returns></returns>
+    [JSInvokable]
+    public async ValueTask RenderInBlazor(float timeStamp)
+    {
+        // calculate frames per second
+        double fps = 1.0 / (DateTime.Now - _lastRender).TotalSeconds;
+
+        _lastRender = DateTime.Now; // update for the next time
+
+        // raise the RenderFrame event to the blazor app
+        await RenderFrame.InvokeAsync(fps);
+    }
+
+    /// <summary>
+    /// Handle the JavaScript window.MouseDown event
+    /// </summary>
+    /// <param name="args"></param>
+    /// <returns></returns>
+    [JSInvokable]
+    public async Task OnMouseDown(CanvasMouseArgs args)
+    {
+        await MouseDown.InvokeAsync(args);
+    }
+
+    /// <summary>
+    /// Handle the JavaScript window.MouseUp event
+    /// </summary>
+    /// <param name="args"></param>
+    /// <returns></returns>
+    [JSInvokable]
+    public async Task OnMouseUp(CanvasMouseArgs args)
+    {
+        await MouseUp.InvokeAsync(args);
+    }
+
+    /// <summary>
+    /// Handle the JavaScript window.MouseMove event
+    /// </summary>
+    /// <param name="args"></param>
+    /// <returns></returns>
+    [JSInvokable]
+    public async Task OnMouseMove(CanvasMouseArgs args)
+    {
+        await MouseMove.InvokeAsync(args);
+    }
+
+    /// <summary>
+    /// Dispose of our module resource
+    /// </summary>
+    /// <returns></returns>
+    public async ValueTask DisposeAsync()
+    {
+        GC.SuppressFinalize(this);
+
+        if (_moduleTask != null && _moduleTask.IsValueCreated)
+        {
+            var module = await _moduleTask.Value;
+            await module.DisposeAsync();
+        }
+    }
+
+}

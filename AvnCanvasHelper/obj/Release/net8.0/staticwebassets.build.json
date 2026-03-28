@@ -1,0 +1,76 @@
+{
+  "Version": 1,
+  "Hash": "E5+fknN8BBYzRwjAIqVnWjFaLPPBBiED44io3fgbDKI=",
+  "Source": "AvnCanvasHelper",
+  "BasePath": "_content/AvnCanvasHelper",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": [
+    {
+      "Identity": "C:\\Users\\reyes\\Source\\Repos\\StockRoom8net\\AvnCanvasHelper\\CanvasHelper.razor.js",
+      "SourceId": "AvnCanvasHelper",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\reyes\\Source\\Repos\\StockRoom8net\\AvnCanvasHelper\\",
+      "BasePath": "_content/AvnCanvasHelper",
+      "RelativePath": "CanvasHelper.razor.js",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "7ml0iotjqy",
+      "Integrity": "kVBNH8uH7yiay55xhLbM7zySk4sQ4Oqhpe+cZOi7jQk=",
+      "CopyToOutputDirectory": "Always",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "CanvasHelper.razor.js"
+    }
+  ],
+  "Endpoints": [
+    {
+      "Route": "CanvasHelper.razor.js",
+      "AssetFile": "C:\\Users\\reyes\\Source\\Repos\\StockRoom8net\\AvnCanvasHelper\\CanvasHelper.razor.js",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "2923"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/javascript"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"kVBNH8uH7yiay55xhLbM7zySk4sQ4Oqhpe+cZOi7jQk=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Sat, 02 Nov 2024 17:49:18 GMT"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-kVBNH8uH7yiay55xhLbM7zySk4sQ4Oqhpe+cZOi7jQk="
+        },
+        {
+          "Name": "script-type",
+          "Value": "module"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,176 @@
+﻿# .NET 11.0 Upgrade Plan - StockRoom10net Solution
+
+## Table of Contents
+
+- [Executive Summary](#executive-summary)
+- [Migration Strategy](#migration-strategy)
+- [Detailed Dependency Analysis](#detailed-dependency-analysis)
+- [Project-by-Project Plans](#project-by-project-plans)
+  - [MyStuff10net.csproj](#mystuff10netcsproj)
+  - [StockRoom10net.csproj](#stockroom10netcsproj)
+- [Package Update Reference](#package-update-reference)
+- [Breaking Changes Catalog](#breaking-changes-catalog)
+- [Testing & Validation Strategy](#testing--validation-strategy)
+- [Complexity & Effort Assessment](#complexity--effort-assessment)
+- [Risk Management](#risk-management)
+- [Source Control Strategy](#source-control-strategy)
+- [Success Criteria](#success-criteria)
+
+---
+
+## Executive Summary
+
+### Scenario Description
+
+This plan outlines the upgrade of the StockRoom10net solution from **.NET 10.0** to **.NET 11.0 (PREVIEW)**. The solution consists of a Windows Forms application with Blazor WebView components and a supporting class library.
+
+### Scope
+
+**Projects Affected:**
+- `StockRoom10net.csproj` - WinForms application with Blazor integration (67,278 LOC)
+- `MyStuff10net\MyStuff10net.csproj` - Class library dependency (101,026 LOC)
+
+**Current State:**
+- Both projects targeting `net10.0-windows`
+- 32 NuGet packages total
+- 168,304 total lines of code
+- 99,672 API compatibility issues identified
+
+**Target State:**
+- Both projects targeting `net11.0-windows`
+- All package references updated to compatible versions
+- All breaking changes addressed
+- Solution builds and runs successfully on .NET 11.0
+
+### Selected Strategy
+
+**All-At-Once Strategy** - All projects upgraded simultaneously in single coordinated operation.
+
+**Rationale:**
+- **Small solution**: Only 2 projects with simple dependency structure
+- **Homogeneous codebase**: Both projects currently on .NET 10.0
+- **Clear dependency path**: MyStuff10net (leaf) → StockRoom10net (root)
+- **Package compatibility**: All packages have clear upgrade paths or are already compatible
+- **No blocking issues**: No security vulnerabilities or circular dependencies
+
+### Complexity Assessment
+
+**Discovered Metrics:**
+- **Project Count**: 2 (simple)
+- **Dependency Depth**: 1 level (minimal)
+- **Total API Issues**: 99,672 (high volume, but mostly Windows Forms compatibility markers)
+- **Package Issues**: 12 packages need attention (2 incompatible, 10 upgrades)
+- **Risk Level**: Medium (high API impact but known migration paths)
+
+**Classification: Simple Solution**
+
+Despite the high API issue count, this is classified as simple because:
+1. The vast majority of API issues (69.6%) are Windows Forms APIs already supported in .NET 11 via the `-windows` TFM
+2. Both projects already use SDK-style format and modern .NET
+3. No complex multi-tier architecture or circular dependencies
+4. Package ecosystem is mature with clear upgrade paths
+
+### Critical Issues
+
+**Incompatible Packages (Require Action):**
+- `Microsoft.AspNetCore.Components.WebView.WindowsForms` - Both versions 9.0.10 and 10.0.30 marked incompatible with .NET 11
+  - **Impact**: Core functionality for Blazor WebView integration
+  - **Mitigation**: Verify actual compatibility or find alternative package version
+
+**Package Functionality Included in Framework:**
+- `Microsoft.AspNetCore.Mvc.Razor.Extensions` (v6.0.0 in MyStuff10net) - Can be removed as functionality is in framework
+
+**Package Upgrades Recommended:**
+- Entity Framework Core packages: 10.0.2 → 10.0.3 (6 packages)
+- Microsoft.Extensions packages: 10.0.0-preview.5 → 10.0.3 (3 packages)
+- Newtonsoft.Json: 13.0.5-beta1 → 13.0.4 (downgrade to stable)
+
+### Recommended Approach
+
+**All-At-Once Migration** with single atomic upgrade operation:
+
+1. **Preparation**: Verify .NET 11 SDK installation
+2. **Atomic Upgrade**: Update both project files + all packages + address breaking changes in single operation
+3. **Validation**: Build solution, fix compilation errors, verify functionality
+4. **Testing**: Execute test projects (if available)
+
+**Expected Timeline Structure:**
+- Phase 0: Prerequisites verification
+- Phase 1: Atomic upgrade (all projects simultaneously)
+- Phase 2: Test validation and smoke testing
+
+### Iteration Strategy
+
+**Fast Batch Approach** (3 iterations total for detail generation):
+- Iteration 2.1: Foundation (Dependency Analysis + Migration Strategy)
+- Iteration 2.2: Project Stubs + Risk/Complexity Overview
+- Iteration 3.1: Detailed project plans (both projects batched together)
+- Final: Success Criteria + Source Control Strategy
+
+This approach is appropriate because both projects have similar characteristics and can be planned together efficiently.
+
+---
+
+## Migration Strategy
+
+[To be filled]
+
+---
+
+## Detailed Dependency Analysis
+
+[To be filled]
+
+---
+
+## Project-by-Project Plans
+
+### MyStuff10net.csproj
+
+[To be filled]
+
+### StockRoom10net.csproj
+
+[To be filled]
+
+---
+
+## Package Update Reference
+
+[To be filled]
+
+---
+
+## Breaking Changes Catalog
+
+[To be filled]
+
+---
+
+## Testing & Validation Strategy
+
+[To be filled]
+
+---
+
+## Complexity & Effort Assessment
+
+[To be filled]
+
+---
+
+## Risk Management
+
+[To be filled]
+
+---
+
+## Source Control Strategy
+
+[To be filled]
+
+---
+
+## Success Criteria
+
+[To be filled]

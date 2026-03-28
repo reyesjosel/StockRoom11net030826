@@ -1,0 +1,30 @@
+﻿@page "/ViewFancyTree"
+@inject IJSRuntime JSRuntime
+
+<ViewFancyTreeHelper @ref="_viewFancyTreeHelper">
+</ViewFancyTreeHelper>
+
+@code {
+
+    private Size Size = new Size();
+    private double FPS;
+    private ViewFancyTreeHelper _viewFancyTreeHelper;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            try
+            {
+                // Initialize the helper
+                await _viewFancyTreeHelper.InitializeViewProd();
+            }
+            catch(Exception error)
+            {
+                string test = error.Message;
+            }
+        }
+    }
+
+    
+}

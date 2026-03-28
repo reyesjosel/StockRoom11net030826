@@ -1,0 +1,148 @@
+﻿@page "/MoviePlayer";
+@using StockRoom11net.BlazorWebAssembly
+@using StockRoom11net.BlazorWebAssembly.Components
+@using StockRoom11net.BlazorWebAssembly.Components.Pages
+@using StockRoom11net.BlazorWebAssembly.Data
+@using StockRoom11net.BlazorWebAssembly.Models
+@implements IAsyncDisposable
+@inject IJSRuntime IJSRuntime
+
+<link rel="stylesheet" href="css/MoviePlayer.css">
+<script id='timeline-script-tag' type="text/javascript" src="jscript/MoviePlayer.js"></script>
+<link rel="stylesheet" href="jscript/bootstrap-5.3.3-dist/css/bootstrap.css">
+<script src="jscript/bootstrap-5.3.3-dist/js/bootstrap.js"></script>
+
+<div class="container-fluid">
+    <div class="row align-items-start">
+        <div class="col-12">
+            <div class="d-flex align-items-start justify-content-center">
+                <div class="outer-container">
+                    <div class="inner-container">
+                        <div class="video-overlay rounded">Now Playing: @nowPlayingMovie?.Title</div>
+                        <video @ref=videoPlayer controls id="videoPlayer" poster="/images/videoPoster.png">
+                        </video>
+                    </div>
+                </div>               
+            </div>
+        </div>
+        <div class="row align-items-center justify-content-center">
+            <div class="col-12 d-flex align-items-start justify-content-center">
+                <div id="scrollbar" class="hstack gap-2 cardList">
+                  @foreach (var item in movies)
+                  {
+                     <MovieCard
+                      Movie="item" 
+                      OnPlayCallBack="@playMovie" 
+                      NowPlayingMovie="@nowPlayingMovie?.Title"/>
+                  }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@code {
+
+    private List<Movie> movies = new();
+    private Movie? nowPlayingMovie;
+    private ElementReference videoPlayer;
+    private IJSObjectReference? module;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            //import the js module
+            module = await IJSRuntime.InvokeAsync<IJSObjectReference>(
+              "import", "./Jscript/MoviePlayer.js");
+
+            //call the function to load the movie
+            if (nowPlayingMovie is not null)
+            {
+                await module.InvokeVoidAsync("loadMovie", nowPlayingMovie.Video, videoPlayer);
+            }
+
+        }
+    }
+
+    protected override void OnInitialized()
+    {
+        getMovies();
+
+        //set the active movie
+        if (nowPlayingMovie is null)
+        {
+            nowPlayingMovie = movies[0];
+        }
+
+    }
+
+    private async void playMovie(Movie movie)
+    {
+        if (module is not null && movie is not null)
+        {
+            nowPlayingMovie = movie;
+
+            //call the js function to play the movie
+            await module.InvokeVoidAsync("playMovie", nowPlayingMovie.Video, videoPlayer);
+        }
+
+    }
+
+    //Add movies to the list
+    private void getMovies()
+    {
+        movies.Add(new Movie()
+            {
+                Title = "Skate Bros",
+                Poster = "SkateBros.png",
+                Video = "SkateBros.mp4"
+            });
+
+        movies.Add(new Movie()
+            {
+                Title = "Before the Storm",
+                Poster = "CalmingWaves.png",
+                Video = "CalmingWaves.mp4"
+            });
+
+        movies.Add(new Movie()
+            {
+                Title = "Mustang Sally",
+                Poster = "MustangSally.png",
+                Video = "MustangSally.mp4"
+            });
+
+        movies.Add(new Movie()
+            {
+                Title = "The Sixth Element",
+                Poster = "TheSixthElement.png",
+                Video = "TheSixthElement.mp4"
+            });
+
+        movies.Add(new Movie()
+            {
+                Title = "Cyber City 2045",
+                Poster = "Cyber2045.png",
+                Video = "Cyber2045.mp4"
+            });
+
+        movies.Add(new Movie()
+            {
+                Title = "Zero Hour",
+                Poster = "DestinyZeroHour.png",
+                Video = "DestinyZeroHour.mp4"
+            });
+    }
+
+    //Dispose of the js module
+    async ValueTask IAsyncDisposable.DisposeAsync()
+    {
+        if (module is not null)
+        {
+            await module.DisposeAsync();
+        }
+    }
+}

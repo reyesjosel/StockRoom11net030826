@@ -1,0 +1,352 @@
+{
+  "reportConfigHash": "07d9dc61",
+  "createdAtUtc": "2026-03-07T23:27:05.7578994Z",
+  "entries": [
+    {
+      "packageName": "GenCode128",
+      "packageVersion": "2.0.0",
+      "insightsName": "GenCode128",
+      "insightsCurrentVersion": "2.0.0",
+      "insightsNewVersion": "",
+      "insightsDescription": "",
+      "insightsIsCompatible": true,
+      "insightsProjects": []
+    },
+    {
+      "packageName": "microsoft.aspnetcore.components.webview.windowsforms",
+      "packageVersion": "9.0.10",
+      "insightsName": "microsoft.aspnetcore.components.webview.windowsforms",
+      "insightsCurrentVersion": "9.0.10",
+      "insightsNewVersion": "",
+      "insightsDescription": "NuGet package is incompatible",
+      "insightsIsCompatible": false,
+      "insightsProjects": [
+        "MyStuff10net\\MyStuff10net.csproj"
+      ]
+    },
+    {
+      "packageName": "Microsoft.AspNetCore.Mvc.Razor.Extensions",
+      "packageVersion": "6.0.0",
+      "insightsName": "Microsoft.AspNetCore.Mvc.Razor.Extensions",
+      "insightsCurrentVersion": "6.0.0",
+      "insightsNewVersion": "",
+      "insightsDescription": "NuGet package functionality is included with framework reference",
+      "insightsIsCompatible": true,
+      "insightsProjects": [
+        "MyStuff10net\\MyStuff10net.csproj"
+      ]
+    },
+    {
+      "packageName": "Microsoft.AspNetCore.Mvc.RazorPages",
+      "packageVersion": "2.3.0",
+      "insightsName": "Microsoft.AspNetCore.Mvc.RazorPages",
+      "insightsCurrentVersion": "2.3.0",
+      "insightsNewVersion": "",
+      "insightsDescription": "",
+      "insightsIsCompatible": true,
+      "insightsProjects": []
+    },
+    {
+      "packageName": "Microsoft.Extensions.DependencyInjection",
+      "packageVersion": "10.0.0-preview.5.25277.114",
+      "insightsName": "Microsoft.Extensions.DependencyInjection",
+      "insightsCurrentVersion": "10.0.0-preview.5.25277.114",
+      "insightsNewVersion": "10.0.3",
+      "insightsDescription": "NuGet package upgrade is recommended",
+      "insightsIsCompatible": true,
+      "insightsProjects": [
+        "MyStuff10net\\MyStuff10net.csproj"
+      ]
+    },
+    {
+      "packageName": "Microsoft.Extensions.DependencyInjection.Abstractions",
+      "packageVersion": "10.0.0-preview.5.25277.114",
+      "insightsName": "Microsoft.Extensions.DependencyInjection.Abstractions",
+      "insightsCurrentVersion": "10.0.0-preview.5.25277.114",
+      "insightsNewVersion": "10.0.3",
+      "insightsDescription": "NuGet package upgrade is recommended",
+      "insightsIsCompatible": true,
+      "insightsProjects": [
+        "MyStuff10net\\MyStuff10net.csproj"
+      ]
+    },
+    {
+      "packageName": "Microsoft.Extensions.FileProviders.Physical",
+      "packageVersion": "10.0.0-preview.5.25277.114",
+      "insightsName": "Microsoft.Extensions.FileProviders.Physical",
+      "insightsCurrentVersion": "10.0.0-preview.5.25277.114",
+      "insightsNewVersion": "10.0.3",
+      "insightsDescription": "NuGet package upgrade is recommended",
+      "insightsIsCompatible": true,
+      "insightsProjects": [
+        "MyStuff10net\\MyStuff10net.csproj"
+      ]
+    },
+    {
+      "packageName": "Be.Windows.Forms.HexBox.Net5",
+      "packageVersion": "1.8.0",
+      "insightsName": "Be.Windows.Forms.HexBox.Net5",
+      "insightsCurrentVersion": "1.8.0",
+      "insightsNewVersion": "",
+      "insightsDescription": "",
+      "insightsIsCompatible": true,
+      "insightsProjects": []
+    },
+    {
+      "packageName": "Blazor.Extensions.Canvas",
+      "packageVersion": "1.1.1",
+      "insightsName": "Blazor.Extensions.Canvas",
+      "insightsCurrentVersion": "1.1.1",
+      "insightsNewVersion": "",
+      "insightsDescription": "",
+      "insightsIsCompatible": true,
+      "insightsProjects": []
+    },
+    {
+      "packageName": "Microsoft.AspNetCore.Components.Authorization",
+      "packageVersion": "10.0.3",
+      "insightsName": "Microsoft.AspNetCore.Components.Authorization",
+      "insightsCurrentVersion": "10.0.3",
+      "insightsNewVersion": "",
+      "insightsDescription": "",
+      "insightsIsCompatible": true,
+      "insightsProjects": []
+    },
+    {
+      "packageName": "Microsoft.AspNetCore.Components.WebView",
+      "packageVersion": "10.0.3",
+      "insightsName": "Microsoft.AspNetCore.Components.WebView",
+      "insightsCurrentVersion": "10.0.3",
+      "insightsNewVersion": "",
+      "insightsDescription": "",
+      "insightsIsCompatible": true,
+      "insightsProjects": []
+    },
+    {
+      "packageName": "Microsoft.AspNetCore.Components.WebView.WindowsForms",
+      "packageVersion": "10.0.30",
+      "insightsName": "Microsoft.AspNetCore.Components.WebView.WindowsForms",
+      "insightsCurrentVersion": "10.0.30",
+      "insightsNewVersion": "",
+      "insightsDescription": "NuGet package is incompatible",
+      "insightsIsCompatible": false,
+      "insightsProjects": [
+        "StockRoom10net.csproj"
+      ]
+    },
+    {
+      "packageName": "Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation",
+      "packageVersion": "10.0.3",
+      "insightsName": "Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation",
+      "insightsCurrentVersion": "10.0.3",
+      "insightsNewVersion": "",
+      "insightsDescription": "",
+      "insightsIsCompatible": true,
+      "insightsProjects": []
+    },
+    {
+      "packageName": "Microsoft.CodeAnalysis.NetAnalyzers",
+      "packageVersion": "10.0.103",
+      "insightsName": "Microsoft.CodeAnalysis.NetAnalyzers",
+      "insightsCurrentVersion": "10.0.103",
+      "insightsNewVersion": "",
+      "insightsDescription": "",
+      "insightsIsCompatible": true,
+      "insightsProjects": []
+    },
+    {
+      "packageName": "Microsoft.Data.Sqlite.Core",
+      "packageVersion": "10.0.3",
+      "insightsName": "Microsoft.Data.Sqlite.Core",
+      "insightsCurrentVersion": "10.0.3",
+      "insightsNewVersion": "",
+      "insightsDescription": "",
+      "insightsIsCompatible": true,
+      "insightsProjects": []
+    },
+    {
+      "packageName": "Microsoft.EntityFrameworkCore",
+      "packageVersion": "10.0.2",
+      "insightsName": "Microsoft.EntityFrameworkCore",
+      "insightsCurrentVersion": "10.0.2",
+      "insightsNewVersion": "10.0.3",
+      "insightsDescription": "NuGet package upgrade is recommended",
+      "insightsIsCompatible": true,
+      "insightsProjects": [
+        "StockRoom10net.csproj"
+      ]
+    },
+    {
+      "packageName": "Microsoft.EntityFrameworkCore.Design",
+      "packageVersion": "10.0.2",
+      "insightsName": "Microsoft.EntityFrameworkCore.Design",
+      "insightsCurrentVersion": "10.0.2",
+      "insightsNewVersion": "10.0.3",
+      "insightsDescription": "NuGet package upgrade is recommended",
+      "insightsIsCompatible": true,
+      "insightsProjects": [
+        "StockRoom10net.csproj"
+      ]
+    },
+    {
+      "packageName": "Microsoft.EntityFrameworkCore.Sqlite",
+      "packageVersion": "10.0.2",
+      "insightsName": "Microsoft.EntityFrameworkCore.Sqlite",
+      "insightsCurrentVersion": "10.0.2",
+      "insightsNewVersion": "10.0.3",
+      "insightsDescription": "NuGet package upgrade is recommended",
+      "insightsIsCompatible": true,
+      "insightsProjects": [
+        "StockRoom10net.csproj"
+      ]
+    },
+    {
+      "packageName": "Microsoft.EntityFrameworkCore.Sqlite.Core",
+      "packageVersion": "10.0.2",
+      "insightsName": "Microsoft.EntityFrameworkCore.Sqlite.Core",
+      "insightsCurrentVersion": "10.0.2",
+      "insightsNewVersion": "10.0.3",
+      "insightsDescription": "NuGet package upgrade is recommended",
+      "insightsIsCompatible": true,
+      "insightsProjects": [
+        "StockRoom10net.csproj"
+      ]
+    },
+    {
+      "packageName": "Microsoft.EntityFrameworkCore.Sqlite.NetTopologySuite",
+      "packageVersion": "10.0.2",
+      "insightsName": "Microsoft.EntityFrameworkCore.Sqlite.NetTopologySuite",
+      "insightsCurrentVersion": "10.0.2",
+      "insightsNewVersion": "10.0.3",
+      "insightsDescription": "NuGet package upgrade is recommended",
+      "insightsIsCompatible": true,
+      "insightsProjects": [
+        "StockRoom10net.csproj"
+      ]
+    },
+    {
+      "packageName": "Microsoft.EntityFrameworkCore.Tools",
+      "packageVersion": "10.0.2",
+      "insightsName": "Microsoft.EntityFrameworkCore.Tools",
+      "insightsCurrentVersion": "10.0.2",
+      "insightsNewVersion": "10.0.3",
+      "insightsDescription": "NuGet package upgrade is recommended",
+      "insightsIsCompatible": true,
+      "insightsProjects": [
+        "StockRoom10net.csproj"
+      ]
+    },
+    {
+      "packageName": "Microsoft.Extensions.Logging",
+      "packageVersion": "10.0.3",
+      "insightsName": "Microsoft.Extensions.Logging",
+      "insightsCurrentVersion": "10.0.3",
+      "insightsNewVersion": "",
+      "insightsDescription": "",
+      "insightsIsCompatible": true,
+      "insightsProjects": []
+    },
+    {
+      "packageName": "Microsoft.Extensions.Logging.Console",
+      "packageVersion": "10.0.3",
+      "insightsName": "Microsoft.Extensions.Logging.Console",
+      "insightsCurrentVersion": "10.0.3",
+      "insightsNewVersion": "",
+      "insightsDescription": "",
+      "insightsIsCompatible": true,
+      "insightsProjects": []
+    },
+    {
+      "packageName": "Microsoft.Extensions.Logging.Debug",
+      "packageVersion": "10.0.3",
+      "insightsName": "Microsoft.Extensions.Logging.Debug",
+      "insightsCurrentVersion": "10.0.3",
+      "insightsNewVersion": "",
+      "insightsDescription": "",
+      "insightsIsCompatible": true,
+      "insightsProjects": []
+    },
+    {
+      "packageName": "Microsoft.JSInterop",
+      "packageVersion": "10.0.3",
+      "insightsName": "Microsoft.JSInterop",
+      "insightsCurrentVersion": "10.0.3",
+      "insightsNewVersion": "",
+      "insightsDescription": "",
+      "insightsIsCompatible": true,
+      "insightsProjects": []
+    },
+    {
+      "packageName": "Newtonsoft.Json",
+      "packageVersion": "13.0.5-beta1",
+      "insightsName": "Newtonsoft.Json",
+      "insightsCurrentVersion": "13.0.5-beta1",
+      "insightsNewVersion": "13.0.4",
+      "insightsDescription": "NuGet package upgrade is recommended",
+      "insightsIsCompatible": true,
+      "insightsProjects": [
+        "StockRoom10net.csproj"
+      ]
+    },
+    {
+      "packageName": "System.Data.OleDb",
+      "packageVersion": "10.0.3",
+      "insightsName": "System.Data.OleDb",
+      "insightsCurrentVersion": "10.0.3",
+      "insightsNewVersion": "",
+      "insightsDescription": "",
+      "insightsIsCompatible": true,
+      "insightsProjects": []
+    },
+    {
+      "packageName": "System.Data.SQLite",
+      "packageVersion": "2.0.2",
+      "insightsName": "System.Data.SQLite",
+      "insightsCurrentVersion": "2.0.2",
+      "insightsNewVersion": "",
+      "insightsDescription": "",
+      "insightsIsCompatible": true,
+      "insightsProjects": []
+    },
+    {
+      "packageName": "System.Data.SQLite.Core",
+      "packageVersion": "1.0.119",
+      "insightsName": "System.Data.SQLite.Core",
+      "insightsCurrentVersion": "1.0.119",
+      "insightsNewVersion": "",
+      "insightsDescription": "",
+      "insightsIsCompatible": true,
+      "insightsProjects": []
+    },
+    {
+      "packageName": "System.Data.SQLite.EF6",
+      "packageVersion": "2.0.2",
+      "insightsName": "System.Data.SQLite.EF6",
+      "insightsCurrentVersion": "2.0.2",
+      "insightsNewVersion": "",
+      "insightsDescription": "",
+      "insightsIsCompatible": true,
+      "insightsProjects": []
+    },
+    {
+      "packageName": "System.Management",
+      "packageVersion": "10.0.3",
+      "insightsName": "System.Management",
+      "insightsCurrentVersion": "10.0.3",
+      "insightsNewVersion": "",
+      "insightsDescription": "",
+      "insightsIsCompatible": true,
+      "insightsProjects": []
+    },
+    {
+      "packageName": "System.Speech",
+      "packageVersion": "10.0.3",
+      "insightsName": "System.Speech",
+      "insightsCurrentVersion": "10.0.3",
+      "insightsNewVersion": "",
+      "insightsDescription": "",
+      "insightsIsCompatible": true,
+      "insightsProjects": []
+    }
+  ]
+}

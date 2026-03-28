@@ -1,0 +1,37 @@
+﻿@using StockRoom11net.BlazorWebAssembly
+@using StockRoom11net.BlazorWebAssembly.Components
+@using StockRoom11net.BlazorWebAssembly.Components.Pages
+@using StockRoom11net.BlazorWebAssembly.Data
+@using StockRoom11net.BlazorWebAssembly.Models
+
+<link rel="stylesheet" href="css/MovieCard.css">
+
+@if (Movie is not null)
+{
+    <div class="hc-wrapper">
+        <div class="hc-card @(NowPlayingMovie == Movie.Title ? "selected" : "")">
+            <picture> <img src="/Images/@Movie.Poster" @onclick="playMovie" /> </picture>
+            <div class="hc-content vstack justify-content-center">
+                    <button class="button" @onclick="playMovie" > Play </button>
+                </div>
+        </div>
+    </div>
+}
+
+@code {
+
+    [Parameter]
+    [EditorRequired]
+    public Movie? Movie { get; set; }
+
+    [Parameter ]
+    public string? NowPlayingMovie { get; set; }
+
+    [Parameter]
+    public EventCallback<Movie> OnPlayCallBack { get; set; }
+    
+    private async Task playMovie()
+    {
+        await OnPlayCallBack.InvokeAsync(Movie);
+    }
+}

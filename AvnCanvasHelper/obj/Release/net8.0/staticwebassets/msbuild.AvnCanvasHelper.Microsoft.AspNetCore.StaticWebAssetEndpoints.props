@@ -1,0 +1,10 @@
+﻿<Project>
+  <ItemGroup>
+    <StaticWebAssetEndpoint Include="_content/AvnCanvasHelper/CanvasHelper.razor.js">
+      <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\CanvasHelper.razor.js'))</AssetFile>
+      <Selectors><![CDATA[[]]]></Selectors>
+      <EndpointProperties><![CDATA[[{"Name":"integrity","Value":"sha256-kVBNH8uH7yiay55xhLbM7zySk4sQ4Oqhpe\u002BcZOi7jQk="},{"Name":"script-type","Value":"module"}]]]></EndpointProperties>
+      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"no-cache"},{"Name":"Content-Length","Value":"2923"},{"Name":"Content-Type","Value":"text/javascript"},{"Name":"ETag","Value":"\u0022kVBNH8uH7yiay55xhLbM7zySk4sQ4Oqhpe\u002BcZOi7jQk=\u0022"},{"Name":"Last-Modified","Value":"Sat, 02 Nov 2024 17:49:18 GMT"}]]]></ResponseHeaders>
+    </StaticWebAssetEndpoint>
+  </ItemGroup>
+</Project>

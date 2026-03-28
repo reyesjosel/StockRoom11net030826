@@ -1,0 +1,188 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
+  <!---><Project Sdk="Microsoft.NET.Sdk"> Original...-->
+  <PropertyGroup Label="Globals">
+    <WebView2UseWinRT>False</WebView2UseWinRT>
+    <WebView2LoaderPreference>Dynamic</WebView2LoaderPreference>
+    <Platforms>AnyCPU</Platforms>
+    <WebView2EnableCsWinRTProjection>False</WebView2EnableCsWinRTProjection>
+  </PropertyGroup>
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net11.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <EnableTypeInfoReflection>false</EnableTypeInfoReflection>
+    <ApplicationVisualStyles>true</ApplicationVisualStyles>
+    <ApplicationUseCompatibleTextRendering>false</ApplicationUseCompatibleTextRendering>
+    <ApplicationHighDpiMode>SystemAware</ApplicationHighDpiMode>
+    <ApplicationDefaultFont>Microsoft Sans Serif, 10pt</ApplicationDefaultFont>
+    <StartupObject>StockRoom11net.Program</StartupObject>
+    <PlatformTarget>x64</PlatformTarget>
+    <SupportedOSPlatformVersion>7.0</SupportedOSPlatformVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <GenerateAssemblyInfo>False</GenerateAssemblyInfo>
+    <DebugType>portable</DebugType>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <GenerateAssemblyInfo>False</GenerateAssemblyInfo>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <GenerateAssemblyInfo>False</GenerateAssemblyInfo>
+    <DebugType>portable</DebugType>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+  </PropertyGroup>
+  <PropertyGroup>
+    <RootNamespace>StockRoom11net</RootNamespace>
+    <AssemblyName>StockRoom11net</AssemblyName>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="MyStuff11net\**" />
+    <Compile Remove="obj\**" />
+    <Content Remove="MyStuff10net\**" />
+    <Content Remove="MyStuff11net\**" />
+    <Content Remove="obj\**" />
+    <EmbeddedResource Remove="MyStuff11net\**" />
+    <EmbeddedResource Remove="obj\**" />
+    <None Remove="MyStuff11net\**" />
+    <None Remove="obj\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="bin\**" />
+    <Content Remove="bin\**" />
+    <EmbeddedResource Remove="bin\**" />
+    <None Remove="bin\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="AvnCanvasHelper\**" />
+    <Compile Remove="MyStuff10net\**" />
+    <Compile Remove="Pages\**" />
+    <Compile Remove="WebviewAppShared\**" />
+    <Content Remove="AvnCanvasHelper\**" />
+    <Content Remove="Pages\**" />
+    <Content Remove="WebviewAppShared\**" />
+    <EmbeddedResource Remove="AvnCanvasHelper\**" />    
+    <EmbeddedResource Remove="Pages\**" />
+    <EmbeddedResource Remove="WebviewAppShared\**" />
+    <None Remove="AvnCanvasHelper\**" />
+    <None Remove="MyStuff10net\**" />
+    <None Remove="Pages\**" />
+    <None Remove="WebviewAppShared\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Remove="wwwroot\Jscript\CanvasHelper.js" />
+    <Content Remove="wwwroot\Jscript\VisTimeLineHelper1.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Be.Windows.Forms.HexBox.Net5" Version="1.8.0" />
+    <PackageReference Include="Blazor.Extensions.Canvas" Version="1.1.1" />
+    <PackageReference Include="GenCode128" Version="2.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebView.WindowsForms" Version="10.0.30" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.RazorPages" Version="2.3.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="10.0.103">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="10.0.3" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.5" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.5" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+    <PackageReference Include="System.Data.OleDb" Version="10.0.3" />
+    <PackageReference Include="System.Data.SQLite" Version="2.0.2" />
+    <PackageReference Include="System.Management" Version="10.0.3" />
+    <PackageReference Include="System.Speech" Version="10.0.3" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="CodeVendor.Controls">
+      <HintPath>D:\My_C#_Example\CodeVendor Grouper\Grouper\bin\Release\net7.0-windows\CodeVendor.Controls.dll</HintPath>
+    </Reference>
+    <Reference Include="MyStuff11net">
+      <HintPath>MyStuff11net\bin\Release\net11.0-windows\MyStuff11net.dll</HintPath>
+    </Reference>
+    <Reference Include="ObjectListView">
+      <HintPath>D:\My_C#_Example\ObjectListView\ObjectListView-main2022\ObjectListView-main2022\Demo\bin\Release\net8.0-windows\ObjectListView.dll</HintPath>
+    </Reference>
+    <Reference Include="WeifenLuo.WinFormsUI.Docking.ThemeVS2003">
+      <HintPath>..\DocPanelSuiteNet9\WinFormsUI.Docking\bin\Release\net9.0-windows\WeifenLuo.WinFormsUI.Docking.ThemeVS2003.dll</HintPath>
+    </Reference>
+    <Reference Include="WeifenLuo.WinFormsUI.Docking.ThemeVS2005">
+      <HintPath>..\DocPanelSuiteNet9\WinFormsUI.Docking\bin\Release\net9.0-windows\WeifenLuo.WinFormsUI.Docking.ThemeVS2005.dll</HintPath>
+    </Reference>
+    <Reference Include="WeifenLuo.WinFormsUI.Docking.ThemeVS2012">
+      <HintPath>..\DocPanelSuiteNet9\WinFormsUI.Docking\bin\Release\net9.0-windows\WeifenLuo.WinFormsUI.Docking.ThemeVS2012.dll</HintPath>
+    </Reference>
+    <Reference Include="WeifenLuo.WinFormsUI.Docking.ThemeVS2013">
+      <HintPath>..\DocPanelSuiteNet9\WinFormsUI.Docking\bin\Release\net9.0-windows\WeifenLuo.WinFormsUI.Docking.ThemeVS2013.dll</HintPath>
+    </Reference>
+    <Reference Include="WeifenLuo.WinFormsUI.Docking.ThemeVS2015">
+      <HintPath>..\DocPanelSuiteNet9\WinFormsUI.Docking\bin\Release\net9.0-windows\WeifenLuo.WinFormsUI.Docking.ThemeVS2015.dll</HintPath>
+    </Reference>
+    <Reference Include="WinFormsUI">
+      <HintPath>..\DocPanelSuiteNet9\WinFormsUI\bin\Release\net9.0-windows\WinFormsUI.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Update="BlazorWebAssembly\Components\Pages\CanvasMouseArgs.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Compile>
+    <Compile Update="TimeLineEditor.cs" />
+    <Compile Update="Production_InventoryDataSet.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Production_InventoryDataSet.xsd</DependentUpon>
+    </Compile>
+    <Compile Update="Properties\Settings.Designer.cs">
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+  </ItemGroup>  
+  <ItemGroup>
+    <None Update="Production_InventoryDataSet.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>Production_InventoryDataSet.Designer.cs</LastGenOutput>
+    </None>
+    <None Update="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Update="wwwroot\**">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Update="BlazorWebAssembly\Components\Pages\TimeLineComp.razor">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="BlazorWebAssembly\Components\Pages\CanvasHelper.razor">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="BlazorWebAssembly\_Imports.razor">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+    </Content>
+    <Content Update="wwwroot\css\site.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include=".github\upgrades\scenarios\new-dotnet-version_5dd7af\plan.md" />
+    <None Include="wwwroot\css\MovieCard.css" />
+    <None Include="wwwroot\Jscript\MoviePlayer.js" />
+    <None Include="wwwroot\Jscript\VisTimeLineHelper1.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\Jscript\CanvasHelper.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\js\counterInterop.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="wwwroot\Jscript\vis\" />
+  </ItemGroup>
+</Project>

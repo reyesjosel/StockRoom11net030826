@@ -1,0 +1,141 @@
+﻿@inject IJSRuntime JSRuntime
+
+<div class="top-row ps-3 navbar navbar-dark">
+    <div class="container-fluid">
+        @if (!IconMenuActive)
+        {
+            <a class="navbar-brand" href="">Blazor Server</a>
+        }
+        else
+        {
+            <a class="navbar-brand bi bi-window-fullscreen" />
+        }
+        <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+    </div>
+</div>
+
+<div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
+    <ul class="nav flex-column">
+        <li class="nav-item px-3">
+            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                <span class="oi oi-home" aria-hidden="true"></span> Home
+            </NavLink>
+        </li>
+        <li class="nav-item px-3">
+            <NavLink class="nav-link" href="water">
+                <span class="oi oi-star" aria-hidden="true"></span> Water demo
+            </NavLink>
+        </li>
+        <li class="nav-item px-3">
+            <NavLink class="nav-link" href="counter">
+                <span class="oi oi-plus" aria-hidden="true"></span> Counter
+            </NavLink>
+        </li>
+        <li class="nav-item px-3">
+            <NavLink class="nav-link" href="ViewProductions">
+                <span class="oi oi-plus" aria-hidden="true"></span> ViewProductions
+            </NavLink>
+        </li>
+        <li class="nav-item px-3">
+            <NavLink class="nav-link" href="ViewFancyTree">
+                <span class="oi oi-plus" aria-hidden="true"></span> ViewFancyTree
+            </NavLink>
+        </li>
+        <li class="nav-item px-3">
+            <NavLink class="nav-link" href="fetchdata">
+                <span class="oi oi-list-rich" aria-hidden="true"></span> Fetch data
+            </NavLink>
+        </li>
+        <li class="nav-item px-3">
+            <NavLink class="nav-link" href="timeline">
+                <span class="oi oi-list-rich" aria-hidden="true"></span> TimeLine
+            </NavLink>
+        </li>
+        <li class="nav-item px-3">
+            <NavLink class="nav-link" href="CanvasComp">
+                <span class="oi oi-list-rich" aria-hidden="true"></span> CanvasComp
+            </NavLink>
+        </li>
+        <li class="nav-item px-3">
+            <NavLink class="nav-link" href="MoviePlayer">
+                <span class="oi oi-list-rich" aria-hidden="true"></span> MoviePlayer
+            </NavLink>
+        </li>
+    </ul>
+</div>
+
+@code
+{
+    [Parameter]
+    public EventCallback<bool> ShowIconMenu { get; set; }
+
+    private bool IconMenuActive { get; set; } = true;
+    private bool collapseNavMenu = true;
+    private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+    private Dictionary<string, bool> subMenuStates = new Dictionary<string, bool>();
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            //await JSRuntime.InvokeVoidAsync("setResizeCallback", DotNetObjectReference.Create(this));
+        }
+    }
+
+    [JSInvokable]
+    public async Task OnResize(bool isBelowThreshold)
+    {
+        if (isBelowThreshold && IconMenuActive)
+        {
+            collapseNavMenu = true;
+            await ToggleIconMenu();
+
+            await ShowIconMenu.InvokeAsync(IconMenuActive);
+
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+
+    private void ToggleNavMenu()
+    {
+        collapseNavMenu = !collapseNavMenu;
+    }
+
+    private async Task ToggleIconMenu()
+    {
+        IconMenuActive = !IconMenuActive;
+
+        await ShowIconMenu.InvokeAsync(IconMenuActive);
+    }
+
+    private void ToggleSubMenu(string subMenuKey)
+    {
+        if (subMenuStates.ContainsKey(subMenuKey) && subMenuStates[subMenuKey])
+        {
+            subMenuStates[subMenuKey] = false;
+        }
+        else
+        {
+            foreach (var key in subMenuStates.Keys.ToList())
+            {
+                subMenuStates[key] = false;
+            }
+
+            if (subMenuStates.ContainsKey(subMenuKey))
+            {
+                subMenuStates[subMenuKey] = !subMenuStates[subMenuKey];
+            }
+            else
+            {
+                subMenuStates[subMenuKey] = true;
+            }
+        }
+    }
+
+    private bool IsSubMenuOpen(string subMenuKey)
+    {
+        return subMenuStates.ContainsKey(subMenuKey) && subMenuStates[subMenuKey];
+    }
+}
