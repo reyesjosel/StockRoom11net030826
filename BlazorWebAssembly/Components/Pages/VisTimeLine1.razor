@@ -1,0 +1,301 @@
+﻿@using System.ComponentModel;
+@using Microsoft.AspNetCore.Components;
+@using Microsoft.JSInterop;
+@using StockRoom11net.BlazorWebAssembly
+@using StockRoom11net.BlazorWebAssembly.Components
+@using StockRoom11net.BlazorWebAssembly.Components.Pages
+@using StockRoom11net.BlazorWebAssembly.Data
+
+<html>
+<head>
+    <title>Timeline basic demo</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.16.1/vis.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.16.1/vis.min.css"
+          rel="stylesheet"
+          type="text/css" />
+
+    <style type="text/css">
+        html {
+            height: 100%;
+        }
+
+        body {
+            min-height: 100%;
+            display: grid;
+            grid-template-rows: 1fr auto;
+        }
+
+        .footer {
+            grid-row-start: 2;
+            grid-row-end: 3;
+        }
+        /*
+        .vis-item {
+            border-color: orange;
+            background-color: yellow;
+        }*/
+
+        /* alternating column backgrounds */
+        .vis-time-axis .vis-grid.vis-odd {
+            background: #f5f5f5;
+        }
+
+        /* gray background in weekends, white text color */
+        .vis-time-axis .vis-grid.vis-saturday,
+        .vis-time-axis .vis-grid.vis-sunday {
+            background: gray;
+        }
+
+        .vis-time-axis .vis-text.vis-saturday,
+        .vis-time-axis .vis-text.vis-sunday {
+            color: white;
+        }
+
+        .vis-item.green {
+            background-color: greenyellow;
+            border-color: green;
+        }
+
+        .vis-item.firebrick {
+            background-color: firebrick;
+            border-color: darkred;
+            color: white;
+        }
+
+        .vis-item.orange {
+            background-color: orange;
+            border-color: darkorange;
+        }
+
+        .vis-item.crimson {
+            background-color: crimson;
+            border-color: purple;
+        }
+
+        .vis-item.blue {
+            background-color: darkturquoise;
+            border-color: blue;
+        }
+
+        .vis-item.gold {
+            background-color: gold;
+            border-color: blue;
+        }
+
+        .vis-item.mediumpurple {
+            background-color: mediumpurple;
+            border-color: blue;
+            color: white;
+        }
+
+        .vis-item.done {
+            background-color: limegreen;
+            border-color: black;
+        }
+    </style>
+</head>
+<body>
+    <main class="content">
+    </main>
+    <footer class="footer">
+        <div id="timeLineDiv">
+            @ChildContent
+        </div>
+    </footer>
+</body>
+</html>
+
+@code
+{
+    /// <summary>
+    /// In a Blazor App, you would wrap a BECanvas element
+    /// in the CanvasHelper
+    /// </summary>
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    /// <summary>
+    /// JS Interop module used to call JavaScript
+    /// </summary>
+    private Lazy<Task<IJSObjectReference>> _moduleTask;
+
+    /// <summary>
+    /// Used to calculate the frames per second
+    /// </summary>
+    private DateTime _lastRender;
+
+    /// <summary>
+    /// JS Runtime
+    /// </summary>
+    [Inject]
+    protected IJSRuntime _jsRuntime { get; set; }
+
+    /// <summary>
+    /// Event called when the browser (and therefore the canvas) is resized
+    /// </summary>
+    [Parameter]
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+    public EventCallback<Size> CanvasResized { get; set; }
+
+    /// <summary>
+    /// Event called every time a frame can be redrawn
+    /// </summary>
+    [Parameter]
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+    public EventCallback<double> RenderFrame { get; set; }
+
+    /// <summary>
+    /// Event called on mouse down
+    /// </summary>
+    [Parameter]
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+    public EventCallback<CanvasMouseArgs> MouseDown { get; set; }
+
+    /// <summary>
+    /// Event called on mouse up
+    /// </summary>
+    [Parameter]
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+    public EventCallback<CanvasMouseArgs> MouseUp { get; set; }
+
+    /// <summary>
+    /// Event called on mouse move
+    /// </summary>
+    [Parameter]
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+    public EventCallback<CanvasMouseArgs> MouseMove { get; set; }
+
+    /// <summary>
+    /// Call this in your Blazor app's OnAfterRenderAsync method when firstRender is true
+    /// </summary>
+    /// <returns></returns>
+    public async Task Initialize()
+    {
+        string jsonString = "";
+
+        try
+        {
+            // We need to specify the .js file path relative to this code
+            _moduleTask = new(() => _jsRuntime.InvokeAsync<IJSObjectReference>(
+            "import", "./Jscript/VisTimeLineHelper1.js").AsTask());
+
+            // Load the module
+            var module = await _moduleTask.Value;
+
+            // Initialize
+            await module.InvokeVoidAsync("startTimeLine", DotNetObjectReference.Create(this));
+
+            // Dispose the module
+            //    await module.DisposeAsync();
+        }
+        catch (Exception ex)
+        {
+            string message = ex.Message;
+        }
+    }
+     
+    /// <summary>
+    /// this is called from the TimeLineComp component.
+    /// Hire we invoke the JavaScript function to update the data in TimeLineHelper.js
+    public async Task UpDateData(string message)
+    {
+        try
+        {
+            if (_moduleTask == null)
+                return;
+
+            // Load the module
+            var module = await _moduleTask.Value;
+
+            // Initialize
+            await module.InvokeVoidAsync("UpdateDataChange", message);
+
+            // Dispose the module
+            // await module.DisposeAsync();
+        }
+        catch (Exception ex)
+        {
+            string mee = ex.Message;
+        }
+    }
+
+    /// <summary>
+    /// Handle the JavaScript event called when the browser/canvas is resized
+    /// </summary>
+    /// <param name="width"></param>
+    /// <param name="height"></param>
+    /// <returns></returns>
+    [JSInvokable]
+    public async Task ResizeInBlazor(int width, int height)
+    {
+        var size = new Size(width, height);
+        // Raise the CanvasResized event to the Blazor app
+        await CanvasResized.InvokeAsync(size);
+    }
+
+    /// <summary>
+    /// Handle the JavaScript event when a frame is ready to render
+    /// </summary>
+    /// <param name="timeStamp"></param>
+    /// <returns></returns>
+    [JSInvokable]
+    public async ValueTask RenderInBlazor(float timeStamp)
+    {
+        // calculate frames per second
+        double fps = 1.0 / (DateTime.Now - _lastRender).TotalSeconds;
+
+        _lastRender = DateTime.Now; // update for the next time
+
+        // raise the RenderFrame event to the blazor app
+        await RenderFrame.InvokeAsync(fps);
+    }
+
+    /// <summary>
+    /// Handle the JavaScript window.MouseDown event
+    /// </summary>
+    /// <param name="args"></param>
+    /// <returns></returns>
+    [JSInvokable]
+    public async Task OnMouseDown(CanvasMouseArgs args)
+    {
+        await MouseDown.InvokeAsync(args);
+    }
+
+    /// <summary>
+    /// Handle the JavaScript window.MouseUp event
+    /// </summary>
+    /// <param name="args"></param>
+    /// <returns></returns>
+    [JSInvokable]
+    public async Task OnMouseUp(CanvasMouseArgs args)
+    {
+        await MouseUp.InvokeAsync(args);
+    }
+
+    /// <summary>
+    /// Handle the JavaScript window.MouseMove event
+    /// </summary>
+    /// <param name="args"></param>
+    /// <returns></returns>
+    [JSInvokable]
+    public async Task OnMouseMove(CanvasMouseArgs args)
+    {
+        await MouseMove.InvokeAsync(args);
+    }
+
+    /// <summary>
+    /// Dispose of our module resource
+    /// </summary>
+    /// <returns></returns>
+    public async ValueTask DisposeAsync()
+    {
+        GC.SuppressFinalize(this);
+
+        if (_moduleTask != null && _moduleTask.IsValueCreated)
+        {
+            var module = await _moduleTask.Value;
+            await module.DisposeAsync();
+        }
+    }
+
+}

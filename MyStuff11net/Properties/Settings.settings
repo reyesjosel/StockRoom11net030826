@@ -1,0 +1,388 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="MyStuff10net.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="Last_SaveDirectory" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="Last_CreateDriverDirectory" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="DriverResourceUrl" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="UserDeviceManufacturers" Type="System.Collections.Specialized.StringCollection" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="UserDeviceInterfaceGUIDs" Type="System.Collections.Specialized.StringCollection" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="UserDeviceDescriptions" Type="System.Collections.Specialized.StringCollection" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="UserSaveDirectorys" Type="System.Collections.Specialized.StringCollection" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="Last_DriverName" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="Last_VID" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="Last_PID" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="ColumnStateWidth" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="ColumnAutoSizeMode" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="ResizeHorizontal" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="ResizeVertical" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="DataBaseAddress" Type="System.String" Scope="User">
+      <Value Profile="(Default)">D:\ProductionManagement</Value>
+    </Setting>
+    <Setting Name="DataBaseName" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="comboBox_SecondCondition_AND" Type="System.String" Scope="User">
+      <Value Profile="(Default)">The AND operator displays a record if both the first/n condition and the second condition is true.</Value>
+    </Setting>
+    <Setting Name="comboBox_SecondCondition_OR" Type="System.String" Scope="User">
+      <Value Profile="(Default)">The OR operator displays a record if either the first/n condition or the second condition is true.</Value>
+    </Setting>
+    <Setting Name="comboBox_SecondCondition_None" Type="System.String" Scope="User">
+      <Value Profile="(Default)">The None operator  do not displays a second condition/n or the second condition dialog.</Value>
+    </Setting>
+    <Setting Name="CalendarPlanerMinDate" Type="System.DateTime" Scope="User">
+      <Value Profile="(Default)">2010-01-01</Value>
+    </Setting>
+    <Setting Name="CalendarPlanerMaxDate" Type="System.DateTime" Scope="User">
+      <Value Profile="(Default)">2013-01-26</Value>
+    </Setting>
+    <Setting Name="DataTableSetting" Type="System.Data.DataTable" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="Downloads" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="DepartmentName" Type="System.String" Scope="User">
+      <Value Profile="(Default)">No set to any department yet</Value>
+    </Setting>
+    <Setting Name="NotificationsShowMyOwn" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="NotificationsShowWarnings" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="NotifycationsEnableSendReceive" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="NotificationsSendMyOwn" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="ProductionInventoryDataSetCaseSensitive" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="splitContainerBomFtvSectionSplitterDistance" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="splitContainerNodeSettingTreeViewSplitterDistance" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="splitContainerHorizontalBomManagementSplitterDistance" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="ApplicationDefaultHtmlPages" Type="System.String" Scope="User">
+      <Value Profile="(Default)">\Resources\HTML pages\</Value>
+    </Setting>
+    <Setting Name="BarCodeDevices" Type="System.Collections.Specialized.StringCollection" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="NotificationsShowDataBaseUpDate" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="NotificationsShowEmails" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="SaveEachTimeTheInformationIsChanged" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="SaveTheInformationByTime" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="SaveTheInformationWhenTheUserSave" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="Every5minutes" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="Every15minutes" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="Every30minutes" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="InstallationFirstDate" Type="System.DateTime" Scope="User">
+      <Value Profile="(Default)">2000-01-01</Value>
+    </Setting>
+    <Setting Name="InstallationFirstUser" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="IntervalReadingNotifications" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">10000</Value>
+    </Setting>
+    <Setting Name="IntervalTrackBar_Value" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">2</Value>
+    </Setting>
+    <Setting Name="IntervalTimeUnitName" Type="System.String" Scope="User">
+      <Value Profile="(Default)">seconds</Value>
+    </Setting>
+    <Setting Name="RenameDistFileName" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="DeleteOriginalFile" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="SpeechSynthesizerBaseVolume" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">100</Value>
+    </Setting>
+    <Setting Name="SpeechSynthesizerBaseRate" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="DataGridViewDrawDoubleBuffering" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="DataGridViewDrawSelectedColor" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">-36865</Value>
+    </Setting>
+    <Setting Name="DocumentationBehavior" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">6</Value>
+    </Setting>
+    <Setting Name="PdfReportUnitOfMeasure" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Inch</Value>
+    </Setting>
+    <Setting Name="PdfReportPaperSizeList" Type="System.String" Scope="User">
+      <Value Profile="(Default)">8.5x11, 8.5x14, 11x17, 12x18</Value>
+    </Setting>
+    <Setting Name="PdfReportMinimumWidthMargin" Type="System.String" Scope="User">
+      <Value Profile="(Default)">-1.0</Value>
+    </Setting>
+    <Setting Name="PdfReportMaximumLeftMargin" Type="System.String" Scope="User">
+      <Value Profile="(Default)">-1.0</Value>
+    </Setting>
+    <Setting Name="PdfReportMaximumRightMargin" Type="System.String" Scope="User">
+      <Value Profile="(Default)">-1.0</Value>
+    </Setting>
+    <Setting Name="PdfReportTopMargin" Type="System.String" Scope="User">
+      <Value Profile="(Default)">-1.0</Value>
+    </Setting>
+    <Setting Name="PdfReportButtomMargin" Type="System.String" Scope="User">
+      <Value Profile="(Default)">-1.0</Value>
+    </Setting>
+    <Setting Name="PdfReportTitleFontName" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Calibri</Value>
+    </Setting>
+    <Setting Name="PdfReportTitleFontSize" Type="System.String" Scope="User">
+      <Value Profile="(Default)">12.0</Value>
+    </Setting>
+    <Setting Name="PdfReportTitleFontBold" Type="System.String" Scope="User">
+      <Value Profile="(Default)">true</Value>
+    </Setting>
+    <Setting Name="PdfReportHeaderFontName" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Calibri</Value>
+    </Setting>
+    <Setting Name="PdfReportHeaderFontSize" Type="System.String" Scope="User">
+      <Value Profile="(Default)">8.5</Value>
+    </Setting>
+    <Setting Name="PdfReportHeaderFontBold" Type="System.String" Scope="User">
+      <Value Profile="(Default)">true</Value>
+    </Setting>
+    <Setting Name="PdfReportHeaderOnEachPage" Type="System.String" Scope="User">
+      <Value Profile="(Default)">true</Value>
+    </Setting>
+    <Setting Name="PdfReportHeaderBackgroudColor" Type="System.String" Scope="User">
+      <Value Profile="(Default)">VeryLightBlue</Value>
+    </Setting>
+    <Setting Name="PdfReportBodyFontName" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Calibri</Value>
+    </Setting>
+    <Setting Name="PdfReportBodyFontSize" Type="System.String" Scope="User">
+      <Value Profile="(Default)">8.5</Value>
+    </Setting>
+    <Setting Name="PdfReportBoldSizeFactor" Type="System.String" Scope="User">
+      <Value Profile="(Default)">1.15</Value>
+    </Setting>
+    <Setting Name="PdfReportHeaderMarginHorizontal" Type="System.String" Scope="User">
+      <Value Profile="(Default)">-1.0</Value>
+    </Setting>
+    <Setting Name="PdfReportHeaderMarginVertical" Type="System.String" Scope="User">
+      <Value Profile="(Default)">-1.0</Value>
+    </Setting>
+    <Setting Name="PdfReportCellMarginHorizontal" Type="System.String" Scope="User">
+      <Value Profile="(Default)">-1.0</Value>
+    </Setting>
+    <Setting Name="PdfReportCellMarginVertical" Type="System.String" Scope="User">
+      <Value Profile="(Default)">-1.0</Value>
+    </Setting>
+    <Setting Name="PdfReportJustifyPageWide" Type="System.String" Scope="User">
+      <Value Profile="(Default)">false</Value>
+    </Setting>
+    <Setting Name="PdfReportAlternativeRowBackgroudColor" Type="System.String" Scope="User">
+      <Value Profile="(Default)">VeryLightGray</Value>
+    </Setting>
+    <Setting Name="PdfReportShowRowHotizontalLine" Type="System.String" Scope="User">
+      <Value Profile="(Default)">false</Value>
+    </Setting>
+    <Setting Name="PdfReportCellLineWidth" Type="System.String" Scope="User">
+      <Value Profile="(Default)">0.0</Value>
+    </Setting>
+    <Setting Name="PdfReportCellLineColor" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Gray</Value>
+    </Setting>
+    <Setting Name="PdfReportGroupHeaderLineWidth" Type="System.String" Scope="User">
+      <Value Profile="(Default)">0.0</Value>
+    </Setting>
+    <Setting Name="PdfReportGroupHeaderLineColor" Type="System.String" Scope="User">
+      <Value Profile="(Default)">VeryDarkGray</Value>
+    </Setting>
+    <Setting Name="PdfReportGroupHeaderBackgroudColor" Type="System.String" Scope="User">
+      <Value Profile="(Default)">VeryLightYellow</Value>
+    </Setting>
+    <Setting Name="PdfReportShowGroupRowHotizontalLine" Type="System.String" Scope="User">
+      <Value Profile="(Default)">false</Value>
+    </Setting>
+    <Setting Name="PdfReportFrameWidth" Type="System.String" Scope="User">
+      <Value Profile="(Default)">-1.0</Value>
+    </Setting>
+    <Setting Name="PdfReportGridWidth" Type="System.String" Scope="User">
+      <Value Profile="(Default)">-1.0</Value>
+    </Setting>
+    <Setting Name="PdfReport1" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="PdfReport2" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="ASCII_Control_Characters" Type="System.String" Scope="User">
+      <Value Profile="(Default)">03,04,</Value>
+    </Setting>
+    <Setting Name="IsSuperPeer" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="NgrokUtilityPath" Type="System.String" Scope="User">
+      <Value Profile="(Default)">\Resources\Ngrok\ngrok.exe</Value>
+    </Setting>
+    <Setting Name="ZebraPrintsDarknessValue" Type="System.Decimal" Scope="User">
+      <Value Profile="(Default)">15.0</Value>
+    </Setting>
+    <Setting Name="RightClickRemoveFilter" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Right Click and select 'Remove this Filter' to clear that selection.</Value>
+    </Setting>
+    <Setting Name="ThisIsAnExternalFilter" Type="System.String" Scope="User">
+      <Value Profile="(Default)">This is an external Filter, there is no action to clear that selection.</Value>
+    </Setting>
+    <Setting Name="ThereIsnoFiltertoClear" Type="System.String" Scope="User">
+      <Value Profile="(Default)">There is no Filter to clear at this moment.</Value>
+    </Setting>
+    <Setting Name="ErrorInExternalFilter" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Error in External Filter.</Value>
+    </Setting>
+    <Setting Name="ProcessSearchByClickHasgeneratedanerror" Type="System.String" Scope="User">
+      <Value Profile="(Default)">ProcessSearchByClick(), Search engine has generated an error.</Value>
+    </Setting>
+    <Setting Name="SearchEngineHasGeneratedAnError" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Search engine has generated an error.</Value>
+    </Setting>
+    <Setting Name="USBDeviceCollection" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="PdfViewer" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="DataBaseConnectionStringSQLite" Type="System.String" Scope="User">
+      <Value Profile="(Default)">data source=D:\ProductionManagement\ProductionInventory.sqlite;</Value>
+    </Setting>
+    <Setting Name="DRIVERRESOURCE_NOTFOUND" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="INSTALLDRIVER_DRIVERLESS_TEXT" Type="System.String" Scope="User">
+      <Value Profile="(Default)">This device is connected and does not currently have a device driver (driverless). Install this driver now to start using it right away.</Value>
+    </Setting>
+    <Setting Name="INSTALLDRIVER_FAILED" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Driver installation failed, check log for details.</Value>
+    </Setting>
+    <Setting Name="INSTALLDRIVER_NOPACKAGE_TEXT" Type="System.String" Scope="User">
+      <Value Profile="(Default)">A setup package must be generated and drivers must be spawned to use the driver installer feature.</Value>
+    </Setting>
+    <Setting Name="INSTALLDRIVER_SUCCESS" Type="System.String" Scope="User">
+      <Value Profile="(Default)">The driver was successfully installed.</Value>
+    </Setting>
+    <Setting Name="INSTALLDRIVER_UPDATE_TEXT" Type="System.String" Scope="User">
+      <Value Profile="(Default)">One or more devices using a {0} service are already installed. The current drivers should be removed before installing this package.</Value>
+    </Setting>
+    <Setting Name="INSTALLDRIVER_WINDOWSSERVICE_TEXT" Type="System.String" Scope="User">
+      <Value Profile="(Default)">One or more devices using a {0} service are already installed.  This package may cause system crashes or blue screens if used!</Value>
+    </Setting>
+    <Setting Name="SETUP_PACKAGE_README_HTM" Type="System.String" Scope="User">
+      <Value Profile="(Default)">&lt;!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"&gt;
+
+&lt;html xmlns="http://www.w3.org/1999/xhtml"&gt;
+&lt;head&gt;
+    &lt;title&gt;#DEVICE_DESCRIPTION# USB setup package&lt;/title&gt;
+    &lt;style type="text/css"&gt;
+&lt;!--
+body {
+	font-family: Tahoma, Verdana, Arial;
+	font-size:12px;
+}
+.title {
+	font-weight:bold;
+	text-align:center;
+	font-size:150%;
+}
+.copyright {
+	font-weight:normal;
+	text-align:center;
+	font-size:80%;
+	text-transform:capitalize;
+}
+table.info td{
+	border-bottom-style: solid;
+	border-bottom-color: #C8CDDE;
+	border-bottom-width: 1px;
+	background: #F7F7FF;
+	padding: 0.2em;
+	vertical-align: top;
+	overflow: hidden;
+}
+--&gt;
+    &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;table&gt;&lt;tr&gt;&lt;td&gt;
+    &lt;div class="title"&gt;#DEVICE_DESCRIPTION# USB setup package&lt;/div&gt;
+    &lt;div class="copyright"&gt;generated by LibUsbDotNet InfWizard&amp;#169;&lt;/div&gt;
+    &lt;br/&gt;
+    &lt;table class="info"&gt;
+        &lt;tr&gt;&lt;td&gt;Driver Resource&lt;/td&gt;&lt;td&gt;#DisplayName#&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;VID / PID&lt;/td&gt;&lt;td&gt;#VID# / #PID# (#HARDWAREID#)&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;Manufacturer&lt;/td&gt;&lt;td&gt;#DEVICE_MANUFACTURER#&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;Description&lt;/td&gt;&lt;td&gt;#DEVICE_DESCRIPTION#&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;Driver Date&lt;/td&gt;&lt;td&gt;#DRIVER_DATE#&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;Driver Version&lt;/td&gt;&lt;td&gt;#DRIVER_VERSION#&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;DeviceInterfaceGUID&lt;/td&gt;&lt;td&gt;#DEVICE_INTERFACE_GUID#&lt;/td&gt;&lt;/tr&gt;
+    &lt;/table&gt;
+    &lt;hr /&gt;
+    &lt;div&gt;&lt;pre&gt;#Description#&lt;/pre&gt;&lt;/div&gt;
+    &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/body&gt;
+&lt;/html&gt;</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

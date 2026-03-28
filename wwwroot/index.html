@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BlazorAppProgressive</title>
+    <base href="/" />
+
+    <!--<link href="manifest.webmanifest" rel="manifest" />-->
+    <link rel="icon" type="image/png" href="favicon.png" />
+    <link rel="apple-touch-icon" sizes="512x512" href="icon-512.png" />
+    <link rel="apple-touch-icon" sizes="192x192" href="icon-192.png" />
+
+    <!--Custom CSS-->
+    <link rel="stylesheet" href="css/app.css" />
+    <link rel="stylesheet" href="css/site.css" />
+    <link rel="stylesheet" href="css/themes.css" />
+    <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css" />
+    <link rel="stylesheet" href="css/BlazorWinFormsApp.styles.css" />
+
+    <!--This do not work in BlazorWebView,
+        so moved to Blazor component <head><style>.../style></head>
+    <link href="StockRoom10net.styles.css" rel="stylesheet" />-->
+
+</head>
+
+<body>
+    <div id="app" style="min-height: 100%; display: grid; grid-template-rows: 1fr auto"> </div>
+
+    <div id="blazor-error-ui">
+        An unhandled error has occurred.
+        Index.html line 28.
+        <a href="." class="reload">Reload</a>
+        <span class="dismiss">🗙</span>
+    </div>
+
+    <script src="_content/Blazor.Extensions.Canvas/blazor.extensions.canvas.js"></script>
+
+    <script src="Jscript/JQuery4/jquery-4.0.0-beta.min.js"></script>
+    <!--
+    <link href="Jscript/fancytree/skin-lion/ui.fancytree.min.css" rel="stylesheet">
+    <script src="Jscript/fancytree/jquery.fancytree-all-deps.min.js"></script>
+    <script src="Jscript/fancytree/modules/jquery.fancytree.menu.js"></script>
+
+    <link rel="stylesheet" href="/Jscript/fancytree/contextmenu/jquery.contextMenu.css" />
+    <script src="Jscript/fancytree/contextmenu/jquery.contextMenu-custom.js"></script>
+    <script src="Jscript/fancytree/modules/jquery.fancytree.menu.js"></script>
+     -->
+    <!-- vis timeline lib -->
+    <script src="Jscript/vis/vis-timeline-graph2d.min.js"></script>
+    <link href="Jscript/vis/vis-timeline-graph2d.min.css" rel="stylesheet" />
+    <!-- your interop file -->
+    <script src="Jscript/timelineInterop.js"></script>
+
+    <!-- Blazor WebView bootstrap must load after your static scripts are present -->
+    <script src="_framework/blazor.webview.js"></script>
+</body>
+
+</html>

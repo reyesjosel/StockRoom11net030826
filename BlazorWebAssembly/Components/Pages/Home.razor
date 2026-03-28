@@ -1,0 +1,34 @@
+﻿@page "/"
+@using System.IO
+@using StockRoom11net.BlazorWebAssembly
+@using StockRoom11net.BlazorWebAssembly.Components
+@using StockRoom11net.BlazorWebAssembly.Components.Pages
+@using StockRoom11net.BlazorWebAssembly.Data
+    
+    <InputFile OnChange="@OnFileSelection"></InputFile>
+<div class="row">
+    <embed src="~/pdf/2n3773 power supply.pdf" style="width:100%; height:2100px;" />
+    <embed src="~/images/rocketdesktopbg.png" width="300" height="200" type="image/jpg">
+    <img src="@imgUrl">
+</div>
+
+@code{
+    string imgUrl = string.Empty;
+
+    private async Task OnFileSelection(InputFileChangeEventArgs e)
+    {
+        IBrowserFile imgFile = e.File;
+        var buffers = new byte[imgFile.Size];
+        await imgFile.OpenReadStream().ReadAsync(buffers);
+        string imageType = imgFile.ContentType;
+        imgUrl =$"data:{imageType};base64,{Convert.ToBase64String(buffers)}";
+    }
+
+    public void FileHandler(int id)
+    {
+        //look up the Id 
+        string path = Path.Combine(Environment.CurrentDirectory, @$"wwwroot/Content/{id}");
+        FileStream fileStream = System.IO.File.OpenRead(path);
+      //  File(fileStream, "application/pdf");
+    }
+}

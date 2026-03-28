@@ -1,0 +1,29 @@
+{
+  "Files": [
+    {
+      "Id": "C:\\Users\\reyes\\Source\\Repos\\StockRoom8net\\AvnCanvasHelper\\CanvasHelper.razor.js",
+      "PackagePath": "staticwebassets\\CanvasHelper.razor.js"
+    },
+    {
+      "Id": "obj\\Release\\net8.0\\staticwebassets\\msbuild.AvnCanvasHelper.Microsoft.AspNetCore.StaticWebAssetEndpoints.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssetEndpoints.props"
+    },
+    {
+      "Id": "obj\\Release\\net8.0\\staticwebassets\\msbuild.AvnCanvasHelper.Microsoft.AspNetCore.StaticWebAssets.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
+    },
+    {
+      "Id": "obj\\Release\\net8.0\\staticwebassets\\msbuild.build.AvnCanvasHelper.props",
+      "PackagePath": "build\\AvnCanvasHelper.props"
+    },
+    {
+      "Id": "obj\\Release\\net8.0\\staticwebassets\\msbuild.buildMultiTargeting.AvnCanvasHelper.props",
+      "PackagePath": "buildMultiTargeting\\AvnCanvasHelper.props"
+    },
+    {
+      "Id": "obj\\Release\\net8.0\\staticwebassets\\msbuild.buildTransitive.AvnCanvasHelper.props",
+      "PackagePath": "buildTransitive\\AvnCanvasHelper.props"
+    }
+  ],
+  "ElementsToRemove": []
+}

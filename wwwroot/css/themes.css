@@ -1,0 +1,288 @@
+﻿:root {
+    --cf-theme-core: var(--cf-code-magic-core);
+    /* app background */
+    --cf-theme-100: var(--cf-code-magic-100);
+    /* subtle background */
+    --cf-theme-150: var(--cf-code-magic-150);
+    /* UI element background */
+    --cf-theme-200: var(--cf-code-magic-200);
+    /* hovered UI background */
+    --cf-theme-300: var(--cf-code-magic-300);
+    /* active UI */
+    --cf-theme-400: var(--cf-code-magic-400);
+    /* selected UI */
+    --cf-theme-500: var(--cf-code-magic-500);
+    /* subtle borders and spearators */
+    --cf-theme-600: var(--cf-code-magic-600);
+    /* element border / focus rings */
+    --cf-theme-700: var(--cf-code-magic-700);
+    /* hovered border  */
+    --cf-theme-800: var(--cf-code-magic-800);
+    /* hovered dark backgrounds */
+    --cf-theme-850: var(--cf-code-magic-850);
+    /* dark backgrounds */
+    --cf-theme-900: var(--cf-code-magic-900);
+   
+    /* #region code-magic */
+    --cf-code-magic-core: #f2c864; /* yellow accent */
+    --cf-code-magic-100: hsl(192, 77%, 79%); /* turqoise */
+    --cf-code-magic-150: hsl(192, 77%, 74%);
+    --cf-code-magic-200: #87bbd7;
+    --cf-code-magic-300: hsl(192, 77%, 69%);
+    --cf-code-magic-400: #f2c864;
+    --cf-code-magic-500: hsl(192, 77%, 49%);
+    --cf-code-magic-600: hsl(192, 77%, 39%);
+    --cf-code-magic-700: hsl(192, 77%, 29%);
+    --cf-code-magic-800: hsl(192, 77%, 19%);
+    --cf-code-magic-850: hsl(192, 77%, 15%);
+    --cf-code-magic-900: hsl(192, 77%, 9%);
+    /* #endregion code-magic */
+  
+    /* #region gray */
+    --cf-gray-core: #adb5bd;
+    --cf-gray-100: hsl(210, 17%, 98%);
+    --cf-gray-150: hsl(210, 17%, 93%);
+    --cf-gray-200: hsl(210, 17%, 88%);
+    --cf-gray-300: hsl(210, 17%, 78%);
+    --cf-gray-400: hsl(210, 17%, 68%);
+    --cf-gray-500: hsl(210, 17%, 58%);
+    --cf-gray-600: hsl(210, 17%, 48%);
+    --cf-gray-700: hsl(210, 17%, 38%);
+    --cf-gray-800: hsl(210, 17%, 28%);
+    --cf-gray-850: hsl(210, 17%, 23%);
+    --cf-gray-900: hsl(210, 17%, 18%);
+    /* #endregion gray */
+}
+
+a {
+    color: var(--cf-theme-500);
+}
+
+    a:hover {
+        color: var(--cf-theme-300);
+    }
+
+.btn-primary {
+    --bs-btn-bg: var(--cf-theme-600);
+    --bs-btn-border-color: var(--cf-theme-600);
+    --bs-btn-hover-bg: var(--cf-theme-700);
+    --bs-btn-hover-border-color: var(--cf-theme-700);
+    --bs-btn-active-bg: var(--cf-theme-800);
+    --bs-btn-active-border-color: var(--cf-theme-800);
+    --bs-btn-disabled-bg: var(--cf-theme-600);
+    --bs-btn-disabled-border-color: var(--cf-theme-600);
+}
+
+.btn-glass {
+    --bs-btn-bg: rgba(13, 202, 240,.4);
+    --bs-btn-border-color: var(--cf-theme-850);
+    --bs-btn-hover-bg: rgba(13, 202, 240,.7);
+    --bs-btn-hover-border-color: var(--cf-theme-800);
+    --bs-btn-active-bg: rgba(13, 202, 240,.7);
+    --bs-btn-active-border-color: var(--cf-theme-700);
+    --bs-btn-disabled-bg: rgba(13, 202, 240,.7);
+    --bs-btn-disabled-border-color: var(--cf-theme-850);
+}
+
+.btn-dark {
+    --bs-btn-bg: var(--cf-theme-850);
+    --bs-btn-border-color: var(--cf-theme-850);
+    --bs-btn-hover-bg: var(--cf-theme-800);
+    --bs-btn-hover-border-color: var(--cf-theme-800);
+    --bs-btn-active-bg: var(--cf-theme-700);
+    --bs-btn-active-border-color: var(--cf-theme-700);
+    --bs-btn-disabled-bg: var(--cf-theme-850);
+    --bs-btn-disabled-border-color: var(--cf-theme-850);
+}
+
+.btn-light {
+    --bs-btn-bg: var(--cf-theme-100);
+    --bs-btn-border-color: var(--cf-theme-100);
+    --bs-btn-hover-bg: var(--cf-theme-150);
+    --bs-btn-hover-border-color: var(--cf-theme-150);
+    --bs-btn-active-bg: var(--cf-theme-200);
+    --bs-btn-active-border-color: var(--cf-theme-200);
+    --bs-btn-disabled-bg: var(--cf-theme-100);
+    --bs-btn-disabled-border-color: var(--cf-theme-100);
+}
+
+
+[data-cf-theme="code-magic"] {
+    --cf-theme-core: var(--cf-code-magic-core);
+    --cf-theme-100: var(--cf-code-magic-100);
+    --cf-theme-150: var(--cf-code-magic-150);
+    --cf-theme-200: var(--cf-code-magic-200);
+    --cf-theme-300: var(--cf-code-magic-300);
+    --cf-theme-400: var(--cf-code-magic-400);
+    --cf-theme-500: var(--cf-code-magic-500);
+    --cf-theme-600: var(--cf-code-magic-600);
+    --cf-theme-700: var(--cf-code-magic-700);
+    --cf-theme-800: var(--cf-code-magic-800);
+    --cf-theme-850: var(--cf-code-magic-850);
+    --cf-theme-900: var(--cf-code-magic-900);
+}
+
+[data-cf-theme="blue"] {
+    --cf-theme-core: var(--cf-blue-core);
+    --cf-theme-100: var(--cf-blue-100);
+    --cf-theme-150: var(--cf-blue-150);
+    --cf-theme-200: var(--cf-blue-200);
+    --cf-theme-300: var(--cf-blue-300);
+    --cf-theme-400: var(--cf-blue-400);
+    --cf-theme-500: var(--cf-blue-500);
+    --cf-theme-600: var(--cf-blue-600);
+    --cf-theme-700: var(--cf-blue-700);
+    --cf-theme-800: var(--cf-blue-800);
+    --cf-theme-850: var(--cf-blue-850);
+    --cf-theme-900: var(--cf-blue-900);
+}
+
+[data-cf-theme="indigo"] {
+    --cf-theme-core: var(--cf-indigo-core);
+    --cf-theme-100: var(--cf-indigo-100);
+    --cf-theme-150: var(--cf-indigo-150);
+    --cf-theme-200: var(--cf-indigo-200);
+    --cf-theme-300: var(--cf-indigo-300);
+    --cf-theme-400: var(--cf-indigo-400);
+    --cf-theme-500: var(--cf-indigo-500);
+    --cf-theme-600: var(--cf-indigo-600);
+    --cf-theme-700: var(--cf-indigo-700);
+    --cf-theme-800: var(--cf-indigo-800);
+    --cf-theme-850: var(--cf-indigo-850);
+    --cf-theme-900: var(--cf-indigo-900);
+}
+
+[data-cf-theme="purple"] {
+    --cf-theme-core: var(--cf-purple-core);
+    --cf-theme-100: var(--cf-purple-100);
+    --cf-theme-150: var(--cf-purple-150);
+    --cf-theme-200: var(--cf-purple-200);
+    --cf-theme-300: var(--cf-purple-300);
+    --cf-theme-400: var(--cf-purple-400);
+    --cf-theme-500: var(--cf-purple-500);
+    --cf-theme-600: var(--cf-purple-600);
+    --cf-theme-700: var(--cf-purple-700);
+    --cf-theme-800: var(--cf-purple-800);
+    --cf-theme-850: var(--cf-purple-850);
+    --cf-theme-900: var(--cf-purple-900);
+}
+
+[data-cf-theme="pink"] {
+    --cf-theme-core: var(--cf-pink-core);
+    --cf-theme-100: var(--cf-pink-100);
+    --cf-theme-150: var(--cf-pink-150);
+    --cf-theme-200: var(--cf-pink-200);
+    --cf-theme-300: var(--cf-pink-300);
+    --cf-theme-400: var(--cf-pink-400);
+    --cf-theme-500: var(--cf-pink-500);
+    --cf-theme-600: var(--cf-pink-600);
+    --cf-theme-700: var(--cf-pink-700);
+    --cf-theme-800: var(--cf-pink-800);
+    --cf-theme-850: var(--cf-pink-850);
+    --cf-theme-900: var(--cf-pink-900);
+}
+
+[data-cf-theme="red"] {
+    --cf-theme-core: var(--cf-red-core);
+    --cf-theme-100: var(--cf-red-100);
+    --cf-theme-150: var(--cf-red-150);
+    --cf-theme-200: var(--cf-red-200);
+    --cf-theme-300: var(--cf-red-300);
+    --cf-theme-400: var(--cf-red-400);
+    --cf-theme-500: var(--cf-red-500);
+    --cf-theme-600: var(--cf-red-600);
+    --cf-theme-700: var(--cf-red-700);
+    --cf-theme-800: var(--cf-red-800);
+    --cf-theme-850: var(--cf-red-850);
+    --cf-theme-900: var(--cf-red-900);
+}
+
+[data-cf-theme="orange"] {
+    --cf-theme-core: var(--cf-orange-core);
+    --cf-theme-100: var(--cf-orange-100);
+    --cf-theme-150: var(--cf-orange-150);
+    --cf-theme-200: var(--cf-orange-200);
+    --cf-theme-300: var(--cf-orange-300);
+    --cf-theme-400: var(--cf-orange-400);
+    --cf-theme-500: var(--cf-orange-500);
+    --cf-theme-600: var(--cf-orange-600);
+    --cf-theme-700: var(--cf-orange-700);
+    --cf-theme-800: var(--cf-orange-800);
+    --cf-theme-850: var(--cf-orange-850);
+    --cf-theme-900: var(--cf-orange-900);
+}
+
+[data-cf-theme="yellow"] {
+    --cf-theme-core: var(--cf-yellow-core);
+    --cf-theme-100: var(--cf-yellow-100);
+    --cf-theme-150: var(--cf-yellow-150);
+    --cf-theme-200: var(--cf-yellow-200);
+    --cf-theme-300: var(--cf-yellow-300);
+    --cf-theme-400: var(--cf-yellow-400);
+    --cf-theme-500: var(--cf-yellow-500);
+    --cf-theme-600: var(--cf-yellow-600);
+    --cf-theme-700: var(--cf-yellow-700);
+    --cf-theme-800: var(--cf-yellow-800);
+    --cf-theme-850: var(--cf-yellow-850);
+    --cf-theme-900: var(--cf-yellow-900);
+}
+
+[data-cf-theme="green"] {
+    --cf-theme-core: #198754;
+    --cf-theme-100: hsl(152, 38%, 95%);
+    --cf-theme-150: hsl(152, 38%, 90%);
+    --cf-theme-200: hsl(152, 38%, 85%);
+    --cf-theme-300: hsl(152, 38%, 75%);
+    --cf-theme-400: hsl(152, 38%, 65%);
+    --cf-theme-500: hsl(152, 38%, 55%);
+    --cf-theme-600: hsl(152, 38%, 45%);
+    --cf-theme-700: hsl(152, 38%, 35%);
+    --cf-theme-800: hsl(152, 38%, 25%);
+    --cf-theme-850: hsl(152, 38%, 20%);
+    --cf-theme-900: hsl(152, 38%, 15%);
+}
+
+[data-cf-theme="teal"] {
+    --cf-theme-core: var(--cf-teal-core);
+    --cf-theme-100: var(--cf-teal-100);
+    --cf-theme-150: var(--cf-teal-150);
+    --cf-theme-200: var(--cf-teal-200);
+    --cf-theme-300: var(--cf-teal-300);
+    --cf-theme-400: var(--cf-teal-400);
+    --cf-theme-500: var(--cf-teal-500);
+    --cf-theme-600: var(--cf-teal-600);
+    --cf-theme-700: var(--cf-teal-700);
+    --cf-theme-800: var(--cf-teal-800);
+    --cf-theme-850: var(--cf-teal-850);
+    --cf-theme-900: var(--cf-teal-900);
+}
+
+[data-cf-theme="cyan"] {
+    --cf-theme-core: var(--cf-cyan-core);
+    --cf-theme-100: var(--cf-cyan-100);
+    --cf-theme-150: var(--cf-cyan-150);
+    --cf-theme-200: var(--cf-cyan-200);
+    --cf-theme-300: var(--cf-cyan-300);
+    --cf-theme-400: var(--cf-cyan-400);
+    --cf-theme-500: var(--cf-cyan-500);
+    --cf-theme-600: var(--cf-cyan-600);
+    --cf-theme-700: var(--cf-cyan-700);
+    --cf-theme-800: var(--cf-cyan-800);
+    --cf-theme-850: var(--cf-cyan-850);
+    --cf-theme-900: var(--cf-cyan-900);
+}
+
+[data-cf-theme="gray"] {
+    --cf-theme-core: var(--cf-gray-core);
+    --cf-theme-100: var(--cf-gray-100);
+    --cf-theme-150: var(--cf-gray-150);
+    --cf-theme-200: var(--cf-gray-200);
+    --cf-theme-300: var(--cf-gray-300);
+    --cf-theme-400: var(--cf-gray-400);
+    --cf-theme-500: var(--cf-gray-500);
+    --cf-theme-600: var(--cf-gray-600);
+    --cf-theme-700: var(--cf-gray-700);
+    --cf-theme-800: var(--cf-gray-800);
+    --cf-theme-850: var(--cf-gray-850);
+    --cf-theme-900: var(--cf-gray-900);
+}

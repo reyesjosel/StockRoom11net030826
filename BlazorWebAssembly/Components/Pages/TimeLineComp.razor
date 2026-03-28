@@ -1,0 +1,102 @@
+﻿@using System.ComponentModel;
+@using Microsoft.AspNetCore.Components;
+@using StockRoom11net.BlazorWebAssembly
+@using StockRoom11net.BlazorWebAssembly.Components
+@using StockRoom11net.BlazorWebAssembly.Components.Pages
+@using StockRoom11net.BlazorWebAssembly.Data
+@using global::MyStuff11net.VisTimeLine
+@inject IJSRuntime JSRuntime
+
+
+@code
+{
+    [Parameter] public string? ElementId { get; set; }
+    [Parameter] public IEnumerable<TimeLineItem>? Items { get; set; }
+    [Parameter] public IEnumerable<TimelineGroup>? Groups { get; set; }
+    [Parameter] public object? Options { get; set; }
+
+    // C# callbacks
+    [Parameter] public EventCallback<int?> OnSelect { get; set; }
+    [Parameter] public EventCallback<TimeLineItem> OnMove { get; set; }
+    [Parameter] public EventCallback<TimeLineItem> OnResize { get; set; }
+    [Parameter] public EventCallback<(DateTime start, DateTime end)> OnRangeChanged { get; set; }
+    [Parameter] public EventCallback<CanvasMouseArgs> MouseDown { get; set; }
+    [Parameter] public EventCallback<CanvasMouseArgs> MouseUp { get; set; }
+    [Parameter] public EventCallback<CanvasMouseArgs> MouseMove { get; set; }
+        
+    private DotNetObjectReference<TimeLineComp>? selfRef;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            selfRef = DotNetObjectReference.Create(this);
+
+            await JSRuntime.InvokeVoidAsync("timelineInterop.create",
+                ElementId, Items, Groups, Options, selfRef);
+        }
+    }
+
+    // JSRuntime → C#
+    [JSInvokable]
+    public async Task NotifySelect(int? id) => await OnSelect.InvokeAsync(id);
+
+    [JSInvokable]
+    public async Task NotifyMove(TimeLineItem item) => await OnMove.InvokeAsync(item);
+
+    [JSInvokable]
+    public async Task NotifyResize(TimeLineItem item) => await OnResize.InvokeAsync(item);
+
+    [JSInvokable]
+    public async Task NotifyRangeChanged(DateTime start, DateTime end) => await OnRangeChanged.InvokeAsync((start, end));
+
+    /// <summary>
+    /// Handle the JavaScript window.MouseDown event
+    /// </summary>
+    /// <param name="args"></param>
+    /// <returns></returns>
+    [JSInvokable]
+    public async Task OnMouseDown(CanvasMouseArgs args)
+    {
+        await MouseDown.InvokeAsync(args);
+    }
+
+    /// <summary>
+    /// Handle the JavaScript window.MouseUp event
+    /// </summary>
+    /// <param name="args"></param>
+    /// <returns></returns>
+    [JSInvokable]
+    public async Task OnMouseUp(CanvasMouseArgs args)
+    {
+        await MouseUp.InvokeAsync(args);
+    }
+
+    /// <summary>
+    /// Handle the JavaScript window.MouseMove event
+    /// </summary>
+    /// <param name="args"></param>
+    /// <returns></returns>
+    [JSInvokable]
+    public async Task OnMouseMove(CanvasMouseArgs args)
+    {
+        await MouseMove.InvokeAsync(args);
+    }
+
+
+    // C# → JS
+    public async Task AddItem(TimeLineItem item)
+        => await JSRuntime.InvokeVoidAsync("timelineInterop.addItem", ElementId, item);
+
+    public async Task UpdateItem(object item)
+        => await JSRuntime.InvokeVoidAsync("timelineInterop.updateItem", ElementId, item);
+
+    public async Task RemoveItem(int id)
+        => await JSRuntime.InvokeVoidAsync("timelineInterop.removeItem", ElementId, id);
+
+    public async Task ZoomIn() => await JSRuntime.InvokeVoidAsync("timelineInterop.zoomIn", ElementId);
+    public async Task ZoomOut() => await JSRuntime.InvokeVoidAsync("timelineInterop.zoomOut", ElementId);
+    public async Task MoveLeft() => await JSRuntime.InvokeVoidAsync("timelineInterop.moveLeft", ElementId);
+    public async Task MoveRight() => await JSRuntime.InvokeVoidAsync("timelineInterop.moveRight", ElementId);
+    
+}

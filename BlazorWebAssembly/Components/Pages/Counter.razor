@@ -1,0 +1,98 @@
+﻿@page "/Counter"
+@using StockRoom11net.BlazorWebAssembly
+@using StockRoom11net.BlazorWebAssembly.Components
+@using StockRoom11net.BlazorWebAssembly.Components.Pages
+@using StockRoom11net.BlazorWebAssembly.Data
+@inject IJSRuntime JSRuntime
+@inject AppState AppState
+
+<!--Ensure you are correctly using @oncontextmenu:preventDefault="true" on the element
+    where you want to display your custom context menu. This attribute should be placed
+    directly on the element that triggers the right-click.
+
+<body @oncontextmenu="HandleRightClick" @oncontextmenu:preventDefault="false">-->
+
+<!--Using JavaScript interop to call preventDefault() synchronously within the
+    browser's JavaScript event handler before the Blazor component's event handler
+	is invoked with element id "counterBody".-->
+<body id="counterBody"> 
+<h1>Counter @message</h1>
+
+<p>Current count: @currentCount</p>
+
+<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
+
+</body>
+
+@code {
+
+    /// <summary>
+    /// JS Interop module used to call JavaScript
+    /// </summary>
+    private Lazy<Task<IJSObjectReference>> _moduleTask;
+
+    /// <summary>
+    /// JS Runtime
+    /// </summary>
+    [Inject]
+    protected IJSRuntime _jsRuntime { get; set; }
+
+
+    private int currentCount = 0;
+	private string message = string.Empty;
+
+    private void HandleRightClick(MouseEventArgs e)
+    {
+        // Right-click detected; you can add custom logic here if needed
+        message = $"Right-click at position: X={e.ClientX}, Y={e.ClientY}";
+	}
+
+    protected override void OnInitialized()
+    {
+        message = $"Initialized at {DateTime.Now}";
+    }
+
+    protected override void OnParametersSet()
+    {
+        currentCount = AppState.Counter;
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        //Do not update the view. AfterRender...
+        currentCount = AppState.Counter;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            // We need to specify the .js file path relative to this code
+        _moduleTask = new(() => _jsRuntime.InvokeAsync<IJSObjectReference>(
+        "import", "./js/counterInterop.js").AsTask());
+
+        // Load the module
+        var module = await _moduleTask.Value;
+
+        // Initialize
+        await module.InvokeVoidAsync("preventContextMenu", "counterBody");
+        }
+    }
+
+    private void IncrementCount()
+    {
+        currentCount++;
+        AppState.Counter++;
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        GC.SuppressFinalize(this);
+
+        if (_moduleTask != null)
+        {
+            var module = await _moduleTask.Value;
+            await module.DisposeAsync();
+        }
+    }
+}

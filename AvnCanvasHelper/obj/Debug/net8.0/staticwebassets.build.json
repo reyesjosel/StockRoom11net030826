@@ -1,0 +1,31 @@
+{
+  "Version": 1,
+  "Hash": "5zhqdHxy31t0qZnDvcSNx5bGXOjeiUd2aIsNcFKXOr4=",
+  "Source": "AvnCanvasHelper",
+  "BasePath": "_content/AvnCanvasHelper",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": [
+    {
+      "Identity": "D:\\My C# Example\\Blazor C#\\BlazorCanvas-master\\BlazorCanvas-master\\AvnCanvasHelper\\CanvasHelper.razor.js",
+      "SourceId": "AvnCanvasHelper",
+      "SourceType": "Discovered",
+      "ContentRoot": "D:\\My C# Example\\Blazor C#\\BlazorCanvas-master\\BlazorCanvas-master\\AvnCanvasHelper\\",
+      "BasePath": "_content/AvnCanvasHelper",
+      "RelativePath": "CanvasHelper.razor.js",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Always",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "CanvasHelper.razor.js"
+    }
+  ]
+}

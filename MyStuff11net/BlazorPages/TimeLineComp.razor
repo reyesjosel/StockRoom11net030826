@@ -1,0 +1,101 @@
+﻿@page "/timeline"
+@using Microsoft.JSInterop
+@inject IJSRuntime JSRuntime
+@inject AppService AppService
+
+<TimeLineHelper 
+@ref="TimeLineHelper"
+CanvasResized="CanvasResized" 
+MouseDown="MouseDown"
+MouseUp="MouseUp"
+MouseMove="MouseMove">
+</TimeLineHelper>    
+
+@code {
+    int timelineHeight = 300;
+
+    private TimeLineHelper TimeLineHelper;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        try
+        {
+            if (firstRender)
+            {
+                await TimeLineHelper.Initialize();
+            }
+
+            await base.OnAfterRenderAsync(firstRender);
+        }
+        catch(Exception error)
+        {
+            string mesage = error.Message;
+        }
+    }
+
+    /// <summary>
+    /// Called by CanvasHelper whenever the browser is resized.
+    /// </summary>
+    /// <param name="size"></param>
+    public void CanvasResized(Size size)
+    {
+        timelineHeight = size.Height;
+    }
+
+
+
+    // Handle mouse down events
+    void MouseDown(CanvasMouseArgs args)
+    {
+
+    }
+
+    // Handle mouse up events
+    void MouseUp(CanvasMouseArgs args)
+    {
+
+    }
+
+    // Handle mouse move events
+    void MouseMove(CanvasMouseArgs args)
+    {
+        if (args == null)
+            return;
+
+        int v = args.ClientX;
+    }
+
+
+    private string Message { get; set; }
+
+    /// <summary>
+    /// OnInitialize we add event handlers to the AppService.MessageReceived event.
+    protected override void OnInitialized()
+    {
+        AppService.MessageReceived += HandleMessage;
+        AppService.UpDateTimeLineEvent += UpDateData;
+    }
+
+    /// <summary>
+    /// This method is called whenever the AppService.MessageReceived event is raised.
+    /// Hire we handle the message and call the UpDateData method to update the data.
+    private void HandleMessage(string message)
+    {
+        UpDateData(message);
+        Message = message;
+        //StateHasChanged(); // Important: Force UI update
+    }
+
+    /// <summary>
+    /// this method is called by the AppService event handlers whenever the data is updated.
+    /// OnInitialized we add event handlers to the AppService.MessageReceived event.
+    public async void UpDateData(string message)
+    {
+        await TimeLineHelper.UpDateData(message);
+    }
+
+    public void Dispose()
+    {
+        AppService.MessageReceived -= HandleMessage;
+    }
+} 

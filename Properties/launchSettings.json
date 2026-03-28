@@ -1,0 +1,11 @@
+{
+  "profiles": {
+    "Solutions_Base": {
+      "commandName": "Project",
+      "hotReloadEnabled": false,
+      "inspectUri": "{wsProtocol}://{url.hostname}:{url.port}/_framework/debug/ws-proxy?browser={browserInspectUri}",
+      "nativeDebugging": false,
+      "jsWebView2Debugging": false
+    }
+  }
+}

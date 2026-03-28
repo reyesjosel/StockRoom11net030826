@@ -1,0 +1,56 @@
+﻿@inject IJSRuntime JSRuntime
+@implements IAsyncDisposable
+
+
+<script src="Jscript/ViewFancyTree.js" type="module"></script>
+
+
+<!-- Tree wrapper -->
+<div id="tree"></div>
+<hr />
+<div id="selected-action">Click right mouse button on node</div>
+
+<div id="blazor-error-ui" data-nosnippet>
+    An unhandled error has occurred.
+    <a href="" class="reload">Reload</a>
+    <a class="dismiss">🗙</a>
+</div>
+
+@code {
+    private IJSObjectReference module;
+
+    private Task<IJSObjectReference>? _module;
+    private Task<IJSObjectReference> Module
+        => _module ??= JSRuntime.InvokeAsync<IJSObjectReference>("import", "./Jscript/ViewProduction.js").AsTask();
+
+
+    /// <summary>
+    /// Call this in your Blazor app's OnAfterRenderAsync method when firstRender is true
+    /// </summary>
+    /// <returns></returns>
+    public async Task InitializeViewProd()
+    {
+        //import the js module
+        module = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./Jscript/ViewFancyTree.js");
+        await module.InvokeVoidAsync("startViewFancyTree", new object[] { "hi" });
+
+        // await JSRuntime.InvokeVoidAsync("startViewProd", new object[] { "hi" });
+
+        // var module = await this.Module;
+        // await module.InvokeVoidAsync("startViewProd", new object[] { "hi" });
+
+        // Dispose the module
+        await module.DisposeAsync();
+    }
+
+    //Dispose of the js module
+    public async ValueTask DisposeAsync()
+    {
+        if (_module != null)
+        {
+            var module = await _module;
+            await module.DisposeAsync();
+        }
+    }
+
+}

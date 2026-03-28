@@ -1,0 +1,546 @@
+﻿@page "/timeline"
+@using MyStuff11net.VisTimeLine
+@using StockRoom11net.BlazorWebAssembly
+@using StockRoom11net.BlazorWebAssembly.Components
+@using StockRoom11net.BlazorWebAssembly.Components.Pages
+@using StockRoom11net.BlazorWebAssembly.Data
+@inject IJSRuntime JSRuntime
+@inject AppService AppService
+
+
+<head>
+    <style>
+        :root {
+            --color-background: #FFF;
+            --color-foreground: #333;
+            --color-items-text: #000;
+            --color-items-border: #333;
+            --color-items-background: #CCCCCC;
+            --color-items-background-hover: #999999;
+            --color-items-background-seledted-hover: #EEEEEE;
+            --color-dark: #000;
+            --color-theme: #c34528;
+            --color-theme-dark: filter: brightness(85%);
+            --color-theme-complement: spin( --color-theme, 180);
+            --color-theme-triad1: spin( --color-theme, -135);
+            --color-theme-triad2: spin( --color-theme, 135);
+            --color-theme-split1: spin( --color-theme, -158);
+            --color-theme-split2: spin( --color-theme, 158);
+            --color-text: lch(from var(--color-foreground) calc(l + 25%) c h); /* Increase lightness by 25% */
+            --color-header-text: --color-dark;
+            --color-text-inverted: darken( --color-background,5);
+            --color-header-text-inverted: --color-background;
+            --color-text-credit: #999999;
+            --color: ActiveBorder;
+        }
+
+        html {
+            height: 100%;
+        }
+
+        body {
+            display: grid;
+            grid-template-rows: 1fr auto;
+            padding: 0;
+            min-height: 100%;
+            background-color: var(--color-background);
+            color: var(--color-foreground);
+            font-family: Arial, sans-serif;
+        }
+
+        footer {
+            grid-row-start: 2;
+            grid-row-end: 3;
+        }
+
+        /* This is the general class applied to all individual items within a vis.js Timeline. */
+
+        .vis-item {
+            /*height: 20px;*/
+            color: black;
+            font-size: 10pt;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-width: 1px;
+            border-radius: 3px;
+            border-color: #333;
+            /*background-color: #CCCCCC;
+                    /* box-shadow: 5px 5px 20px rgba(128, 128, 128, 0.5);*/
+
+            :hover {
+                cursor: move;
+            }
+        }
+
+            /* This is an additional class applied to a vis-item when its type property is set to 'box'.
+               In vis.js Timelines, items can be of different types like 'box', 'point', 'range', or 'background'.
+               The 'box' type represents an item with a defined start date, displayed as a rectangular box on the timeline.*/
+            
+               .vis-item.vis-box {
+                /*text-align: center;*/
+                border-style: solid;
+                border-radius: 3px;
+            }
+
+            .vis-item.vis-point {
+                background: none;
+            }
+
+            .vis-item.vis-dot {
+                position: absolute;
+                padding: 0;
+                border-width: 4px;
+                border-style: solid;
+                border-radius: 4px;
+            }
+
+            .vis-item.vis-range {
+                /*border-left: 3px solid #ff4d4f;
+                border-right: 3px solid #ff4d4f;
+                height : 20px;*/
+                border-style: solid;
+                border-radius: 3px;
+                box-sizing: border-box;
+            }
+
+            .vis-item.vis-background {
+                border: none;
+                border-width: 0px;
+                background-color: aqua;
+                box-sizing: content-box;
+                z-index: 0;
+            }
+
+                .vis-item.vis-background.vis-item-content {
+                    position: absolute;
+                    display: inline-block;
+                }
+
+                .vis-item.vis-background.positive {
+                    background-color: lightgray;
+                }
+
+                .vis-item.vis-background.negative {
+                    background-color: rgba(224, 208, 33, 0.729);
+                }
+
+        .vis-item-overflow {
+            color: black;
+            position: absolute;
+            border-width: 1px;
+            border-radius: 3px;
+            /*border-color: var(--color-items-border);
+            /*background-color: var(--color-items-background);*/
+            display: inline-block;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .vis-item.vis-selected {
+            font-weight: bold;
+            border-width: 2px;
+            border-radius: 3px;
+            border-color: black;
+            background-color: white;
+            /*z-index must be higher than the z-index of custom time bar and current time bar */
+            z-index: 2;
+
+            :hover {
+                color: black;
+                /*background-color: var(--color-items-background-seledted-hover);*/
+                cursor: pointer;
+            }
+        }
+
+        .vis-editable.vis-selected {
+            cursor: move;
+        }
+
+        .vis-item.vis-point.vis-selected {
+            background-color: #fff785;
+        }
+
+        .vis-item.vis-item-overflow {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        .vis-item-visible-frame {
+            white-space: nowrap;
+        }
+
+        .vis-item.vis-range .vis-item-content {
+            position: relative;
+            display: inline-block;
+        }
+
+        .vis-item.vis-line {
+            padding: 0;
+            position: absolute;
+            width: 1px;
+            border-left-width: 1px;
+            border-left-style: solid;
+        }
+
+        .vis-item.vis-item-content {
+            white-space: nowrap;
+            box-sizing: border-box;
+            /*padding: 5px;*/
+        }
+
+        .vis-item.vis-onUpdateTime-tooltip {
+            position: absolute;
+            background: #4f81bd;
+            color: white;
+            width: 200px;
+            text-align: center;
+            white-space: nowrap;
+            padding: 5px;
+            border-radius: 1px;
+            transition: 0.4s;
+            -o-transition: 0.4s;
+            -moz-transition: 0.4s;
+            -webkit-transition: 0.4s;
+        }
+
+        .vis-item.vis-delete,
+        .vis-item.vis-delete-rtl {
+            position: absolute;
+            top: 0px;
+            width: 24px;
+            height: 24px;
+            box-sizing: border-box;
+            padding: 0px 5px;
+            cursor: pointer;
+            -webkit-transition: background 0.2s linear;
+            -moz-transition: background 0.2s linear;
+            -o-transition: background 0.2s linear;
+            transition: background 0.2s linear;
+        }
+
+        .vis-item.vis-delete {
+            right: -24px;
+        }
+
+        .vis-item.vis-delete-rtl {
+            left: -24px;
+        }
+
+            .vis-item.vis-delete:after,
+            .vis-item.vis-delete-rtl:after {
+                content: "\00D7"; /* MULTIPLICATION SIGN */
+                color: red;
+                font-family: arial, sans-serif;
+                font-size: 22px;
+                font-weight: bold;
+                -webkit-transition: color 0.2s linear;
+                -moz-transition: color 0.2s linear;
+                -o-transition: color 0.2s linear;
+                transition: color 0.2s linear;
+            }
+
+            .vis-item.vis-delete:hover,
+            .vis-item.vis-delete-rtl:hover {
+                background: red;
+            }
+
+                .vis-item.vis-delete:hover:after,
+                .vis-item.vis-delete-rtl:hover:after {
+                    color: white;
+                }
+
+        .vis-item.vis-drag-center {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0px;
+            cursor: move;
+        }
+
+        .vis-item.vis-range.vis-drag-left {
+            position: absolute;
+            width: 24px;
+            max-width: 20%;
+            min-width: 2px;
+            height: 100%;
+            top: 0;
+            left: -4px;
+            cursor: w-resize;
+        }
+
+        .vis-item.vis-range.vis-drag-right {
+            position: absolute;
+            width: 24px;
+            max-width: 20%;
+            min-width: 2px;
+            height: 100%;
+            top: 0;
+            right: -4px;
+            cursor: e-resize;
+        }
+
+        .vis-range.vis-item.vis-readonly.vis-drag-left,
+        .vis-range.vis-item.vis-readonly.vis-drag-right {
+            cursor: auto;
+        }
+
+        .vis-item.vis-cluster {
+            vertical-align: central;
+            text-align: center;
+            border-style: solid;
+            border-radius: 2px;
+        }
+
+        .vis-item.vis-cluster-line {
+            padding: 0;
+            position: absolute;
+            width: 0;
+            border-left-width: 1px;
+            border-left-style: solid;
+        }
+
+        .vis-item.vis-cluster-dot {
+            position: absolute;
+            padding: 0;
+            border-width: 4px;
+            border-style: solid;
+            border-radius: 4px;
+        }
+
+        div.vis-editable,
+        div.vis-editable.vis-selected {
+            /* custom styling for editable items... */
+        }
+
+        div.vis-readonly,
+        div.vis-readonly.vis-selected {
+            /* custom styling for readonly items... */
+            background-color: lightgreen;
+            border-color: green;
+            color: darkgrey;
+        }
+
+        /* alternating column backgrounds */
+        .vis-time-axis .vis-grid.vis-odd {
+            background: #f5f5f5;
+        }
+
+        /*gray background in weekends, white text color*/
+        .vis-time-axis .vis-grid.vis-saturday,
+        .vis-time-axis .vis-grid.vis-sunday {
+            background: #faffd6;
+        }
+
+        .vis-time-axis .vis-text.vis-saturday,
+        .vis-time-axis .vis-text.vis-sunday {
+            color: black;
+        }
+
+        /* Style for the major axis labels */
+        .vis-major {
+            font-weight: bold;
+            font-size: 10px;
+            font-family: Arial, sans-serif;
+            color: black;
+        }
+
+        /* You can also style minor labels using .vis-minor */
+        .vis-minor {
+            font-weight: normal;
+            font-size: 10px;
+            font-family: Arial, sans-serif;
+            color: gray;
+        }
+
+	</style>
+</head>
+
+<body>
+    <main>
+        <p>Welcome to my website!</p>
+        @ChildContent
+    </main>
+    <footer>
+        <div id="@ElementId"></div>
+
+        <TimeLineComp @ref="timelinecomp"
+                      Items="@Items"
+                      Options="@TimeLineOptions"
+                      ElementId="@ElementId"
+                      OnSelect="SelectEvent"
+                      OnMove="MoveEvent"
+                      OnResize="ResizeEvent"
+                      OnRangeChanged="RangeEvent" />
+    </footer>
+</body>
+
+ <!--
+<button @onclick="() => timelinecomp!.ZoomIn()">Zoom In</button>
+<button @onclick="() => timelinecomp!.ZoomOut()">Zoom Out</button>
+<button @onclick="() => timelinecomp!.MoveLeft()">Left</button>
+<button @onclick="() => timelinecomp!.MoveRight()">Right</button>
+-->
+
+@code {
+    /// <summary>
+    /// In a Blazor App, you would wrap a BECanvas element
+    /// in the CanvasHelper
+    /// </summary>
+    [Parameter] public RenderFragment ChildContent { get; set; }
+
+    string ElementId = "timeline-" + Guid.NewGuid().ToString("N");
+
+    private TimeLineComp? timelinecomp;
+
+    List<TimelineGroup> Groups = new()
+    {
+        new() { Id = 0, Content = "" },
+        new() { Id = 1, Content = "Group A" },
+        new() { Id = 2, Content = "Group B" }
+    };
+
+    List<TimeLineItem> Items = new()
+    {
+		new() { Id = 0, Content = "Item 0", Start = DateTime.Today.AddDays(-10), Editable = false },
+        new() { Id = 1, Group = 1, Content = "Item A", Start = DateTime.Today, Editable = true },
+        new() { Id = 2, Group = 2, Content = "Item B", Start = DateTime.Today.AddDays(1), Editable = true },
+        new() { Id = 3, Content = "Resizable Item", Start = DateTime.Parse("2025-12-10"), End = DateTime.Parse("2025-12-12"), Editable = true },
+        new() { Id = 4, Content = "Fixed Duration Item", Start = DateTime.Parse("2025-12-15"), End = DateTime.Parse("2025-12-16"), Editable = false }
+    };
+
+
+    object TimeLineOptions = new TimeLineOptions
+    {
+        Start = new DateTime(2025, 9, 1),
+        End = new DateTime(2026, 2, 10),
+        Min = new DateTime(2020, 12,01, 12, 00, 00),
+        Max = DateTime.Today + TimeSpan.FromDays(200),
+       // Height = "125px",
+        MaxHeight = "50%",
+        MinHeight = "10%",
+        ShowCurrentTime = true,
+        Selectable = true,
+        Moveable = true,
+        ShowMajorLabels = true,
+        ShowMinorLabels = true,
+        HorizontalScroll = false,
+        VerticalScroll = false,
+        Stack = true,
+        Multiselect = false,
+        ZoomMin = 1000 * 60 * 60 * 24,            // One day in milliseconds  // 1000 * 60 * 60, -> 1 hour
+        ZoomMax = 1000L * 60 * 60 * 24 * 30 * 18, // 1000L * 60 * 60 * 24 * 30 -> 30 days
+        Editable = new TimeLineEditableOptions
+        {
+            Add = true,
+            UpdateTime = true,
+            UpdateGroup = true,
+            Remove = true
+        },        
+        Margin = new TimeLineMarginOptions
+        {
+            Item = 10,
+            Axis = 5
+        },
+        Orientation = new TimeLineOrientationOptions
+        {
+            Axis = "bottom",
+            Item = "bottom"
+		},
+        Format = new TimeLineFormatOptions
+        {
+            MinorLabels = new Dictionary<string, string>
+            {
+                // sub-day
+                ["millisecond"] = "SSS",
+                ["second"] = "HH:mm:ss",
+                ["minute"] = "HH:mm",
+                ["hour"] = "HH:mm",
+
+                // date
+                ["weekday"] = "ddd D",
+                ["day"] = "D",
+                ["month"] = "MMM",
+                ["year"] = "YYYY"
+            },
+
+            MajorLabels = new Dictionary<string, string>
+            {
+                // sub-day
+                ["millisecond"] = "HH:mm",
+                ["second"] = "HH:mm",
+                ["minute"] = "HH:mm",
+                ["hour"] = "MMM D HH:mm",
+                // date
+                ["weekday"] = "MMM D",
+                ["day"] = "MMMM YYYY",
+                ["month"] = "YYYY",
+                ["year"] = ""
+            }
+        }
+	};
+
+    Task SelectEvent(int? id)
+    {
+        Console.WriteLine($"Selected: {id}");
+        return Task.CompletedTask;
+    }
+
+    Task MoveEvent(TimeLineItem item)
+    {
+        Console.WriteLine($"Moved: {item.Id} → {item.Start}");
+        return Task.CompletedTask;
+    }
+
+    Task ResizeEvent(TimeLineItem item)
+    {
+        Console.WriteLine($"Resized: {item.Id}");
+        return Task.CompletedTask;
+    }
+
+    Task RangeEvent((DateTime start, DateTime end) window)
+    {
+        Console.WriteLine($"Range: {window.start} → {window.end}");
+        return Task.CompletedTask;
+    }
+
+
+        
+    private string Message { get; set; }
+
+    /// <summary>
+    /// OnInitialize we add event handlers to the AppService.MessageReceived event.
+    protected override void OnInitialized()
+    {
+        AppService.MessageReceived += HandleMessage;
+        AppService.UpDateTimeLineEvent += UpDateData;
+    }
+
+    /// <summary>
+    /// This method is called whenever the AppService.MessageReceived event is raised.
+    /// Hire we handle the message and call the UpDateData method to update the data.
+    private void HandleMessage(string message)
+    {
+        UpDateData(message);
+        Message = message;
+        //StateHasChanged(); // Important: Force UI update
+    }
+
+    /// <summary>
+    /// this method is called by the AppService event handlers whenever the data is updated.
+    /// OnInitialized we add event handlers to the AppService.MessageReceived event.
+    public async void UpDateData(string message)
+    {
+       // await timelinecomp.UpDateData(message);
+    }
+
+    public void Dispose()
+    {
+        AppService.MessageReceived -= HandleMessage;
+    }
+}
