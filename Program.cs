@@ -2,6 +2,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System.Diagnostics;
 using MyStuff11net.DependencyInjection;
+using StockRoom11net.Data; // Add EF Core DI
 
 
 namespace StockRoom11net
@@ -24,11 +25,14 @@ namespace StockRoom11net
 
 
             ApplicationConfiguration.Initialize();
-                        
+
             var host = Host.CreateDefaultBuilder()
                 .ConfigureServices((context, services) =>
                 {
-                    // Services
+                    // *** MODERN EF CORE SERVICES ***
+                    services.AddDataServices(); // Add EF Core repositories and services
+
+                    // Legacy Services (can be removed gradually)
                     services.AddSingleton<IMyService, MyService>();
 
                     // Forms
