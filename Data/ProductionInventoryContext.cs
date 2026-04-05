@@ -20,17 +20,18 @@ public class ProductionInventoryContext : DbContext
     // DbSets representing your tables
     public DbSet<StockRoom> StockRooms { get; set; } = null!;
     public DbSet<Project> Projects { get; set; } = null!;
-    public DbSet<Employee> Employees { get; set; } = null!;
+    public DbSet<EmployeeT> Employees { get; set; } = null!;
     public DbSet<Location> Locations { get; set; } = null!;
     public DbSet<Marshall> Marshalls { get; set; } = null!;
-    public DbSet<Timeline> Timelines { get; set; } = null!;
+    public DbSet<TimeLine> Timelines { get; set; } = null!;
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         if (!optionsBuilder.IsConfigured)
         {
+            // ✅ IMPORTANT: Add this for migrations to work
             // Get connection string from configuration
-            string connectionString = Properties.Settings.Default.Production_InventoryConnectionString;
+            string connectionString = Properties.Settings.Default.DataBaseConnectionStringSQLite;
             optionsBuilder.UseSqlite(connectionString);
 
             // Enable detailed logging in debug mode
@@ -78,7 +79,7 @@ public class ProductionInventoryContext : DbContext
 
     private void ConfigureEmployees(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Employee>(entity =>
+        modelBuilder.Entity<EmployeeT>(entity =>
         {
             entity.ToTable("Table_Employees");
             entity.HasKey(e => e.Id);
@@ -106,10 +107,38 @@ public class ProductionInventoryContext : DbContext
 
     private void ConfigureTimelines(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Timeline>(entity =>
+        modelBuilder.Entity<TimeLine>(entity =>
         {
             entity.ToTable("Table_TimeLine");
-            entity.HasKey(e => e.Id);
+            entity.HasKey(e => e.ID);
+            // Configure indexes
+            entity.HasIndex(e => e.Index)
+                  .HasDatabaseName("IX_TimeLine_Index");
+
+            entity.HasIndex(e => e.DateCreated)
+                  .HasDatabaseName("IX_TimeLine_DateCreated");
+
+            entity.HasIndex(e => e.Parent_ID)
+                  .HasDatabaseName("IX_TimeLine_ParentID");
+
+            // Configure self-referencing relationship
+            entity.HasOne(t => t.Parent)
+                  .WithMany(t => t.Children)
+                  .HasForeignKey(t => t.Parent_ID)
+                  .OnDelete(DeleteBehavior.Restrict); // Prevent cascade delete
+
+            // Configure default values
+            entity.Property(e => e.DateCreated)
+                  .HasDefaultValueSql("GETDATE()");
+
+            entity.Property(e => e.ItemCount)
+                  .HasDefaultValue(0);
+
+            entity.Property(e => e.ItemOpen)
+                  .HasDefaultValue(false);
+
+            entity.Property(e => e.Status)
+                  .HasDefaultValue("Active");
         });
     }
 }

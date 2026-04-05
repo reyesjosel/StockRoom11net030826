@@ -1,3 +1,7 @@
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
+using StockRoom11net.Data.Repositories;
+
 namespace StockRoom11net.Data;
 
 /// <summary>
@@ -6,15 +10,16 @@ namespace StockRoom11net.Data;
 /// </summary>
 public interface IUnitOfWork : IDisposable
 {
+    // Repository properties
     IStockRoomRepository StockRooms { get; }
-    IRepository<Project> Projects { get; }
-    IRepository<Employee> Employees { get; }
-    IRepository<Location> Locations { get; }
-    IRepository<Marshall> Marshalls { get; }
-    IRepository<Timeline> Timelines { get; }
-
-    Task<int> SaveChangesAsync();
-    Task BeginTransactionAsync();
+    IRepository<TimeLine> TimeLines { get; }
+    
+    // Save changes methods
+    Task<int> CompleteAsync();
+    Task<int> SaveChangesAsync(); // ✅ Add this alias
+    
+    // Transaction support
+    Task<IDbContextTransaction> BeginTransactionAsync();
     Task CommitTransactionAsync();
     Task RollbackTransactionAsync();
 }
@@ -22,72 +27,119 @@ public interface IUnitOfWork : IDisposable
 public class UnitOfWork : IUnitOfWork
 {
     private readonly ProductionInventoryContext _context;
-    private Microsoft.EntityFrameworkCore.Storage.IDbContextTransaction? _transaction;
-
-    // Lazy-loaded repositories
     private IStockRoomRepository? _stockRooms;
-    private IRepository<Project>? _projects;
-    private IRepository<Employee>? _employees;
-    private IRepository<Location>? _locations;
-    private IRepository<Marshall>? _marshalls;
-    private IRepository<Timeline>? _timelines;
+    private IRepository<TimeLine>? _timeLines;
+    private IDbContextTransaction? _currentTransaction;
 
     public UnitOfWork(ProductionInventoryContext context)
     {
         _context = context;
     }
 
-    public IStockRoomRepository StockRooms => 
-        _stockRooms ??= new StockRoomRepository(_context);
+    public IStockRoomRepository StockRooms
+    {
+        get { return _stockRooms ??= new StockRoomRepository(_context); }
+    }
 
-    public IRepository<Project> Projects => 
-        _projects ??= new Repository<Project>(_context);
+    public IRepository<TimeLine> TimeLines
+    {
+        get { return _timeLines ??= new Repository<TimeLine>(_context); }
+    }
 
-    public IRepository<Employee> Employees => 
-        _employees ??= new Repository<Employee>(_context);
-
-    public IRepository<Location> Locations => 
-        _locations ??= new Repository<Location>(_context);
-
-    public IRepository<Marshall> Marshalls => 
-        _marshalls ??= new Repository<Marshall>(_context);
-
-    public IRepository<Timeline> Timelines => 
-        _timelines ??= new Repository<Timeline>(_context);
-
-    public async Task<int> SaveChangesAsync()
+    /// <summary>
+    /// Saves all changes made in this unit of work to the database
+    /// </summary>
+    /// <returns>The number of state entries written to the database</returns>
+    public async Task<int> CompleteAsync()
     {
         return await _context.SaveChangesAsync();
     }
 
-    public async Task BeginTransactionAsync()
+    /// <summary>
+    /// Alias for CompleteAsync() - saves all changes to the database
+    /// Provided for naming convention preference
+    /// </summary>
+    /// <returns>The number of state entries written to the database</returns>
+    public async Task<int> SaveChangesAsync()
     {
-        _transaction = await _context.Database.BeginTransactionAsync();
+        return await CompleteAsync();
     }
 
+    #region "Transaction Management"
+
+    /// <summary>
+    /// Begins a new database transaction
+    /// </summary>
+    public async Task<IDbContextTransaction> BeginTransactionAsync()
+    {
+        if (_currentTransaction != null)
+        {
+            throw new InvalidOperationException("A transaction is already in progress.");
+        }
+
+        _currentTransaction = await _context.Database.BeginTransactionAsync();
+        return _currentTransaction;
+    }
+
+    /// <summary>
+    /// Commits the current transaction
+    /// </summary>
     public async Task CommitTransactionAsync()
     {
-        if (_transaction != null)
+        if (_currentTransaction == null)
         {
-            await _transaction.CommitAsync();
-            await _transaction.DisposeAsync();
-            _transaction = null;
+            throw new InvalidOperationException("No active transaction to commit.");
+        }
+
+        try
+        {
+            await _context.SaveChangesAsync();
+            await _currentTransaction.CommitAsync();
+        }
+        catch
+        {
+            await RollbackTransactionAsync();
+            throw;
+        }
+        finally
+        {
+            if (_currentTransaction != null)
+            {
+                await _currentTransaction.DisposeAsync();
+                _currentTransaction = null;
+            }
         }
     }
 
+    /// <summary>
+    /// Rolls back the current transaction
+    /// </summary>
     public async Task RollbackTransactionAsync()
     {
-        if (_transaction != null)
+        if (_currentTransaction == null)
         {
-            await _transaction.RollbackAsync();
-            await _transaction.DisposeAsync();
-            _transaction = null;
+            throw new InvalidOperationException("No active transaction to rollback.");
+        }
+
+        try
+        {
+            await _currentTransaction.RollbackAsync();
+        }
+        finally
+        {
+            if (_currentTransaction != null)
+            {
+                await _currentTransaction.DisposeAsync();
+                _currentTransaction = null;
+            }
         }
     }
+
+    #endregion
 
     public void Dispose()
     {
-        _transaction?.Dispose();
+        _currentTransaction?.Dispose();
         _context.Dispose();
     }
 }

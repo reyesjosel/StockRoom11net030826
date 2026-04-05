@@ -7,6 +7,8 @@ using MyStuff11net.DataGridViewExtend;
 using MyStuff11net.Properties;
 using StockRoom11net.BlazorWebAssembly.Components.Pages;
 using StockRoom11net.BlazorWebAssembly.Data;
+using StockRoom11net.Data;
+using StockRoom11net.Services;
 using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
@@ -26,23 +28,18 @@ namespace StockRoom11net
 {
     public partial class TimeLineEditor : BaseTemple
     {
-        #region"Properties"
-
-        DataColumnCollection _stockroomColumns;
-        /// <summary>
-        /// Keep a record of all columns existent in StockRoom datatable.
-        /// </summary>
-        private DataColumnCollection StockRoomColumns
-        {
-            get
-            {
-                return _stockroomColumns;
-            }
-            set
-            {
-                _stockroomColumns = value;
-            }
-        }
+        #region "Properties"
+        
+        // Injected EF Core services
+        private readonly ITimeLineService _timeLineService;
+        private readonly IUnitOfWork _unitOfWork;
+        
+        // Binding sources
+        private BindingSource _bindingSourceTimeLine;
+        private BindingSource _bindingSourceTimeLineTreeView;
+        
+        // Data storage
+        private BindingList<TimeLine> _timeLineBindingList;
 
         /// <summary>
         /// RenameDistFileName, true to rename with new fileName, false keep original fileName.
@@ -50,7 +47,7 @@ namespace StockRoom11net
         bool RenameDistFileName;
 
         /// <summary>
-        /// DeleteOriginalFile, true to delete the source file, false keep source file.
+        /// RenameDistFileName, true to rename with new fileName, false keep original fileName.ile, true to delete the source file, false keep source file.
         /// </summary>
         bool DeleteOriginalFile;
 
@@ -58,9 +55,6 @@ namespace StockRoom11net
         /// Reference to data table were is saved all information.
         /// </summary>
         private DataTable table;
-
-        private BindingSource _bindingSourceTimeLine;
-        private BindingSource _bindingSourceTimeLineTreeView;
 
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public BindingSource BindingSourceTimeLineTreeView
@@ -118,28 +112,35 @@ namespace StockRoom11net
         readonly AppState _appState = new();
         readonly AppService _appService = new();
 
-        #endregion"Properties"
-
+        #endregion "Properties"
+        
+        // Parameterless constructor for designer
+        [Obsolete("Use constructor with dependency injection")]
         public TimeLineEditor()
         {
             InitializeComponent();
         }
 
-        public TimeLineEditor(BindingSource bindingSourceTimeLine)
+        // Constructor with DI
+        public TimeLineEditor(ITimeLineService timeLineService, IUnitOfWork unitOfWork)
         {
             InitializeComponent();
+
+            // Assign injected services
+            _timeLineService = timeLineService ?? throw new ArgumentNullException(nameof(timeLineService));
+            _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
 
             Name = "TimeLineEditor";
 
             InitializeBlazorWebView();
-
-            #region"_bindingSourceTimeLine, ColumnsCollection"
+            
+            #region "_bindingSourceTimeLine, ColumnsCollection"
 
             _bindingSourceTimeLineTreeView = [];
 
             MessagePositionString = "_bindingSourceTimeLine == null";
             _bindingSourceTimeLine = [];
-            _bindingSourceTimeLine = bindingSourceTimeLine;
+    //        _bindingSourceTimeLine = bindingSourceTimeLine;
             _dataTableTimeLine = new DataTable();
             if (_bindingSourceTimeLine == null)
             {
@@ -150,16 +151,16 @@ namespace StockRoom11net
             else
             {
                 MessagePositionString = "tempDataTable";
-                _dataTableTimeLine = (_bindingSourceTimeLine.DataSource as DataSet).Tables[_bindingSourceTimeLine.DataMember];
+            //    _dataTableTimeLine = (_bindingSourceTimeLine.DataSource as DataSet).Tables[_bindingSourceTimeLine.DataMember];
 
                 MessagePositionString = "columnsCollection";
-                ColumnsCollection = _dataTableTimeLine?.Columns;
+            //    ColumnsCollection = _dataTableTimeLine?.Columns;
             }
 
             #endregion"_bindingSource_StockRoom, ColumnsCollection"    
         }
 
-        private void InitializeBlazorWebView()
+        void InitializeBlazorWebView()
         {
             try
             {
@@ -228,7 +229,7 @@ namespace StockRoom11net
             // blazorWebView_TimeLine.WebView.CoreWebView2.OpenDevToolsWindow();
         }
 
-        void TimeLineEditor_Load(object? sender, EventArgs e)
+        async void TimeLineEditor_Load(object? sender, EventArgs e)
         {
             try
             {
@@ -237,11 +238,89 @@ namespace StockRoom11net
 
                 InitTabControlExtend();
                 Initialize_DataGridView();
+
+                // ✅ Load data using EF Core
+                await LoadTimeLineDataAsync();
             }
             catch (Exception error)
             {
-                MessageBox.Show(error.Message, @"Error on initialization", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
+                MessageBox.Show(error.Message, @"Error on initialization",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        /// <summary>
+        /// Load TimeLine data using EF Core service
+        /// </summary>
+        async Task LoadTimeLineDataAsync()
+        {
+            try
+            {
+                // Show loading indicator
+                Cursor = Cursors.WaitCursor;
+                StatusBarMessage(new StatusBarMessage_EventArgs("Loading TimeLine data..."));
+
+                // ✅ Load data from database using the service
+                _timeLineBindingList = await _timeLineService.LoadTimelinesAsync();
+
+                // Create BindingSource for DataGridView binding
+                _bindingSourceTimeLine = new BindingSource
+                {
+                    DataSource = _timeLineBindingList
+                };
+
+                // Bind to DataGridView
+                dataGridViewExtended_TimeLineEditor.DataSource = _bindingSourceTimeLine;
+
+                StatusBarMessage(new StatusBarMessage_EventArgs($"Loaded {_timeLineBindingList.Count} TimeLine records"));
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error loading TimeLine data: {ex.Message}",
+                    "Data Load Error",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+            }
+            finally
+            {
+                Cursor = Cursors.Default;
+            }
+        }
+
+        /// <summary>
+        /// Refresh data from database
+        /// </summary>
+        async Task RefreshTimeLineDataAsync()
+        {
+            await LoadTimeLineDataAsync();
+        }
+
+        /// <summary>
+        /// Filter data by search term
+        /// </summary>
+        async Task SearchTimeLineAsync(string searchTerm)
+        {
+            try
+            {
+                Cursor = Cursors.WaitCursor;
+
+                _timeLineBindingList = await _timeLineService.GetTimeLinesByFilterAsync(searchTerm);
+                _bindingSourceTimeLine.DataSource = _timeLineBindingList;
+                _bindingSourceTimeLine.ResetBindings(false);
+
+                StatusBarMessage(new StatusBarMessage_EventArgs(
+                    $"Found {_timeLineBindingList.Count} matching records"));
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error searching: {ex.Message}",
+                    "Search Error",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+            }
+            finally
+            {
+                Cursor = Cursors.Default;
             }
         }
 
@@ -259,6 +338,331 @@ namespace StockRoom11net
                 return;
             }
         }
+
+        /// <summary>
+        /// Get the next available index/ID for a new TimeLine item
+        /// </summary>
+        async Task<int> GetNextIndexAsync()
+        {
+            try
+            {
+                if (_timeLineBindingList.Count == 0)
+                    return 1;
+
+                // Option 1: Get max from current list
+                int maxId = _timeLineBindingList.Max(t => t.ID);
+
+                // Option 2: Get from database to be sure
+                // var allItems = await _timeLineService.LoadTimelinesAsync();
+                // int maxId = allItems.Any() ? allItems.Max(t => t.ID) : 0;
+
+                return maxId + 1;
+            }
+            catch
+            {
+                return _timeLineBindingList.Count + 1;
+            }
+        }
+
+        /// <summary>
+        /// Create multiple timeline items in a single transaction
+        /// </summary>
+        public async Task<List<TimeLine>> CreateMultipleTimeLinesAsync(List<TimeLine> timeLines)
+        {
+            // ✅ Begin transaction
+            await _unitOfWork.BeginTransactionAsync();
+
+            try
+            {
+                var createdItems = new List<TimeLine>();
+
+                foreach (var timeLine in timeLines)
+                {
+                    var created = await _unitOfWork.TimeLines.AddAsync(timeLine);
+                    createdItems.Add(created);
+                }
+
+                // Save all changes
+                await _unitOfWork.SaveChangesAsync();
+
+                // ✅ Commit transaction
+                await _unitOfWork.CommitTransactionAsync();
+
+                return createdItems;
+            }
+            catch (Exception)
+            {
+                // ✅ Rollback on error
+                await _unitOfWork.RollbackTransactionAsync();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Update timeline with related changes in transaction
+        /// </summary>
+        public async Task UpdateTimeLineWithChildrenAsync(TimeLine parent, List<TimeLine> children)
+        {
+            await _unitOfWork.BeginTransactionAsync();
+
+            try
+            {
+                // Update parent
+                _unitOfWork.TimeLines.Update(parent);
+
+                // Update or add children
+                foreach (var child in children)
+                {
+                    child.Parent_ID = parent.ID;
+
+                    if (child.ID == 0)
+                        await _unitOfWork.TimeLines.AddAsync(child);
+                    else
+                        _unitOfWork.TimeLines.Update(child);
+                }
+
+                await _unitOfWork.SaveChangesAsync();
+                await _unitOfWork.CommitTransactionAsync();
+            }
+            catch
+            {
+                await _unitOfWork.RollbackTransactionAsync();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Save a single timeline item
+        /// </summary>
+        private async Task SaveTimeLineAsync(TimeLine timeLine)
+        {
+            try
+            {
+                if (timeLine.ID == 0) // New item
+                {
+                    await _unitOfWork.TimeLines.AddAsync(timeLine);
+                }
+                else // Update existing
+                {
+                    _unitOfWork.TimeLines.Update(timeLine);
+                }
+
+                // ✅ Use SaveChangesAsync()
+                var recordsSaved = await _unitOfWork.SaveChangesAsync();
+
+                StatusBarMessage(new StatusBarMessage_EventArgs(
+                    $"Saved successfully. {recordsSaved} record(s) affected."));
+
+                // Refresh the list
+                await RefreshTimeLineDataAsync();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error saving: {ex.Message}",
+                    "Save Error",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+            }
+        }
+
+        /// <summary>
+        /// Save all pending changes in the binding list
+        /// </summary>
+        private async Task SaveAllChangesAsync()
+        {
+            try
+            {
+                Cursor = Cursors.WaitCursor;
+
+                await _unitOfWork.BeginTransactionAsync();
+
+                // Process all changes
+                foreach (var item in _timeLineBindingList)
+                {
+                    if (item.ID == 0) // New items
+                    {
+                        await _unitOfWork.TimeLines.AddAsync(item);
+                    }
+                    // Modified items are tracked automatically by EF Core
+                }
+
+                // Save everything
+                var totalRecords = await _unitOfWork.SaveChangesAsync();
+                await _unitOfWork.CommitTransactionAsync();
+
+                StatusBarMessage(new StatusBarMessage_EventArgs(
+                    $"Saved {totalRecords} record(s) successfully"));
+            }
+            catch (Exception ex)
+            {
+                await _unitOfWork.RollbackTransactionAsync();
+
+                MessageBox.Show($"Error saving changes: {ex.Message}",
+                    "Save Error",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+            }
+            finally
+            {
+                Cursor = Cursors.Default;
+            }
+        }
+
+        /// <summary>
+        /// Save multiple timeline changes with transaction support
+        /// </summary>
+        private async Task SaveMultipleChangesAsync()
+        {
+            try
+            {
+                Cursor = Cursors.WaitCursor;
+
+                // ✅ Begin transaction
+                await _unitOfWork.BeginTransactionAsync();
+
+                // Get all modified items
+                var modifiedItems = _timeLineBindingList
+                    .Where(t => t.ID > 0) // Existing items
+                    .ToList();
+
+                var newItems = _timeLineBindingList
+                    .Where(t => t.ID == 0) // New items
+                    .ToList();
+
+                // Save new items first
+                foreach (var newItem in newItems)
+                {
+                    await _unitOfWork.TimeLines.AddAsync(newItem);
+                }
+
+                // Update existing items
+                foreach (var modifiedItem in modifiedItems)
+                {
+                    _unitOfWork.TimeLines.Update(modifiedItem);
+                }
+
+                // Save all changes
+                await _unitOfWork.SaveChangesAsync();
+
+                // ✅ Commit transaction
+                await _unitOfWork.CommitTransactionAsync();
+
+                StatusBarMessage(new StatusBarMessage_EventArgs(
+                    $"Saved {newItems.Count} new and {modifiedItems.Count} modified items"));
+            }
+            catch (Exception ex)
+            {
+                // ✅ Rollback on error
+                await _unitOfWork.RollbackTransactionAsync();
+
+                MessageBox.Show($"Error saving changes: {ex.Message}",
+                    "Save Error",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+            }
+            finally
+            {
+                Cursor = Cursors.Default;
+            }
+        }
+
+        /// <summary>
+        /// Delete TimeLine item
+        /// </summary>
+        private async Task DeleteTimeLineAsync(int id)
+        {
+            try
+            {
+                var result = MessageBox.Show(
+                    "Are you sure you want to delete this TimeLine item?",
+                    "Confirm Delete",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Question);
+
+                if (result == DialogResult.Yes)
+                {
+                    await _timeLineService.DeleteTimeLineAsync(id);
+                    StatusBarMessage(new StatusBarMessage_EventArgs("TimeLine deleted successfully"));
+                    await RefreshTimeLineDataAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error deleting TimeLine: {ex.Message}",
+                    "Delete Error",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+            }
+        }
+
+        /// <summary>
+        /// Bulk delete with transaction using 'using' pattern
+        /// </summary>
+        private async Task BulkDeleteTimeLines(List<int> idsToDelete)
+        {
+            try
+            {
+                using (var transaction = await _unitOfWork.BeginTransactionAsync())
+                {
+                    foreach (var id in idsToDelete)
+                    {
+                        var item = await _unitOfWork.TimeLines.GetByIdAsync(id);
+                        if (item != null)
+                        {
+                            _unitOfWork.TimeLines.Remove(item);
+                        }
+                    }
+
+                    await _unitOfWork.SaveChangesAsync();
+                    await _unitOfWork.CommitTransactionAsync();
+
+                    StatusBarMessage(new StatusBarMessage_EventArgs(
+                        $"Deleted {idsToDelete.Count} timeline items"));
+                }
+            }
+            catch (Exception ex)
+            {
+                await _unitOfWork.RollbackTransactionAsync();
+
+                MessageBox.Show($"Error deleting items: {ex.Message}",
+                    "Delete Error",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+            }
+        }
+
+        /// <summary>
+        /// Execute an action within a transaction with automatic rollback on error
+        /// </summary>
+        private async Task TransactionHelperWay()
+        {
+            TimeLine newTimeLine = new TimeLine
+            { Text_Name = "Node1",
+                Description_Short = "Short desc",
+                Description_Expand = "Expanded desc" };
+
+            TimeLine anotherTimeLine = new TimeLine
+            { Text_Name = "Node2",
+                Description_Short = "Short desc",
+                Description_Expand = "Expanded desc" };
+
+            // Simple transaction
+            await _unitOfWork.ExecuteInTransactionAsync(async () =>
+            {
+                await _unitOfWork.TimeLines.AddAsync(newTimeLine);
+                await _unitOfWork.TimeLines.AddAsync(anotherTimeLine);
+            });
+
+            // Transaction with result
+            var createdItem = await _unitOfWork.ExecuteInTransactionAsync(async () =>
+            {
+                var item = await _unitOfWork.TimeLines.AddAsync(newTimeLine);
+                return item;
+            });
+        }
+        
+        
+
 
         void InitializeProperties()
         {
@@ -435,59 +839,35 @@ namespace StockRoom11net
 
             dataGridViewExtended_TimeLineEditor.ResumeLayout();
         }
-
-        private void DataGridViewExtended_Inventory_AddNewItemEvent(object? sender, EventArgs e)
+               
+        /// <summary>
+        /// Handle add new item button click
+        /// </summary>
+        private async void DataGridViewExtended_Inventory_AddNewItemEvent(object? sender, EventArgs e)
         {
-            BindingSource bindingSource = (BindingSource)dataGridViewExtended_TimeLineEditor.DataSource;
-
-            table = (bindingSource.DataSource as DataSet).Tables[bindingSource.DataMember];
-
-            if (table.Rows.Count > 0)
-                LastID = (int)table.Compute("MAX(ID)", "ID is Not null");
-            else
-                LastID = 0;
-
-            bindingSource.SuspendBinding();
-            bindingSource.RaiseListChangedEvents = false;
-
-            object? newObject = bindingSource.AddNew();
-            DataRowView? newRow = newObject as DataRowView;
-
-            if (newRow == null)
+            try
             {
-                On_StatusBarMessage(new StatusBarMessage_EventArgs("Error in row information."));
-                return;
+                var newTimeLine = new TimeLine
+                {
+                    ID = 0, // Will be set by database
+                    Text_Name = "NewNode",
+                    Description_Short = "",
+                    Description_Expand = "",
+                    DateCreated = DateTime.Now,
+                    Created_by = CurrentEmployeesLogIn.FullName
+                };
+
+                await SaveTimeLineAsync(newTimeLine);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error adding new item: {ex.Message}", 
+                    "Add Error", 
+                    MessageBoxButtons.OK, 
+                    MessageBoxIcon.Error);
             }
 
-            int newRowID = LastID;
-
-            newRow.BeginEdit();
-            newRow["ID"] = newRowID;
-            newRow["Index"] = newRowID;
-            newRow["Text_Name"] = "NewNode";
-            newRow["Parent_ID"] = DBNull.Value;
-            newRow["Node_PDF"] = "";
-            newRow["Node_Picture"] = "";
-            newRow["Description_Short"] = "";
-            newRow["Description_Expand"] = "";
-            newRow["Image"] = "";
-            newRow["String_Filter"] = "";
-            newRow["ItemCount"] = 0;
-            newRow["ItemOpen"] = "false";
-            newRow["DateCreated"] = DateTime.Now;
-            newRow["Created_by"] = CurrentEmployeesLogIn.Name + " " + CurrentEmployeesLogIn.LastName;
-            newRow["Properties"] = "";
-            newRow["Message_String"] = "";
-            newRow["Status"] = "";
-
-            newRow.EndEdit();
-
-            bindingSource.EndEdit();
-            bindingSource.RaiseListChangedEvents = true;
-            bindingSource.ResumeBinding();
-            bindingSource.ResetBindings(false);
-            bindingSource.Sort = "ID ASC";
-            bindingSource.Position = bindingSource.Count - 1;
+           // _timeLineBindingList.Position = _timeLineBindingList.Count - 1; // Move to the newly added item
         }
 
         private void DataGridViewExtendedInventoryCellEndEditEvent(object? sender, DataGridViewCellEventArgs e)
@@ -625,13 +1005,13 @@ namespace StockRoom11net
 
         private void DataGridViewExtendedInventoryUserDeletedRow(object? sender, DataGridViewRowEventArgs e)
         {
-            if (e.Row.Cells[0].Value == null)
+            if(e.Row.Cells[0].Value == null)
             {
                 On_StatusBarMessage(new StatusBarMessage_EventArgs("Error in row information."));
                 return;
             }
 
-            if (!e.Row.Cells[0].Value.ToString().Contains("-"))
+            if (!e.Row.Cells[0].Value.ToString().Contains('-'))
             {
                 On_StatusBarMessage(new StatusBarMessage_EventArgs("Error in row information."));
                 return;

@@ -1,4 +1,6 @@
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using StockRoom11net.Services;
 
 namespace StockRoom11net.Data;
 
@@ -11,13 +13,25 @@ public static class DependencyInjection
     public static IServiceCollection AddDataServices(this IServiceCollection services)
     {
         // Register DbContext with scoped lifetime
-        services.AddDbContext<ProductionInventoryContext>(ServiceLifetime.Scoped);
+        //services.AddDbContext<ProductionInventoryContext>(ServiceLifetime.Scoped);
+
+        // ✅ Configure DbContext with connection string
+        var connectionString = Properties.Settings.Default.DataBaseConnectionStringSQLite;
+
+        services.AddDbContext<ProductionInventoryContext>(options =>
+        {
+            options.UseSqlite(connectionString);
+            options.EnableSensitiveDataLogging(); // For development only
+            options.EnableDetailedErrors(); // For development only
+        }, ServiceLifetime.Scoped);
+
 
         // Register Unit of Work
         services.AddScoped<IUnitOfWork, UnitOfWork>();
 
         // Register Services
         services.AddScoped<IStockRoomService, StockRoomService>();
+        services.AddScoped<ITimeLineService, TimeLineService>();
 
         return services;
     }

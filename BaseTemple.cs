@@ -255,14 +255,19 @@ namespace StockRoom11net
         // put some information to Properties Manager.
         [Category("Controls Events")]
         [Description("Status bar message and status bar help.")]
-        public event Custom_Events_Args.StatusBarMessage_EventHandler? StatusBarMessage;
+        public event Custom_Events_Args.StatusBarMessage_EventHandler? StatusBarMessageEvent;
 
         // # 4 ... Declare the public virtual methods for
         // this events, in this procedure we calling the event itself.
         public virtual void On_StatusBarMessage(StatusBarMessage_EventArgs e)
         {
             // Notify Subscribers
-            StatusBarMessage?.Invoke(this, e);
+            StatusBarMessageEvent?.Invoke(this, e);
+        }
+
+        public void StatusBarMessage(StatusBarMessage_EventArgs e)
+        {
+            On_StatusBarMessage(e);
         }
 
         #endregion"StatusBarMessage"

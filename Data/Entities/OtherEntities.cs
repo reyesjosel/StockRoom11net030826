@@ -62,7 +62,7 @@ public class Project : INotifyPropertyChanged
 }
 
 [Table("Table_Employees")]
-public class Employee : INotifyPropertyChanged
+public class EmployeeT : INotifyPropertyChanged
 {
     private int _id;
     private string? _employeeName;
@@ -165,35 +165,3 @@ public class Marshall : INotifyPropertyChanged
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 }
 
-[Table("Table_TimeLine")]
-public class Timeline : INotifyPropertyChanged
-{
-    private int _id;
-    private DateTime? _eventDate;
-    private string? _description;
-
-    [Key]
-    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public int Id
-    {
-        get => _id;
-        set { if (_id != value) { _id = value; OnPropertyChanged(nameof(Id)); } }
-    }
-
-    public DateTime? EventDate
-    {
-        get => _eventDate;
-        set { if (_eventDate != value) { _eventDate = value; OnPropertyChanged(nameof(EventDate)); } }
-    }
-
-    [MaxLength(1000)]
-    public string? Description
-    {
-        get => _description;
-        set { if (_description != value) { _description = value; OnPropertyChanged(nameof(Description)); } }
-    }
-
-    public event PropertyChangedEventHandler? PropertyChanged;
-    protected virtual void OnPropertyChanged(string propertyName) =>
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-}

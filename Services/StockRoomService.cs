@@ -1,3 +1,4 @@
+using StockRoom11net.Data;
 using System.ComponentModel;
 
 namespace StockRoom11net.Services;

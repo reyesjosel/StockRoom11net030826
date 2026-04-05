@@ -79,32 +79,40 @@
     <PackageReference Include="Be.Windows.Forms.HexBox.Net5" Version="1.8.0" />
     <PackageReference Include="Blazor.Extensions.Canvas" Version="1.1.1" />
     <PackageReference Include="GenCode128" Version="2.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebView.WindowsForms" Version="10.0.30" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebView" Version="11.0.0-preview.2.26159.112" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebView.WindowsForms" Version="11.0.0-preview.2.26152.10" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.RazorPages" Version="2.3.0" />
-    <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="10.0.103">
+    <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="11.0.100-preview.2.26159.112">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="10.0.5" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.5" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.5">
+    <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="11.0.0-preview.2.26159.112" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="11.0.0-preview.2.26159.112" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="11.0.0-preview.2.26159.112">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.5" />
-    <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.5" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="11.0.0-preview.2.26159.112" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="11.0.0-preview.2.26159.112" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="11.0.0-preview.2.26159.112">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="11.0.0-preview.2.26159.112" />
+    <PackageReference Include="Microsoft.IdentityModel.JsonWebTokens" Version="8.17.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
     <PackageReference Include="System.Data.OleDb" Version="10.0.3" />
-    <PackageReference Include="System.Data.SQLite" Version="2.0.2" />
-    <PackageReference Include="System.Management" Version="10.0.3" />
-    <PackageReference Include="System.Speech" Version="10.0.3" />
+    <PackageReference Include="System.Data.SQLite" Version="2.0.3" />
+    <PackageReference Include="System.Management" Version="11.0.0-preview.2.26159.112" />
+    <PackageReference Include="System.Memory.Data" Version="11.0.0-preview.2.26159.112" />
+    <PackageReference Include="System.Speech" Version="11.0.0-preview.2.26159.112" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="CodeVendor.Controls">
       <HintPath>D:\My_C#_Example\CodeVendor Grouper\Grouper\bin\Release\net7.0-windows\CodeVendor.Controls.dll</HintPath>
     </Reference>
     <Reference Include="MyStuff11net">
-      <HintPath>MyStuff11net\bin\Release\net11.0-windows\MyStuff11net.dll</HintPath>
+      <HintPath>MyStuff11net\bin\Debug\net11.0-windows\MyStuff11net.dll</HintPath>
     </Reference>
     <Reference Include="ObjectListView">
       <HintPath>D:\My_C#_Example\ObjectListView\ObjectListView-main2022\ObjectListView-main2022\Demo\bin\Release\net8.0-windows\ObjectListView.dll</HintPath>
