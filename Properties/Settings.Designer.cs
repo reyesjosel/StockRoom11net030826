@@ -26,12 +26,12 @@ namespace StockRoom11net.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("data source=D:\\ProductionManagement\\ProductionInventory.sqlite;")]
-        public string Production_InventoryConnectionString {
+        public string DataBaseConnectionStringSQLite {
             get {
-                return ((string)(this["Production_InventoryConnectionString"]));
+                return ((string)(this["DataBaseConnectionStringSQLite"]));
             }
             set {
-                this["Production_InventoryConnectionString"] = value;
+                this["DataBaseConnectionStringSQLite"] = value;
             }
         }
     }

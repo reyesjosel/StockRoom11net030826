@@ -11,31 +11,31 @@
 
 ```
 ┌─────────────────────────────────────────────────┐
-│              WinForms (UI Layer)                 │
-│  ├─ DataGridView binds to BindingList<T>       │
+│              WinForms (UI Layer)                │
+│  ├─ DataGridView binds to BindingList<T>        │
 │  └─ Forms inject services via DI                │
 └─────────────────────────────────────────────────┘
                       ↓
 ┌─────────────────────────────────────────────────┐
-│           Service Layer (Business Logic)         │
+│           Service Layer (Business Logic)        │
 │  ├─ StockRoomService                            │
 │  └─ Returns BindingList<T> for WinForms         │
 └─────────────────────────────────────────────────┘
                       ↓
 ┌─────────────────────────────────────────────────┐
-│        Repository + Unit of Work Pattern         │
+│        Repository + Unit of Work Pattern        │
 │  ├─ IRepository<T> - Generic CRUD               │
 │  ├─ StockRoomRepository - Custom queries        │
 │  └─ UnitOfWork - Transaction management         │
 └─────────────────────────────────────────────────┘
                       ↓
 ┌─────────────────────────────────────────────────┐
-│           DbContext (EF Core)                    │
+│           DbContext (EF Core)                   │
 │  └─ ProductionInventoryContext                  │
 └─────────────────────────────────────────────────┘
                       ↓
 ┌─────────────────────────────────────────────────┐
-│          SQLite Database                         │
+│          SQLite Database                        │
 │  Production_InventoryConnectionString           │
 └─────────────────────────────────────────────────┘
 ```

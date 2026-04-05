@@ -1,4 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
+using StockRoom11net.Data;
+using StockRoom11net.Services;
 using System.ComponentModel;
 
 namespace StockRoom11net.Examples;

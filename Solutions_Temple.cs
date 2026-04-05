@@ -1,11 +1,14 @@
 ﻿using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.VisualBasic.Devices;
 using MyStuff11net;
 using MyStuff11net.DependencyInjection;
 using MyStuff11net.DocumentationBehavior;
 using MyStuff11net.Properties;
 using RawInput_dll;
+using StockRoom11net.Data;
 using StockRoom11net.Production_InventoryDataSetTableAdapters;
 using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
@@ -39,6 +42,7 @@ namespace StockRoom11net
     public partial class Solutions_TempleClass : Form
     {
         private readonly IMyService _myService;
+        private static IHost _appHost;
 
         // X:\ProductionManagement\AdvanceTec Software\
         // \\advt01s1\atishares\\ProductionManagement\AdvanceTec Software\
@@ -444,7 +448,7 @@ namespace StockRoom11net
         private static TimeSpan InstallationDaysAfter;
 
         SpeechSynthesizer SpeechSynthesizerBase;
-                
+
         #endregion"Properties and fields"
 
         /// <summary>
@@ -456,6 +460,27 @@ namespace StockRoom11net
         /// thread exceptions. The form relies on the provided service for certain operations; ensure that the service
         /// is properly initialized before passing it to the constructor.</remarks>
         /// <param name="myService">The service instance used to provide application-specific functionality to the form. Cannot be null.</param>
+        public Solutions_TempleClass()
+        {
+            _appHost = Host.CreateDefaultBuilder()
+                .ConfigureServices((context, services) =>
+                {
+                    // *** MODERN EF CORE SERVICES ***
+                    services.AddDataServices(); // Add EF Core repositories and services
+
+                    // Legacy Services (can be removed gradually)
+                    services.AddSingleton<IMyService, MyService>();
+
+                    // Forms
+                    services.AddTransient<Solutions_TempleClass>();
+                    services.AddTransient<TimeLineEditor>();
+                })
+                .Build();
+
+            // Start WinForms using DI
+            Application.Run(_appHost.Services.GetRequiredService<Solutions_TempleClass>());
+        }
+
         public Solutions_TempleClass(IMyService myService)
         {
             InitializeComponent();
@@ -596,7 +621,7 @@ namespace StockRoom11net
                 ((ISupportInitialize)(_bindingSource_TimeLine_TreeView)).EndInit();
 
                 #endregion"Initialize_bindingSource"
-                               
+
                 _currentEmployeesLogIn = new Employee();
 
                 changedRecordsTable = new DataTable("ChangedRecordsTable");
@@ -605,7 +630,7 @@ namespace StockRoom11net
                 _mDeserializeDockContent = new DeserializeDockContent(GetContentFromPersistString);
 
                 _bindingSource_StockRoom.RaiseListChangedEvents = true;
-               
+
                 dockPanel.Dock = DockStyle.Fill;
                 dockPanel.Theme = vS2005Theme;
                 dockPanel.ShowDocumentIcon = true;
@@ -633,7 +658,7 @@ namespace StockRoom11net
             //  registrar.RegisterComDLL();
             //  finalizer = new Finalizer(registrar);
         }
-               
+
         static void Application_ThreadException(object sender, ThreadExceptionEventArgs e)
         {
             return;
@@ -757,7 +782,7 @@ namespace StockRoom11net
             InitializeBackgroundWorkerFillByLastAccessTime();
 
             // To use StatusBarMessage event from MyCode.
-            MyCode.StatusBarMessage += StatusBarMessage;
+            MyCode.StatusBarMessage += OnStatusBarMessage;
             MyCode.LogFileMessage += LogFileMessage;
 
             // To initialized statusBar item to the right. Alignment property.
@@ -1426,7 +1451,7 @@ namespace StockRoom11net
                 Text = @"H7H Explorer."
             };
 
-            _h7h_ExplorerForm.StatusBarMessage += StatusBarMessage;
+            _h7h_ExplorerForm.StatusBarMessage += OnStatusBarMessage;
 
             Write_LogFile(new object(), new Custom_Events_Args.LogFileMessageEventArgs(new List<string>
                     {
@@ -2345,7 +2370,7 @@ namespace StockRoom11net
                 return; //An error has been found in the initialization.
 
             _LabelsPrintsSMT.LogFileMessage += Write_LogFile;
-            _LabelsPrintsSMT.StatusBarMessage += StatusBarMessage;
+            _LabelsPrintsSMT.StatusBarMessageEvent += OnStatusBarMessage;
             _LabelsPrintsSMT.Save_Requested += LabelsSMT_ProcessSaveRequest;
             _LabelsPrintsSMT.SpeechSynthesizerBase += SpeechSynthesizerBaseSpeak;
 
@@ -2382,7 +2407,7 @@ namespace StockRoom11net
             }
 
             _SMT_Reel_Record.FormClosing += SMTReelRecord_FormClosing;
-            _SMT_Reel_Record.StatusBarMessage += StatusBarMessage;
+            _SMT_Reel_Record.StatusBarMessageEvent += OnStatusBarMessage;
             _SMT_Reel_Record.SpeechSynthesizerBase += SpeechSynthesizerBaseSpeak;
 
             ScannedDataEvent += _SMT_Reel_Record.OnBarcodeScanned_EventHandler;
@@ -2421,7 +2446,7 @@ namespace StockRoom11net
             if (_ordersProcess.DialogResult == DialogResult.Cancel)//An error has been found in the initialization.
                 return;
 
-            _ordersProcess.StatusBarMessage += StatusBarMessage;
+            _ordersProcess.StatusBarMessageEvent += OnStatusBarMessage;
             _ordersProcess.SpeechSynthesizerBase += SpeechSynthesizerBaseSpeak;
 
             ScannedDataEvent += _ordersProcess.OnBarcodeScanned_EventHandler;
@@ -2460,7 +2485,7 @@ namespace StockRoom11net
                         
             _stockRoomForm.DockStateChanged += StockRoomDockStateChanged;
             _stockRoomForm.LogFileMessage += Write_LogFile;
-            _stockRoomForm.StatusBarMessage += StatusBarMessage;
+            _stockRoomForm.StatusBarMessageEvent += OnStatusBarMessage;
             _stockRoomForm.Save_Requested += StockRoom_ProcessSaveRequest;
             _stockRoomForm.CellDoubleClick_Event += StockRoomCellDoubleClick;
             _stockRoomForm.SaveTreeView_Requested += StockRoomSaveTreeViewRequested;
@@ -2531,7 +2556,7 @@ namespace StockRoom11net
 
             _locationAndLayoutDesignForm.DockStateChanged += LocationLayoutDesingDockStateChanged;
             _locationAndLayoutDesignForm.LogFileMessage += Write_LogFile;
-            _locationAndLayoutDesignForm.StatusBarMessage += StatusBarMessage;
+            _locationAndLayoutDesignForm.StatusBarMessageEvent += OnStatusBarMessage;
             _locationAndLayoutDesignForm.VisibleChanged += LocationLayoutDesignVisibleChanged;
             _locationAndLayoutDesignForm.Save_Requested += LocationAndLayoutDesignSaveRequested;
             _locationAndLayoutDesignForm.SaveTreeView_Requested += LocationAndLayoutDesignSaveTreeViewRequested;
@@ -2674,7 +2699,7 @@ namespace StockRoom11net
        //     _employees_ManagementsForm.Refresh_Requested += EmployeesManagementsRefreshRequested;
             _employees_ManagementsForm.Save_Requested += EmployeesManagements_ProcessSaveRequest;
             _employees_ManagementsForm.SaveTreeView_Requested += EmployeesManagementsSaveTreeViewRequested;
-            _employees_ManagementsForm.StatusBarMessage += StatusBarMessage;
+            _employees_ManagementsForm.StatusBarMessageEvent += OnStatusBarMessage;
             _employees_ManagementsForm.SpeechSynthesizerBase += SpeechSynthesizerBaseSpeak;
 
             CurrentDeptUserBroadcast_Requested += _employees_ManagementsForm.CurrentUserBroadcast_EventHandler;
@@ -2774,7 +2799,7 @@ namespace StockRoom11net
             //   _stockRoomAddNewComp.Need_SaveData      += StockRoom_NeedSaveData;
             _stockRoomAddNewCompForm.DockStateChanged += StockRoomAddNewCompDockStateChanged;
             //   _stockRoomAddNewComp.LogFileMessage     += Write_LogFile;
-            _stockRoomAddNewCompForm.StatusBarMessage += StatusBarMessage;
+            _stockRoomAddNewCompForm.StatusBarMessageEvent += OnStatusBarMessage;
             _stockRoomAddNewCompForm.Save_Requested += StockRoom_ProcessSaveRequest;
 
             _stockRoomAddNewCompForm.SaveTreeView_Requested += StockRoomSaveTreeViewRequested;
@@ -2846,9 +2871,10 @@ namespace StockRoom11net
                 return;
             }
 
-            _timeLineEditorForm = new TimeLineEditor(_bindingSource_TimeLine)
+            // ✅ Get TimeLineEditor from DI with all dependencies injected
+            _timeLineEditorForm = _appHost.Services.GetRequiredService<TimeLineEditor>();
             {
-                Text = textTitle
+                Text = textTitle;
             };
 
             _timeLineEditorForm.BindingSourceTimeLineTreeView = _bindingSource_TimeLine_TreeView;
@@ -2858,7 +2884,7 @@ namespace StockRoom11net
                         
             _timeLineEditorForm.DockStateChanged += TimeLineDockStateChanged;
             //_timeLineEditorForm.LogFileMessage += Write_LogFile;
-            _timeLineEditorForm.StatusBarMessage += StatusBarMessage;
+            _timeLineEditorForm.StatusBarMessageEvent += OnStatusBarMessage;
             _timeLineEditorForm.Save_Requested += TimeLine_ProcessSaveRequest;
             // _timeLineEditorForm.CellDoubleClick_Event += StockRoomCellDoubleClick;
             _timeLineEditorForm.SaveTreeView_Requested += TimeLineSaveTreeViewRequested;
@@ -3264,7 +3290,7 @@ namespace StockRoom11net
                 _statusBarTimer.Start();
         }
 
-        public void StatusBarMessage(object sender, StatusBarMessage_EventArgs e)
+        public void OnStatusBarMessage(object sender, StatusBarMessage_EventArgs e)
         {
             if (e.StatusBarHelp != null)
                 StatusBarHelp(e.StatusBarHelp);
@@ -3448,7 +3474,7 @@ namespace StockRoom11net
                         Tags.NewLine("Save Labels_SMT Requested at " + DateTime.Now),
                         Tags.NewLine("No rows changed, nothing to save.")
                     }));
-                    StatusBarMessage(new object(), new StatusBarMessage_EventArgs("No rows changed, nothing to save.", Resources.error_alert));
+                    OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("No rows changed, nothing to save.", Resources.error_alert));
                     return true;
                 }
                 // Save the changes to the database.
@@ -3457,7 +3483,7 @@ namespace StockRoom11net
                 if (RowsSaved == RowsChanged)
                 {
                     Production_InventoryDataSet.Table_Labels_SMT.AcceptChanges();
-                    StatusBarMessage(new object(), new StatusBarMessage_EventArgs("Labels_SMT, save request, has already been processed, " + RowsSaved + " rows saved.", Resources.OK));
+                    OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Labels_SMT, save request, has already been processed, " + RowsSaved + " rows saved.", Resources.OK));
                     Write_LogFile(new object(), new Custom_Events_Args.LogFileMessageEventArgs(new List<string>
                     {
                         Tags.NewLine(""),
@@ -3470,7 +3496,7 @@ namespace StockRoom11net
                 }
                 else
                 {
-                    StatusBarMessage(new object(), new StatusBarMessage_EventArgs("Error while trying to save the DataBase Labels SMT.", Resources.ErrorIcon));
+                    OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Error while trying to save the DataBase Labels SMT.", Resources.ErrorIcon));
                     Write_LogFile(new object(), new Custom_Events_Args.LogFileMessageEventArgs(new List<string>
                     {
                         Tags.NewLine(""),
@@ -3608,7 +3634,7 @@ namespace StockRoom11net
                         Tags.NewLine("Save TimeLine Requested at " + DateTime.Now),
                         Tags.NewLine("No rows changed, nothing to save.")
                     }));
-                    StatusBarMessage(new object(), new StatusBarMessage_EventArgs("No rows changed, nothing to save.", Resources.error_alert));
+                    OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("No rows changed, nothing to save.", Resources.error_alert));
                     return true;
                 }
                 // Save the changes to the database.
@@ -3617,7 +3643,7 @@ namespace StockRoom11net
                 if (RowsSaved == RowsChanged)
                 {
                     Production_InventoryDataSet.Table_TimeLine.AcceptChanges();
-                    StatusBarMessage(new object(), new StatusBarMessage_EventArgs("TimeLine, save request has already been processed, " + RowsSaved + " rows saved.", Resources.OK));
+                    OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("TimeLine, save request has already been processed, " + RowsSaved + " rows saved.", Resources.OK));
                     Write_LogFile(new object(), new Custom_Events_Args.LogFileMessageEventArgs(new List<string>
                     {
                         Tags.NewLine(""),
@@ -3630,7 +3656,7 @@ namespace StockRoom11net
                 }
                 else
                 {
-                    StatusBarMessage(new object(), new StatusBarMessage_EventArgs("Error while trying to save the DataBase TimeLine.", Resources.ErrorIcon));
+                    OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Error while trying to save the DataBase TimeLine.", Resources.ErrorIcon));
                     Write_LogFile(new object(), new Custom_Events_Args.LogFileMessageEventArgs(new List<string>
                     {
                         Tags.NewLine(""),
@@ -3695,7 +3721,7 @@ namespace StockRoom11net
                         Tags.NewLine("Save TimeLineTreeView Requested at " + DateTime.Now),
                         Tags.NewLine("No rows changed, nothing to save.")
                     }));
-                    StatusBarMessage(new object(), new StatusBarMessage_EventArgs("No rows changed, nothing to save.", Resources.error_alert));
+                    OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("No rows changed, nothing to save.", Resources.error_alert));
                     return true;
                 }
                 // Save the changes to the database.
@@ -3704,7 +3730,7 @@ namespace StockRoom11net
                 if (RowsSaved == RowsChanged)
                 {
                     Production_InventoryDataSet.Table_TimeLine_TreeView.AcceptChanges();
-                    StatusBarMessage(new object(), new StatusBarMessage_EventArgs("TimeLine TreeView, save request, has already been processed, " + RowsSaved + " rows saved.", Resources.OK));
+                    OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("TimeLine TreeView, save request, has already been processed, " + RowsSaved + " rows saved.", Resources.OK));
                     Write_LogFile(new object(), new Custom_Events_Args.LogFileMessageEventArgs(new List<string>
                     {
                         Tags.NewLine(""),
@@ -3720,7 +3746,7 @@ namespace StockRoom11net
                 }
                 else
                 {
-                    StatusBarMessage(new object(), new StatusBarMessage_EventArgs("Error while trying to save the DataBase TimeLine TreeView.", Resources.ErrorIcon));
+                    OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Error while trying to save the DataBase TimeLine TreeView.", Resources.ErrorIcon));
                     Write_LogFile(new object(), new Custom_Events_Args.LogFileMessageEventArgs(new List<string>
                     {
                         Tags.NewLine(""),
@@ -3781,7 +3807,7 @@ namespace StockRoom11net
                         Tags.NewLine("Save Projections Requested at " + DateTime.Now),
                         Tags.NewLine("No rows changed, nothing to save.")
                     }));
-                    StatusBarMessage(new object(), new StatusBarMessage_EventArgs("No rows changed, nothing to save.", Resources.error_alert));
+                    OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("No rows changed, nothing to save.", Resources.error_alert));
                     return true;
                 }
                 // Save the changes to the database.
@@ -3790,7 +3816,7 @@ namespace StockRoom11net
                 if (RowsSaved == RowsChanged)
                 {
                     Production_InventoryDataSet.Table_Projects.AcceptChanges();
-                    StatusBarMessage(new object(), new StatusBarMessage_EventArgs("StockRoom Projections, save request, has already been processed", Resources.OK));
+                    OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("StockRoom Projections, save request, has already been processed", Resources.OK));
                     Write_LogFile(new object(), new Custom_Events_Args.LogFileMessageEventArgs(new List<string>
                     {
                         Tags.NewLine(""),
@@ -3803,7 +3829,7 @@ namespace StockRoom11net
                 }
                 else
                 {
-                    StatusBarMessage(new object(), new StatusBarMessage_EventArgs("No rows have been saved.", Resources.error_alert));
+                    OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("No rows have been saved.", Resources.error_alert));
                     Write_LogFile(new object(), new Custom_Events_Args.LogFileMessageEventArgs(new List<string>
                     {
                         Tags.NewLine(""),
@@ -3860,7 +3886,7 @@ namespace StockRoom11net
                         Tags.NewLine("Save Projects Viewer Requested at " + DateTime.Now),
                         Tags.NewLine("No rows changed, nothing to save.")
                     }));
-                    StatusBarMessage(new object(), new StatusBarMessage_EventArgs("No rows changed, nothing to save.", Resources.error_alert));
+                    OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("No rows changed, nothing to save.", Resources.error_alert));
                     return true;
                 }
                 // Save the changes to the database.
@@ -3869,7 +3895,7 @@ namespace StockRoom11net
                 if (RowsSaved == RowsChanged)
                 {
                     Production_InventoryDataSet.Table_Projects_TreeView.AcceptChanges();
-                    StatusBarMessage(new object(), new StatusBarMessage_EventArgs("Project Viewer, save request has already been processed, " + RowsSaved + " rows saved.", Resources.OK));
+                    OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Project Viewer, save request has already been processed, " + RowsSaved + " rows saved.", Resources.OK));
                     Write_LogFile(new object(), new Custom_Events_Args.LogFileMessageEventArgs(
                     [
                         Tags.NewLine(""),
@@ -3882,7 +3908,7 @@ namespace StockRoom11net
                 }
                 else
                 {
-                    StatusBarMessage(new object(), new StatusBarMessage_EventArgs("No rows have been saved.", Resources.error_alert));
+                    OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("No rows have been saved.", Resources.error_alert));
                     Write_LogFile(new object(), new Custom_Events_Args.LogFileMessageEventArgs(
                     [
                         Tags.NewLine(""),
@@ -3926,7 +3952,7 @@ namespace StockRoom11net
                 StatusBarMessage = e.Message,
                 StatusBarIcon = Resources.info
             };
-            StatusBarMessage(sender, statusBarMessage);
+            OnStatusBarMessage(sender, statusBarMessage);
 
             switch (e.SaveEvent)
             {
@@ -4024,7 +4050,7 @@ namespace StockRoom11net
                         Tags.NewLine("Save StockRoom Requested at " + DateTime.Now),
                         Tags.NewLine("No rows changed, nothing to save.")
                     ]));
-                    StatusBarMessage(new object(), new StatusBarMessage_EventArgs("No rows changed, nothing to save.", Resources.error_alert));
+                    OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("No rows changed, nothing to save.", Resources.error_alert));
                     return true;
                 }
 
@@ -4033,7 +4059,7 @@ namespace StockRoom11net
                 if (RowsSaved == RowsChanged)
                 {
                     Production_InventoryDataSet.Table_StockRoom.AcceptChanges();
-                    StatusBarMessage(new object(), new StatusBarMessage_EventArgs("StockRoom Control, save request, has already been processed, "
+                    OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("StockRoom Control, save request, has already been processed, "
                                                                + RowsSaved + " rows have been saved out of a total of "
                                                                + RowsChanged + " modified rows.", Resources.OK));
                     Write_LogFile(new object(), new Custom_Events_Args.LogFileMessageEventArgs(new List<string>
@@ -4048,7 +4074,7 @@ namespace StockRoom11net
                 }
                 else
                 {
-                    StatusBarMessage(new object(), new StatusBarMessage_EventArgs("Error while trying to save the DataBase StockRoom, " + RowsSaved + " rows saved out of a total of " + RowsChanged + " modified rows.", Resources.error_alert));
+                    OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Error while trying to save the DataBase StockRoom, " + RowsSaved + " rows saved out of a total of " + RowsChanged + " modified rows.", Resources.error_alert));
                     Write_LogFile(new object(), new Custom_Events_Args.LogFileMessageEventArgs(
                     [
                         Tags.NewLine(""),
@@ -4120,7 +4146,7 @@ namespace StockRoom11net
                         Tags.NewLine("Save StockRoomTreeView Requested at " + DateTime.Now),
                         Tags.NewLine("No rows changed, nothing to save.")
                     ]));
-                    StatusBarMessage(new object(), new StatusBarMessage_EventArgs("No rows changed, nothing to save.", Resources.ErrorIcon));
+                    OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("No rows changed, nothing to save.", Resources.ErrorIcon));
                     return true;
                 }
 
@@ -4129,7 +4155,7 @@ namespace StockRoom11net
                 if (RowsSaved == RowsChanged)
                 {
                     Production_InventoryDataSet.Table_StockRoom_TreeView.AcceptChanges();
-                    StatusBarMessage(new object(), new StatusBarMessage_EventArgs("StockRoom TreeView, save request, has already been processed, " + RowsSaved + " rows saved.", Resources.OK));
+                    OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("StockRoom TreeView, save request, has already been processed, " + RowsSaved + " rows saved.", Resources.OK));
                     Write_LogFile(new object(), new Custom_Events_Args.LogFileMessageEventArgs(
                     [
                         Tags.NewLine(""),
@@ -4214,7 +4240,7 @@ namespace StockRoom11net
                         Tags.NewLine("Save Locations Requested at " + DateTime.Now),
                         Tags.NewLine("No rows changed, nothing to save.")
                     }));
-                    StatusBarMessage(new object(), new StatusBarMessage_EventArgs("No rows changed, nothing to save.", Resources.error_alert));
+                    OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("No rows changed, nothing to save.", Resources.error_alert));
                     return true;
                 }
 
@@ -4223,7 +4249,7 @@ namespace StockRoom11net
                 if (RowsSaved == RowsChanged)
                 {
                     Production_InventoryDataSet.Table_Locations.AcceptChanges();
-                    StatusBarMessage(new object(), new StatusBarMessage_EventArgs("Locations, save request, has already been processed, " + RowsSaved + " rows saved.", Resources.OK));
+                    OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Locations, save request, has already been processed, " + RowsSaved + " rows saved.", Resources.OK));
                     Write_LogFile(new object(), new Custom_Events_Args.LogFileMessageEventArgs(new List<string>
                     {
                         Tags.NewLine(""),
@@ -4236,7 +4262,7 @@ namespace StockRoom11net
                 }
                 else
                 {
-                    StatusBarMessage(new object(), new StatusBarMessage_EventArgs("Error while trying to save the DataBase Locations, " + RowsSaved + " rows saved out of a total of " + RowsChanged + " modified rows.", Resources.error_alert));
+                    OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Error while trying to save the DataBase Locations, " + RowsSaved + " rows saved out of a total of " + RowsChanged + " modified rows.", Resources.error_alert));
                     Write_LogFile(new object(), new Custom_Events_Args.LogFileMessageEventArgs(new List<string>
                     {
                         Tags.NewLine(""),
@@ -4304,7 +4330,7 @@ namespace StockRoom11net
                         Tags.NewLine("Save LocationsTreeView Requested at " + DateTime.Now),
                         Tags.NewLine("No rows changed, nothing to save.")
                     }));
-                    StatusBarMessage(new object(), new StatusBarMessage_EventArgs("No rows changed, nothing to save.", Resources.error_alert));
+                    OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("No rows changed, nothing to save.", Resources.error_alert));
                     return true;
                 }
 
@@ -4312,7 +4338,7 @@ namespace StockRoom11net
                 if (RowsSaved == RowsChanged)
                 {
                     Production_InventoryDataSet.Table_Location_TreeView.AcceptChanges();
-                    StatusBarMessage(new object(), new StatusBarMessage_EventArgs("LocationsTreeView, save request, has already been processed, " + RowsSaved + " rows saved.", Resources.OK));
+                    OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("LocationsTreeView, save request, has already been processed, " + RowsSaved + " rows saved.", Resources.OK));
                     Write_LogFile(new object(), new Custom_Events_Args.LogFileMessageEventArgs(new List<string>
                     {
                         Tags.NewLine(""),
@@ -4372,13 +4398,13 @@ namespace StockRoom11net
         public void CalendarViewerSaveTreeViewRequested(object sender, EventArgs e)
         {
             if (SaveMarshallTreeView_Requested())
-                StatusBarMessage(new object(), new StatusBarMessage_EventArgs("Marshall TreeView Table, save request, has already been processed", Resources.OK));
+                OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Marshall TreeView Table, save request, has already been processed", Resources.OK));
 
             if (SaveComponents_Requested())
-                StatusBarMessage(new object(), new StatusBarMessage_EventArgs("Components Table, save request, has already been processed", Resources.OK));
+                OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Components Table, save request, has already been processed", Resources.OK));
 
             if (SavePlacements_Requested())
-                StatusBarMessage(new object(), new StatusBarMessage_EventArgs("Placements Table, save request, has already been processed", Resources.OK));
+                OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Placements Table, save request, has already been processed", Resources.OK));
         }
 
         public void CalendarViewerSaveStockRoomRequested(object sender, EventArgs e)
@@ -4414,7 +4440,7 @@ namespace StockRoom11net
                         Tags.NewLine("Save Marshall Requested at " + DateTime.Now),
                         Tags.NewLine("No rows changed, nothing to save.")
                     }));
-                    StatusBarMessage(new object(), new StatusBarMessage_EventArgs("No rows changed, nothing to save.", Resources.error_alert));
+                    OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("No rows changed, nothing to save.", Resources.error_alert));
                     return true;
                 }
                 // Save the changes to the database.
@@ -4423,7 +4449,7 @@ namespace StockRoom11net
                 if (RowsSaved == RowsChanged)
                 {
                     Production_InventoryDataSet.Table_Marshall.AcceptChanges();
-                    StatusBarMessage(new object(), new StatusBarMessage_EventArgs("Marshall Control, save request, has already been processed, " + RowsSaved + " rows saved.", Resources.OK));
+                    OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Marshall Control, save request, has already been processed, " + RowsSaved + " rows saved.", Resources.OK));
                     Write_LogFile(new object(), new Custom_Events_Args.LogFileMessageEventArgs(new List<string>
                     {
                         Tags.NewLine(""),
@@ -4436,7 +4462,7 @@ namespace StockRoom11net
                 }
                 else
                 {
-                    StatusBarMessage(new object(), new StatusBarMessage_EventArgs("Marshall Control, save request, has already been processed, but no rows have been saved.", Resources.error_alert));
+                    OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Marshall Control, save request, has already been processed, but no rows have been saved.", Resources.error_alert));
                     Write_LogFile(new object(), new Custom_Events_Args.LogFileMessageEventArgs(new List<string>
                     {
                         Tags.NewLine(""),
@@ -4492,7 +4518,7 @@ namespace StockRoom11net
                         Tags.NewLine("Save MarshallTreeView Requested at " + DateTime.Now),
                         Tags.NewLine("No rows changed, nothing to save.")
                     }));
-                    StatusBarMessage(new object(), new StatusBarMessage_EventArgs("No rows changed, nothing to save.", Resources.error_alert));
+                    OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("No rows changed, nothing to save.", Resources.error_alert));
                     return true;
                 }
 
@@ -4501,7 +4527,7 @@ namespace StockRoom11net
                 if (RowsSaved == RowsChanged)
                 {
                     Production_InventoryDataSet.Table_Marshall_TreeView.AcceptChanges();
-                    StatusBarMessage(new object(), new StatusBarMessage_EventArgs("Marshall TreeView, save request, has already been processed, " + RowsSaved + " rows saved.", Resources.OK));
+                    OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Marshall TreeView, save request, has already been processed, " + RowsSaved + " rows saved.", Resources.OK));
                     Write_LogFile(new object(), new Custom_Events_Args.LogFileMessageEventArgs(new List<string>
                     {
                         Tags.NewLine(""),
@@ -4517,7 +4543,7 @@ namespace StockRoom11net
                 }
                 else
                 {
-                    StatusBarMessage(new object(), new StatusBarMessage_EventArgs("Marshall TreeView, save request, has already been processed, but no rows have been saved.", Resources.error_alert));
+                    OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Marshall TreeView, save request, has already been processed, but no rows have been saved.", Resources.error_alert));
                     Write_LogFile(new object(), new Custom_Events_Args.LogFileMessageEventArgs(new List<string>
                     {
                         Tags.NewLine(""),
@@ -4797,7 +4823,7 @@ namespace StockRoom11net
                             Tags.NewLine("Save Employees Requested at " + DateTime.Now),
                             Tags.NewLine("No rows changed, nothing to save.")
                         }));
-                    StatusBarMessage(new object(), new StatusBarMessage_EventArgs("No rows changed, nothing to save.", Resources.error_alert));
+                    OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("No rows changed, nothing to save.", Resources.error_alert));
                     return true;
                 }
 
@@ -4806,7 +4832,7 @@ namespace StockRoom11net
                 if (RowsSaved == RowsChanged)
                 {
                     Production_InventoryDataSet.Table_Employees.AcceptChanges();
-                    StatusBarMessage(new object(), new StatusBarMessage_EventArgs("Employees, save request, has already been processed, " + RowsSaved + " rows saved.", Resources.OK));
+                    OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Employees, save request, has already been processed, " + RowsSaved + " rows saved.", Resources.OK));
                     Write_LogFile(new object(), new Custom_Events_Args.LogFileMessageEventArgs(new List<string>
                     {
                         Tags.NewLine(""),
@@ -4819,7 +4845,7 @@ namespace StockRoom11net
                 }
                 else
                 {
-                    StatusBarMessage(new object(), new StatusBarMessage_EventArgs("Employees, save request, has already been processed, but no rows have been saved.", Resources.ErrorIcon));
+                    OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Employees, save request, has already been processed, but no rows have been saved.", Resources.ErrorIcon));
                     Write_LogFile(new object(), new Custom_Events_Args.LogFileMessageEventArgs(new List<string>
                         {
                             Tags.NewLine(""),
@@ -4873,7 +4899,7 @@ namespace StockRoom11net
                             Tags.NewLine("EmployeesTreeView Save Requested at " + DateTime.Now),
                             Tags.NewLine("No rows changed, nothing to save.")
                         }));
-                    StatusBarMessage(new object(), new StatusBarMessage_EventArgs("No rows changed, nothing to save.", Resources.error_alert));
+                    OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("No rows changed, nothing to save.", Resources.error_alert));
                     return true;
                 }
 
@@ -4882,7 +4908,7 @@ namespace StockRoom11net
                 if (RowsSaved == RowsChanged)
                 {
                     Production_InventoryDataSet.Table_Employees_TreeView.AcceptChanges();
-                    StatusBarMessage(new object(), new StatusBarMessage_EventArgs("EmployeesTreeView, save request, has already been processed, " + RowsSaved + " rows saved.", Resources.OK));
+                    OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("EmployeesTreeView, save request, has already been processed, " + RowsSaved + " rows saved.", Resources.OK));
                     Write_LogFile(new object(), new Custom_Events_Args.LogFileMessageEventArgs(new List<string>
                         {
                             Tags.NewLine(""),
@@ -4898,7 +4924,7 @@ namespace StockRoom11net
                 }
                 else
                 {
-                    StatusBarMessage(new object(), new StatusBarMessage_EventArgs("EmployeesTreeView, save request, has already been processed, but no rows have been saved.", Resources.ErrorIcon));
+                    OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("EmployeesTreeView, save request, has already been processed, but no rows have been saved.", Resources.ErrorIcon));
                     Write_LogFile(new object(), new Custom_Events_Args.LogFileMessageEventArgs(new List<string>
                         {
                             Tags.NewLine(""),
@@ -5341,7 +5367,7 @@ namespace StockRoom11net
             {
                 if (!Directory.Exists(documentsAddressItem.DocumentsAddressValueDirectory))
                 {
-                    StatusBarMessage(new object(), new StatusBarMessage_EventArgs("Not a valid Directory " +
+                    OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Not a valid Directory " +
                                                                                   documentsAddressItem.DocumentsAddressValueDirectory,
                                                                                   Resources.ErrorIcon));
                     continue;
@@ -5432,7 +5458,7 @@ namespace StockRoom11net
                 }
 
                 if (_indexOpenedPdfDocuments > 0)
-                    StatusBarMessage(new object(), new StatusBarMessage_EventArgs("Number of files founded " +
+                    OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Number of files founded " +
                                                       (_indexOpenedPdfDocuments + 1) + ", " + pathRootFolder +
                                                       @"\" + fileNameToMatch + fileExtToMatch.Replace("*", ""),
                                                       MyStuff11net.Properties.Resources.OK));
@@ -5526,7 +5552,7 @@ namespace StockRoom11net
             }
             catch (Exception ex)
             {
-                StatusBarMessage(new object(), new StatusBarMessage_EventArgs("The file name " + e.DataSheet + " has an error " + ex.Message, Resources.ErrorIcon));
+                OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("The file name " + e.DataSheet + " has an error " + ex.Message, Resources.ErrorIcon));
             }
         }
 
@@ -5723,15 +5749,15 @@ namespace StockRoom11net
 
                 if (_rowLoaded == 0)
                 {
-                    StatusBarMessage(new object(), new StatusBarMessage_EventArgs("No rows loaded from Table_Labels_SMT", Resources.ErrorIcon));
+                    OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("No rows loaded from Table_Labels_SMT", Resources.ErrorIcon));
                     return;
                 }
 
-                StatusBarMessage(new object(), new StatusBarMessage_EventArgs("Rows loaded from Table_Labels_SMT = " + _rowLoaded, Resources.OK));
+                OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Rows loaded from Table_Labels_SMT = " + _rowLoaded, Resources.OK));
             }
             catch (Exception errors)
             {
-                StatusBarMessage(new object(), new StatusBarMessage_EventArgs("Error loading Table_Labels_SMT " + errors.Message, Resources.ErrorIcon));
+                OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Error loading Table_Labels_SMT " + errors.Message, Resources.ErrorIcon));
             }
         }
 
@@ -5765,15 +5791,15 @@ namespace StockRoom11net
 
                 if (_rowLoaded == 0)
                 {
-                    StatusBarMessage(new object(), new StatusBarMessage_EventArgs("No rows loaded from Table_StockRoom", Resources.ErrorIcon));
+                    OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("No rows loaded from Table_StockRoom", Resources.ErrorIcon));
                     return;
                 }
 
-                StatusBarMessage(new object(), new StatusBarMessage_EventArgs("Rows loaded from Table_StockRoom = " + _rowLoaded, Resources.OK));
+                OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Rows loaded from Table_StockRoom = " + _rowLoaded, Resources.OK));
             }
             catch (Exception errors)
             {
-                StatusBarMessage(new object(), new StatusBarMessage_EventArgs("Error loading Table_StockRoom " + errors.Message, Resources.ErrorIcon));
+                OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Error loading Table_StockRoom " + errors.Message, Resources.ErrorIcon));
             }
         }
 
@@ -5806,15 +5832,15 @@ namespace StockRoom11net
                 _rowLoaded = adapterTable_StockroomTreeView.Fill(Production_InventoryDataSet.Table_StockRoom_TreeView);
                 if (_rowLoaded == 0)
                 {
-                    StatusBarMessage(new object(), new StatusBarMessage_EventArgs("No rows loaded from Table_StockRoom_TreeView", Resources.ErrorIcon));
+                    OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("No rows loaded from Table_StockRoom_TreeView", Resources.ErrorIcon));
                     return;
                 }
 
-                StatusBarMessage(new object(), new StatusBarMessage_EventArgs("Rows loaded from Table_StockRoom_TreeView = " + _rowLoaded, Resources.OK));
+                OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Rows loaded from Table_StockRoom_TreeView = " + _rowLoaded, Resources.OK));
             }
             catch (Exception errors)
             {
-                StatusBarMessage(new object(), new StatusBarMessage_EventArgs("Error loading Table_StockRoom_TreeView " + errors.Message, Resources.ErrorIcon));
+                OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Error loading Table_StockRoom_TreeView " + errors.Message, Resources.ErrorIcon));
             }
         }
 
@@ -5848,15 +5874,15 @@ namespace StockRoom11net
 
                 if (_rowLoaded == 0)
                 {
-                    StatusBarMessage(new object(), new StatusBarMessage_EventArgs("No rows loaded from Table_Marshall", Resources.ErrorIcon));
+                    OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("No rows loaded from Table_Marshall", Resources.ErrorIcon));
                     return;
                 }
 
-                StatusBarMessage(new object(), new StatusBarMessage_EventArgs("Rows loaded from Table_Marshall = " + _rowLoaded, Resources.OK));
+                OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Rows loaded from Table_Marshall = " + _rowLoaded, Resources.OK));
             }
             catch (Exception errors)
             {
-                StatusBarMessage(new object(), new StatusBarMessage_EventArgs("Error loading Table_Marshall " + errors.Message, Resources.ErrorIcon));
+                OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Error loading Table_Marshall " + errors.Message, Resources.ErrorIcon));
             }
         }
 
@@ -5890,15 +5916,15 @@ namespace StockRoom11net
 
                 if (_rowLoaded == 0)
                 {
-                    StatusBarMessage(new object(), new StatusBarMessage_EventArgs("No rows loaded from Table_Marshall_TreeView", Resources.ErrorIcon));
+                    OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("No rows loaded from Table_Marshall_TreeView", Resources.ErrorIcon));
                     return;
                 }
 
-                StatusBarMessage(new object(), new StatusBarMessage_EventArgs("Rows loaded from Table_Marshall_TreeView = " + _rowLoaded, Resources.OK));
+                OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Rows loaded from Table_Marshall_TreeView = " + _rowLoaded, Resources.OK));
             }
             catch (Exception errors)
             {
-                StatusBarMessage(new object(), new StatusBarMessage_EventArgs("Error loading Table_Marshall_TreeView " + errors.Message, Resources.ErrorIcon));
+                OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Error loading Table_Marshall_TreeView " + errors.Message, Resources.ErrorIcon));
             }
         }
 
@@ -5932,15 +5958,15 @@ namespace StockRoom11net
 
                 if (_rowLoaded == 0)
                 {
-                    StatusBarMessage(new object(), new StatusBarMessage_EventArgs("No rows loaded from Table_Projects", Resources.ErrorIcon));
+                    OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("No rows loaded from Table_Projects", Resources.ErrorIcon));
                     return;
                 }
 
-                StatusBarMessage(new object(), new StatusBarMessage_EventArgs("Rows loaded from Table_Projects = " + _rowLoaded, Resources.OK));
+                OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Rows loaded from Table_Projects = " + _rowLoaded, Resources.OK));
             }
             catch (Exception errors)
             {
-                StatusBarMessage(new object(), new StatusBarMessage_EventArgs("Error loading Table_Projects " + errors.Message, Resources.ErrorIcon));
+                OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Error loading Table_Projects " + errors.Message, Resources.ErrorIcon));
             }
         }
 
@@ -5973,14 +5999,14 @@ namespace StockRoom11net
                 _rowLoaded = adapterTable_Employees.Fill(Production_InventoryDataSet.Table_Employees);
                 if (_rowLoaded == 0)
                 {
-                    StatusBarMessage(new object(), new StatusBarMessage_EventArgs("No rows loaded from Table_Employees", Resources.ErrorIcon));
+                    OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("No rows loaded from Table_Employees", Resources.ErrorIcon));
                     return;
                 }
-                StatusBarMessage(new object(), new StatusBarMessage_EventArgs("Rows loaded from Table_Employees = " + _rowLoaded, Resources.OK));
+                OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Rows loaded from Table_Employees = " + _rowLoaded, Resources.OK));
             }
             catch (Exception errors)
             {
-                StatusBarMessage(new object(), new StatusBarMessage_EventArgs("Error loading Table_Employees " + errors.Message, Resources.ErrorIcon));
+                OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Error loading Table_Employees " + errors.Message, Resources.ErrorIcon));
             }
         }
 
@@ -6013,14 +6039,14 @@ namespace StockRoom11net
                 _rowLoaded = adapterTable_EmployeesTreeView.Fill(Production_InventoryDataSet.Table_Employees_TreeView);
                 if (_rowLoaded == 0)
                 {
-                    StatusBarMessage(new object(), new StatusBarMessage_EventArgs("No data found in Table_Employees_TreeView.", Resources.ErrorIcon));
+                    OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("No data found in Table_Employees_TreeView.", Resources.ErrorIcon));
                     return;
                 }
-                StatusBarMessage(new object(), new StatusBarMessage_EventArgs("Table_Employees_TreeView loaded with " + _rowLoaded + " rows.", Resources.OK));
+                OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Table_Employees_TreeView loaded with " + _rowLoaded + " rows.", Resources.OK));
             }
             catch (Exception errors)
             {
-                StatusBarMessage(new object(), new StatusBarMessage_EventArgs("Error loading Table_Employees_TreeView " + errors.Message, Resources.ErrorIcon));
+                OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Error loading Table_Employees_TreeView " + errors.Message, Resources.ErrorIcon));
             }
         }
 
@@ -6054,15 +6080,15 @@ namespace StockRoom11net
 
                 if (_rowLoaded == 0)
                 {
-                    StatusBarMessage(new object(), new StatusBarMessage_EventArgs("No data found in Table_Locations.", Resources.ErrorIcon));
+                    OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("No data found in Table_Locations.", Resources.ErrorIcon));
                     return;
                 }
 
-                StatusBarMessage(new object(), new StatusBarMessage_EventArgs("Table_Locations loaded with " + _rowLoaded + " rows.", Resources.OK));
+                OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Table_Locations loaded with " + _rowLoaded + " rows.", Resources.OK));
             }
             catch (Exception errors)
             {
-                StatusBarMessage(new object(), new StatusBarMessage_EventArgs("Error loading Table_Locations " + errors.Message, Resources.ErrorIcon));
+                OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Error loading Table_Locations " + errors.Message, Resources.ErrorIcon));
             }
         }
 
@@ -6096,15 +6122,15 @@ namespace StockRoom11net
 
                 if (_rowLoaded == 0)
                 {
-                    StatusBarMessage(new object(), new StatusBarMessage_EventArgs("No data found in Table_Locations_TreeView.", Resources.ErrorIcon));
+                    OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("No data found in Table_Locations_TreeView.", Resources.ErrorIcon));
                     return;
                 }
 
-                StatusBarMessage(new object(), new StatusBarMessage_EventArgs("Table_Locations_TreeView loaded with " + _rowLoaded + " rows.", Resources.OK));
+                OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Table_Locations_TreeView loaded with " + _rowLoaded + " rows.", Resources.OK));
             }
             catch (Exception errors)
             {
-                StatusBarMessage(new object(), new StatusBarMessage_EventArgs("Error loading Table_Locations_TreeView " + errors.Message, Resources.ErrorIcon));
+                OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Error loading Table_Locations_TreeView " + errors.Message, Resources.ErrorIcon));
             }
         }
 
@@ -6138,15 +6164,15 @@ namespace StockRoom11net
 
                 if (_rowLoaded == 0)
                 {
-                    StatusBarMessage(new object(), new StatusBarMessage_EventArgs("No data found in Table_Components.", Resources.error_alert));
+                    OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("No data found in Table_Components.", Resources.error_alert));
                     return;
                 }
 
-                StatusBarMessage(new object(), new StatusBarMessage_EventArgs("Table_Components loaded with " + _rowLoaded + " rows.", Resources.OK));
+                OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Table_Components loaded with " + _rowLoaded + " rows.", Resources.OK));
             }
             catch (Exception errors)
             {
-                StatusBarMessage(new object(), new StatusBarMessage_EventArgs("Error loading Table_Components " + errors.Message, Resources.ErrorIcon));
+                OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Error loading Table_Components " + errors.Message, Resources.ErrorIcon));
             }
         }
 
@@ -6180,14 +6206,14 @@ namespace StockRoom11net
 
                 if (_rowLoaded == 0)
                 {
-                    StatusBarMessage(new object(), new StatusBarMessage_EventArgs("No data found in Table_Placements.", Resources.ErrorIcon));
+                    OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("No data found in Table_Placements.", Resources.ErrorIcon));
                     return;
                 }
-                StatusBarMessage(new object(), new StatusBarMessage_EventArgs("Table_Placements loaded with " + _rowLoaded + " rows.", Resources.OK));
+                OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Table_Placements loaded with " + _rowLoaded + " rows.", Resources.OK));
             }
             catch (Exception errors)
             {
-                StatusBarMessage(new object(), new StatusBarMessage_EventArgs("Error loading Table_Placements " + errors.Message, Resources.ErrorIcon));
+                OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Error loading Table_Placements " + errors.Message, Resources.ErrorIcon));
             }
         }
 
@@ -6225,15 +6251,15 @@ namespace StockRoom11net
 
                 if (_rowLoaded == 0)
                 {
-                    StatusBarMessage(new object(), new StatusBarMessage_EventArgs("No data found in Table_Projects_TreeView.", Resources.ErrorIcon));
+                    OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("No data found in Table_Projects_TreeView.", Resources.ErrorIcon));
                     return;
                 }
 
-                StatusBarMessage(new object(), new StatusBarMessage_EventArgs("Table_Projects_TreeView loaded with " + _rowLoaded + " rows.", Resources.OK));
+                OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Table_Projects_TreeView loaded with " + _rowLoaded + " rows.", Resources.OK));
             }
             catch (Exception errors)
             {
-                StatusBarMessage(new object(), new StatusBarMessage_EventArgs("Error loading Projects_TreeView " + errors.Message, Resources.ErrorIcon));
+                OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Error loading Projects_TreeView " + errors.Message, Resources.ErrorIcon));
             }
         }
 
@@ -6271,15 +6297,15 @@ namespace StockRoom11net
 
                 if (_rowLoaded == 0)
                 {
-                    StatusBarMessage(new object(), new StatusBarMessage_EventArgs("No data found in Table_TimeLine.", Resources.ErrorIcon));
+                    OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("No data found in Table_TimeLine.", Resources.ErrorIcon));
                     return;
                 }
 
-                StatusBarMessage(new object(), new StatusBarMessage_EventArgs("Table_TimeLine loaded with " + _rowLoaded + " rows.", Resources.OK));
+                OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Table_TimeLine loaded with " + _rowLoaded + " rows.", Resources.OK));
             }
             catch (Exception errors)
             {
-                StatusBarMessage(new object(), new StatusBarMessage_EventArgs("Error loading TimeLine " + errors.Message, Resources.ErrorIcon));
+                OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Error loading TimeLine " + errors.Message, Resources.ErrorIcon));
             }
         }
 
@@ -6312,15 +6338,15 @@ namespace StockRoom11net
 
                 if (_rowLoaded == 0)
                 {
-                    StatusBarMessage(new object(), new StatusBarMessage_EventArgs("No data found in Table_TimeLine_TreeView.", Resources.ErrorIcon));
+                    OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("No data found in Table_TimeLine_TreeView.", Resources.ErrorIcon));
                     return;
                 }
 
-                StatusBarMessage(new object(), new StatusBarMessage_EventArgs("Table_TimeLine_TreeView loaded with " + _rowLoaded + " rows.", Resources.OK));
+                OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Table_TimeLine_TreeView loaded with " + _rowLoaded + " rows.", Resources.OK));
             }
             catch (Exception errors)
             {
-                StatusBarMessage(new object(), new StatusBarMessage_EventArgs("Error loading TimeLineTreeView " + errors.Message, Resources.ErrorIcon));
+                OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Error loading TimeLineTreeView " + errors.Message, Resources.ErrorIcon));
             }
         }
 
@@ -6430,7 +6456,7 @@ namespace StockRoom11net
             catch (ThreadAbortException)
             {
                 // Write log message.
-                StatusBarMessage(new object(), new StatusBarMessage_EventArgs(string.Format("Channel Aborted !!!, The {0} is destroyed and stopped at {1:F}",
+                OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs(string.Format("Channel Aborted !!!, The {0} is destroyed and stopped at {1:F}",
                                                                                     Thread.CurrentThread.Name, DateTime.Now)));
             }
         }
@@ -6438,14 +6464,14 @@ namespace StockRoom11net
         void BackgroundWorker_FixOnAvailable_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
             DataRow _row = (DataRow)e.UserState;
-            StatusBarMessage(new object(), new StatusBarMessage_EventArgs("Fixing OnAvailable column, PartNumber " + _row["PartNumber"].ToString() + ", row : " +
+            OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Fixing OnAvailable column, PartNumber " + _row["PartNumber"].ToString() + ", row : " +
                                                          e.ProgressPercentage + " of " + _bindingSource_StockRoom.Count));
         }
 
         void BackgroundWorker_FixOnAvailable_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             fixOnAvailableToolStripMenuItem.Enabled = true;
-            StatusBarMessage(new object(), new StatusBarMessage_EventArgs("Fixing OnAvailable column, end."));
+            OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Fixing OnAvailable column, end."));
         }
 
         #endregion"BackgroundWorker_FixOnAvailable"
@@ -6482,13 +6508,13 @@ namespace StockRoom11net
             }
             catch (Exception errors)
             {
-                StatusBarMessage(new object(), new StatusBarMessage_EventArgs("Error loading Table_StockRoom by LastAccessTime. " + errors.Message, Resources.ErrorIcon));
+                OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Error loading Table_StockRoom by LastAccessTime. " + errors.Message, Resources.ErrorIcon));
             }
         }
 
         void BackgroundWorkerFillByLastAccessTime_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            StatusBarMessage(new object(), new StatusBarMessage_EventArgs("Finished loading table StockRoom by LastAccessTime... Rows loaded = " + _rowLoaded));
+            OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Finished loading table StockRoom by LastAccessTime... Rows loaded = " + _rowLoaded));
         }
 
         #endregion"BackgroundWorkerFillByLastAccessTime"
@@ -6680,7 +6706,7 @@ namespace StockRoom11net
             }
             catch (Exception error)
             {
-                StatusBarMessage(new object(), new StatusBarMessage_EventArgs("Error" + error.Message));
+                OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Error" + error.Message));
             }
         }
 
@@ -6967,7 +6993,7 @@ namespace StockRoom11net
             }
             catch (Exception error)
             {
-                StatusBarMessage(new object(), new StatusBarMessage_EventArgs("Error" + error.Message));
+                OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Error" + error.Message));
             }
         }
 
@@ -7096,7 +7122,7 @@ namespace StockRoom11net
             {
                 StartThreadTimerEmergencyStatus();
 
-                StatusBarMessage(new object(), new StatusBarMessage_EventArgs("Error loading Table_Status at" + messageLocation + " " + errors.Message));
+                OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Error loading Table_Status at" + messageLocation + " " + errors.Message));
             }
 
             ProcessTableStatus();
@@ -7441,12 +7467,12 @@ namespace StockRoom11net
 
             _timerEmergencyStatus.Change(5000, Timeout.Infinite); //enable
 
-            StatusBarMessage(new object(), new StatusBarMessage_EventArgs("Process notifications has been stoped."));
+            OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Process notifications has been stoped."));
         }
         void EmergencyCheckStatus(object obj)
         {
             StartThreadTimerCheckStatusTable();
-            StatusBarMessage(new object(), new StatusBarMessage_EventArgs("Process notification restarted."));
+            OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Process notification restarted."));
         }
 
         #endregion"InitializeThreadTimer Check status table. Notifications"
@@ -7469,7 +7495,7 @@ namespace StockRoom11net
             else
             {
                 StopThreadTimerSaveEveryInterval();
-                StatusBarMessage(new object(), new StatusBarMessage_EventArgs("Stopped process Saved by timer..."));
+                OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Stopped process Saved by timer..."));
             }
         }
 
@@ -7486,7 +7512,7 @@ namespace StockRoom11net
             }
             catch (Exception errors)
             {
-                StatusBarMessage(new object(), new StatusBarMessage_EventArgs("Error loading Table_Status at" + errors.Message, Resources.ErrorIcon));
+                OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Error loading Table_Status at" + errors.Message, Resources.ErrorIcon));
             }
         }
 
