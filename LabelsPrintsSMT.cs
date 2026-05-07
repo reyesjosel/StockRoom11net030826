@@ -1,12 +1,12 @@
 ﻿using GenCode128;
-using MyStuff11net;
-using MyStuff11net.Properties;
+using StockRoom11net.Properties;
 using System.Data;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
-using static MyStuff11net.Custom_Events_Args;
+using static StockRoom11net.Controls.Custom_Events_Args;
 using System.ComponentModel;
+using StockRoom11net.Controls;
 
 namespace StockRoom11net
 {
@@ -180,7 +180,7 @@ namespace StockRoom11net
         {
             try
             {
-                On_Save_Requested(new Save_Requested_EventArgs(MyCode.NotificationEvents.DataBaseUpDated));
+                On_Save_Requested(new Save_Requested_EventArgs(Utilities.NotificationEvents.DataBaseUpDated));
                 NeedSaveData = false;
             }
             catch (Exception ex)
@@ -199,7 +199,7 @@ namespace StockRoom11net
             if ((int)numericUpDown_Quantity.Value == 0)
             {
                 AddNewRecord();
-                LabelsPrintsSMT_SaveRequested(sender, new Save_Requested_EventArgs(MyCode.NotificationEvents.RowAdded));
+                LabelsPrintsSMT_SaveRequested(sender, new Save_Requested_EventArgs(Utilities.NotificationEvents.RowAdded));
                 Close();
                 return;
             }
@@ -207,7 +207,7 @@ namespace StockRoom11net
             if (Prints())
             {
                 AddNewRecord();
-                LabelsPrintsSMT_SaveRequested(sender, new Save_Requested_EventArgs(MyCode.NotificationEvents.RowAdded));
+                LabelsPrintsSMT_SaveRequested(sender, new Save_Requested_EventArgs(Utilities.NotificationEvents.RowAdded));
             }
         }
 
@@ -294,8 +294,8 @@ namespace StockRoom11net
 
                 if (BarcodeDatatoPrint.Length > 3)
                 {
-                    if (Enum.IsDefined(typeof(MyCode.EncodeCode), Convert.ToInt32(BarcodeDatatoPrint.Substring(0, 3))))
-                        Code = "" + (MyCode.EncodeCode)Convert.ToInt32(BarcodeDatatoPrint.Substring(0, 3));
+                    if (Enum.IsDefined(typeof(Utilities.EncodeCode), Convert.ToInt32(BarcodeDatatoPrint.Substring(0, 3))))
+                        Code = "" + (Utilities.EncodeCode)Convert.ToInt32(BarcodeDatatoPrint.Substring(0, 3));
                     else
                     {
                         Code = BarcodeDatatoPrint.Substring(0, 3);

@@ -1,7 +1,8 @@
-﻿using MyStuff11net;
+﻿using StockRoom11net.Controls;
+using StockRoom11net.Controls.ComboBoxExtended;
 using System.Data;
-using Save_Requested_EventArgs = MyStuff11net.Custom_Events_Args.Save_Requested_EventArgs;
-using SpeechSynthesizerBase_EventArgs = MyStuff11net.Custom_Events_Args.SpeechSynthesizerBase_EventArgs;
+using Save_Requested_EventArgs = StockRoom11net.Controls.Custom_Events_Args.Save_Requested_EventArgs;
+using SpeechSynthesizerBase_EventArgs = StockRoom11net.Controls.Custom_Events_Args.SpeechSynthesizerBase_EventArgs;
 
 namespace StockRoom11net
 {
@@ -41,7 +42,7 @@ namespace StockRoom11net
                 #endregion"CodeTreeView Table to List"
 
                 #region"ColumnsCollection StockRoomInventory"
-                MessagePositionString = "stockroom == null";
+                MessageDebugPosition = "stockroom == null";
                 if (bindingSourceStockRoomInventory == null)
                 {
                     MessageBox.Show(@"The input stockroom bindingSource is Null", @"Error on initialization",
@@ -51,10 +52,10 @@ namespace StockRoom11net
 
                 _bindingSource_StockRoomInventory = bindingSourceStockRoomInventory;
 
-                MessagePositionString = "tempDataTable";
+                MessageDebugPosition = "tempDataTable";
                 var tempDataTable = ((DataSet)bindingSourceStockRoomInventory.DataSource).Tables[bindingSourceStockRoomInventory.DataMember];
 
-                MessagePositionString = "columnsCollection";
+                MessageDebugPosition = "columnsCollection";
                 ColumnsCollection = tempDataTable.Columns;
 
                 #endregion"ColumnsCollection StockRoomInventory"
@@ -127,7 +128,7 @@ namespace StockRoom11net
 
             dataGridViewExtended_AddNewComp.DataSource = _bindingSource_StockRoomInventory;
 
-            dataGridViewExtended_AddNewComp.CustomEdit = MyCode.EditMode.View;
+            dataGridViewExtended_AddNewComp.CustomEdit = Utilities.EditMode.View;
         }
 
         #endregion"DataGridView_AddNewComp"
@@ -174,7 +175,7 @@ namespace StockRoom11net
         {
             button_Save.Enabled = false;
 
-            On_Save_Requested(new Save_Requested_EventArgs(MyCode.NotificationEvents.DataBaseUpDated));
+            On_Save_Requested(new Save_Requested_EventArgs(Utilities.NotificationEvents.DataBaseUpDated));
         }
 
         void Button_Delete_Click(object sender, EventArgs e)
@@ -237,7 +238,7 @@ namespace StockRoom11net
                     ComboBoxExtended comboBox = control as ComboBoxExtended;
                     comboBox.SelectionLength = 0;
 
-                    int pCent = MyCode.CastAsInt(comboBox.Tag);
+                    int pCent = Utilities.CastAsInt(comboBox.Tag);
                     control.Width = (nextWidth * pCent) / 100;
                 }
             }

@@ -186,14 +186,14 @@ namespace StockRoom11net
             richTextBox5 = new RichTextBox();
             tabPage_SearchForPDFFileWithin = new TabPage();
             grouper_DefinedAddressDocumentation = new CodeVendor.Controls.Grouper();
-            documentsAddressGroup_SearchForPDFfileWithin = new MyStuff11net.DocumentsAddressGroup();
+            documentsAddressGroup_SearchForPDFfileWithin = new StockRoom11net.Controls.DocumentationBehavior.DocumentsAddressGroup();
             panel_Space2 = new Panel();
             grouper_SearchForPDFfileWithin = new CodeVendor.Controls.Grouper();
             richTextBox_SearchForPDFfileWithin = new RichTextBox();
             panel_Space_SearchForPDFfileWithin = new Panel();
             tabPage_ConvertFilesFrontThisLocation = new TabPage();
             grouper_ConvertFilesFrontThisLocation = new CodeVendor.Controls.Grouper();
-            scanDocumentsAddressGroup_Default = new MyStuff11net.ScanDocumentsAddressGroup();
+            scanDocumentsAddressGroup_Default = new StockRoom11net.Controls.DocumentationBehavior.ScanDocumentsAddressGroup();
             panel_ScanTheseFoltherFor = new Panel();
             grouper_ConvertFilesFrontThisLocationInformation = new CodeVendor.Controls.Grouper();
             richTextBox7 = new RichTextBox();
@@ -2854,7 +2854,7 @@ namespace StockRoom11net
         private System.Windows.Forms.Label label_Versions;
         private CodeVendor.Controls.Grouper grouper_BrowserVersion;
         private CodeVendor.Controls.Grouper grouper_DefinedAddressDocumentation;
-        private MyStuff11net.DocumentsAddressGroup documentsAddressGroup_SearchForPDFfileWithin;
+        private StockRoom11net.Controls.DocumentationBehavior.DocumentsAddressGroup documentsAddressGroup_SearchForPDFfileWithin;
         private System.Windows.Forms.TabPage tabPage_SearchForPDFFileWithin;
         private System.Windows.Forms.Panel panel_Space2;
         private CodeVendor.Controls.Grouper grouper_SearchForPDFfileWithin;

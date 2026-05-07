@@ -1,32 +1,56 @@
-﻿using System.Data;
-using System.ComponentModel;
-
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.AspNetCore.Components.WebView.WindowsForms;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.AspNetCore.Components.WebView.WindowsForms;
-
-using RawInput_dll;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-
-using MyStuff11net;
-using MyStuff11net.Properties;
-using MyStuff11net.ZPL2ZebraPrint;
-using MyStuff11net.DataGridViewExtend;
-
-using static MyStuff11net.Custom_Events_Args;
-using static MyStuff11net.DataGridViewExtend.BindingSourceGroups;
-using CurrentRowMouseEnterEventArgs = MyStuff11net.Custom_Events_Args.RowsMouseEnterEventArgs;
-
-using StockRoom11net.BlazorWebAssembly.Data;
-using StockRoom11net.BlazorWebAssembly.Components.Pages;
 using StockRoom11net.BlazorWebAssembly;
+using StockRoom11net.BlazorWebAssembly.Components.Pages;
+using StockRoom11net.BlazorWebAssembly.Data;
+using StockRoom11net.Controls;
+using StockRoom11net.Controls.BindingSourceExt;
+using StockRoom11net.Controls.ComponentInformations;
+using StockRoom11net.Controls.DataGridViewExtend;
+using StockRoom11net.Controls.DirectoryFileOperations;
+using StockRoom11net.Controls.RawInput;
+using StockRoom11net.Controls.ShellBasics;
+using StockRoom11net.Controls.SMTcontrol;
+using StockRoom11net.Controls.ZPL2_ZebraPrint;
+using StockRoom11net.Data;
+using StockRoom11net.Data.Entities;
+using StockRoom11net.Data.Services;
+using StockRoom11net.Properties;
+using System.ComponentModel;
+using System.Data;
+using System.Diagnostics;
+using static StockRoom11net.Controls.Custom_Events_Args;
+using CurrentRowMouseEnterEventArgs = StockRoom11net.Controls.Custom_Events_Args.RowsMouseEnterEventArgs;
 
 namespace StockRoom11net
 {
     public partial class StockRoom_Inventory : BaseTemple
     {
-        #region"Properties"
+        #region "Properties"
 
+        // Injected EF Core services
+        private readonly IStockRoomService _stockRoomService;
+        private readonly ITableStockRoomTreeViewService _tableStockRoomTreeViewService;
+        private readonly IUnitOfWork _unitOfWork;
+
+        // ✅ Updated to use scaffolded entity
+        private BindingList<Table_StockRoom> _stockRoomBindingList;
+        private BindingList<Table_StockRoom_TreeView> _stockRoomTreeViewBindingList;
+
+        // Declare as extended type
+        public BindingSourceValidating<Table_StockRoom> _bindingSourceStockRoomVal;
+        public BindingSourceValidating<Table_Base_TreeView> _bindingSourceStockRoomTreeViewVal;
+
+        BindingSource _bindingSourceStockRoom;
+        BindingSource _bindingSourceStockRoomTreeView;
+
+        DataColumnCollection _stockroomColumns;
+
+        readonly AppState _appState = new();
+        readonly AppService _appService = new();
+                
         /// <summary>
         /// Reference to table of Code and Range used to defined the database content.
         /// </summary>
@@ -91,7 +115,7 @@ namespace StockRoom11net
             {
                 if (_currentColumnActive != null && _currentColumnActive.ColumnName.Contains("Location"))
                 {
-                    CurrentRowViewActive.Row[_currentColumnActive.ColumnName] = e.BarcodeData;
+           //         CurrentRowViewActive.Row[_currentColumnActive.ColumnName] = e.BarcodeData;
                     TabControl_Inventory.SelectTab("tabPage_Location");
                     return;
                 }
@@ -174,141 +198,212 @@ namespace StockRoom11net
 
         readonly DataTable _dataTableStockRoom;
         readonly DataTable _dataTableTreeListView;
-        readonly AppState _appState = new();
-        readonly AppService _appService = new();
 
+        //To catch missing registrations early, you can also mark the parameterless constructor with[Obsolete] so it shows a compiler warning whenever it's accidentally used:
+        [Obsolete("Use DI constructor. Missing service registration may be causing this call.")]
         public StockRoom_Inventory()
         {
             InitializeComponent();
-            
-            AutoScaleMode = AutoScaleMode.Dpi;
-            DockAreas = WinFormsUI.Docking.DockAreas.Document | WinFormsUI.Docking.DockAreas.Float;
         }
 
-        public StockRoom_Inventory(BindingSource treeView, BindingSource stockroom, BindingSource bindingSource_CodeTreeView, List<string> departList)
+        public StockRoom_Inventory(IStockRoomService stockRoomService,
+                                    ITableStockRoomTreeViewService tableStockRoomTreeViewService,
+                                    IUnitOfWork unitOfWork)
+        {
+            InitializeComponent();
+
+            AutoScaleMode = AutoScaleMode.Dpi;
+            DockAreas = WinFormsUI.Docking.DockAreas.Document | WinFormsUI.Docking.DockAreas.Float;
+
+            _stockRoomService = stockRoomService ?? throw new ArgumentNullException(nameof(stockRoomService));
+            _tableStockRoomTreeViewService = tableStockRoomTreeViewService ?? throw new ArgumentNullException(nameof(tableStockRoomTreeViewService));
+            _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
+
+            Name = "StockRoom_Inventory";
+
+            // ✅ Pass unitOfWork to the EXISTING designer instance, don't replace it
+            dataTreeViewToAdd_Cancel_Delete.SetUnitOfWork(_unitOfWork);
+
+            InitializeBlazorWebView();
+
+            LoadDataEF();
+        }
+
+        void InitializeBlazorWebView()
+        {
+            #region"BlazorWebView"
+
+            var serviceCollection = new ServiceCollection();
+            serviceCollection.AddWindowsFormsBlazorWebView();
+            serviceCollection.AddSingleton<AppState>(_appState);
+            serviceCollection.AddSingleton<AppService>(_appService);
+            serviceCollection.AddSingleton<WeatherForecastService>();
+            serviceCollection.AddLogging(builder =>             // Add logging services and configure them
+            {
+                builder.SetMinimumLevel(LogLevel.Information);  // Set a minimum log level
+                builder.AddConsole();                           // Add the Console logging provider
+                builder.AddDebug();                             // Add the Debug logging provider
+            });
+
+            // Build the service provider
+            var serviceProvider = serviceCollection.BuildServiceProvider();
+
+            // Get an ILogger instance
+            var logger = serviceProvider.GetRequiredService<ILogger<StockRoom_Inventory>>();
+            // Log a message
+            logger.LogInformation("Application started.");
+
+            blazorWebView1.HostPage = "wwwroot\\index.html";
+            // blazorWebView1.HostPage = Path.Combine(Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName), "wwwroot\\index.html");
+            blazorWebView1.Services = serviceProvider;
+            blazorWebView1.RootComponents.Add<Counter>("#app");
+
+            blazorWebView2.HostPage = "wwwroot\\index.html";
+            blazorWebView2.Services = serviceProvider;
+            blazorWebView2.RootComponents.Add<App>("#app");
+
+            AppDomain.CurrentDomain.UnhandledException += (sender, error) =>
+            {
+#if DEBUG
+                MessageBox.Show(text: error.ExceptionObject.ToString(), caption: "Error");
+#else
+                        MessageBox.Show(text: "An error has occurred.", caption: "Error");
+#endif
+            };
+
+            #endregion"BlazorWebView"                
+        }
+
+        /// <summary>
+        /// If we were not using EF Core, we would load data from a file or other source here.
+        /// But since we are using EF Core, we will load data in the LoadDataEF() method.
+        /// </summary>
+        async void LoadDataEF()
+        {
+            // ✅ Load data using EF Core
+            await LoadTimeLineDataAsync();
+        }
+
+        /// <summary>
+        /// Load TimeLine data using EF Core service
+        /// </summary>
+        private async Task LoadTimeLineDataAsync()
         {
             try
             {
-                MessagePositionString = "InitializeComponent()";
-                InitializeComponent();
+                MessageDebugPosition = "Starting LoadTimeLineDataAsync()";
+                Cursor = Cursors.WaitCursor;
+                StatusBarMessage(new StatusBarMessage_EventArgs("Loading TimeLine data..."));
 
-                Icon = Resources.Tutorial;               
-                FormClosing += StockRoomInventory_FormClosing;
-                DepartList = departList;
+                // ✅ Load data from database
+                _stockRoomBindingList = await _stockRoomService.LoadStockRoomsAsync();
 
-                #region"BlazorWebView"
+                // ✅ Convert to DataTable → DataView → BindingSource (supports .Filter)
+                var dataTable = _stockRoomBindingList.ToDataTable();
+                var dataView = new DataView(dataTable);
 
-                var serviceCollection = new ServiceCollection();
-                serviceCollection.AddWindowsFormsBlazorWebView();
-                serviceCollection.AddSingleton<AppState>(_appState);
-                serviceCollection.AddSingleton<AppService>(_appService);
-                serviceCollection.AddSingleton<WeatherForecastService>();                
-                serviceCollection.AddLogging(builder =>             // Add logging services and configure them
+                _bindingSourceStockRoomVal = new BindingSourceValidating<Table_StockRoom>
                 {
-                    builder.SetMinimumLevel(LogLevel.Information);  // Set a minimum log level
-                    builder.AddConsole();                           // Add the Console logging provider
-                    builder.AddDebug();                             // Add the Debug logging provider
-                });
-
-                // Build the service provider
-                var serviceProvider = serviceCollection.BuildServiceProvider();
-
-                // Get an ILogger instance
-                var logger = serviceProvider.GetRequiredService<ILogger<StockRoom_Inventory>>();
-                // Log a message
-                logger.LogInformation("Application started.");
-                
-                blazorWebView1.HostPage = "wwwroot\\index.html";
-               // blazorWebView1.HostPage = Path.Combine(Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName), "wwwroot\\index.html");
-                blazorWebView1.Services = serviceProvider;
-                blazorWebView1.RootComponents.Add<Counter>("#app");
-
-                blazorWebView2.HostPage = "wwwroot\\index.html";
-                blazorWebView2.Services = serviceProvider;
-                blazorWebView2.RootComponents.Add<App>("#app");
-
-                AppDomain.CurrentDomain.UnhandledException += (sender, error) =>
-                {
-                    #if DEBUG
-                    MessageBox.Show(text: error.ExceptionObject.ToString(), caption: "Error");
-                    #else
-                        MessageBox.Show(text: "An error has occurred.", caption: "Error");
-                    #endif
+                    DataSource = dataView,
+                    TableName = "Table_StockRoom",
+                    Position = 0
                 };
 
-                #endregion"BlazorWebView"                
+                MessageDebugPosition = "Assigning BindingSource to DataGridView";
+                dataGridViewExtended.DataSource = _bindingSourceStockRoomVal;
 
-                MessagePositionString = "InitializeProperties()";
-                InitializeProperties();
-                               
-                #region"CodeTreeView Table to List"
 
-                if (bindingSource_CodeTreeView == null)
+                MessageDebugPosition = "Loading TreeView data";
+                _stockRoomTreeViewBindingList = await _tableStockRoomTreeViewService.LoadStockRoomsTreeViewAsync();
+
+                // ✅ Remove nodes with duplicate or zero IDs before binding
+                var validNodes = _stockRoomTreeViewBindingList
+                    .Where(n => n.ID > 0)
+                    .GroupBy(n => n.ID)
+                    .Select(g => g.First())  // keep first in case of duplicates
+                    .ToList();
+
+                var duplicates = _stockRoomTreeViewBindingList
+                    .GroupBy(n => n.ID)
+                    .Where(g => g.Count() > 1 || g.Key == 0)
+                    .Select(g => g.Key)
+                    .ToList();
+
+                if (duplicates.Count != 0)
+                    Debug.WriteLine($"⚠️ Duplicate/zero IDs found: {string.Join(", ", duplicates)}");
+
+                if (HasCircularReference(validNodes))
                 {
-                    MessageBox.Show(@"The input CodeTreeView bindingSource is Null", @"Error on initialization",
-                                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    return;
+                    MessageBox.Show($"Error loading data: Circular reference detected in node ID: {nodeID}.",
+                    "Data Load Error",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
                 }
 
-                _bindingSource_CodeTreeView = bindingSource_CodeTreeView;
-                _bindingSource_CodeTreeView.RaiseListChangedEvents = true;
-                _bindingSource_CodeTreeView.PositionChanged += BindingSource_CodeTreeView_PositionChanged;
-                _bindingSource_CodeTreeView.ListChanged += BindingSource_CodeTreeView_ListChanged;
-                _bindingSource_CodeTreeView.BindingComplete += BindingSource_CodeTreeView_BindingComplete;
+                MessageDebugPosition = "Diagnose data before assigning to OLV";
+                var items = _stockRoomTreeViewBindingList.ToList().Cast<Table_Base_TreeView>().ToList();
+                var roots = items.Where(n => n.Parent_ID == 0).ToList();
+                var dupIDs = items.GroupBy(n => n.ID).Where(g => g.Count() > 1).Select(g => g.Key).ToList();
+                var orphans = items.Where(n => n.Parent_ID != 0 && !items.Any(p => p.ID == n.Parent_ID)).ToList();
 
-                codeDataTable = ((DataSet)_bindingSource_CodeTreeView.DataSource).Tables[_bindingSource_CodeTreeView.DataMember];
+                Debug.WriteLine($"Total: {items.Count} | Roots (Parent_ID==0): {roots.Count} | DupIDs: {string.Join(",", dupIDs)} | Orphans: {orphans.Count}");
 
-                #endregion"CodeTreeView Table to List"
-
-                #region"_bindingSource_StockRoom, ColumnsCollection"
-
-                MessagePositionString = "stockroom == null";
-                _bindingSource_StockRoom = stockroom;
-                if (_bindingSource_StockRoom == null)
+                if (roots.Count == 0 || dupIDs.Any())
                 {
-                    MessageBox.Show(@"The input stockroom bindingSource is Null", @"Error on initialization",
-                                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    return;
-                }
-                else
-                {
-                    MessagePositionString = "tempDataTable";
-                    _dataTableStockRoom = (_bindingSource_StockRoom.DataSource as DataSet).Tables[_bindingSource_StockRoom.DataMember];
-
-                    MessagePositionString = "columnsCollection";
-                    ColumnsCollection = _dataTableStockRoom.Columns;
+                    MessageBox.Show($"Tree data invalid!\nRoots: {roots.Count}\nDuplicate IDs: {string.Join(",", dupIDs)}\nOrphans: {orphans.Count}",
+                        "DataSource Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return; // ← prevents the freeze
                 }
 
-                #endregion"_bindingSource_StockRoom, ColumnsCollection"
-
-                #region"Tree view"
-
-                MessagePositionString = "tree view == null";
-                if (treeView == null)
+                MessageDebugPosition = "Create BindingSource for TreeView";
+                _bindingSourceStockRoomTreeViewVal = new BindingSourceValidating<Table_Base_TreeView>
                 {
-                    MessageBox.Show(@"The input tree view bindingSource is Null", @"Error on initialization",
-                                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    return;
-                }
+                    // DataSource = new BindingList<Table_Base_TreeView>(validNodes.Cast<Table_Base_TreeView>().ToList()),
+                    DataSource = _stockRoomTreeViewBindingList,
+                    TableName = "Table_StockRoom_TreeView",
+                    Position = 0
+                };
 
-                MessagePositionString = "bindingSource_table_StockroomTreeView";
-                _bindingSource_table_StockroomTreeView.ListChanged += BindingSource_Table_StockroomTreeView_ListChanged;
-                _bindingSource_table_StockroomTreeView = BindingSourceTreeViewBase = treeView;
+                MessageDebugPosition = "Assign BindingSource to TreeView";
+                dataTreeViewToAdd_Cancel_Delete.BindingSourceTreeView = _bindingSourceStockRoomTreeViewVal;
                 
-                MessagePositionString = "tempDataTable";
-                _dataTableTreeListView = ((DataSet)_bindingSource_StockRoom.DataSource).Tables[_bindingSource_table_StockroomTreeView.DataMember];
-
-                #endregion"Tree view"
+                StatusBarMessage(new StatusBarMessage_EventArgs($"Loaded {_stockRoomBindingList.Count} StockRoom records"));
             }
-            catch (Exception error)
+            catch (Exception ex)
             {
-                using (var form = new Form { TopMost = true })
+                MessageBox.Show($"Error loading StockRoom data: {ex.Message}",
+                    "Data Load Error",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+            }
+            finally
+            {
+                Cursor = Cursors.Default;
+            }
+        }
+
+        string nodeID = string.Empty;
+        bool HasCircularReference(IEnumerable<Table_Base_TreeView> nodes)
+        {
+            var lookup = nodes.ToDictionary(n => n.ID);
+
+            foreach (var node in nodes)
+            {
+                var visited = new HashSet<int>();
+                int current = node.Parent_ID  ;
+
+                while (current != 0)
                 {
-                    MessageBox.Show(form, @"Message related to this error is " + error.Message,
-                                          @"StockRoom Inventory has generated an error at " + MessagePositionString,
-                                          MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    if (!lookup.TryGetValue(current, out var parent)) break;
+                    if (!visited.Add(current))
+                    {
+                        nodeID = node.ID.ToString();
+                        return true; // ← circular!
+                    }
+                    current = parent.Parent_ID;
                 }
             }
+            return false;
         }
 
         bool _isNotInitiating = false;
@@ -321,7 +416,8 @@ namespace StockRoom11net
 
                 var action = new Action(() =>
                 {
-                    dataTreeViewToAdd_Cancel_Delete.BindingSourceTreeView = BindingSourceTreeViewBase;
+                    dataTreeViewToAdd_Cancel_Delete.BindingSourceTreeView = 
+                    new BindingSourceValidating<Table_Base_TreeView> { DataSource = BindingSourceTreeViewBase };
                 });
 
                 ThreadSafeInvoke(action);
@@ -357,43 +453,43 @@ namespace StockRoom11net
 
         void StockRoomInventoryLoad(object sender, EventArgs e)
         {
-            MessagePositionString = "Starting Try/Catch procedure.";
+            MessageDebugPosition = "Starting Try/Catch procedure.";
             try
             {
-                MessagePositionString = "Initialize_DataGridView()";
+                MessageDebugPosition = "Initialize_DataGridView()";
                 Initialize_DataGridView();
 
-                MessagePositionString = "InitTabControlExtend()";
+                MessageDebugPosition = "InitTabControlExtend()";
                 InitTabControlExtend();
 
-                MessagePositionString = "InitializeThumbsViewerPicture()";
+                MessageDebugPosition = "InitializeThumbsViewerPicture()";
                 InitializeThumbsViewerPicture();
 
-                MessagePositionString = "InitializeThumbsViewerLocation()";
+                MessageDebugPosition = "InitializeThumbsViewerLocation()";
                 InitializeThumbsViewerLocation();
 
-                MessagePositionString = "InitializeTabPage_UpDateModifCompValue()";
+                MessageDebugPosition = "InitializeTabPage_UpDateModifCompValue()";
                 InitializeTabPage_UpDateModifCompValue();
 
-                MessagePositionString = "InitEasyProgressBar()";
+                MessageDebugPosition = "InitEasyProgressBar()";
                 //   InitEasyProgressBar();
 
-                MessagePositionString = "InitEasyProgressBar_GraphicChart()";
+                MessageDebugPosition = "InitEasyProgressBar_GraphicChart()";
                 //   InitEasyProgressBar_GraphicChart();
 
-                MessagePositionString = "Initialize_ToolTip";
+                MessageDebugPosition = "Initialize_ToolTip";
                 //   InitializeToolTip();
 
-                MessagePositionString = "Initialize_NodeSetting";
-                //InitializeNodeSettingTabPage();
+                MessageDebugPosition = "Initialize_NodeSetting";
+                InitializeNodeSettingTabPage();
 
-                MessagePositionString = "Initialize_OK";
+                MessageDebugPosition = "Initialize_OK";
             }
             catch (Exception error)
             {
                 using (var form = new Form { TopMost = true })
                 {
-                    MessageBox.Show(form, @"Found an error at " + MessagePositionString + @" " + error.Message,
+                    MessageBox.Show(form, @"Found an error at " + MessageDebugPosition + @" " + error.Message,
                                           @"StockRoom Inventory load has generated an error.",
                                           MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
@@ -406,13 +502,16 @@ namespace StockRoom11net
             try
             {
                 dataTreeViewToAdd_Cancel_Delete.CurrentDepartmentLogIn = CurrentDepartmentLogIn.DeptName;
-                // We force the event to be raised, in case the list was not empty at initialization.
-                BindingSource_Table_StockroomTreeView_ListChanged(sender, new ListChangedEventArgs(ListChangedType.ItemMoved, 0));
+                MessageDebugPosition = "ListChangedType.Reset";
 
-                MessagePositionString = "InitializeTab_AddNewItem";
+                // ✅ Use Reset instead of ItemMoved — Reset does not require a valid index
+                // and correctly signals "re-evaluate the whole list" for initialization.
+                BindingSource_Table_StockroomTreeView_ListChanged(sender, new ListChangedEventArgs(ListChangedType.Reset, -1));
+
+                MessageDebugPosition = "InitializeTab_AddNewItem";
                 InitializeTab_AddNewItem();
 
-                MessagePositionString = "_initialDelay";
+                MessageDebugPosition = "_initialDelay";
                 _initialDelay = new System.Windows.Forms.Timer
                 {
                     Interval = 1000
@@ -427,7 +526,7 @@ namespace StockRoom11net
                 using (var form = new Form { TopMost = true })
                 {
                     MessageBox.Show(form, @"Message related to this error is " + error.Message,
-                                          @"StockRoom Inventory show has generated an error at " + MessagePositionString,
+                                          @"StockRoom Inventory show has generated an error at " + MessageDebugPosition,
                                           MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
@@ -444,18 +543,18 @@ namespace StockRoom11net
                 //Call those only one time.
                 if (count_InitialDelayTick == 1)
                 {
-                    //  InitializeProcessUserHasLogIn();
+                    //InitializeProcessUserHasLogIn();
                     if(_isNotInitiating == false)
-                        BindingSource_Table_StockroomTreeView_ListChanged(sender, new ListChangedEventArgs(ListChangedType.ItemMoved, 0));
+                        BindingSource_Table_StockroomTreeView_ListChanged(sender, new ListChangedEventArgs(ListChangedType.Reset, -1));
                 }
 
                 InitializeBindingSource();
 
                 InitializeBindingSourceStockRoomEvents();
 
-                //  SortColumnPartNumber();
-                //  AddColumnSortDoc_PDF_Doc_Docx();               
-                // ProcessBOMrows();
+             //   SortColumnPartNumber();
+             //   AddColumnSortDoc_PDF_Doc_Docx();               
+             //   ProcessBOMrows();
             }
             catch (Exception)
             { }
@@ -516,22 +615,36 @@ namespace StockRoom11net
             
         }
 
-        void DataTreeViewToAdd_Cancel_Delete_SelectedIndexChanged(object sender, TreeViewSelectedIndexChangedEventArgs e)
+        async void DataTreeViewToAdd_Cancel_Delete_SelectedIndexChangedAsync(object sender, TreeViewSelectedIndexChangedEventArgs e)
         {
-            // If DataGridView is bound to the StockRoom table
-            // then we apply the filter.
-            if (dataGridViewExtended.DataSource == _bindingSource_StockRoom)
-                dataGridViewExtended.CustomFilter = e.SelectedNodeProperties.StringFilter;
-
-            #region"tabPage_DataTreeViewSetting"
-
-            if (_nodeSettingIsDone & TabControl_Inventory.SelectedTab.Name == "tabPage_TreeViewSetting")
+            try
             {
-                _nodeSetting.FocusedNodeProperties = e.SelectedNodeProperties;
+                if (dataGridViewExtended.DataSource == _bindingSourceStockRoomVal)
+                {
+                    //string filter = e.SelectedNodeProperties.StringFilter;
+                    //var filtered = await _stockRoomService.FilterByStringFilterAsync(filter);
+                    //_bindingSourceStockRoomVal.DataSource = filtered;
+                    //_bindingSourceStockRoomVal.ResetBindings(false);
+
+                    // ✅ Filter now works because DataSource is a DataView
+                    dataGridViewExtended.CustomFilter = e.SelectedNodeProperties.StringFilter;
+                }
+
+                #region"tabPage_DataTreeViewSetting"
+
+                if (_nodeSettingIsDone & TabControl_Inventory.SelectedTab.Name == "tabPage_TreeViewSetting")
+                {
+                    _nodeSetting.FocusedNodeProperties = e.SelectedNodeProperties;
+                }
+
+                #endregion"tabPage_DataTreeViewSetting"
+
             }
-
-            #endregion"tabPage_DataTreeViewSetting"
-
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Filter error: {ex.Message}", "Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         void DataTreeViewToAdd_Cancel_Delete_Save_Requested(object sender, Save_Requested_EventArgs e)
@@ -542,10 +655,10 @@ namespace StockRoom11net
 
         void DataTreeViewToAdd_Cancel_Delete_Switch_DataTable(object sender, Switch_DataTable_EventArgs e)
         {
-            if(dataGridViewExtended.DataSource == _bindingSource_StockRoom)
-                dataGridViewExtended.DataSource = _bindingSource_table_StockroomTreeView;
+            if(dataGridViewExtended.DataSource == _bindingSourceStockRoomVal)
+                dataGridViewExtended.DataSource = _bindingSourceStockRoomTreeViewVal;
             else
-                dataGridViewExtended.DataSource = _bindingSource_StockRoom;
+                dataGridViewExtended.DataSource = _bindingSourceStockRoomVal;
 
             SettingMode = true;            
         }
@@ -594,10 +707,7 @@ namespace StockRoom11net
 
             dataGridViewExtended.ContextMenuStripItemClicked += DataGridViewExtended_ContextMenuStripItemClicked;
             dataGridViewExtended.ContextMenuStripPrintCompLabel += DataGridViewExtended_PrintCompLabel;
-
-            //We bind this at InitialDelay_Tick().
-            //dataGridViewExtended.DataSource = _bindingSource_tableStockRoom;                  
-
+            
             dataGridViewExtended.ResumeLayout();
         }
 
@@ -630,46 +740,7 @@ namespace StockRoom11net
 
         void InitializeBindingSource()
         {
-            #region"AggregateBindingListView<Item>()"
-            /*
-            AggregateBindingListView<Item> itemsView;
-
-            BindingSourceGroups bindingSourceGroups;
-            
-             
-            itemsView = new AggregateBindingListView<Item>();
-
-            _bindingSource_StockRoom.Filter = null;
-
-            BindingList<Item> _items = new BindingList<Item>();
-
-            foreach (object obj in _bindingSource_StockRoom)
-            {
-                DataRowView row = (DataRowView)obj;
-                Item item = new Item(row);
-                _items.Add(item);
-            }
-
-            itemsView.SourceLists.Add(_items);
-
-            dataGridViewExtended.DataSource = itemsView;
-            */
-            #endregion"AggregateBindingListView<Item>()"
-
-            #region"AggregateBindingListView<Item>()"
-            // bindingSourceGroups = new BindingSourceGroups();
-
-            // Set();
-
-
-            // dataGridViewExtended.DataSource = bindingSourceGroups;
-            #endregion"AggregateBindingListView<Item>()"
-
-            //bindingReguler = new BindingSource();
-            //Set();
-            //dataGridViewExtended.DataSource = bindingReguler;
-
-            dataGridViewExtended.DataSource = _bindingSource_StockRoom;
+            //dataGridViewExtended.DataSource = _bindingSource_StockRoom;
 
             FaultColumnPartNumber = !dataGridViewExtended._dataGridView.Columns.Contains("PartNumber");
         }
@@ -716,16 +787,7 @@ namespace StockRoom11net
         }
 
         #endregion"Add Column method"
-
-        DataColumn CurrentDataColumnActive(int ColumnIndex)
-        {
-            DataColumn newDataColumn = new DataColumn();
-
-            if ((CurrentRowViewActive.DataView.Table.Columns.Count - 1) >= ColumnIndex)
-                newDataColumn = CurrentRowViewActive.DataView.Table.Columns[ColumnIndex];
-
-            return newDataColumn;
-        }
+              
 
         string editorPageLocation;
         string editorTinyMce;
@@ -782,7 +844,7 @@ namespace StockRoom11net
         {
             try
             {
-                On_AddNewItemSaveTreeViewRequested(new Save_Requested_EventArgs(MyCode.NotificationEvents.DataBaseUpDated));
+                On_AddNewItemSaveTreeViewRequested(new Save_Requested_EventArgs(Utilities.NotificationEvents.DataBaseUpDated));
             }
             catch (Exception error)
             {
@@ -797,25 +859,21 @@ namespace StockRoom11net
 
         void DataGridViewExtendedInventoryCellEndEditEvent(object sender, DataGridViewCellEventArgs e)
         {
-            DataColumn column = CurrentDataColumnActive(e.ColumnIndex);
-            if (column == null)
-                return;
-
             NeedSaveData = true;
-            if (CurrentRowViewActive.DataView.Table.Columns.Contains("LastAccessTime"))
+            if (CurrentRowViewActive["LastAccessTime"] != null)
             {
                 CurrentRowViewActive["LastAccessTime"] = DateTime.Now;
                 CurrentRowViewActive["ModifiedBy"] = CurrentEmployeesLogIn.FullName;
             }
 
             #region"OnHand column, update OnHold and Onavailable"
-            if (column.ColumnName.Contains("OnHand"))
+            if (CurrentRowViewActive["OnHand"] != null)
             {
-                int OnHold = MyCode.IntParseFast(CurrentRowViewActive["OnHold"].ToString());
+                int OnHold = Utilities.IntParseFast(CurrentRowViewActive["OnHold"].ToString());
                 if (OnHold < 0)
                     OnHold = 0;
 
-                int OnHand = MyCode.IntParseFast(CurrentRowViewActive["OnHand"].ToString());
+                int OnHand = Utilities.IntParseFast(CurrentRowViewActive["OnHand"].ToString());
 
                 int OnAvailable = OnHand - OnHold;
 
@@ -823,9 +881,8 @@ namespace StockRoom11net
                     OnAvailable = 0;
 
                 CurrentRowViewActive["OnAvailable"] = OnAvailable;
-                CurrentRowViewActive.EndEdit();
 
-                On_Save_Requested(new Save_Requested_EventArgs(MyCode.NotificationEvents.RowInformationChange, CurrentRowViewActive));
+           //     On_Save_Requested(new Save_Requested_EventArgs(Utilities.NotificationEvents.RowInformationChange, CurrentRowViewActive));
             }
             #endregion"OnHand column, update OnHold and Onavailable"
         }
@@ -834,11 +891,7 @@ namespace StockRoom11net
         {
             try
             {
-                MessagePositionString = "CellBeggingEditEvent";
-                _currentColumnActive = CurrentDataColumnActive(e.ColumnIndex);
-                if (_currentColumnActive == null)
-                    return;
-
+                MessageDebugPosition = "CellBeggingEditEvent";
                 if (CurrentEmployeesLogIn.IsUser)
                 {
                     MessageBox.Show(@"The current User, does not have the right to perform this action.",
@@ -847,15 +900,14 @@ namespace StockRoom11net
                     return;
                 }
 
-                var description = "The information of " + CurrentRowViewActive["PartNumber"].ToString() + " is being edited." + Environment.NewLine +
-                                     _currentColumnActive.ColumnName + " " + CurrentRowViewActive[_currentColumnActive.ColumnName].ToString();
+                var description = "The information of " + CurrentRowViewActive["PartNumber"]?.ToString() + " is being edited." + Environment.NewLine;
 
                 On_NotificationsToSends(new Notification(
                                                          "Row information is being edited.",                //notification.Text
                                                          "Warning, Row information is being edited.",       //notification.Title
                                                          description,                                        //notification.Description
                                                          (int)ToolTipIcon.Info,                              //notification.MessageIcon
-                                                         (int)MyCode.NotificationEvents.Warning,             //notifycation.NotifycationEvents
+                                                         (int)Utilities.NotificationEvents.Warning,             //notifycation.NotifycationEvents
                                                          Settings.Default.DepartmentName,                   //notification.DepartmentName
                                                          DateTime.Now,                                       //notification.DateCreated
                                                          CurrentEmployeesLogIn.FullName,                     //notification.Created_by
@@ -868,7 +920,7 @@ namespace StockRoom11net
                 using (var form = new Form() { TopMost = true })
                 {
                     MessageBox.Show(form, @"Message related to this error is " + ex.Message +
-                    @", Break code at position " + MessagePositionString,
+                    @", Break code at position " + MessageDebugPosition,
                     @"DataGridViewExtended has generated an error.",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
@@ -899,7 +951,7 @@ namespace StockRoom11net
         {
             try
             {
-                MessagePositionString = "DataGridViewExtendedInventoryCurrentRowActive try...";
+                MessageDebugPosition = "DataGridViewExtendedInventoryCurrentRowActive try...";
                 if (e.CurrentRowActive.Index == -1)
                 {
                     On_ActiveDataSheet(null);
@@ -909,59 +961,49 @@ namespace StockRoom11net
                     return;
                 }
 
-                MessagePositionString = "TabControl_Inventory.SelectedTab.Name";
+                MessageDebugPosition = "TabControl_Inventory.SelectedTab.Name";
                 if (TabControl_Inventory.SelectedTab.Name.Contains("tabPage_NoteEditor"))
                 {
                     TabControl_Inventory.SelectTab(nameof(tabPage_Pictures));
                     TabControl_Inventory.HideTab(nameof(tabPage_NoteEditor));
                 }
 
-                MessagePositionString = "_currentRowViewActive = (DataRowView)e.";
-                Type irt = e.CurrentRowActive.DataBoundItem.GetType();
-                //string irtName = irt.Name;
-                if (irt.Name.Contains("GroupRow"))
+                MessageDebugPosition = "Check if CurrentRowActive.DataBoundItem is Table_StockRoom";
+                if (e.CurrentRowActive.DataBoundItem.GetType() == typeof(Table_StockRoom))
                 {
-                    GroupRow actGroupRow = (GroupRow)e.CurrentRowActive.DataBoundItem;
-
-                    CurrentRowViewActive = (DataRowView?)actGroupRow.Rows[0];
-                }
-                else
                     CurrentRowViewActive = (DataRowView)e.CurrentRowActive.DataBoundItem;
-
-                CurrentRowStatus = new CurrentStatus(CurrentRowViewActive);
-
-                if (CurrentRowViewActive.IsNew)
-                    return;
-
-
-                MessagePositionString = "_currentPartNumber = _currentRowViewActive[PartNumber]";
-                if (SettingMode & dataGridViewExtended.DataSource == _bindingSource_table_StockroomTreeView)
-                {
-                    CurrentPartNumber = CurrentRowViewActive["Text_Name"].ToString();
-                    return;
                 }
-                else
-                    CurrentPartNumber = CurrentRowViewActive["PartNumber"].ToString();
 
+                if (e.CurrentRowActive.DataBoundItem.GetType() == typeof(DataRowView))
+                {
+                    CurrentRowViewActive = (DataRowView)e.CurrentRowActive.DataBoundItem;
+                }
+
+                if (CurrentRowViewActive != null)
+                {
+                    CurrentRowStatus = new CurrentStatus(CurrentRowViewActive);
+                    CurrentPartNumber = CurrentRowViewActive["PartNumber"]?.ToString();
+                }
 
                 thumbViewer_Pictures.PathFromPartNumber = CurrentPartNumber;
 
-                MessagePositionString = "DataSheetProcess()";
+                MessageDebugPosition = "DataSheetProcess()";
                 DataSheetProcess();
 
-                if (CurrentRowViewActive["Location"] != DBNull.Value)
-                    GetLocationProcess((string)CurrentRowViewActive["Location"]);
+                if (CurrentRowViewActive["Location"] != null)
+                    GetLocationProcess(CurrentRowViewActive["Location"]?.ToString());
                 else
                     GetLocationProcess("NoLocationDef");
 
-                MessagePositionString = "FocusTabPage_UpDateModifCompValue().";
+                MessageDebugPosition = "FocusTabPage_UpDateModifCompValue().";
                 FocusTabPage_UpDateModifCompValue();
+
             }
             catch (Exception error)
             {
                 using var form = new Form() { TopMost = true };
                 MessageBox.Show(form, @"Message related to this error is " + error.Message +
-                @", Break code at position " + MessagePositionString,
+                @", Break code at position " + MessageDebugPosition,
                 @"DataGridViewExtended has generated an error.",
                 MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
@@ -975,7 +1017,7 @@ namespace StockRoom11net
         /// <param name="e"></param>
         void DataGridViewExtended_StockRoom_CellClick_Event(object sender, CellClick_EventArgs e)
         {
-            _currentColumnActive = CurrentDataColumnActive(e.ColumnIndex);
+          //  _currentColumnActive = CurrentDataColumnActive(e.ColumnIndex);
         }
 
         void DataGridViewExtended_StockRoom_CellDoubleClick_Event(object sender, CellDoubleClick_EventArgs e)
@@ -998,7 +1040,7 @@ namespace StockRoom11net
             {
                 using (var directoryFile = new DirectoryFile())
                 {
-                    var selectedFileNames = directoryFile.ProcessDataSheetFiles(CurrentRowViewActive["PartNumber"].ToString(), false, false);
+                    var selectedFileNames = directoryFile.ProcessDataSheetFiles(CurrentRowViewActive["PartNumber"]?.ToString(), false, false);
 
                     foreach (string strFileName in selectedFileNames)
                     {
@@ -1014,8 +1056,7 @@ namespace StockRoom11net
                     }
 
                     CurrentRowViewActive["DataSheet_File"] = listFileNames;
-                    CurrentRowViewActive.EndEdit();
-
+                   
                     dataGridViewExtended._dataGridView.EndEdit();
                     DataSheetProcess();
                     return;
@@ -1091,7 +1132,7 @@ namespace StockRoom11net
                                                      "Warning, DataBase change.",                        //notification.Title
                                                      description,                                        //notification.Description
                                                      (int)ToolTipIcon.Info,                              //notification.MessageIcon
-                                                     (int)MyCode.NotificationEvents.RowRemoved,          //notifycation.NotifycationEvents
+                                                     (int)Utilities.NotificationEvents.RowRemoved,          //notifycation.NotifycationEvents
                                                      Settings.Default.DepartmentName + ";",   //notification.String_Filter
                                                      DateTime.Now,                                       //notification.DateCreated
                                                      CurrentEmployeesLogIn.FullName,                     //notification.Created_by
@@ -1111,7 +1152,7 @@ namespace StockRoom11net
                                                      "Warning, DataBase change.",                        //notification.Title
                                                      description,                                        //notification.Description
                                                      (int)ToolTipIcon.Info,                              //notification.MessageIcon
-                                                     (int)MyCode.NotificationEvents.RowRemoved,          //notification.NotificationEvents
+                                                     (int)Utilities.NotificationEvents.RowRemoved,          //notification.NotificationEvents
                                                      Settings.Default.DepartmentName + ";",              //notification.String_Filter
                                                      DateTime.Now,                                       //notification.DateCreated
                                                      CurrentEmployeesLogIn.FullName,                     //notification.Created_by
@@ -1141,10 +1182,10 @@ namespace StockRoom11net
 
             CurrentRowViewActive = (DataRowView)e.CurrentRowActive.DataBoundItem;
             CurrentRowStatus = new CurrentStatus(CurrentRowViewActive);
-            CurrentPartNumber = CurrentRowViewActive["PartNumber"].ToString();
+            CurrentPartNumber = CurrentRowViewActive["PartNumber"]?.ToString();
 
             Update_Description(CurrentRowViewActive);
-            //         thumbViewer_Pictures.PathFromPartNumber = CurrentPartNumber;
+            thumbViewer_Pictures.PathFromPartNumber = CurrentPartNumber;
         }
 
         void DataGridViewExtended_ContextMenuStripItemClicked(object sender, EventArgs e)
@@ -1154,8 +1195,8 @@ namespace StockRoom11net
 
         void DataGridViewExtended_PrintCompLabel(object sender, EventArgs e)
         {
-            string partNumber = CurrentRowViewActive["PartNumber"].ToString();
-            string description = CurrentRowViewActive["Description"].ToString();
+            string partNumber = CurrentRowViewActive["PartNumber"]?.ToString();
+            string description = CurrentRowViewActive["Description"]?.ToString();
 
             Zebra_Prints_CompPartNumbers printCompLabel = new Zebra_Prints_CompPartNumbers(partNumber, description, 1);
             printCompLabel.ShowDialog();
@@ -1163,13 +1204,13 @@ namespace StockRoom11net
 
         void DataSheetProcess()
         {
-            MessagePositionString = "DataSheetProcess()";
-            string dataSheetInfo = CurrentRowViewActive["DataSheet_File"].ToString();
+            MessageDebugPosition = "DataSheetProcess()";
+            string dataSheetInfo = CurrentRowViewActive["DataSheet_File"]?.ToString();
 
             if (dataSheetInfo == null || string.IsNullOrEmpty(dataSheetInfo) || string.IsNullOrWhiteSpace(dataSheetInfo))
                 dataSheetInfo = "";
 
-            MessagePositionString = "DataSheetProcess() -> DocumentationBehavior";
+            MessageDebugPosition = "DataSheetProcess() -> DocumentationBehavior";
             On_ActiveDataSheet(new ActiveDataSheet_EventArgs(CurrentPartNumber, Settings.Default.DataBaseAddress + "\\DataSheets\\", dataSheetInfo));
         }
 
@@ -1186,7 +1227,7 @@ namespace StockRoom11net
 
             string whoUsesThis = e.CurrentRowActive.Cells["Who_uses_this"].Value?.ToString();
 
-            string tip = MyCode.DescriptionExpand(whoUsesThis, Font, CreateGraphics());
+            string tip = Utilities.DescriptionExpand(whoUsesThis, Font, CreateGraphics());
 
             if (tip != null && tip.Contains("Error Information"))
             {
@@ -1216,13 +1257,13 @@ namespace StockRoom11net
             #region"Description Short"
 
             string description_short;
-            description_short = "<font color='Blue'><b>" + currentRowView["PartNumber"] + "</b></font>    ->";
+            description_short = "<font color='Blue'><b>" + currentRowView["PartNumber"]?.ToString() + "</b></font>    ->";
 
-            if (currentRowView["Description"].ToString() == "")
+            if (currentRowView["Description"]?.ToString() == "")
                 description_short += "  This component has not any Description.";
             else
             {
-                string tempDescription = currentRowView["Description"].ToString();
+                string tempDescription = currentRowView["Description"]?.ToString();
                 if (tempDescription.Contains("&"))
                     tempDescription = tempDescription.Replace("&", "&amp;");
 
@@ -1233,10 +1274,10 @@ namespace StockRoom11net
 
             #region"Description Expand"
 
-            if (currentRowView["OnAvailable"] == DBNull.Value)
+            if (currentRowView["OnAvailable"] == null)
                 currentRowView["OnAvailable"] = 0;
 
-            string description_expand = MyCode.DescriptionExpand(currentRowView["Who_uses_this"].ToString(), Font, CreateGraphics());
+            string description_expand = Utilities.DescriptionExpand(currentRowView["Who_uses_this"]?.ToString(), Font, CreateGraphics());
 
             #endregion"Description Expand"
 
@@ -1465,7 +1506,7 @@ namespace StockRoom11net
         {
             button_Save.Enabled = false;
 
-            On_Save_Requested(new Save_Requested_EventArgs(MyCode.NotificationEvents.DataBaseUpDated));
+            On_Save_Requested(new Save_Requested_EventArgs(Utilities.NotificationEvents.DataBaseUpDated));
         }
 
         void Button_Delete_Click(object sender, EventArgs e)
@@ -1546,7 +1587,7 @@ namespace StockRoom11net
             _nodeSetting.AutoScroll = true;
             _nodeSetting.AutoScrollMinSize = new Size(730, 475);
             _nodeSetting.Dock = DockStyle.Fill;
-            _nodeSetting.FocusedNodeProperties = new NodeProperties();
+       //     _nodeSetting.FocusedNodeProperties = new NodeProperties();
             _nodeSetting.Location = new Point(0, 0);
             _nodeSetting.Name = "nodeSetting";
             _nodeSetting.NeedSaveData = false;
@@ -1560,7 +1601,7 @@ namespace StockRoom11net
 
         void NodeSetting_NodeImageChange(object? sender, NodeSetting.NodeImageChange_EventArgs e)
         {
-            dataTreeViewToAdd_Cancel_Delete.InitializeImageList();
+            _ = dataTreeViewToAdd_Cancel_Delete.InitializeImageListAsync();
         }
 
         void NodeSetting_StatusBarMessage(object? sender, StatusBarMessage_EventArgs e)

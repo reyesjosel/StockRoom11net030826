@@ -1,9 +1,10 @@
-﻿using MyStuff11net;
-using MyStuff11net.Properties;
-using RawInput_dll;
+﻿using StockRoom11net.Controls;
+using StockRoom11net.Controls.EmployeeInformation;
+using StockRoom11net.Controls.RawInput;
+using StockRoom11net.Properties;
 using System.Data;
 using System.Data.OleDb;
-using static MyStuff11net.Custom_Events_Args;
+using static StockRoom11net.Controls.Custom_Events_Args;
 
 namespace StockRoom11net
 {
@@ -121,7 +122,7 @@ namespace StockRoom11net
 
         void DataGridViewExtended_ReelRecord_SaveRequested(object sender, Save_Requested_EventArgs e)
         {
-            ReelRecordDataSheetSaveRequest(new Save_Requested_EventArgs(MyCode.NotificationEvents.DataBaseUpDated));
+            ReelRecordDataSheetSaveRequest(new Save_Requested_EventArgs(Utilities.NotificationEvents.DataBaseUpDated));
         }
 
         int cellEditEnd;
@@ -147,7 +148,7 @@ namespace StockRoom11net
                     if (numberOfRowAdded == 5)
                     {
                         numberOfRowAdded = 0;
-                        ReelRecordDataSheetSaveRequest(new Save_Requested_EventArgs(MyCode.NotificationEvents.DataBaseUpDated));
+                        ReelRecordDataSheetSaveRequest(new Save_Requested_EventArgs(Utilities.NotificationEvents.DataBaseUpDated));
                         On_SpeechSynthesizerBase(new SpeechSynthesizerBase_EventArgs("New items have been stored."));
                     }
 
@@ -207,7 +208,7 @@ namespace StockRoom11net
         {
             switch (e.SaveEvent)
             {
-                case MyCode.NotificationEvents.RowInformationChange:
+                case Utilities.NotificationEvents.RowInformationChange:
                     {
                         if (Settings.Default.SaveEachTimeTheInformationIsChanged)
                         {
@@ -218,7 +219,7 @@ namespace StockRoom11net
 
                         break;
                     }
-                case MyCode.NotificationEvents.DataBaseUpDated:
+                case Utilities.NotificationEvents.DataBaseUpDated:
                     {
                         //NotificationEvent will be up when the database is saved successfully.
 
@@ -226,7 +227,7 @@ namespace StockRoom11net
                         ReelRecordDataSheetSaveRequest(e);
                         break;
                     }
-                case MyCode.NotificationEvents.ClearAllSelected:
+                case Utilities.NotificationEvents.ClearAllSelected:
                     {
          //               UpdateStatusColumn(reelRecord_DataSet.ReelRecord_Table);
 

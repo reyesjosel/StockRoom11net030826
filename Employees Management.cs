@@ -5,7 +5,12 @@ using System.Collections.Specialized;
 using MyStuff11net;
 using BrightIdeasSoftware;
 
-using static MyStuff11net.Custom_Events_Args;
+using static StockRoom11net.Controls.Custom_Events_Args;
+using StockRoom11net.Controls.EmployeeInformation;
+using StockRoom11net.Controls.DataGridViewExtend;
+using StockRoom11net.Controls.ResourcesCache;
+using Microsoft.IdentityModel.Tokens;
+using StockRoom11net.Controls;
 
 namespace StockRoom11net
 {
@@ -139,7 +144,7 @@ namespace StockRoom11net
 
             _cache = new ResourcesCache();
 
-            MessagePositionString = "Initialize_DataTreeListView";
+            MessageDebugPosition = "Initialize_DataTreeListView";
             Initialize_DataTreeListView();
             DataTreeListView_Shown();
 
@@ -173,7 +178,7 @@ namespace StockRoom11net
 
             // How much space do we want to give each row? Obviously, this should be at least
             // the height of the images used by the renderer
-            //olvDataTree.RowHeight = 32;
+            //olvDataTreeMaster.RowHeight = 32;
 
             toolStripMenuItem_FullRowSelect.Checked = true;
 
@@ -211,7 +216,7 @@ namespace StockRoom11net
                 if (nodeID == espanding_parentID)
                     continue;
 
-                // olvDataTree.Collapse(expandedNode);
+                // olvDataTreeMaster.Collapse(expandedNode);
             }
 
         }
@@ -246,11 +251,11 @@ namespace StockRoom11net
                 {
                     CurrentDataRowViewActive = (DataRowView)olvDataTree.SelectedItem.RowObject;
 
-                    _currentFocusedNodeproperties = new NodeProperties(CurrentDataRowViewActive);
-                    if (_currentFocusedNodeproperties == null)
-                        return;
+          //          _currentFocusedNodeproperties = new NodeProperties(CurrentDataRowViewActive);
+         //           if (_currentFocusedNodeproperties == null)
+         //               return;
 
-                    _dataGridViewExtended_Employee.CustomFilter = _currentFocusedNodeproperties.StringFilter;
+         //           _dataGridViewExtended_Employee.CustomFilter = _currentFocusedNodeproperties.StringFilter;
 
                     if (!olvDataTree.Bounds.Contains(olvDataTree.PointToClient(MousePosition)))
                         return;
@@ -394,15 +399,15 @@ namespace StockRoom11net
                         {
                             olvDataTree.FullRowSelect = false;
                             olvDataTree.UseHotItem = true;
-                            //olvDataTree.UseExplorerTheme = true;
+                            //olvDataTreeMaster.UseExplorerTheme = true;
 
                             toolStripMenuItem_FullRowSelect.Checked = false;
                         }
                         else
                         {
                             olvDataTree.FullRowSelect = true;
-                            //olvDataTree.UseHotItem = false;
-                            //olvDataTree.UseExplorerTheme = true;
+                            //olvDataTreeMaster.UseHotItem = false;
+                            //olvDataTreeMaster.UseExplorerTheme = true;
 
                             toolStripMenuItem_FullRowSelect.Checked = true;
                         }
@@ -415,7 +420,7 @@ namespace StockRoom11net
 
         private void ToolStripMenuItem_singleExpandedNode_Click(object sender, EventArgs e)
         {
-            //olvDataTree.Exp
+            //olvDataTreeMaster.Exp
         }
 
         private void SetupDescriptionColumn()
@@ -530,7 +535,7 @@ namespace StockRoom11net
             _dataGridViewExtended_Employee.DataSource = _bindingSource_Employees;
 
             _dataGridViewExtended_Employee._dataGridView.ReadOnly = false;
-            _dataGridViewExtended_Employee.CustomEdit = MyCode.EditMode.Delete;
+            _dataGridViewExtended_Employee.CustomEdit = StockRoom11net.Controls.Utilities.EditMode.Delete;
         }
 
         private void DataGridViewExtended_Employee_ContextMenuStripOpening(object sender, ContextMenuStrip e)
@@ -582,7 +587,7 @@ namespace StockRoom11net
             {
                 if (e.CurrentRowActive == null || e.CurrentRowActive.Index == -1)
                     return;
-                MessagePositionString = "e.CurrentRowActive.Index";
+                MessageDebugPosition = "e.CurrentRowActive.Index";
                 DataRowView currentRow = (DataRowView)_bindingSource_Employees[e.CurrentRowActive.Index];
 
                 if (currentRow["Department"].ToString().Contains("Department"))
@@ -607,7 +612,7 @@ namespace StockRoom11net
                 using (var form = new Form { TopMost = true })
                 {
                     MessageBox.Show(@"Message related to this error is " + error.Message +
-                                    @", Break code at position " + MessagePositionString,
+                                    @", Break code at position " + MessageDebugPosition,
                                     @"StockRoom Inventory has generated an error.",
                                     MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
@@ -618,7 +623,7 @@ namespace StockRoom11net
         {
             try
             {
-                On_Save_Requested(new Save_Requested_EventArgs(MyCode.NotificationEvents.DataBaseUpDated));
+                On_Save_Requested(new Save_Requested_EventArgs(Utilities.NotificationEvents.DataBaseUpDated));
                 NeedSaveData = false;
             }
             catch (Exception ex)
@@ -652,15 +657,15 @@ namespace StockRoom11net
 
             comboBox_AccessLevel.SelectedValueChanged += AnySetting_TextChanged;
             comboBox_AccessLevel.TextChanged += AnySetting_TextChanged;
-            comboBox_AccessLevel.DataSource = Enum.GetValues(typeof(MyCode.AccessLevel));
+            comboBox_AccessLevel.DataSource = Enum.GetValues(typeof(Utilities.AccessLevel));
 
             comboBox_EditMode.SelectedValueChanged += AnySetting_TextChanged;
             comboBox_EditMode.TextChanged += AnySetting_TextChanged;
-            comboBox_EditMode.DataSource = Enum.GetValues(typeof(MyCode.EditMode));
+            comboBox_EditMode.DataSource = Enum.GetValues(typeof(Utilities.EditMode));
 
             comboBox_EnableSetting.SelectedValueChanged += AnySetting_TextChanged;
             comboBox_EnableSetting.TextChanged += AnySetting_TextChanged;
-            comboBox_EnableSetting.DataSource = Enum.GetValues(typeof(MyCode.EnableSetting));
+            comboBox_EnableSetting.DataSource = Enum.GetValues(typeof(Utilities.EnableSetting));
 
             button_AddNewEmployee.Enabled = true;
             button_SaveEmployee.Text = "Save";
@@ -708,7 +713,7 @@ namespace StockRoom11net
             button_SaveEmployee.Text = "Save";
             button_SaveEmployee.Enabled = false;
 
-            EmployeesSelected.Last6Digit = MyCode.CastAsInt(textBox_Last6Digit.Text);
+            EmployeesSelected.Last6Digit = Utilities.CastAsInt(textBox_Last6Digit.Text);
             EmployeesSelected.Name = textBox_Employee_Name.Text;
             EmployeesSelected.LastName = textBox_Employee_LastName.Text;
             EmployeesSelected.Address = textBox_Address.Text;
@@ -718,9 +723,9 @@ namespace StockRoom11net
             EmployeesSelected.Position = comboBox_Position.Text;
             EmployeesSelected.Department = comboBox_Department.Text;
 
-            EmployeesSelected.EmployeeAccessLevel = (MyCode.AccessLevel)comboBox_AccessLevel.SelectedItem;
-            EmployeesSelected.EmployeeEditMode = (MyCode.EditMode)comboBox_EditMode.SelectedItem;
-            EmployeesSelected.EmployeeEnableTreeViewSetting = (MyCode.EnableSetting)comboBox_EnableSetting.SelectedItem;
+            EmployeesSelected.EmployeeAccessLevel = (Utilities.AccessLevel)comboBox_AccessLevel.SelectedItem;
+            EmployeesSelected.EmployeeEditMode = (Utilities.EditMode)comboBox_EditMode.SelectedItem;
+            EmployeesSelected.EmployeeEnableTreeViewSetting = (Utilities.EnableSetting)comboBox_EnableSetting.SelectedItem;
 
             EmployeesSelected.SaveSetting();
 
@@ -740,12 +745,12 @@ namespace StockRoom11net
                 return false;
             }
 
-            int NewLast6Digit = MyCode.CastAsInt(textBox_Last6Digit.Text);
+            int NewLast6Digit = Utilities.CastAsInt(textBox_Last6Digit.Text);
 
             foreach (object row in _bindingSource_Employees)
             {
                 DataRowView _row = row as DataRowView;
-                int Last6Digit = MyCode.CastAsInt(_row["Last6Digit"]);
+                int Last6Digit = Utilities.CastAsInt(_row["Last6Digit"]);
 
                 if (Last6Digit == NewLast6Digit)
                 {
@@ -817,8 +822,8 @@ namespace StockRoom11net
                 textBox_Last6Digit.Clear();
                 textBox_Last6Digit.Focus();
 
-                MyCode.MouseUtility.MousePointerPosition(textBox_Last6Digit, 2, 2);
-                MyCode.MouseUtility.DoMouseClick(MouseButtons.Left);
+                Utilities.MouseUtility.MousePointerPosition(textBox_Last6Digit, 2, 2);
+                Utilities.MouseUtility.DoMouseClick(MouseButtons.Left);
 
                 DataGridViewExtended_Employees_CurrentRowActive(sender, new CurrentRowActive_EventArgs(
                                     (int)_newRow["ID"], _dataGridViewExtended_Employee.CurrentRowActive));
@@ -926,7 +931,7 @@ namespace StockRoom11net
 
         private void UpDateDepartmentSelected()
         {
-            DepartmentSelected.DeptID = MyCode.CastAsInt(textBox_DepartmentID.Text);
+            DepartmentSelected.DeptID = Utilities.CastAsInt(textBox_DepartmentID.Text);
             DepartmentSelected.DeptName = textBox_DepartmentName.Text;
             //    DepartmentSelected.LastName = textBox_Employee_LastName.Text;
             DepartmentSelected.DeptComments = textBox_DepartmentComents.Text;
@@ -936,8 +941,8 @@ namespace StockRoom11net
             //    DepartmentSelected.Position = comboBox_Position.Text;
             //    DepartmentSelected.Department; // ReadOnly
 
-            DepartmentSelected.DeptAccessLevel = (MyCode.AccessLevel)comboBox_AccessLevel.SelectedItem;
-            DepartmentSelected.DeptEditMode = (MyCode.EditMode)comboBox_EditMode.SelectedItem;
+            DepartmentSelected.DeptAccessLevel = (Utilities.AccessLevel)comboBox_AccessLevel.SelectedItem;
+            DepartmentSelected.DeptEditMode = (Utilities.EditMode)comboBox_EditMode.SelectedItem;
 
             foreach (Control dataControl in panel_dataGridViewProfile.Controls)
             {
@@ -1032,8 +1037,8 @@ namespace StockRoom11net
 
                 isNewEmployee = true;
 
-                MyCode.MouseUtility.MousePointerPosition(textBox_DepartmentName, 2, 2);
-                MyCode.MouseUtility.DoMouseClick(MouseButtons.Left);
+                Utilities.MouseUtility.MousePointerPosition(textBox_DepartmentName, 2, 2);
+                Utilities.MouseUtility.DoMouseClick(MouseButtons.Left);
 
                 DataGridViewExtended_Employees_CurrentRowActive(sender, new CurrentRowActive_EventArgs((int)_newRow["ID"],
                                                                                         _dataGridViewExtended_Employee.CurrentRowActive));

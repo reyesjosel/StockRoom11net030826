@@ -1,11 +1,11 @@
 ﻿using Be.Windows.Forms;
-using MyStuff11net;
-using MyStuff11net.Properties;
+using StockRoom11net.Properties;
+using StockRoom11net.Controls;
 using System.ComponentModel;
 using System.Globalization;
 using System.Text;
 using WinFormsUI.Docking;
-using StatusBarMessage_EventArgs = MyStuff11net.Custom_Events_Args.StatusBarMessage_EventArgs;
+using StatusBarMessage_EventArgs = StockRoom11net.Controls.Custom_Events_Args.StatusBarMessage_EventArgs;
 
 
 namespace StockRoom11net
@@ -213,14 +213,14 @@ namespace StockRoom11net
 
             //Array.Reverse(X_axes);  // Deal with Endian issue?
             Single Xmyvalue = BitConverter.ToSingle(X_axes, 0);
-            placementsInformations += Environment.NewLine + "Axe X  : " + MyCode.CodeSMTAxes(X_axes).ToString("0.000") + "  --->" + Xmyvalue;
-            placementsInformations += Environment.NewLine + "Axe X  : " + MyCode.CodeSMTAxes(BitConverter.ToString(X_axes).Replace("-", string.Empty)).ToString("0.000");
+            placementsInformations += Environment.NewLine + "Axe X  : " + Utilities.CodeSMTAxes(X_axes).ToString("0.000") + "  --->" + Xmyvalue;
+            placementsInformations += Environment.NewLine + "Axe X  : " + Utilities.CodeSMTAxes(BitConverter.ToString(X_axes).Replace("-", string.Empty)).ToString("0.000");
             string axesX = BitConverter.ToString(X_axes).Replace("-", string.Empty);
             placementsInformations += Environment.NewLine + "Axe X  : " + int.Parse(axesX, NumberStyles.AllowHexSpecifier) / 254000;
 
             byte[] Y_axes = _binaryreader.ReadBytes(4);                                                                      // 12+4=16
-            placementsInformations += Environment.NewLine + "Axe Y  : " + MyCode.CodeSMTAxes(Y_axes).ToString("0.000");
-            placementsInformations += Environment.NewLine + "Axe Y  : " + MyCode.CodeSMTAxes(BitConverter.ToString(Y_axes).Replace("-", string.Empty)).ToString("0.000");
+            placementsInformations += Environment.NewLine + "Axe Y  : " + Utilities.CodeSMTAxes(Y_axes).ToString("0.000");
+            placementsInformations += Environment.NewLine + "Axe Y  : " + Utilities.CodeSMTAxes(BitConverter.ToString(Y_axes).Replace("-", string.Empty)).ToString("0.000");
             string axesY = BitConverter.ToString(Y_axes).Replace("-", string.Empty);
             placementsInformations += Environment.NewLine + "Axe X  : " + int.Parse(axesY, NumberStyles.AllowHexSpecifier) / 254000;
 

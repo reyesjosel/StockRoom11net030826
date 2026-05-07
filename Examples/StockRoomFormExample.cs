@@ -1,6 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using StockRoom11net.Data;
-using StockRoom11net.Services;
+using StockRoom11net.Data.Entities;
+using StockRoom11net.Data.Services;
 using System.ComponentModel;
 
 namespace StockRoom11net.Examples;
@@ -12,7 +13,7 @@ namespace StockRoom11net.Examples;
 public partial class StockRoomFormExample : Form
 {
     private readonly IStockRoomService _stockRoomService;
-    private BindingList<StockRoom> _bindingList;
+    private BindingList<Table_StockRoom> _bindingList;
 
     #region Constructor with Dependency Injection
 
@@ -20,8 +21,8 @@ public partial class StockRoomFormExample : Form
     public StockRoomFormExample(IStockRoomService stockRoomService)
     {
         InitializeComponent();
-        _stockRoomService = stockRoomService;
-        _bindingList = new BindingList<StockRoom>();
+        _stockRoomService = stockRoomService ?? throw new ArgumentNullException(nameof(stockRoomService));
+        _bindingList = new BindingList<Table_StockRoom>();
     }
 
     // Alternative: Manual service resolution (if form not created via DI)
@@ -32,7 +33,7 @@ public partial class StockRoomFormExample : Form
         // Get service manually
         using var scope = DependencyInjection.CreateScope();
         _stockRoomService = scope.ServiceProvider.GetRequiredService<IStockRoomService>();
-        _bindingList = new BindingList<StockRoom>();
+        _bindingList = new BindingList<Table_StockRoom>();
     }
 
     #endregion
@@ -66,7 +67,7 @@ public partial class StockRoomFormExample : Form
             statusLabel.Text = "Loading data...";
 
             // Load data asynchronously
-            _bindingList = await _stockRoomService.GetAllStockRoomsAsync();
+            _bindingList = await _stockRoomService.LoadStockRoomsAsync();
 
             // Bind to DataGridView (supports automatic updates via INotifyPropertyChanged)
             dataGridView.DataSource = _bindingList;
@@ -107,7 +108,7 @@ public partial class StockRoomFormExample : Form
             if (string.IsNullOrWhiteSpace(searchTerm))
             {
                 // Load all
-                _bindingList = await _stockRoomService.GetAllStockRoomsAsync();
+                _bindingList = await _stockRoomService.LoadStockRoomsAsync();
             }
             else
             {
@@ -142,14 +143,14 @@ public partial class StockRoomFormExample : Form
     {
         try
         {
-            var newItem = new StockRoom
+            var newItem = new Table_StockRoom
             {
                 PartNumber = txtPartNumber.Text,
                 Description = txtDescription.Text,
-                Quantity = (int)numQuantity.Value,
+                OnHand = (int)numQuantity.Value,
                 Location = txtLocation.Text,
-                UnitPrice = numUnitPrice.Value,
-                LastUpdated = DateTime.Now
+                SalePrice = (int)numUnitPrice.Value,
+                LastAccessTime = DateTime.Now
             };
 
             // Validate
@@ -192,7 +193,7 @@ public partial class StockRoomFormExample : Form
     {
         try
         {
-            if (dataGridView.CurrentRow?.DataBoundItem is StockRoom selectedItem)
+            if (dataGridView.CurrentRow?.DataBoundItem is Table_StockRoom selectedItem)
             {
                 // Entity already has changes from UI binding
                 // Just save it
@@ -225,7 +226,7 @@ public partial class StockRoomFormExample : Form
     {
         try
         {
-            if (dataGridView.CurrentRow?.DataBoundItem is StockRoom selectedItem)
+            if (dataGridView.CurrentRow?.DataBoundItem is Table_StockRoom selectedItem)
             {
                 var result = MessageBox.Show(
                     $"Delete {selectedItem.PartNumber}?",
@@ -235,7 +236,7 @@ public partial class StockRoomFormExample : Form
 
                 if (result == DialogResult.Yes)
                 {
-                    await _stockRoomService.DeleteStockRoomAsync(selectedItem.Id);
+                   // await _stockRoomService.DeleteStockRoomAsync(selectedItem.Index);
                     _bindingList.Remove(selectedItem); // Automatic UI update
 
                     MessageBox.Show("Record deleted successfully!");
@@ -260,12 +261,12 @@ public partial class StockRoomFormExample : Form
 
         // Find items: quantity < 50, price > $10, in locations starting with 'A'
         var results = await unitOfWork.StockRooms.FindAsync(s =>
-            s.Quantity < 50 &&
-            s.UnitPrice > 10m &&
+            s.OnHand < 50 &&
+            s.SalePrice > 10m &&
             s.Location != null &&
             s.Location.StartsWith("A"));
 
-        _bindingList = new BindingList<StockRoom>(results.ToList());
+        _bindingList = new BindingList<Table_StockRoom>(results.ToList());
         dataGridView.DataSource = _bindingList;
     }
 
@@ -274,7 +275,7 @@ public partial class StockRoomFormExample : Form
     // ============================================================================
 
     // NEW WAY (Efficient bulk operations)
-    private async Task BatchUpdate_NewWay(List<StockRoom> itemsToUpdate)
+    private async Task BatchUpdate_NewWay(List<Table_StockRoom> itemsToUpdate)
     {
         using var scope = DependencyInjection.CreateScope();
         var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
@@ -285,7 +286,7 @@ public partial class StockRoomFormExample : Form
 
             foreach (var item in itemsToUpdate)
             {
-                item.LastUpdated = DateTime.Now;
+                item.LastAccessTime = DateTime.Now;
                 unitOfWork.StockRooms.Update(item);
             }
 
@@ -385,4 +386,6 @@ public partial class StockRoomFormExample : Form
     private ToolStripStatusLabel statusLabel = null!;
 
     #endregion
+
+
 }

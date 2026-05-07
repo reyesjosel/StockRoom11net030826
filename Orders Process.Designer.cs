@@ -1,4 +1,6 @@
 ﻿using MyStuff11net;
+using StockRoom11net.Controls;
+using StockRoom11net.Controls.DataGridViewExtend;
 
 namespace StockRoom11net
 {
@@ -31,7 +33,7 @@ namespace StockRoom11net
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.dataGridViewExtended_GPS = new MyStuff11net.DataGridViewExtend.DataGridViewExtended();
+            this.dataGridViewExtended_GPS = new StockRoom11net.Controls.DataGridViewExtend.DataGridViewExtended();
             this._bindingSource_GPSDataSheet = new System.Windows.Forms.BindingSource(this.components);
        //     this._dataSet_GPSDataSheet = new StockRoom11net.GPS_DataSheetDataSet();
             ((System.ComponentModel.ISupportInitialize)(this.BindingSourceTreeViewBase)).BeginInit();
@@ -49,7 +51,7 @@ namespace StockRoom11net
             this.dataGridViewExtended_GPS.CurrentRowBackgroundColor = System.Drawing.Color.DeepSkyBlue;
             this.dataGridViewExtended_GPS.CurrentRowBorderColor = System.Drawing.Color.DarkBlue;
             this.dataGridViewExtended_GPS.CurrentRowMouseOverStatus = null;
-            this.dataGridViewExtended_GPS.CustomEdit = MyCode.EditMode.View;
+            this.dataGridViewExtended_GPS.CustomEdit = Utilities.EditMode.View;
             this.dataGridViewExtended_GPS.CustomFilter = null;
             this.dataGridViewExtended_GPS.DataGridViewDrawDoubleBuffering = false;
             this.dataGridViewExtended_GPS.DataSource = this._bindingSource_GPSDataSheet;
@@ -97,7 +99,7 @@ namespace StockRoom11net
 
         #endregion
 
-        private MyStuff11net.DataGridViewExtend.DataGridViewExtended dataGridViewExtended_GPS;
+        private DataGridViewExtended dataGridViewExtended_GPS;
       //  private GPS_DataSheetDataSet _dataSet_GPSDataSheet;
         private System.Windows.Forms.BindingSource _bindingSource_GPSDataSheet;
     }

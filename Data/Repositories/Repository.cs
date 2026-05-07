@@ -7,7 +7,7 @@ namespace StockRoom11net.Data.Repositories;
 /// Generic Repository Pattern implementation for EF Core
 /// Provides common CRUD operations with async support
 /// </summary>
-public interface IRepository<T> where T : class
+public partial interface IRepository<T> where T : class
 {
     // Query operations
     Task<T?> GetByIdAsync(int id);
@@ -18,7 +18,6 @@ public interface IRepository<T> where T : class
     // Command operations
     Task<T> AddAsync(T entity);
     Task AddRangeAsync(IEnumerable<T> entities);
-    void Update(T entity);
     void Remove(T entity);
     void RemoveRange(IEnumerable<T> entities);
 
@@ -26,7 +25,7 @@ public interface IRepository<T> where T : class
     Task<int> SaveChangesAsync();
 }
 
-public class Repository<T> : IRepository<T> where T : class
+public partial class Repository<T> : IRepository<T> where T : class
 {
     protected readonly ProductionInventoryContext _context;
     protected readonly DbSet<T> _dbSet;
@@ -66,11 +65,6 @@ public class Repository<T> : IRepository<T> where T : class
     public virtual async Task AddRangeAsync(IEnumerable<T> entities)
     {
         await _dbSet.AddRangeAsync(entities);
-    }
-
-    public virtual void Update(T entity)
-    {
-        _dbSet.Update(entity);
     }
 
     public virtual void Remove(T entity)

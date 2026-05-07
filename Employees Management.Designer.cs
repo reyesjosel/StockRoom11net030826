@@ -1,4 +1,6 @@
 ﻿using BrightIdeasSoftware;
+using StockRoom11net.Controls;
+using StockRoom11net.Controls.DataGridViewExtend;
 
 namespace StockRoom11net
 {
@@ -116,7 +118,7 @@ namespace StockRoom11net
             button_CancelProfile = new Button();
             button_SaveProfile = new Button();
             button_DeleteProfile = new Button();
-            _dataGridViewExtended_Employee = new MyStuff11net.DataGridViewExtend.DataGridViewExtended();
+            _dataGridViewExtended_Employee = new StockRoom11net.Controls.DataGridViewExtend.DataGridViewExtended();
             _bindingSource_Employees = new BindingSource(components);
             dataView_Employees = new System.Data.DataView();
             _contextMenuStripTreeView = new ContextMenuStrip(components);
@@ -226,7 +228,7 @@ namespace StockRoom11net
             splitContainer2.SplitterDistance = 473;
             splitContainer2.TabIndex = 0;
             // 
-            // olvDataTree
+            // olvDataTreeMaster
             // 
             olvDataTree.AlternateRowBackColor = Color.FromArgb(224, 224, 224);
             olvDataTree.AutoGenerateColumns = false;
@@ -238,7 +240,7 @@ namespace StockRoom11net
             olvDataTree.KeyAspectName = "Id";
             olvDataTree.Location = new Point(0, 0);
             olvDataTree.Margin = new Padding(1);
-            olvDataTree.Name = "olvDataTree";
+            olvDataTree.Name = "olvDataTreeMaster";
             olvDataTree.ParentKeyAspectName = "ParentId";
             olvDataTree.RootKeyValueString = "";
             olvDataTree.SelectColumnsOnRightClick = false;
@@ -1271,7 +1273,7 @@ namespace StockRoom11net
             _dataGridViewExtended_Employee.BindingCompleted = false;
             _dataGridViewExtended_Employee.CurrentRowBackgroundColor = Color.DeepSkyBlue;
             _dataGridViewExtended_Employee.CurrentRowBorderColor = Color.DarkBlue;
-            _dataGridViewExtended_Employee.CustomEdit = MyStuff11net.MyCode.EditMode.Delete;
+            _dataGridViewExtended_Employee.CustomEdit = Utilities.EditMode.Delete;
             _dataGridViewExtended_Employee.DividerColor = Color.Red;
             _dataGridViewExtended_Employee.DividerHeight = 0;
             _dataGridViewExtended_Employee.Dock = DockStyle.Fill;
@@ -1494,7 +1496,7 @@ namespace StockRoom11net
         private Button button_AddNewDept;
         private Button button_AdjustmentDept;
         private Button button_SaveDept;
-        private MyStuff11net.DataGridViewExtend.DataGridViewExtended _dataGridViewExtended_Employee;
+        private DataGridViewExtended _dataGridViewExtended_Employee;
         private Panel panel2;
         private FlowLayoutPanel flowLayoutPanel2;
         private Button button_AddNewEmployee;

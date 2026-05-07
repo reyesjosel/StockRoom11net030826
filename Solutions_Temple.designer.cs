@@ -826,7 +826,7 @@ namespace StockRoom11net
             // newToolStripButton
             // 
             newToolStripButton.DisplayStyle = ToolStripItemDisplayStyle.Image;
-            newToolStripButton.Image = MyStuff11net.Properties.Resources.file;
+            newToolStripButton.Image = StockRoom11net.Properties.Resources.file;
             newToolStripButton.ImageTransparentColor = Color.Magenta;
             newToolStripButton.Name = "newToolStripButton";
             newToolStripButton.Size = new Size(24, 26);
@@ -835,7 +835,7 @@ namespace StockRoom11net
             // openToolStripButton
             // 
             openToolStripButton.DisplayStyle = ToolStripItemDisplayStyle.Image;
-            openToolStripButton.Image = MyStuff11net.Properties.Resources.OpenFolderImage;
+            openToolStripButton.Image = StockRoom11net.Properties.Resources.OpenFolderImage;
             openToolStripButton.ImageTransparentColor = Color.Magenta;
             openToolStripButton.Name = "openToolStripButton";
             openToolStripButton.Size = new Size(24, 26);
@@ -844,7 +844,7 @@ namespace StockRoom11net
             // saveToolStripButton
             // 
             saveToolStripButton.DisplayStyle = ToolStripItemDisplayStyle.Image;
-            saveToolStripButton.Image = MyStuff11net.Properties.Resources.SaveImage;
+            saveToolStripButton.Image = StockRoom11net.Properties.Resources.SaveImage;
             saveToolStripButton.ImageTransparentColor = Color.Magenta;
             saveToolStripButton.Name = "saveToolStripButton";
             saveToolStripButton.Size = new Size(24, 26);
@@ -853,7 +853,7 @@ namespace StockRoom11net
             // printToolStripButton
             // 
             printToolStripButton.DisplayStyle = ToolStripItemDisplayStyle.Image;
-            printToolStripButton.Image = MyStuff11net.Properties.Resources.print24_h;
+            printToolStripButton.Image = StockRoom11net.Properties.Resources.print24_h;
             printToolStripButton.ImageTransparentColor = Color.Magenta;
             printToolStripButton.Name = "printToolStripButton";
             printToolStripButton.Size = new Size(24, 26);

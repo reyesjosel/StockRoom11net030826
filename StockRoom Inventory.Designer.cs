@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Components.WebView.WindowsForms;
-using MyStuff11net;
-using MyStuff11net.DataGridViewExtend;
-using MyStuff11net.FlexibleTreeView;
+using StockRoom11net.Controls;
+using StockRoom11net.Controls.CustomPanelDoubleBuffered;
+using StockRoom11net.Controls.DataGridViewExtend;
+using StockRoom11net.Controls.ThumbViewer;
+using StockRoom11net.Controls.ZPL2_ZebraPrint;
 
 namespace StockRoom11net
 {
@@ -86,10 +88,10 @@ namespace StockRoom11net
             button_Delete = new Button();
             grouper_ItemProperties = new CodeVendor.Controls.Grouper();
             flowLayoutPanel_ItemsProperties = new FlowLayoutPanel();
-            comboBoxExtended_Description = new ComboBoxExtended();
-            comboBoxExtended_Status = new ComboBoxExtended();
-            comboBoxExtended1 = new ComboBoxExtended();
-            comboBoxExtended_PartNumber = new ComboBoxExtended();
+            comboBoxExtended_Description = new StockRoom11net.Controls.ComboBoxExtended.ComboBoxExtended();
+            comboBoxExtended_Status = new StockRoom11net.Controls.ComboBoxExtended.ComboBoxExtended();
+            comboBoxExtended1 = new StockRoom11net.Controls.ComboBoxExtended.ComboBoxExtended();
+            comboBoxExtended_PartNumber = new StockRoom11net.Controls.ComboBoxExtended.ComboBoxExtended();
             tabPage_Test = new TabPage();
             tabPage_UpDateModifCompValue = new TabPage();
             grouper_ManufacturerProperties = new CodeVendor.Controls.Grouper();
@@ -320,7 +322,7 @@ namespace StockRoom11net
             dataTreeViewToAdd_Cancel_Delete.TabIndex = 0;
             dataTreeViewToAdd_Cancel_Delete.Switch_DataTable += DataTreeViewToAdd_Cancel_Delete_Switch_DataTable;
             dataTreeViewToAdd_Cancel_Delete.Save_Requested += DataTreeViewToAdd_Cancel_Delete_Save_Requested;
-            dataTreeViewToAdd_Cancel_Delete.SelectedIndexChanged += DataTreeViewToAdd_Cancel_Delete_SelectedIndexChanged;
+            dataTreeViewToAdd_Cancel_Delete.SelectedIndexChanged += DataTreeViewToAdd_Cancel_Delete_SelectedIndexChangedAsync;
             dataTreeViewToAdd_Cancel_Delete.Load += DataTreeViewToAdd_Cancel_Delete_Load;
             // 
             // contextMenuStripPicturesBox
@@ -1226,7 +1228,7 @@ namespace StockRoom11net
             dataGridViewExtended.ContextMenuStrip = _contextMenuStripTreeView;
             dataGridViewExtended.CurrentRowBackgroundColor = Color.DeepSkyBlue;
             dataGridViewExtended.CurrentRowBorderColor = Color.DarkBlue;
-            dataGridViewExtended.CustomEdit = MyCode.EditMode.View;
+            dataGridViewExtended.CustomEdit = Utilities.EditMode.View;
             dataGridViewExtended.DividerColor = Color.Red;
             dataGridViewExtended.DividerHeight = 0;
             dataGridViewExtended.Dock = DockStyle.Fill;
@@ -1330,7 +1332,7 @@ namespace StockRoom11net
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripMenuItem ToolStripMenuItem_showSettingDialog;
         private System.Windows.Forms.ToolStripMenuItem ToolStripMenuItem_multipleExpandedNodes;
-        private MyStuff11net.DataGridViewExtend.DataGridViewExtended dataGridViewExtended;
+        private DataGridViewExtended dataGridViewExtended;
         private System.Windows.Forms.BindingSource _bindingSource_table_StockroomTreeView;
         private System.Data.DataView dataView_TreeView;
         private System.Windows.Forms.ToolStripMenuItem ToolStripMenuItem_AddNewComponent;
@@ -1350,7 +1352,7 @@ namespace StockRoom11net
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemCopyFileToTheClickBoard;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemCopyToANewFile;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemCopyImageToTheClipBoard;
-        private MyStuff11net.ThumbViewer thumbViewer_Pictures;
+        private StockRoom11net.Controls.ThumbViewer.ThumbViewer thumbViewer_Pictures;
         private System.Windows.Forms.TabPage tabPage_NoteEditor;
         private System.Windows.Forms.ToolStripMenuItem ToolStripMenuItem_GroupByThisColumn;
         private System.Windows.Forms.ToolStripMenuItem ToolStripMenuItem_PrintCompLabel;
@@ -1358,16 +1360,16 @@ namespace StockRoom11net
         private System.Windows.Forms.TabPage tabPage_AddNewItem;
         private CodeVendor.Controls.Grouper grouper_ItemProperties;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel_ItemsProperties;
-        private MyStuff11net.ComboBoxExtended comboBoxExtended_PartNumber;
-        private MyStuff11net.ComboBoxExtended comboBoxExtended_Description;
-        private MyStuff11net.ComboBoxExtended comboBoxExtended_Status;
-        private MyStuff11net.ComboBoxExtended comboBoxExtended1;
+        private StockRoom11net.Controls.ComboBoxExtended.ComboBoxExtended comboBoxExtended_PartNumber;
+        private StockRoom11net.Controls.ComboBoxExtended.ComboBoxExtended comboBoxExtended_Description;
+        private StockRoom11net.Controls.ComboBoxExtended.ComboBoxExtended comboBoxExtended_Status;
+        private StockRoom11net.Controls.ComboBoxExtended.ComboBoxExtended comboBoxExtended1;
         private CodeVendor.Controls.Grouper grouper_NewItemButtons;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel_Buttons;
         private System.Windows.Forms.Button button_AddNew;
         private System.Windows.Forms.Button button_Save;
         private System.Windows.Forms.Button button_Delete;
-        private MyStuff11net.ThumbViewer thumbViewer_Location;
+        private StockRoom11net.Controls.ThumbViewer.ThumbViewer thumbViewer_Location;
         private DataTreeViewToAdd_Cancel_Delete dataTreeViewToAdd_Cancel_Delete;
         private ToolStripMenuItem toolStripMenuItem_Border;
         private ToolStripMenuItem toolStripMenuItem_Translucent;
@@ -1393,7 +1395,7 @@ namespace StockRoom11net
         private Label label_Model_Number;
         private ComboBox comboBox_Manufacturer;
         private Panel panel_ComponentControl;
-        private PrintingReferences printingReferences;
+        private StockRoom11net.Controls.ZPL2_ZebraPrint.PrintingReferences printingReferences;
         private Panel panel_SpacerContainerComp;
         private FlowLayoutPanel flowLayoutPanel;
         private Button button_Add;

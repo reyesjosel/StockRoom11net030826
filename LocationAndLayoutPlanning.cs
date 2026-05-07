@@ -1,19 +1,23 @@
-﻿using MyStuff11net;
-using MyStuff11net.DataGridViewExtend;
-using MyStuff11net.Properties;
-using RawInput_dll;
+﻿using StockRoom11net.Controls;
+using StockRoom11net.Controls.DataGridViewExtend;
+using StockRoom11net.Controls.DirectoryFileOperations;
+using StockRoom11net.Controls.EmployeeInformation;
+using StockRoom11net.Controls.OpenFileDialogExt;
+using StockRoom11net.Controls.RawInput;
+using StockRoom11net.Controls.ShellBasics;
+using StockRoom11net.Properties;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing.Imaging;
 using System.Drawing.Printing;
-using CellClick_EventArgs = MyStuff11net.Custom_Events_Args.CellClick_EventArgs;
-using CellDoubleClick_EventArgs = MyStuff11net.Custom_Events_Args.CellDoubleClick_EventArgs;
-using CurrentRowActive_EventArgs = MyStuff11net.Custom_Events_Args.CurrentRowActive_EventArgs;
-using DataGridViewMouseEnterEventArgs = MyStuff11net.Custom_Events_Args.DataGridViewMouseEnterEventArgs;
-using DataGridViewSort_EventArgs = MyStuff11net.Custom_Events_Args.DataGridViewSort_EventArgs;
-using Refresh_Requested_EventArgs = MyStuff11net.Custom_Events_Args.Refresh_Requested_EventArgs;
-using Save_Requested_EventArgs = MyStuff11net.Custom_Events_Args.Save_Requested_EventArgs;
-using StatusBarMessage_EventArgs = MyStuff11net.Custom_Events_Args.StatusBarMessage_EventArgs;
+using CellClick_EventArgs = StockRoom11net.Controls.Custom_Events_Args.CellClick_EventArgs;
+using CellDoubleClick_EventArgs = StockRoom11net.Controls.Custom_Events_Args.CellDoubleClick_EventArgs;
+using CurrentRowActive_EventArgs = StockRoom11net.Controls.Custom_Events_Args.CurrentRowActive_EventArgs;
+using DataGridViewMouseEnterEventArgs = StockRoom11net.Controls.Custom_Events_Args.DataGridViewMouseEnterEventArgs;
+using DataGridViewSort_EventArgs = StockRoom11net.Controls.Custom_Events_Args.DataGridViewSort_EventArgs;
+using Refresh_Requested_EventArgs = StockRoom11net.Controls.Custom_Events_Args.Refresh_Requested_EventArgs;
+using Save_Requested_EventArgs = StockRoom11net.Controls.Custom_Events_Args.Save_Requested_EventArgs;
+using StatusBarMessage_EventArgs = StockRoom11net.Controls.Custom_Events_Args.StatusBarMessage_EventArgs;
 
 
 namespace StockRoom11net
@@ -181,7 +185,7 @@ namespace StockRoom11net
             _bindingSourceLocations = bindingsourceLocations;
             _bindingSourceLocationsTreeView = bindingsourceLocationsTreeView;
 
-            MessagePositionString = "tempDataTable";
+            MessageDebugPosition = "tempDataTable";
             Type typeDataSource = bindingsourceLocations.DataSource.GetType();
 
             if (typeDataSource.BaseType == typeof(DataSet))
@@ -190,13 +194,13 @@ namespace StockRoom11net
             if (typeDataSource.BaseType == typeof(DataTable))
                 table = bindingsourceLocations.DataSource as DataTable;
 
-            MessagePositionString = "columnsCollection";
+            MessageDebugPosition = "columnsCollection";
             ColumnsCollection = table.Columns;
         }
 
         void LocationAndLayoutPlanning_Load(object sender, EventArgs e)
         {
-            MessagePositionString = "InitializeProperties()";
+            MessageDebugPosition = "InitializeProperties()";
             InitializeProperties();
 
             InitializedPicturesBox();
@@ -320,7 +324,7 @@ namespace StockRoom11net
 
             #endregion"IsManager or Administrator"
 
-            if (CurrentEmployeesLogIn.EmployeeEnableTreeViewSetting == MyCode.EnableSetting.True)
+            if (CurrentEmployeesLogIn.EmployeeEnableTreeViewSetting == Utilities.EnableSetting.True)
             {
 
             }
@@ -472,7 +476,7 @@ namespace StockRoom11net
                                                      "Warning, Row information changed.",               //notification.Title
                                                      description,                                        //notification.Description
                                                      (int)ToolTipIcon.Info,                              //notification.MessageIcon
-                                                     (int)MyCode.NotificationEvents.RowInformationChange,//notifycation.NotifycationEvents
+                                                     (int)Utilities.NotificationEvents.RowInformationChange,//notifycation.NotifycationEvents
                                                      Settings.Default.DepartmentName,        //notification.String_Filter
                                                      DateTime.Now,                                       //notification.DateCreated
                                                      CurrentEmployeesLogIn.FullName,                     //notification.Created_by
@@ -482,11 +486,11 @@ namespace StockRoom11net
 
             if (column.ColumnName.Contains("OnHand"))
             {
-                int OnHold = MyCode.IntParseFast(_currentRowViewActive["OnHold"].ToString());
+                int OnHold = Utilities.IntParseFast(_currentRowViewActive["OnHold"].ToString());
                 if (OnHold < 0)
                     OnHold = 0;
 
-                int OnHand = MyCode.IntParseFast(_currentRowViewActive["OnHand"].ToString());
+                int OnHand = Utilities.IntParseFast(_currentRowViewActive["OnHand"].ToString());
 
                 int OnAvailable = OnHand - OnHold;
 
@@ -496,7 +500,7 @@ namespace StockRoom11net
                 _currentRowViewActive["OnAvailable"] = OnAvailable;
                 _currentRowViewActive.EndEdit();
 
-                ProcessSaveRequest(MyCode.NotificationEvents.RowInformationChange);
+                ProcessSaveRequest(Utilities.NotificationEvents.RowInformationChange);
             }
         }
 
@@ -512,7 +516,7 @@ namespace StockRoom11net
                                                      "Warning, Row information is being edited.",       //notification.Title
                                                      description,                                        //notification.Description
                                                      (int)ToolTipIcon.Info,                              //notification.MessageIcon
-                                                     (int)MyCode.NotificationEvents.Warning,             //notifycation.NotifycationEvents
+                                                     (int)Utilities.NotificationEvents.Warning,             //notifycation.NotifycationEvents
                                                      Settings.Default.DepartmentName,         //notification.DepartmentName
                                                      DateTime.Now,                                       //notification.DateCreated
                                                      CurrentEmployeesLogIn.FullName,                     //notification.Created_by
@@ -592,7 +596,7 @@ namespace StockRoom11net
 
         private void DataGridViewExtendedInventorySaveRequested(object sender, Save_Requested_EventArgs e)
         {
-            ProcessSaveRequest(MyCode.NotificationEvents.DataBaseUpDated);
+            ProcessSaveRequest(Utilities.NotificationEvents.DataBaseUpDated);
         }
 
         private void DataGridViewExtendedInventoryRefreshRequested(object sender, Refresh_Requested_EventArgs e)
@@ -653,7 +657,7 @@ namespace StockRoom11net
                                                      "Warning, DataBase change.",                        //notification.Title
                                                      description,                                        //notification.Description
                                                      (int)ToolTipIcon.Info,                              //notification.MessageIcon
-                                                     (int)MyCode.NotificationEvents.RowRemoved,          //notifycation.NotifycationEvents
+                                                     (int)Utilities.NotificationEvents.RowRemoved,          //notifycation.NotifycationEvents
                                                      Settings.Default.DepartmentName + ";",   //notification.String_Filter
                                                      DateTime.Now,                                       //notification.DateCreated
                                                      CurrentEmployeesLogIn.FullName,                     //notification.Created_by
@@ -673,7 +677,7 @@ namespace StockRoom11net
                                                      "Warning, DataBase change.",                        //notification.Title
                                                      description,                                        //notification.Description
                                                      (int)ToolTipIcon.Info,                              //notification.MessageIcon
-                                                     (int)MyCode.NotificationEvents.RowRemoved,          //notifycation.NotifycationEvents
+                                                     (int)Utilities.NotificationEvents.RowRemoved,          //notifycation.NotifycationEvents
                                                      Settings.Default.DepartmentName + ";",   //notification.String_Filter
                                                      DateTime.Now,                                       //notification.DateCreated
                                                      CurrentEmployeesLogIn.FullName,                     //notification.Created_by
@@ -740,7 +744,7 @@ namespace StockRoom11net
             if (currentRowview["OnAvailable"] == DBNull.Value)
                 currentRowview["OnAvailable"] = 0;
 
-            string discriptionexpand = MyCode.DescriptionExpand(currentRowview["Who_uses_this"].ToString(), Font, CreateGraphics());
+            string discriptionexpand = Utilities.DescriptionExpand(currentRowview["Who_uses_this"].ToString(), Font, CreateGraphics());
             if (discriptionexpand != null && discriptionexpand.Contains("Error Information"))
             {
                 currentRowview["Status"] += "Selected(-36865)";
@@ -755,11 +759,11 @@ namespace StockRoom11net
 
         #region"Process Save Request"
 
-        private void ProcessSaveRequest(MyCode.NotificationEvents saveEvent)
+        private void ProcessSaveRequest(Utilities.NotificationEvents saveEvent)
         {
             switch (saveEvent)
             {
-                case MyCode.NotificationEvents.RowInformationChange:
+                case Utilities.NotificationEvents.RowInformationChange:
                     {
                         if (Settings.Default.SaveEachTimeTheInformationIsChanged)
                         {
@@ -769,7 +773,7 @@ namespace StockRoom11net
 
                         break;
                     }
-                case MyCode.NotificationEvents.DataBaseUpDated:
+                case Utilities.NotificationEvents.DataBaseUpDated:
                     {
                         NeedSaveData = false;
                         SaveRequest();
@@ -783,14 +787,14 @@ namespace StockRoom11net
         {
             try
             {
-                On_Save_Requested(new Save_Requested_EventArgs(MyCode.NotificationEvents.DataBaseUpDated));
+                On_Save_Requested(new Save_Requested_EventArgs(Utilities.NotificationEvents.DataBaseUpDated));
 
                 On_NotificationsToSends(new Notification(
                                                      "DataBase has been updated.",                       // 0 notification.Text
                                                      "Warning, DataBase updated.",                       // 1 notification.Title
                                                      "The database has been updated by an user.",        // 2 notification.Description
                                                      (int)ToolTipIcon.Info,                              // 3 notification.MessageIcon
-                                                     (int)MyCode.NotificationEvents.DataBaseUpDated,     // 4 notifycation.NotifycationEvents
+                                                     (int)Utilities.NotificationEvents.DataBaseUpDated,     // 4 notifycation.NotifycationEvents
                                                      Settings.Default.DepartmentName,         // 5 notification.String_Filter
                                                      DateTime.Now,                                       // 6 notification.DateCreated
                                                      CurrentEmployeesLogIn.FullName,                     // 7 notification.Created_by
@@ -806,45 +810,6 @@ namespace StockRoom11net
         }
 
         #endregion"Process Save Request"
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        private void UpDateInformation(Object sender, EventArgs e)
-        {
-
-        }
-
-
-
-
-
-
-
-
 
     }
 }

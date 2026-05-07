@@ -36,7 +36,7 @@
                       ↓
 ┌─────────────────────────────────────────────────┐
 │          SQLite Database                        │
-│  Production_InventoryConnectionString           │
+│  DataBaseConnectionStringSQLite           │
 └─────────────────────────────────────────────────┘
 ```
 
@@ -312,3 +312,36 @@ StockRoom11net/
 ---
 
 **✨ You now have a modern, maintainable, high-performance data access layer!**
+
+```csharp
+// ✅ REPOSITORY — only data access, no logic
+public class TableTimeLineTreeViewRepository : Repository<Table_TimeLine_TreeView>
+{
+    // Just CRUD: GetAllAsync, FindAsync, AddAsync, Remove... 
+    // No business rules here
+}
+
+// ✅ SERVICE — business logic, uses repository via UnitOfWork
+public partial class TableTimeLineTreeViewService : ITableTimeLineTreeViewService
+{ 
+    private readonly IUnitOfWork _unitOfWork;  // ← accesses DB through UnitOfWork
+
+    // Business logic: search by name, validate, process
+    public async Task<Table_TimeLine_TreeView?> FindNodeByNameAsync(string nodeName, ...)
+    {
+        // Validation (business rule) ← belongs here, NOT in repository
+        if (string.IsNullOrEmpty(nodeName)) return null;
+
+        // Data access delegated to repository via UnitOfWork
+        return await _unitOfWork.TableTimeLineTreeViews
+            .FirstOrDefaultAsync(node => node.Text_Name == nodeName);
+    }
+}
+
+
+
+
+
+
+```
+

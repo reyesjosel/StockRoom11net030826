@@ -1,5 +1,6 @@
 ﻿using MyStuff11net;
-using MyStuff11net.DataGridViewExtend;
+using StockRoom11net.Controls;
+using StockRoom11net.Controls.DataGridViewExtend;
 using System.Drawing;
 
 namespace StockRoom11net
@@ -606,7 +607,7 @@ namespace StockRoom11net
             _dataGridViewLabelsSMT.CurrentRowBackgroundColor = Color.DeepSkyBlue;
             _dataGridViewLabelsSMT.CurrentRowBorderColor = Color.DarkBlue;
             _dataGridViewLabelsSMT.CurrentRowMouseOverStatus = null;
-            _dataGridViewLabelsSMT.CustomEdit = MyCode.EditMode.Delete;
+            _dataGridViewLabelsSMT.CustomEdit = Utilities.EditMode.Delete;
             _dataGridViewLabelsSMT.DataGridViewDrawDoubleBuffering = false;
             _dataGridViewLabelsSMT.DividerColor = Color.Red;
             _dataGridViewLabelsSMT.DividerHeight = 0;
@@ -687,7 +688,7 @@ namespace StockRoom11net
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.CheckBox checkBox_print;
         private System.Windows.Forms.TabPage tabPage2;
-        private MyStuff11net.DataGridViewExtend.DataGridViewExtended _dataGridViewLabelsSMT;
+        private DataGridViewExtended _dataGridViewLabelsSMT;
         private System.Windows.Forms.SplitContainer splitContainer1;
         private CodeVendor.Controls.Grouper grouper_PCB_PartNumber;
         private System.Windows.Forms.TextBox textBox_PartNumber_Data;

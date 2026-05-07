@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using StockRoom11net.Services;
+using StockRoom11net.Data.Services;
 
 namespace StockRoom11net.Data;
 
@@ -31,7 +31,9 @@ public static class DependencyInjection
 
         // Register Services
         services.AddScoped<IStockRoomService, StockRoomService>();
-        services.AddScoped<ITimeLineService, TimeLineService>();
+        services.AddScoped<ITableTimeLineService, TableTimeLineService>();
+        services.AddScoped<ITableTimeLineTreeViewService, TableTimeLineTreeViewService>();
+        services.AddScoped<ITableStockRoomTreeViewService, TableStockRoomTreeViewService>();
 
         return services;
     }

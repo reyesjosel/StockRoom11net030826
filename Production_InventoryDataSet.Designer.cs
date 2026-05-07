@@ -21565,7 +21565,7 @@ namespace StockRoom11net.Production_InventoryDataSetTableAdapters {
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
         private void InitConnection() {
             this._connection = new global::System.Data.OleDb.OleDbConnection();
-            this._connection.ConnectionString = global::StockRoom11net.Properties.Settings.Default.Production_InventoryConnectionString;
+            this._connection.ConnectionString = global::StockRoom11net.Properties.Settings.Default.DataBaseConnectionStringSQLite;
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -22162,7 +22162,7 @@ namespace StockRoom11net.Production_InventoryDataSetTableAdapters {
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
         private void InitConnection() {
             this._connection = new global::System.Data.OleDb.OleDbConnection();
-            this._connection.ConnectionString = global::StockRoom11net.Properties.Settings.Default.Production_InventoryConnectionString;
+            this._connection.ConnectionString = global::StockRoom11net.Properties.Settings.Default.DataBaseConnectionStringSQLite;
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -22691,7 +22691,7 @@ namespace StockRoom11net.Production_InventoryDataSetTableAdapters {
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
         private void InitConnection() {
             this._connection = new global::System.Data.OleDb.OleDbConnection();
-            this._connection.ConnectionString = global::StockRoom11net.Properties.Settings.Default.Production_InventoryConnectionString;
+            this._connection.ConnectionString = global::StockRoom11net.Properties.Settings.Default.DataBaseConnectionStringSQLite;
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -23341,7 +23341,7 @@ namespace StockRoom11net.Production_InventoryDataSetTableAdapters {
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
         private void InitConnection() {
             this._connection = new global::System.Data.OleDb.OleDbConnection();
-            this._connection.ConnectionString = global::StockRoom11net.Properties.Settings.Default.Production_InventoryConnectionString;
+            this._connection.ConnectionString = global::StockRoom11net.Properties.Settings.Default.DataBaseConnectionStringSQLite;
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -24131,7 +24131,7 @@ namespace StockRoom11net.Production_InventoryDataSetTableAdapters {
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
         private void InitConnection() {
             this._connection = new global::System.Data.OleDb.OleDbConnection();
-            this._connection.ConnectionString = global::StockRoom11net.Properties.Settings.Default.Production_InventoryConnectionString;
+            this._connection.ConnectionString = global::StockRoom11net.Properties.Settings.Default.DataBaseConnectionStringSQLite;
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -24572,7 +24572,7 @@ namespace StockRoom11net.Production_InventoryDataSetTableAdapters {
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
         private void InitConnection() {
             this._connection = new global::System.Data.OleDb.OleDbConnection();
-            this._connection.ConnectionString = global::StockRoom11net.Properties.Settings.Default.Production_InventoryConnectionString;
+            this._connection.ConnectionString = global::StockRoom11net.Properties.Settings.Default.DataBaseConnectionStringSQLite;
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -25603,7 +25603,7 @@ namespace StockRoom11net.Production_InventoryDataSetTableAdapters {
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
         private void InitConnection() {
             this._connection = new global::System.Data.OleDb.OleDbConnection();
-            this._connection.ConnectionString = global::StockRoom11net.Properties.Settings.Default.Production_InventoryConnectionString;
+            this._connection.ConnectionString = global::StockRoom11net.Properties.Settings.Default.DataBaseConnectionStringSQLite;
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -26029,7 +26029,7 @@ namespace StockRoom11net.Production_InventoryDataSetTableAdapters {
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
         private void InitConnection() {
             this._connection = new global::System.Data.OleDb.OleDbConnection();
-            this._connection.ConnectionString = global::StockRoom11net.Properties.Settings.Default.Production_InventoryConnectionString;
+            this._connection.ConnectionString = global::StockRoom11net.Properties.Settings.Default.DataBaseConnectionStringSQLite;
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -26625,7 +26625,7 @@ namespace StockRoom11net.Production_InventoryDataSetTableAdapters {
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
         private void InitConnection() {
             this._connection = new global::System.Data.OleDb.OleDbConnection();
-            this._connection.ConnectionString = global::StockRoom11net.Properties.Settings.Default.Production_InventoryConnectionString;
+            this._connection.ConnectionString = global::StockRoom11net.Properties.Settings.Default.DataBaseConnectionStringSQLite;
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -27102,7 +27102,7 @@ namespace StockRoom11net.Production_InventoryDataSetTableAdapters {
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
         private void InitConnection() {
             this._connection = new global::System.Data.OleDb.OleDbConnection();
-            this._connection.ConnectionString = global::StockRoom11net.Properties.Settings.Default.Production_InventoryConnectionString;
+            this._connection.ConnectionString = global::StockRoom11net.Properties.Settings.Default.DataBaseConnectionStringSQLite;
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -27637,7 +27637,7 @@ namespace StockRoom11net.Production_InventoryDataSetTableAdapters {
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
         private void InitConnection() {
             this._connection = new global::System.Data.OleDb.OleDbConnection();
-            this._connection.ConnectionString = global::StockRoom11net.Properties.Settings.Default.Production_InventoryConnectionString;
+            this._connection.ConnectionString = global::StockRoom11net.Properties.Settings.Default.DataBaseConnectionStringSQLite;
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -28220,7 +28220,7 @@ namespace StockRoom11net.Production_InventoryDataSetTableAdapters {
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
         private void InitConnection() {
             this._connection = new global::System.Data.OleDb.OleDbConnection();
-            this._connection.ConnectionString = global::StockRoom11net.Properties.Settings.Default.Production_InventoryConnectionString;
+            this._connection.ConnectionString = global::StockRoom11net.Properties.Settings.Default.DataBaseConnectionStringSQLite;
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -28753,7 +28753,7 @@ namespace StockRoom11net.Production_InventoryDataSetTableAdapters {
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
         private void InitConnection() {
             this._connection = new global::System.Data.OleDb.OleDbConnection();
-            this._connection.ConnectionString = global::StockRoom11net.Properties.Settings.Default.Production_InventoryConnectionString;
+            this._connection.ConnectionString = global::StockRoom11net.Properties.Settings.Default.DataBaseConnectionStringSQLite;
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -29814,7 +29814,7 @@ namespace StockRoom11net.Production_InventoryDataSetTableAdapters {
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
         private void InitConnection() {
             this._connection = new global::System.Data.OleDb.OleDbConnection();
-            this._connection.ConnectionString = global::StockRoom11net.Properties.Settings.Default.Production_InventoryConnectionString;
+            this._connection.ConnectionString = global::StockRoom11net.Properties.Settings.Default.DataBaseConnectionStringSQLite;
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -30495,7 +30495,7 @@ namespace StockRoom11net.Production_InventoryDataSetTableAdapters {
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "18.0.0.0")]
         private void InitConnection() {
             this._connection = new global::System.Data.OleDb.OleDbConnection();
-            this._connection.ConnectionString = global::StockRoom11net.Properties.Settings.Default.Production_InventoryConnectionString;
+            this._connection.ConnectionString = global::StockRoom11net.Properties.Settings.Default.DataBaseConnectionStringSQLite;
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]

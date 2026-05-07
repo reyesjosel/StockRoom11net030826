@@ -1,7 +1,10 @@
-﻿using MyStuff11net;
-using MyStuff11net.FirstInstallationSetting;
-using MyStuff11net.Properties;
-using RawInput_dll;
+﻿using StockRoom11net.Controls;
+using StockRoom11net.Controls.DocumentationBehavior;
+using StockRoom11net.Controls.EmployeeInformation;
+using StockRoom11net.Controls.FileSystemExt;
+using StockRoom11net.Controls.RawInput;
+using StockRoom11net.Controls.ResourcesCache;
+using StockRoom11net.Properties;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Data;
@@ -13,7 +16,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 using WinFormsUI.Docking;
-using static MyStuff11net.Custom_Events_Args;
+using static StockRoom11net.Controls.Custom_Events_Args;
 using File = System.IO.File;
 
 namespace StockRoom11net
@@ -356,7 +359,7 @@ namespace StockRoom11net
 
         public ResourcesCache _cache = new ResourcesCache();
 
-        public virtual void ProcessInput(CellDoubleClick_EventArgs cellDoubleClickEventArgs, MyCode.ProcessMode value) { }
+        public virtual void ProcessInput(CellDoubleClick_EventArgs cellDoubleClickEventArgs, Utilities.ProcessMode value) { }
 
         public void ThreadSafeInvoke(Action action)
         {
@@ -431,7 +434,7 @@ namespace StockRoom11net
                 Settings.Default.InstallationFirstDate = DateTime.Now;
                 Settings.Default.InstallationFirstUser = "";
 
-                using (var installationKey = new InstallationKey())
+                using (var installationKey = new StockRoom11net.Controls.FirstInstallationSetting.InstallationKey())
                 {
                     installationKey.TopMost = true;
                     installationKey.ShowDialog();
@@ -1241,7 +1244,7 @@ namespace StockRoom11net
             if (treeViewApplicationsSetting.SelectedNode == null)
                 return;
 
-            if (CurrentEmployeesLogIn.EmployeeAccessLevel > MyCode.AccessLevel.Administrator)
+            if (CurrentEmployeesLogIn.EmployeeAccessLevel > Utilities.AccessLevel.Administrator)
             {
                 if (treeViewApplicationsSetting.SelectedNode.Text.Contains("USB Device Utility"))
                     if (Recognized_Devices_System.Count > 0)
@@ -2462,29 +2465,29 @@ namespace StockRoom11net
             InitializeDocumentsAddressGroup();
 
             MessagePositionString = @"DocumentationBehavior switch";
-            switch ((MyCode.DocumentationBehavior)Settings.Default.DocumentationBehavior)
+            switch ((Utilities.DocumentationBehavior)Settings.Default.DocumentationBehavior)
             {
-                case MyCode.DocumentationBehavior.SpecifiedDocument:
+                case Utilities.DocumentationBehavior.SpecifiedDocument:
                     {
                         radioButton_SpecifiedDocument.Checked = true;
                         break;
                     }
-                case MyCode.DocumentationBehavior.LastRevision:
+                case Utilities.DocumentationBehavior.LastRevision:
                     {
                         radioButton_LastRevision.Checked = true;
                         break;
                     }
-                case MyCode.DocumentationBehavior.AllVersionsFound:
+                case Utilities.DocumentationBehavior.AllVersionsFound:
                     {
                         radioButton_AllVersionsFound.Checked = true;
                         break;
                     }
-                case MyCode.DocumentationBehavior.Last2Versions:
+                case Utilities.DocumentationBehavior.Last2Versions:
                     {
                         radioButton_Last2Versions.Checked = true;
                         break;
                     }
-                case MyCode.DocumentationBehavior.NoDocumentsExist:
+                case Utilities.DocumentationBehavior.NoDocumentsExist:
                     {
                         radioButton_NoDocumentsToShow.Checked = true;
                         break;

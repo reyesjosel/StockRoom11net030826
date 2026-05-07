@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.tinyMceEditor = new MyStuff11net.TinyMCE();
+            this.tinyMceEditor = new StockRoom11net.Controls.HTML_Editor.TinyMCE();
             this.SuspendLayout();
             // 
             // tinyMceEditor
@@ -55,6 +55,6 @@
 
         #endregion
 
-        private MyStuff11net.TinyMCE tinyMceEditor;
+        private StockRoom11net.Controls.HTML_Editor.TinyMCE tinyMceEditor;
     }
 }

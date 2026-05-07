@@ -1,10 +1,13 @@
 ﻿using MyStuff11net;
-using MyStuff11net.DataGridViewExtend;
+using StockRoom11net.Controls;
+using StockRoom11net.Controls.ComponentInformations;
+using StockRoom11net.Controls.DataGridViewExtend;
+using StockRoom11net.Controls.ResourcesCache;
 using System.Data;
-using CellDoubleClick_EventArgs = MyStuff11net.Custom_Events_Args.CellDoubleClick_EventArgs;
-using CurrentRowActive_EventArgs = MyStuff11net.Custom_Events_Args.CurrentRowActive_EventArgs;
-using DataGridViewMouseEnterEventArgs = MyStuff11net.Custom_Events_Args.DataGridViewMouseEnterEventArgs;
-using Save_Requested_EventArgs = MyStuff11net.Custom_Events_Args.Save_Requested_EventArgs;
+using CellDoubleClick_EventArgs = StockRoom11net.Controls.Custom_Events_Args.CellDoubleClick_EventArgs;
+using CurrentRowActive_EventArgs = StockRoom11net.Controls.Custom_Events_Args.CurrentRowActive_EventArgs;
+using DataGridViewMouseEnterEventArgs = StockRoom11net.Controls.Custom_Events_Args.DataGridViewMouseEnterEventArgs;
+using Save_Requested_EventArgs = StockRoom11net.Controls.Custom_Events_Args.Save_Requested_EventArgs;
 
 
 namespace StockRoom11net
@@ -150,7 +153,7 @@ namespace StockRoom11net
 
             }
                      
-            ProcessInput(MyCode.ProcessMode.Adjust);
+            ProcessInput(Utilities.ProcessMode.Adjust);
 
         }
 
@@ -191,7 +194,7 @@ namespace StockRoom11net
                 return;
             }
 
-            var dict = MyCode.GetDict(currentRowview["Who_uses_this"].ToString());
+            var dict = Utilities.GetDict(currentRowview["Who_uses_this"].ToString());
 
             information = headtext + headline;
 
@@ -313,7 +316,7 @@ namespace StockRoom11net
             float maxSpace = 0;
 
             int padRight = 0;
-            var dict = MyCode.GetDict(stringToDescription);
+            var dict = Utilities.GetDict(stringToDescription);
 
             foreach (KeyValuePair<string, int> inf in dict)
             {
@@ -406,7 +409,7 @@ namespace StockRoom11net
             if (CellDoubleClick_Args.ComponentInformations == null)
                 return;
 
-            ProcessInput(MyCode.ProcessMode.Receive);
+            ProcessInput(Utilities.ProcessMode.Receive);
         }
 
         #region"DataGridViewExtended" 
@@ -430,15 +433,15 @@ namespace StockRoom11net
             Update_Description(e.CurrentRowActive);
 
             //Inicializo el sistema para Adjust Inventory by defauld,
-            CellDoubleClick_Args = new CellDoubleClick_EventArgs(e.CurrentRowActive, MyCode.ProcessMode.Adjust);
+            CellDoubleClick_Args = new CellDoubleClick_EventArgs(e.CurrentRowActive, Utilities.ProcessMode.Adjust);
 
-            ProcessInput(MyCode.ProcessMode.Adjust);
+            ProcessInput(Utilities.ProcessMode.Adjust);
 
         }
 
         void DataGridViewExtended_Save_Requested(object sender, Save_Requested_EventArgs e)
         {
-            On_Save_Requested(new Save_Requested_EventArgs(MyCode.NotificationEvents.DataBaseUpDated));
+            On_Save_Requested(new Save_Requested_EventArgs(Utilities.NotificationEvents.DataBaseUpDated));
         }
 
         public void DataGridViewExtended_CellDoubleClick_Event(object sender, CellDoubleClick_EventArgs e)
@@ -456,7 +459,7 @@ namespace StockRoom11net
 
         #region"Methods concerning Received_CellDoubleClickEvent"
 
-        void ProcessInput(MyCode.ProcessMode value)
+        void ProcessInput(Utilities.ProcessMode value)
         {
             tabPage_Received.SuspendLayout();
             _isReceivedProcess = true;
@@ -478,27 +481,27 @@ namespace StockRoom11net
 
             switch (value)
             {
-                case MyCode.ProcessMode.AddNew:
+                case Utilities.ProcessMode.AddNew:
                     {
-                        _selectedComponet.EditMode = MyCode.EditMode.Delete;
+                        _selectedComponet.EditMode = Utilities.EditMode.Delete;
                         SelectNode();
                         DescriptionResume();
                         AddNewProcess();
 
                         break;
                     }
-                case MyCode.ProcessMode.Receive:
+                case Utilities.ProcessMode.Receive:
                     {
-                        _selectedComponet.EditMode = MyCode.EditMode.View;
+                        _selectedComponet.EditMode = Utilities.EditMode.View;
                         SelectNode();
                         DescriptionResume();
                         ReceivedProcess();
 
                         break;
                     }
-                case MyCode.ProcessMode.Adjust:
+                case Utilities.ProcessMode.Adjust:
                     {
-                        _selectedComponet.EditMode = MyCode.EditMode.View;
+                        _selectedComponet.EditMode = Utilities.EditMode.View;
                         SelectNode();
                         DescriptionResume();
                         AdjustedProcess();
@@ -587,9 +590,9 @@ namespace StockRoom11net
 
                 #region"Mouse position and click, TabIndex order"
 
-                MyCode.MouseUtility.MousePointerPosition(comboBox_PartNumber);
+                Utilities.MouseUtility.MousePointerPosition(comboBox_PartNumber);
 
-                MyCode.MouseUtility.DoMouseClick(MouseButtons.Left);
+                Utilities.MouseUtility.DoMouseClick(MouseButtons.Left);
 
           //      textBox_Received_Quantity.TabIndex = 0;
 
@@ -665,9 +668,9 @@ namespace StockRoom11net
                 _messageString = "Mouse Positions.";
                 #region"Mouse position and click, TabIndex order"
 
-        //        MyCode.MouseUtility.MousePointerPosition(textBox_Received_Quantity);
+        //        Utilities.MouseUtility.MousePointerPosition(textBox_Received_Quantity);
 
-                MyCode.MouseUtility.DoMouseClick(MouseButtons.Left);
+                Utilities.MouseUtility.DoMouseClick(MouseButtons.Left);
 
          //       textBox_Received_Quantity.TabIndex = 0;
 
@@ -803,8 +806,8 @@ namespace StockRoom11net
             if (e.KeyData != Keys.Enter)
                 return;
 
-        //    MyCode.MouseUtility.MousePointerPosition(textBox_Received_Quantity);
-            MyCode.MouseUtility.DoMouseClick(MouseButtons.Left);
+        //    Utilities.MouseUtility.MousePointerPosition(textBox_Received_Quantity);
+            Utilities.MouseUtility.DoMouseClick(MouseButtons.Left);
 
         //    textBox_Received_Quantity.Focus();
         }
@@ -825,8 +828,8 @@ namespace StockRoom11net
 
             printingReferences.QuantityReceived = QuantityReceived;
 
-            MyCode.MouseUtility.MousePointerPosition(comboBox_Manufacturer);
-            MyCode.MouseUtility.DoMouseClick(MouseButtons.Left);
+            Utilities.MouseUtility.MousePointerPosition(comboBox_Manufacturer);
+            Utilities.MouseUtility.DoMouseClick(MouseButtons.Left);
 
             comboBox_Manufacturer.Focus();
         }
@@ -868,7 +871,8 @@ namespace StockRoom11net
 
             printingReferences.QuantityReceived = QuantityReceived;
 
-            MyCode.MouseUtility.MousePointerPosition(button_Adjustment);
+            Utilities.MouseUtility.MousePointerPosition(button_Adjustment);
+            Utilities.MouseUtility.DoMouseClick(MouseButtons.Left);
 
             button_Adjustment.Focus();
         }
@@ -896,7 +900,7 @@ namespace StockRoom11net
             if (e.KeyCode != Keys.Enter)
                 return;
 
-            if (CellDoubleClick_Args.ProcessInfor == MyCode.ProcessMode.Adjust)
+            if (CellDoubleClick_Args.ProcessInfor == Utilities.ProcessMode.Adjust)
                 button_Adjustment.Focus();
         }
 
@@ -942,7 +946,7 @@ namespace StockRoom11net
             _newComponentRow["OnHand"] = QuantityReceived;
             _newComponentRow["OnAvailable"] = QuantityReceived;
 
-            var dict = MyCode.GetDict(_newComponentRow["Reel_Number"].ToString());
+            var dict = Utilities.GetDict(_newComponentRow["Reel_Number"].ToString());
 
             dict.Add("Counter", 1);
             _counter = 1;
@@ -955,7 +959,7 @@ namespace StockRoom11net
 
             dict["Counter"] = _counter;
 
-            string reel_numbers = MyCode.GetString(dict);
+            string reel_numbers = Utilities.GetString(dict);
 
             _newComponentRow["Reel_Number"] = reel_numbers;
 
@@ -966,7 +970,7 @@ namespace StockRoom11net
 
             try
             {
-                On_Save_Requested(new Save_Requested_EventArgs(MyCode.NotificationEvents.DataBaseUpDated));
+                On_Save_Requested(new Save_Requested_EventArgs(Utilities.NotificationEvents.DataBaseUpDated));
             }
             catch (Exception ex)
             {
@@ -974,7 +978,7 @@ namespace StockRoom11net
                                 MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
 
-            ProcessInput(MyCode.ProcessMode.Adjust);
+            ProcessInput(Utilities.ProcessMode.Adjust);
         }
 
         void Button_Received_Click(object sender, EventArgs e)
@@ -1002,7 +1006,7 @@ namespace StockRoom11net
             _currentRow["OnHand"] = Check_is_no_null(_currentRow["OnHand"]) + QuantityReceived;
             _currentRow["OnAvailable"] = Check_is_no_null(_currentRow["OnAvailable"]) + QuantityReceived;
 
-            var dict = MyCode.GetDict(_currentRow["Reel_Number"].ToString());
+            var dict = Utilities.GetDict(_currentRow["Reel_Number"].ToString());
 
             if (dict.ContainsKey("Counter"))
                 ReelsCounter = dict["Counter"];
@@ -1039,7 +1043,7 @@ namespace StockRoom11net
 
             dict["Counter"] = ReelsCounter;
 
-            string reel_numbers = MyCode.GetString(dict);
+            string reel_numbers = Utilities.GetString(dict);
 
             _currentRow["Reel_Number"] = reel_numbers;
 
@@ -1050,7 +1054,7 @@ namespace StockRoom11net
 
             try
             {
-                On_Save_Requested(new Save_Requested_EventArgs(MyCode.NotificationEvents.DataBaseUpDated));
+                On_Save_Requested(new Save_Requested_EventArgs(Utilities.NotificationEvents.DataBaseUpDated));
             }
             catch (Exception ex)
             {
@@ -1114,7 +1118,7 @@ namespace StockRoom11net
 
             try
             {
-                On_Save_Requested(new Save_Requested_EventArgs(MyCode.NotificationEvents.DataBaseUpDated));
+                On_Save_Requested(new Save_Requested_EventArgs(Utilities.NotificationEvents.DataBaseUpDated));
             }
             catch (Exception ex)
             {
@@ -1136,7 +1140,7 @@ namespace StockRoom11net
             rowToSave.EndEdit();
             _bindingSource_tableStockRoom.EndEdit();
 
-            On_Save_Requested(new Save_Requested_EventArgs(MyCode.NotificationEvents.DataBaseUpDated));
+            On_Save_Requested(new Save_Requested_EventArgs(Utilities.NotificationEvents.DataBaseUpDated));
 
             AdjustedProcess();
         }
@@ -1159,7 +1163,7 @@ namespace StockRoom11net
                 label_Received_Date.Text = "Edit Mode";
                 dateTimePicker.Enabled = true;
 
-                _selectedComponet.EditMode = MyCode.EditMode.Edit;
+                _selectedComponet.EditMode = Utilities.EditMode.Edit;
 
                 comboBox_Manufacturer.Enabled = true;
                 comboBox_Model_Number.Enabled = true;

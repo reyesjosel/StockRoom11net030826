@@ -11,62 +11,11 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Serialization;
-using static MyStuff11net.Custom_Events_Args;
 
 namespace MyStuff11net
 {
     public class MyCode
-    {
-        #region"StatusBarMessage"
-
-        // # 1 ... Declare the event in the control class
-        // put some information to Properties Manager.
-        [Category("Controls Events")]
-        [Description("ActiveDataSheet has been changed")]
-        public static event StatusBarMessage_EventHandler StatusBarMessage;
-
-        // # 2 ... ***** New Event Declaration. *****
-        // Declare the delegates for this event:
-        public delegate void StatusBarMessage_EventHandler(object sender, StatusBarMessage_EventArgs e);
-
-        // # 4 ... Declare the protected virtual methods for
-        // this events, in this procedure we calling the event itself.
-        public static void On_StatusBarMessage(StatusBarMessage_EventArgs e)
-        {
-            // If an event has no subscriber registered, it will
-            // evaluate to Null. The test checks that the value
-            // is not null, ensuring that there are subscribers
-            // before calling the event itself.
-
-            // Notify Subscribers
-            StatusBarMessage?.Invoke(new object(), e);
-        }
-
-        #endregion"StatusBarMessage"
-
-        #region"LogFile information"
-
-        // # 1 ... Declare the event in the control class
-        // put some information to Properties Manager.
-        [Category("Controls Events")]
-        [Description("LogFile information are append.")]
-        public static event Custom_Events_Args.LogFileMessageEventHandler LogFileMessage;
-
-        // # 4 ... Declare the protected virtual methods for
-        // this events, in this procedure we calling the event itself.
-        public virtual void On_LogFileMessage(Custom_Events_Args.LogFileMessageEventArgs e)
-        {
-            // If an event has no subscriber registered, it will
-            // evaluate to Null. The test checks that the value
-            // is not null, ensuring that there are subscribers
-            // before calling the event itself.
-
-            // Notify Subscribers
-            LogFileMessage?.Invoke(this, e);
-        }
-
-        #endregion"LogFile information"
-
+    {      
         #region"Dictionary Dynamic Initialization"
 
         //public Dictionary<string,Icon>
@@ -1103,7 +1052,7 @@ namespace MyStuff11net
             return (T)Enum.Parse(typeof(T), value, ignoreCase: true);
         }
 
-        /// <summary>
+                 /// <summary>
         /// How parse a string to enum value.
         /// </summary>
         public void UseParseEnum()
@@ -1230,7 +1179,6 @@ namespace MyStuff11net
         #endregion"Initialize ToolTip"
 
         #region"if else them"
-
         private void IF_else_Them()
         {
             int a = 1;
@@ -2526,379 +2474,7 @@ namespace MyStuff11net
 
         #endregion"Table.Compute funtion"
 
-        #region"Getting and Setting the Mouse Position and Clicking the Mouse."
-
-        public class MouseUtility
-        {
-            /// <summary>
-            /// Struct representing a point. 
-            /// </summary>
-            [StructLayout(LayoutKind.Sequential)]
-            public struct POINT
-            {
-                public int X;
-                public int Y;
-                public static implicit operator Point(POINT point)
-                {
-                    return new Point(point.X, point.Y);
-                }
-            }
-
-            /// <summary>
-            /// Retrieves the cursor's position, in screen coordinates.
-            /// </summary>
-            /// <see>See MSDN documentation for further information.</see>
-            [DllImport("user32.dll")]
-            public static extern bool GetCursorPos(out POINT lpPoint);
-            public static Point GetCursorPosition()
-            {
-                POINT lpPoint;
-                GetCursorPos(out lpPoint);
-                //bool success = User32.GetCursorPos(out lpPoint);
-                // if (!success)
-                return lpPoint;
-            }
-
-
-            /// <summary>
-            /// Sets the cursor position to the location of the control.
-            /// </summary>
-            public static void MousePointerPosition(Control value)
-            {
-                var _TopParent = value.Parent;
-
-                int Xposition = value.Location.X;
-
-                int Yposition = value.Location.Y;
-
-                while (_TopParent != null)
-                {
-                    if (_TopParent.Location.X > 0)
-                        Xposition += _TopParent.Location.X;
-
-                    if (_TopParent.Location.Y > 0)
-                        Yposition += _TopParent.Location.Y;
-
-                    _TopParent = _TopParent.Parent;
-
-                }
-
-                Xposition += 20;
-                Yposition += 45;
-
-                Cursor.Position = new Point(Xposition, Yposition);
-
-            }
-
-            /// <summary>
-            /// Set the mouse pointer in the center of this control.
-            /// </summary>
-            /// <param name="control_ref"></param>
-            public static void MousePointerPositionToCenterOf(Control control_ref)
-            {
-                Point sendMouseto = control_ref.PointToScreen(control_ref.Location);
-
-                int control_X_centrer = control_ref.Width / 2;
-                int control_Y_centrer = control_ref.Height / 2;
-
-                sendMouseto.X += control_X_centrer;
-                sendMouseto.Y -= 24;
-
-                Cursor.Position = sendMouseto;
-
-            }
-
-            /// <summary>
-            /// Sets the cursor position to the location of the control.
-            /// Plus X and Y offset.
-            /// </summary>
-            public static void MousePointerPosition(Control control_ref, int x, int y)
-            {
-                Point sendMouseto = control_ref.PointToScreen(control_ref.Location);
-
-                int control_X_centrer = control_ref.Height / 2;
-                int control_Y_centrer = control_ref.Width / 2;
-
-                sendMouseto.X += control_X_centrer + x;
-                sendMouseto.Y += control_Y_centrer + y;
-
-                Cursor.Position = sendMouseto;
-
-            }
-
-            /// <summary>
-            /// This funtion allows us to click the mouse.
-            /// </summary>
-            // this allows us to make a call to the native user32 dll
-            [DllImport("user32.dll")]
-            public static extern void mouse_event(int dwFlags, int dx, int dy, int cButtons, int dwExtraInfo);
-
-            [DllImport("user32.dll")]
-            public static extern IntPtr GetMessageExtraInfo();
-
-            [DllImport("user32.dll")]
-            public static extern bool CloseWindow(IntPtr iHandle);
-
-            #region"Luke Quinane answer modif."
-
-            public enum InputType : int
-            {
-                Mouse = 0,
-                Keyboard = 1,
-                Hardware = 2
-            };
-
-            public enum MouseFlags : uint
-            {
-                Move = 0x0001,     // MouseEventF_Move - Specifies that movement occurred.
-                LeftDown = 0x0002,     // MouseEventF_LeftDown -Specifies that the left button was pressed.
-                LeftUp = 0x0004,     // MouseEventF_LeftUp - Specifies that the left button was released.
-                RightDown = 0x0008,     // MouseEventF_RightDown - Specifies that the right button was pressed.
-                RightUp = 0x0010,     // MouseEventF_Rightup - Specifies that the right button was released.
-                Absolute = 0x8000,     // MouseEventF_Absolute - Specifies that the dx and dy members contain
-                                       // normalized absolute coordinates. If the flag is not set, dx and dy contain
-                                       // relative data ( the change position since the last reported position. ) This
-                                       // flag can be set or nor set, regardless of what kind of mouse or other pointing
-                                       // device, if any, is conected to the system.
-                Wheel = 0x0080,     // MouseEventF_Wheel - Windows NT/2000/XP - Specifies that the wheel was moved, if
-                                    // the mouse has a wheel. The amount of movement is spacified in mouseData.
-                MiddleDow = 0x0020,     // MouseEventF_MiddleDow - Specifies that the middle button was pressed.
-                MiddleUp = 0x0040,     // MouseEventF_MiddleUp - Specifies that the middle button was released;
-                VirtualDesk = 0x4000,     // MouseEventF_VirtualDesk - Windows 2000/XP - Maps coordinates to the entire
-                                          // desktop. Must be used with MouseEventF_Absolute.
-                XDows = 0x0080,     // MouseEventF_XDown - Specifies that an X button was pressed.
-                XUp = 0x0100,     // MouseEventF_XDown - Specifies that an X button was released.
-                HWheel = 0x1000,     // MouseEventF_HWheel - Windows Vista - Specifies that the wheel was moved
-                                     // horizontally, if the mouse has a wheel. The amount movement is specified in mouseData.
-            };
-
-            public enum VirtualKeyBoard : ushort
-            {
-                Shift = 0x10,
-                Control = 0x11,
-                Menu = 0x12,
-                Escape = 0x1B,
-            }
-
-            [DllImport("user32.dll", SetLastError = true)]
-            public static extern uint SendInput(uint cInputs, INPUT[] input, int size);
-
-            [StructLayout(LayoutKind.Sequential)]
-            public struct MouseInput
-            {
-                int dx;                     // 0 - 65535
-                int dy;                     // 0 - 65535
-                int mouseData;              // if dwFlags = MouseEventF_Wheel or MouseEventf_HWheel, then mouseData specifies the amount of wheel movement.
-                                            // +/- multiples of Wheel_Delta which is 20.
-                public MouseFlags dwFlags;  // Specifies MouseEventF.
-                uint time;                  // Time stamp for the event, in milliseconds. If this parameter is 0, the system will provide its own time stamp.
-                IntPtr dwExtraInfo;         // specifies an additional value with the mouse event.An application calls
-                                            // GetMessageExtraInfo to obtain this extra informatio.
-
-                public MouseInput(MouseFlags flags)
-                {
-                    dx = 0;
-                    dy = 0;
-                    mouseData = 0;
-                    time = 0;
-                    dwExtraInfo = GetMessageExtraInfo();
-                    dwFlags = flags;
-                }
-
-                public MouseInput(int dx, int dy, MouseFlags flags)
-                {
-                    dx = dx;
-                    dy = dy;
-                    mouseData = 0;
-                    time = 0;
-                    dwExtraInfo = GetMessageExtraInfo();
-                    dwFlags = flags;
-                }
-
-                public MouseInput(int mouseScroll)
-                {
-                    dx = 0;
-                    dy = 0;
-                    mouseData = 120 * mouseScroll;  // Mouse_Delta = 120
-                    time = 0;
-                    dwExtraInfo = GetMessageExtraInfo();
-                    dwFlags = MouseFlags.Wheel;
-                }
-            }
-
-            [StructLayout(LayoutKind.Sequential)]
-            public struct KeyboardInput
-            {
-                public VirtualKeyBoard wVK;
-                public ushort wScan;
-                public uint dwFlags;
-                public uint time;
-                public IntPtr dwExtraInfo;
-            }
-
-            [StructLayout(LayoutKind.Sequential)]
-            public struct HardwareInput
-            {
-                public uint uMsg;
-                public ushort wParamL;
-                public ushort wParamH;
-            }
-
-            [StructLayout(LayoutKind.Explicit)]
-            public struct INPUT
-            {
-                [FieldOffset(0)]
-                public InputType InputDevice;
-
-                [FieldOffset(4)]
-                public MouseInput InputMouse;
-
-                [FieldOffset(4)]
-                public KeyboardInput InputKeyBoard;
-
-                [FieldOffset(4)]
-                public HardwareInput InputHardware;
-
-                public INPUT(MouseInput inputmouse)
-                {
-                    InputDevice = InputType.Mouse;
-                    InputKeyBoard = new KeyboardInput();
-                    InputHardware = new HardwareInput();
-                    InputMouse = inputmouse;
-                }
-            }
-
-            public static void DoMouseClick(MouseButtons my_mouseButton)
-            {
-                /*
-
-                INPUT[] i = new INPUT[3];
-                i[0] = new INPUT(new MouseInput(0, 0, MouseFlags.Move | MouseFlags.Absolute));
-                i[1] = new INPUT(new MouseInput(MouseFlags.LeftDown));
-                i[2] = new INPUT(new MouseInput(MouseFlags.LeftUp));
-
-                if (SendInput(3, i, Marshal.SizeOf(i[0])) == 0)
-                    throw new Exception();
-                 */
-
-                INPUT[] i = new INPUT[2];
-                i[0] = new INPUT(new MouseInput(MouseFlags.LeftDown));
-                i[1] = new INPUT(new MouseInput(MouseFlags.LeftUp));
-
-                if (SendInput(2, i, Marshal.SizeOf(i[0])) == 0)
-                    throw new Exception();
-            }
-
-            public static void DoMouseClick(int x, int y, MouseButtons my_mouseButton)
-            {
-                //  INPUT[] i = new INPUT[3];
-                //  i[0] = new INPUT(new MouseInput(x, y, MouseFlags.Move));
-                //  i[1] = new INPUT(new MouseInput(MouseFlags.LeftDown));
-                //  i[2] = new INPUT(new MouseInput(MouseFlags.LeftUp));
-
-                INPUT[] i = new INPUT[2];
-                i[0] = new INPUT(new MouseInput(MouseFlags.LeftDown));
-                i[1] = new INPUT(new MouseInput(MouseFlags.LeftUp));
-
-                if (SendInput(2, i, Marshal.SizeOf(i[0])) == 0)
-                    throw new Exception();
-            }
-
-            public static void DoMouseDoubleClick(MouseButtons my_mouseButton)
-            {
-                DoMouseClick(my_mouseButton);
-                DoMouseClick(my_mouseButton);
-            }
-
-            #endregion"Luke Quinane answer modif."
-
-            private static int MouseButtonDow(MouseButtons my_mouseButton)
-            {
-                switch (my_mouseButton)
-                {
-                    case System.Windows.Forms.MouseButtons.Left:
-                        {
-                            return 0x02;
-                        }
-                    case System.Windows.Forms.MouseButtons.Right:
-                        {
-                            return 0x08;
-                        }
-                    case System.Windows.Forms.MouseButtons.Middle:
-                        {
-                            return 0x20;
-                        }
-                    case System.Windows.Forms.MouseButtons.None:    // Absolute
-                        {
-                            return 0x8000;
-                        }
-                    case System.Windows.Forms.MouseButtons.XButton1:
-                        {
-                            return 0x021;
-                        }
-                    case System.Windows.Forms.MouseButtons.XButton2:
-                        {
-                            return 0x024;
-                        }
-                    //  case System.Windows.Forms.MouseButtons.Move:
-                    //      {
-                    //          return 0x1;
-                    //      }
-                    default:
-                        return 0;
-                }
-                ;
-
-            }
-
-            private static int MouseButtonUp(MouseButtons my_mouseButton)
-            {
-                switch (my_mouseButton)
-                {
-                    case System.Windows.Forms.MouseButtons.Left:
-                        {
-                            return 0x04;
-                        }
-                    case System.Windows.Forms.MouseButtons.Right:
-                        {
-                            return 0x10;
-                        }
-                    case System.Windows.Forms.MouseButtons.Middle:
-                        {
-                            return 0x40;
-                        }
-                    case System.Windows.Forms.MouseButtons.None: // Absolute
-                        {
-                            return 0x8000;
-                        }
-                    case System.Windows.Forms.MouseButtons.XButton1:
-                        {
-                            return 0x023;
-                        }
-                    case System.Windows.Forms.MouseButtons.XButton2:
-                        {
-                            return 0x026;
-                        }
-                    default:
-                        return 0;
-                }
-                ;
-
-            }
-
-            public static void DoMouseDow(MouseButtons my_mouseButton)
-            {
-                mouse_event(MouseButtonDow(my_mouseButton), 0, 0, 0, 0);
-            }
-
-            public static void DoMouseUp(MouseButtons my_mouseButton)
-            {
-                mouse_event(MouseButtonUp(my_mouseButton), 0, 0, 0, 0);
-            }
-        }
-
-        #endregion"Getting and Setting the Mouse Position and Clicking the Mouse."
-
+       
         #region"Pausing Timer loop until something is not finished."
 
         public static System.Timers.Timer _timer;
@@ -3160,7 +2736,7 @@ namespace MyStuff11net
         private AccessLevel EmployeeAccessLevel = MyCode.AccessLevel.User;
         private EditMode EmployeeEditMode = MyCode.EditMode.View;
         private EnableSetting EmployeeEnableTreeViewsetting = MyCode.EnableSetting.False;
-
+        /*
         private Employee _currentEmployeesLogIn;
 
         public void CurrentUserBroadcast_EventHandler(object sender, Employee e)
@@ -3178,7 +2754,7 @@ namespace MyStuff11net
 
             // dataGridViewExtended_Inventory.CurrentEmployeesLogIn = e;
         }
-
+        */
         #endregion"CurrentUserBroadcast, Properties and fiels used in LogIn employees."
 
         #region"Count number of occurrences of a character in a string"
@@ -3349,19 +2925,19 @@ namespace MyStuff11net
         #region"LinQ, utile uses"
 
         /// <summary>
-        /// This LinQ expression select all controls filterConditon whit FilterControlIndex >= indexFilterControl;
+        /// This LinQ expression select all controls filterConditon with FilterControlIndex >= indexFilterControl;
         /// </summary>
         private static void DeletedControls(int indexFilterControl)
         {
             Panel panelFilterConditions = new Panel();
 
-            List<FilterCondition> toDeleted = panelFilterConditions.Controls.OfType<FilterCondition>().Where
-                                    (filterConditon => filterConditon.FilterControlIndex >= indexFilterControl).ToList();
+         //   List<FilterCondition> toDeleted = panelFilterConditions.Controls.OfType<FilterCondition>().Where
+         //                           (filterConditon => filterConditon.FilterControlIndex >= indexFilterControl).ToList();
 
-            foreach (FilterCondition filterConditiontoDeletes in toDeleted)
-            {
-                panelFilterConditions.Controls.Remove(filterConditiontoDeletes);
-            }
+         //   foreach (FilterCondition filterConditiontoDeletes in toDeleted)
+         //   {
+         //       panelFilterConditions.Controls.Remove(filterConditiontoDeletes);
+         //   }
         }
 
         //Return the top 10 most frequently occurring words in a string.
@@ -3524,54 +3100,7 @@ namespace MyStuff11net
 
 
 
-        #region"DataView, RowFilter"
-
-        /// <summary>
-        /// If a pattern in a LIKE clause contains any of these special characters * % [ ],
-        /// <para></para>
-        /// those characters must be escaped in brackets [ ] like this [*], [%], [[] or []].
-        /// </summary>
-        /// <param name="valueWithoutWildcards"></param>
-        /// <returns></returns>
-        public static string EscapeLikeValue(string valueWithoutWildcards)
-        {
-            StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < valueWithoutWildcards.Length; i++)
-            {
-                char c = valueWithoutWildcards[i];
-                if (c == '*' || c == '%' || c == '[' || c == ']')
-                    sb.Append("[").Append(c).Append("]");
-                else if (c == '\'')
-                    sb.Append("''");
-                else
-                    sb.Append(c);
-            }
-            return sb.ToString();
-        }
-
-        /// <summary>
-        /// If a column name contains any of these special characters ~ ( ) # \ / = > + - * % | ^ ' " [ ],
-        /// <para></para>
-        /// you must enclose the column name within square brackets [ ].
-        /// <para></para>
-        /// If a column name contains right bracket ] or backslash \, escape it with backslash (\] or \\).
-        /// </summary>
-        public void ColumnNameException()
-        {
-            // special characters < and & cant' not be in XML.
-            //If a column name contains any of these special characters ~ ( ) # \ / = > < + - * % & | ^ ' " [ ],
-            //you must enclose the column name within square brackets [ ].
-            //If a column name contains right bracket ] or backslash \, escape it with backslash (\] or \\).
-
-            DataView dataView = new DataView();
-
-            dataView.RowFilter = "id = 10";      // no special character in column name "id"
-            dataView.RowFilter = "$id = 10";     // no special character in column name "$id"
-            dataView.RowFilter = "[#id] = 10";   // special character "#" in column name "#id"
-            dataView.RowFilter = "[[id\\]] = 10"; // special characters in column name "[id]"
-        }
-
-        #endregion"DataView, RowFilter"
+       
 
         #region"Valid File.Ext in image or picture file"
 
@@ -4182,14 +3711,7 @@ namespace MyStuff11net
 
 
 
-        const int ERROR_SHARING_VIOLATION = 32;
-        const int ERROR_LOCK_VIOLATION = 33;
-
-        public static bool IsFileLocked(Exception exception)
-        {
-            int errorCode = Marshal.GetHRForException(exception) & ((1 << 16) - 1);
-            return errorCode == ERROR_SHARING_VIOLATION || errorCode == ERROR_LOCK_VIOLATION;
-        }
+        
 
 
         /*Indeed, endianness is your issue here. While not difficult to work around,
@@ -4289,29 +3811,7 @@ namespace MyStuff11net
              */
         }
 
-        /// <summary>
-        /// Extract the string Text front the filter, this have to be
-        /// "PartNumber Like '*044-34*'", the '----' most be present.
-        /// </summary>
-        /// <param name="filter"></param>
-        /// <returns></returns>
-        public static string GetTextfrontFilter(string filter)
-        {
-            if (filter == null)
-                return "";
-
-            if (!(filter.Contains("'")))
-                return "";
-
-            int _starIndex = filter.IndexOf('\'') + 1;
-            int _lengt = filter.LastIndexOf('\'') - _starIndex;
-
-            filter = filter.Substring(_starIndex, _lengt);
-            filter = filter.Replace("*", "");
-
-            return filter.Trim();
-        }
-
+        
         /// <summary>
         /// How add columns to dataGridView.
         /// </summary>
@@ -4346,23 +3846,23 @@ namespace MyStuff11net
 
             //      dataGridView1.Rows.Add(new object[] { "Visible", false, false, false });
 
-            ColumnSetting columnsetting = new ColumnSetting();
+        //    ColumnSetting columnsetting = new ColumnSetting();
             DataGridView dataGridView1 = new DataGridView();
 
-            foreach (var property in columnsetting.GetType().GetProperties())
-            {
+         //   foreach (var property in columnsetting.GetType().GetProperties())
+         //   {
                 //  Console.WriteLine("{0}={1}", property.Name, property.GetValue(columnsetting, null));
 
-                if (property.Name == "Name")
-                    continue;
+         //       if (property.Name == "Name")
+         //           continue;
 
-                int rowIndex = dataGridView1.Rows.Add();
-                DataGridViewRow row = dataGridView1.Rows[rowIndex];
-                row.Cells[0].Value = property.Name;
-                row.Cells[1].Value = property.GetValue(columnsetting, null);
-                row.Cells[2].Value = true;
+        //        int rowIndex = dataGridView1.Rows.Add();
+         //       DataGridViewRow row = dataGridView1.Rows[rowIndex];
+         //       row.Cells[0].Value = property.Name;
+         //       row.Cells[1].Value = property.GetValue(columnsetting, null);
+         //       row.Cells[2].Value = true;
 
-            }
+         //   }
 
 
         }
