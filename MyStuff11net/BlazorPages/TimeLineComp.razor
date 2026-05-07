@@ -1,7 +1,8 @@
 ﻿@page "/timeline"
 @using Microsoft.JSInterop
 @inject IJSRuntime JSRuntime
-@inject AppService AppService
+
+@* @inject AppService AppService *@
 
 <TimeLineHelper 
 @ref="TimeLineHelper"
@@ -72,8 +73,8 @@ MouseMove="MouseMove">
     /// OnInitialize we add event handlers to the AppService.MessageReceived event.
     protected override void OnInitialized()
     {
-        AppService.MessageReceived += HandleMessage;
-        AppService.UpDateTimeLineEvent += UpDateData;
+      //  AppService.MessageReceived += HandleMessage;
+      //  AppService.UpDateTimeLineEvent += UpDateData;
     }
 
     /// <summary>
@@ -96,6 +97,6 @@ MouseMove="MouseMove">
 
     public void Dispose()
     {
-        AppService.MessageReceived -= HandleMessage;
+      //  AppService.MessageReceived -= HandleMessage;
     }
 } 

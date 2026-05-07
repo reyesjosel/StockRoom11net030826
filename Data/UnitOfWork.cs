@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
+using StockRoom11net.Data.Entities;
 using StockRoom11net.Data.Repositories;
+using StockRoom11net.Data.Services;
 
 namespace StockRoom11net.Data;
 
@@ -12,8 +14,11 @@ public interface IUnitOfWork : IDisposable
 {
     // Repository properties
     IStockRoomRepository StockRooms { get; }
-    IRepository<TimeLine> TimeLines { get; }
-    
+    ITableTimeLineRepository TableTimeLines { get; }
+    ITableTimeLineTreeViewRepository TableTimeLineTreeViews { get; }
+
+    ITableStockRoomTreeViewRepository TableStockRoomTreeViews { get; }
+
     // Save changes methods
     Task<int> CompleteAsync();
     Task<int> SaveChangesAsync(); // ✅ Add this alias
@@ -28,7 +33,11 @@ public class UnitOfWork : IUnitOfWork
 {
     private readonly ProductionInventoryContext _context;
     private IStockRoomRepository? _stockRooms;
-    private IRepository<TimeLine>? _timeLines;
+    private ITableStockRoomTreeViewRepository? _tableStockRoomTreeViews;
+
+    private ITableTimeLineRepository? _tableTimeLines;
+    private ITableTimeLineTreeViewRepository? _tableTimeLineTreeViews;
+
     private IDbContextTransaction? _currentTransaction;
 
     public UnitOfWork(ProductionInventoryContext context)
@@ -41,10 +50,22 @@ public class UnitOfWork : IUnitOfWork
         get { return _stockRooms ??= new StockRoomRepository(_context); }
     }
 
-    public IRepository<TimeLine> TimeLines
+    public ITableTimeLineRepository TableTimeLines
     {
-        get { return _timeLines ??= new Repository<TimeLine>(_context); }
+        get { return _tableTimeLines ??= new TableTimeLineRepository(_context); }
     }
+
+    public ITableTimeLineTreeViewRepository TableTimeLineTreeViews
+    {
+        get { return _tableTimeLineTreeViews ??= new TableTimeLineTreeViewRepository(_context); }
+    }
+
+    public ITableStockRoomTreeViewRepository TableStockRoomTreeViews
+    {
+        get { return _tableStockRoomTreeViews ??= new TableStockRoomTreeViewRepository(_context); }
+    }
+
+    public IDbContextTransaction? CurrentTransaction => _currentTransaction;
 
     /// <summary>
     /// Saves all changes made in this unit of work to the database

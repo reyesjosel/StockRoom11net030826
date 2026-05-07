@@ -1,4 +1,6 @@
 ﻿using MyStuff11net;
+using StockRoom11net.Controls.ComponentInformations;
+using StockRoom11net.Controls.TabControl.Control;
 
 namespace StockRoom11net
 {
@@ -66,7 +68,7 @@ namespace StockRoom11net
             button_Edit = new Button();
             button_Add_Other = new Button();
             panel_ComponentControl = new Panel();
-            printingReferences = new PrintingReferences();
+            printingReferences = new StockRoom11net.Controls.ZPL2_ZebraPrint.PrintingReferences();
             panel6 = new Panel();
             resistor1 = new Resistor();
             grouper_ComponentProperties = new CodeVendor.Controls.Grouper();
@@ -921,7 +923,7 @@ namespace StockRoom11net
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripMenuItem ToolStripMenuItem_ExpandAll;
         private System.Windows.Forms.ToolStripMenuItem ToolStripMenuItem_CollaseAll;
-        private MyStuff11net.FATabStripItem faTabStripItem3;
+        private StockRoom11net.Controls.TabControl.Control.FATabStripItem faTabStripItem3;
         private System.Windows.Forms.CustomTabControl customTabControl_Received;
         private System.Windows.Forms.TabPage tabPage_Received;
         private System.Windows.Forms.TabPage tabPage_Graphics;
@@ -948,7 +950,7 @@ namespace StockRoom11net
         private System.Windows.Forms.ImageList imageList1;
         private System.Windows.Forms.BindingSource _bindingSource_table_StockroomTreeView;
         private System.Windows.Forms.BindingSource _bindingSource_tableStockRoom;
-        private MyStuff11net.PrintingReferences printingReferences;
+        private StockRoom11net.Controls.ZPL2_ZebraPrint.PrintingReferences printingReferences;
         private CodeVendor.Controls.Grouper grouper_ManufacturerProperties;
         private CodeVendor.Controls.Grouper grouper_ComponentProperties;
         private System.Windows.Forms.Control control1;
@@ -964,7 +966,7 @@ namespace StockRoom11net
         private System.Windows.Forms.Panel panel_LabelsComponentsProperties;
         private System.Windows.Forms.Panel panel_LabelsManufacturerProperties;
         private System.Windows.Forms.Panel panel_ComponentControl;
-        private MyStuff11net.Resistor resistor1;
+        private StockRoom11net.Controls.ComponentInformations.Resistor resistor1;
         private Panel panel1;
         private Panel panel2;
         private Panel panel3;

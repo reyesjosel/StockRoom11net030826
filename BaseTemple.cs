@@ -1,26 +1,27 @@
-﻿using MyStuff11net;
-using MyStuff11net.DataGridViewExtend;
+﻿using StockRoom11net.Controls;
+using StockRoom11net.Controls.DataGridViewExtend;
+using StockRoom11net.Controls.ResourcesCache;
+using StockRoom11net.Controls.ThumbViewer;
+using StockRoom11net.Data.Entities;
 using System.ComponentModel;
 using System.Data;
 using WinFormsUI.Docking;
-using ActiveDataSheet_EventArgs = MyStuff11net.Custom_Events_Args.ActiveDataSheet_EventArgs;
-using CellDoubleClick_EventArgs = MyStuff11net.Custom_Events_Args.CellDoubleClick_EventArgs;
-using CurrentDeptUserBroadcast_EventArgs = MyStuff11net.Custom_Events_Args.CurrentDeptUserBroadcast_EventArgs;
-using CurrentStatus = MyStuff11net.CurrentStatus;
-using DepartmentInformation = MyStuff11net.DepartmentInformation;
-using Employee = MyStuff11net.Employee;
-using LogFileMessageEventArgs = MyStuff11net.Custom_Events_Args.LogFileMessageEventArgs;
-using MyCode = MyStuff11net.MyCode;
-using Need_SaveData_EventArgs = MyStuff11net.Custom_Events_Args.Need_SaveData_EventArgs;
-using Notification = MyStuff11net.Notification;
-using Refresh_Requested_EventArgs = MyStuff11net.Custom_Events_Args.Refresh_Requested_EventArgs;
-using Save_Requested_EventArgs = MyStuff11net.Custom_Events_Args.Save_Requested_EventArgs;
-using SaveSettingEventArgs = MyStuff11net.Custom_Events_Args.SaveSettingEventArgs;
-using SpeechSynthesizerBase_EventArgs = MyStuff11net.Custom_Events_Args.SpeechSynthesizerBase_EventArgs;
-using SpeechSynthesizerBase_EventHandler = MyStuff11net.Custom_Events_Args.SpeechSynthesizerBase_EventHandler;
-using StatusBarMessage_EventArgs = MyStuff11net.Custom_Events_Args.StatusBarMessage_EventArgs;
-using TreeViewUpdateEventArgs = MyStuff11net.Custom_Events_Args.TreeViewUpdateEventArgs;
-
+using ActiveDataSheet_EventArgs = StockRoom11net.Controls.Custom_Events_Args.ActiveDataSheet_EventArgs;
+using CellDoubleClick_EventArgs = StockRoom11net.Controls.Custom_Events_Args.CellDoubleClick_EventArgs;
+using CurrentDeptUserBroadcast_EventArgs = StockRoom11net.Controls.Custom_Events_Args.CurrentDeptUserBroadcast_EventArgs;
+using CurrentStatus = StockRoom11net.Controls.CurrentStatus;
+using DepartmentInformation = StockRoom11net.Controls.EmployeeInformation.DepartmentInformation;
+using Employee = StockRoom11net.Controls.EmployeeInformation.Employee;
+using LogFileMessageEventArgs = StockRoom11net.Controls.Custom_Events_Args.LogFileMessageEventArgs;
+using MyCode = StockRoom11net.Controls.Utilities;
+using Need_SaveData_EventArgs = StockRoom11net.Controls.Custom_Events_Args.Need_SaveData_EventArgs;
+using Notification = StockRoom11net.Controls.Notification;
+using Refresh_Requested_EventArgs = StockRoom11net.Controls.Custom_Events_Args.Refresh_Requested_EventArgs;
+using Save_Requested_EventArgs = StockRoom11net.Controls.Custom_Events_Args.Save_Requested_EventArgs;
+using SaveSettingEventArgs = StockRoom11net.Controls.Custom_Events_Args.SaveSettingEventArgs;
+using SpeechSynthesizerBase_EventArgs = StockRoom11net.Controls.Custom_Events_Args.SpeechSynthesizerBase_EventArgs;
+using SpeechSynthesizerBase_EventHandler = StockRoom11net.Controls.Custom_Events_Args.SpeechSynthesizerBase_EventHandler;
+using StatusBarMessage_EventArgs = StockRoom11net.Controls.Custom_Events_Args.StatusBarMessage_EventArgs;
 
 namespace StockRoom11net
 {
@@ -28,13 +29,13 @@ namespace StockRoom11net
     /// This is the base class for applications, these develop one aim, one purpose,
     /// example: Stockroom Inventory, Stockroom Received.
     /// </summary>
-    public partial class BaseTemple : DockContent
+    public partial class BaseTemple : DockContent, IDiagnosticBase
     {
         public BaseTemple()
         {
             try
             {
-                MessagePositionString = "constructor method";
+                MessageDebugPosition = "constructor method";
                 InitializeComponent();
 
                 AutoScaleMode = AutoScaleMode.Dpi;
@@ -47,12 +48,13 @@ namespace StockRoom11net
                 using (var form = new Form { TopMost = true })
                 {
                     MessageBox.Show(form, @"Message related to this error is " + error.Message,
-                                          @"BaseTemple has generated an error at " + MessagePositionString,
+                                          @"BaseTemple has generated an error at " + MessageDebugPosition,
                                           MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }
 
+        
         private string m_fileName = string.Empty;
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public string FileName
@@ -549,9 +551,12 @@ namespace StockRoom11net
         #endregion"thumbViewerBase"
 
         #region"Properties"
-
+                
+        /// <summary>
+        /// Gets or sets the debug message position.
+        /// </summary>
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public string MessagePositionString { get; set; } = string.Empty;
+        public string MessageDebugPosition { get; set; } = string.Empty;        
 
         /// <summary>
         /// A flags about the visibility state of the dock control,
@@ -594,13 +599,13 @@ namespace StockRoom11net
         /// update on CellClick and CellBegingEdit event.
         /// </summary>
         public DataColumn? _currentColumnActive = new DataColumn();
-        
+
         /// <summary>
-        /// Current rowView active in the dataGridViewExtended_Inventory,
+        /// Current DataRowView active in the dataGridViewExtended_Inventory,
         /// update on CurrentRowActive and MouseEnterEvent event.
         /// </summary>
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public DataRowView? CurrentRowViewActive { get; set; }
+        public DataRowView CurrentRowViewActive { get; set; }
         
         /// <summary>
         /// Current row status active in the dataGridViewExtended_Inventory,
@@ -649,6 +654,24 @@ namespace StockRoom11net
 
         public virtual void ProcessInput(CellDoubleClick_EventArgs cellDoubleClickEventArgs, MyCode.ProcessMode value) { }
 
+        /// <summary>
+        /// The action to execute.<br/>
+        /// <code>
+        /// var action = new Action(() => <br/>
+        /// { <br/>
+        ///     Call some method here, or execute some code, for example: <br/>
+        ///     SettingMode = !_settingMode; <br/>
+        /// }); <br/>
+        /// </code>
+        /// </summary>
+        public Action action;
+
+        /// <summary>
+        /// Executes the specified action on the appropriate thread, marshaling to the UI thread if necessary.
+        /// </summary>
+        /// <remarks>Ensures thread-safe execution by automatically marshaling the call to the UI thread
+        /// when invoked from a worker thread.</remarks>
+        /// <param name="action">The action to execute.</param>
         public void ThreadSafeInvoke(Action action)
         {
             if (InvokeRequired)

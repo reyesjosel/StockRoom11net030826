@@ -1,4 +1,6 @@
 ﻿using MyStuff11net;
+using StockRoom11net.Controls;
+using StockRoom11net.Controls.DataGridViewExtend;
 
 namespace StockRoom11net
 {
@@ -31,7 +33,7 @@ namespace StockRoom11net
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.dataGridViewExtended_ReelRecord = new MyStuff11net.DataGridViewExtend.DataGridViewExtended();
+            this.dataGridViewExtended_ReelRecord = new StockRoom11net.Controls.DataGridViewExtend.DataGridViewExtended();
             this._bindingSource_ReelRecord = new System.Windows.Forms.BindingSource(this.components);
          //   this.reelRecord_DataSet = new StockRoom11net.ReelRecord_DataSet();
             this.splitContainer_CompReelChange = new System.Windows.Forms.SplitContainer();
@@ -79,7 +81,7 @@ namespace StockRoom11net
             this.dataGridViewExtended_ReelRecord.CurrentRowBackgroundColor = System.Drawing.Color.DeepSkyBlue;
             this.dataGridViewExtended_ReelRecord.CurrentRowBorderColor = System.Drawing.Color.DarkBlue;
             this.dataGridViewExtended_ReelRecord.CurrentRowMouseOverStatus = null;
-            this.dataGridViewExtended_ReelRecord.CustomEdit = MyCode.EditMode.View;
+            this.dataGridViewExtended_ReelRecord.CustomEdit = Utilities.EditMode.View;
             this.dataGridViewExtended_ReelRecord.CustomFilter = null;
             this.dataGridViewExtended_ReelRecord.DataGridViewDrawDoubleBuffering = false;
             this.dataGridViewExtended_ReelRecord.DataSource = this._bindingSource_ReelRecord;
@@ -398,7 +400,7 @@ namespace StockRoom11net
 
         #endregion
 
-        private MyStuff11net.DataGridViewExtend.DataGridViewExtended dataGridViewExtended_ReelRecord;
+        private DataGridViewExtended dataGridViewExtended_ReelRecord;
         private System.Windows.Forms.BindingSource _bindingSource_ReelRecord;
         private System.Windows.Forms.SplitContainer splitContainer_CompReelChange;
         private System.Windows.Forms.CustomTabControl tabControl_CompReelChange;

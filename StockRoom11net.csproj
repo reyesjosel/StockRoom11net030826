@@ -37,6 +37,7 @@
   <PropertyGroup>
     <RootNamespace>StockRoom11net</RootNamespace>
     <AssemblyName>StockRoom11net</AssemblyName>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="MyStuff11net\**" />
@@ -111,9 +112,6 @@
     <Reference Include="CodeVendor.Controls">
       <HintPath>D:\My_C#_Example\CodeVendor Grouper\Grouper\bin\Release\net7.0-windows\CodeVendor.Controls.dll</HintPath>
     </Reference>
-    <Reference Include="MyStuff11net">
-      <HintPath>MyStuff11net\bin\Debug\net11.0-windows\MyStuff11net.dll</HintPath>
-    </Reference>
     <Reference Include="ObjectListView">
       <HintPath>D:\My_C#_Example\ObjectListView\ObjectListView-main2022\ObjectListView-main2022\Demo\bin\Release\net8.0-windows\ObjectListView.dll</HintPath>
     </Reference>
@@ -140,16 +138,225 @@
     <Compile Update="BlazorWebAssembly\Components\Pages\CanvasMouseArgs.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Compile>
+    <Compile Update="Controls\BindingSourceExt\BindingSourceExtended.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Controls\BindingSourceExt\BindingSourceValidating.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Controls\ComboBoxExtended\ComboBoxExtended.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Controls\ComponentInformations\Antennas.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Controls\ComponentInformations\BaseComponent.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Controls\ComponentInformations\Cables.cs" />
+    <Compile Update="Controls\ComponentInformations\Capacitors.cs" />
+    <Compile Update="Controls\ComponentInformations\ComponentProperties.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Controls\ComponentInformations\Connectors.cs" />
+    <Compile Update="Controls\ComponentInformations\CoversSheetMetals.cs" />
+    <Compile Update="Controls\ComponentInformations\CristalOscillators.cs" />
+    <Compile Update="Controls\ComponentInformations\Diodes.cs" />
+    <Compile Update="Controls\ComponentInformations\Hardware.cs" />
+    <Compile Update="Controls\ComponentInformations\Heatsink.cs" />
+    <Compile Update="Controls\ComponentInformations\Inductors.cs" />
+    <Compile Update="Controls\ComponentInformations\IntegratedCircuit.cs" />
+    <Compile Update="Controls\ComponentInformations\Labels.cs" />
+    <Compile Update="Controls\ComponentInformations\Leds.cs" />
+    <Compile Update="Controls\ComponentInformations\ManualsWarrantyCards.cs" />
+    <Compile Update="Controls\ComponentInformations\Packaging.cs" />
+    <Compile Update="Controls\ComponentInformations\PCBs.cs" />
+    <Compile Update="Controls\ComponentInformations\Resistors.cs" />
+    <Compile Update="Controls\ComponentInformations\SchematicDiagrams.cs" />
+    <Compile Update="Controls\ComponentInformations\Speakers.cs" />
+    <Compile Update="Controls\ComponentInformations\Switches.cs" />
+    <Compile Update="Controls\ComponentInformations\Transformers.cs" />
+    <Compile Update="Controls\ComponentInformations\Transistors.cs" />
+    <Compile Update="Controls\CustomPanelDoubleBuffered\CustomPanelDoubleBuffered.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Controls\CustomTabControl\CustomTabControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Controls\CustomTabControl\TabStyleProvider.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Controls\CustomTabControl\TabStyleProviders\TabStyleAngledProvider.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Controls\CustomTabControl\TabStyleProviders\TabStyleChromeProvider.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Controls\CustomTabControl\TabStyleProviders\TabStyleDarkProvider.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Controls\CustomTabControl\TabStyleProviders\TabStyleDefaultProvider.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Controls\CustomTabControl\TabStyleProviders\TabStyleIE8Provider.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Controls\CustomTabControl\TabStyleProviders\TabStyleNoneProvider.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Controls\CustomTabControl\TabStyleProviders\TabStyleRoundedProvider.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Controls\CustomTabControl\TabStyleProviders\TabStyleVisualStudioProvider.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Controls\CustomTabControl\TabStyleProviders\TabStyleVS2010Provider.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Controls\DataGridViewExtend\DataGridViewControlExtended.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Controls\DataGridViewExtend\DataGridViewDatailsView.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Controls\DataGridViewExtend\DataGridViewExtended.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Controls\DataGridViewExtend\DataGridViewGrouper.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Controls\DataGridViewExtend\DataGridViewSetting.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Controls\DataGridViewExtend\TextBoxOwnerDraw.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Controls\DataGridViewExtend\ToolStripSpringTextBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Controls\DataGridViewExtend\ToolStripTextBoxOwnerDraw.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Controls\DataGridViewExtend\ToolStripTextBoxOwnerDrawClearFilter.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Controls\DataTreeViewToAdd_Cancel_Delete.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Controls\DocumentationBehavior\DocumentsAddressEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Controls\DocumentationBehavior\DocumentsAddressGroup.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Controls\DocumentationBehavior\DocumentsAddressItem.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Controls\DocumentationBehavior\DocumentsAddressViewer.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Controls\DocumentationBehavior\ScanDocumentsAddressEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Controls\DocumentationBehavior\ScanDocumentsAddressGroup.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Controls\DocumentationBehavior\ScanDocumentsAddressItem.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Controls\FileSystemEnumerator\SearchForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Controls\FileSystemWatcherAgent\FileSystemWatcherExample.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Controls\FilterCondition.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Controls\Find&amp;Replace\Find and Remplace.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Controls\FirstInstallationSetting\InstallationKey.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Controls\HTML_Editor\EngineeringRequestForm\Engineering Change Request.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Controls\HTML_Editor\Fabric\FabricViewer.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Controls\HTML_Editor\htmlwysiwyg.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Controls\HTML_Editor\TestHTML.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Controls\HTML_Editor\TinyMCE.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Controls\MouseKeyboardActivityMonitor\Controls\MouseKeyEventProvider.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Controls\NodeSetting.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Controls\OpenFileDialogExt\OpenFileDialogExt.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Controls\QueryBuilder.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Controls\RawInput\USB Device Setup.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Controls\TabControl\BaseClasses\BaseStyledPanel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Controls\TabControl\Control\FATabStrip.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Controls\TabControl\Control\FATabStripItem.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Controls\ThumbViewer\DockingControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Controls\ThumbViewer\ThumbNail.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Controls\ThumbViewer\ThumbViewer.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Controls\UpDateModifComponentValue\UpDateModifComponentValue.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Controls\ZPL2_ZebraPrint\PrintingReferences.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Controls\ZPL2_ZebraPrint\Zebra Prints PCB Labels.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Controls\ZPL2_ZebraPrint\ZebraPrintsPCBLabels.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Controls\ZPL2_ZebraPrint\Zebra_Prints_CompPartNumbers.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Properties\Resources.Designer.cs">
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Update="Properties\Settings.Designer.cs">
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <AutoGen>True</AutoGen>
+    </Compile>
     <Compile Update="TimeLineEditor.cs" />
     <Compile Update="Production_InventoryDataSet.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>Production_InventoryDataSet.xsd</DependentUpon>
-    </Compile>
-    <Compile Update="Properties\Settings.Designer.cs">
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
   </ItemGroup>  
   <ItemGroup>
@@ -158,8 +365,8 @@
       <LastGenOutput>Production_InventoryDataSet.Designer.cs</LastGenOutput>
     </None>
     <None Update="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+      <Generator>PublicSettingsSingleFileGenerator</Generator>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -184,7 +391,9 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <None Include=".github\copilot-instructions.md" />
     <None Include=".github\upgrades\scenarios\new-dotnet-version_5dd7af\plan.md" />
+    <None Include="Controls\ShellBasics\ShellLib.csproj" />
     <None Include="wwwroot\css\MovieCard.css" />
     <None Include="wwwroot\Jscript\MoviePlayer.js" />
     <None Include="wwwroot\Jscript\VisTimeLineHelper1.js">
@@ -197,5 +406,11 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="wwwroot\Jscript\vis\" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\Resources.resx">
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <Generator>PublicResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
   </ItemGroup>
 </Project>

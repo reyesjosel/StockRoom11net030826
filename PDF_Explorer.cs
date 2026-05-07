@@ -1,11 +1,12 @@
-﻿using MyStuff11net;
-using MyStuff11net.Properties;
+﻿using StockRoom11net.Properties;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using WinFormsUI.Docking;
-using ActiveDataSheet_EventArgs = MyStuff11net.Custom_Events_Args.ActiveDataSheet_EventArgs;
-using Resources = MyStuff11net.Properties.Resources;
+using ActiveDataSheet_EventArgs = StockRoom11net.Controls.Custom_Events_Args.ActiveDataSheet_EventArgs;
+using Resources = StockRoom11net.Properties.Resources;
 using System.ComponentModel;
+using StockRoom11net.Controls.EmployeeInformation;
+using StockRoom11net.Controls;
 
 namespace StockRoom11net
 {
@@ -144,7 +145,7 @@ namespace StockRoom11net
             {
                 InitializeComponent();
                 /*
-                MessagePositionString = "xCoPDFXCpreview = new AxPDFXCviewAxLib";
+                MessageDebugPosition = "xCoPDFXCpreview = new AxPDFXCviewAxLib";
                 axCoPDFXCpreview = new AxPDFXCviewAxLib.AxCoPDFXCpreview();
                 
                 ((System.ComponentModel.ISupportInitialize)(axCoPDFXCpreview)).BeginInit();
@@ -271,7 +272,7 @@ namespace StockRoom11net
                 contextMenuStripPdfViewer.Items.Clear();
 
 
-                if (CurrentEmployeesLogIn.EmployeeAccessLevel < MyCode.AccessLevel.Manager)
+                if (CurrentEmployeesLogIn.EmployeeAccessLevel < Utilities.AccessLevel.Manager)
                 {
                     contextMenuStripPdfViewer.Items.AddRange(new ToolStripItem[]
                                                              {
@@ -280,7 +281,7 @@ namespace StockRoom11net
                     return;
                 }
 
-                if (CurrentEmployeesLogIn.EmployeeAccessLevel == MyCode.AccessLevel.Manager)
+                if (CurrentEmployeesLogIn.EmployeeAccessLevel == Utilities.AccessLevel.Manager)
                 {
                     contextMenuStripPdfViewer.Items.AddRange(new ToolStripItem[]
                                                              {

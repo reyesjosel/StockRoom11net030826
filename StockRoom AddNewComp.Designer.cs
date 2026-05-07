@@ -1,4 +1,6 @@
 ﻿using MyStuff11net;
+using StockRoom11net.Controls;
+using StockRoom11net.Controls.DataGridViewExtend;
 using System.Drawing;
 
 namespace StockRoom11net
@@ -38,17 +40,17 @@ namespace StockRoom11net
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.grouper_ItemProperties = new CodeVendor.Controls.Grouper();
             this.flowLayoutPanel_ItemsProperties = new System.Windows.Forms.FlowLayoutPanel();
-            this.comboBoxExtended_PartNumber = new MyStuff11net.ComboBoxExtended();
-            this.comboBoxExtended_Description = new MyStuff11net.ComboBoxExtended();
-            this.comboBoxExtended_Status = new MyStuff11net.ComboBoxExtended();
-            this.comboBoxExtended1 = new MyStuff11net.ComboBoxExtended();
+            this.comboBoxExtended_PartNumber = new StockRoom11net.Controls.ComboBoxExtended.ComboBoxExtended();
+            this.comboBoxExtended_Description = new StockRoom11net.Controls.ComboBoxExtended.ComboBoxExtended();
+            this.comboBoxExtended_Status = new StockRoom11net.Controls.ComboBoxExtended.ComboBoxExtended();
+            this.comboBoxExtended1 = new StockRoom11net.Controls.ComboBoxExtended.ComboBoxExtended();
             this.grouper_NewItemButtons = new CodeVendor.Controls.Grouper();
             this.flowLayoutPanel_Buttons = new System.Windows.Forms.FlowLayoutPanel();
             this.button_AddNew = new System.Windows.Forms.Button();
             this.button_Save = new System.Windows.Forms.Button();
             this.button_Delete = new System.Windows.Forms.Button();
             this.tabPage2 = new System.Windows.Forms.TabPage();
-            this.dataGridViewExtended_AddNewComp = new MyStuff11net.DataGridViewExtend.DataGridViewExtended();
+            this.dataGridViewExtended_AddNewComp = new StockRoom11net.Controls.DataGridViewExtend.DataGridViewExtended();
             this._contextMenuStripTreeView = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.ToolStripMenuItem_singleExpandedNode = new System.Windows.Forms.ToolStripMenuItem();
             this.ToolStripMenuItem_multipleExpandedNodes = new System.Windows.Forms.ToolStripMenuItem();
@@ -363,7 +365,7 @@ namespace StockRoom11net
             this.dataGridViewExtended_AddNewComp.CurrentRowBackgroundColor = System.Drawing.Color.DeepSkyBlue;
             this.dataGridViewExtended_AddNewComp.CurrentRowBorderColor = System.Drawing.Color.DarkBlue;
             this.dataGridViewExtended_AddNewComp.CurrentRowMouseOverStatus = null;
-            this.dataGridViewExtended_AddNewComp.CustomEdit = MyCode.EditMode.View;
+            this.dataGridViewExtended_AddNewComp.CustomEdit = Utilities.EditMode.View;
             this.dataGridViewExtended_AddNewComp.DataGridViewDrawDoubleBuffering = false;
             this.dataGridViewExtended_AddNewComp.DividerColor = System.Drawing.Color.Red;
             this.dataGridViewExtended_AddNewComp.DividerHeight = 0;
@@ -541,15 +543,15 @@ namespace StockRoom11net
         private System.Windows.Forms.SplitContainer splitContainer2;
         private CodeVendor.Controls.Grouper grouper_ItemProperties;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel_ItemsProperties;
-        private MyStuff11net.ComboBoxExtended comboBoxExtended_PartNumber;
-        private MyStuff11net.ComboBoxExtended comboBoxExtended_Description;
-        private MyStuff11net.ComboBoxExtended comboBoxExtended_Status;
+        private StockRoom11net.Controls.ComboBoxExtended.ComboBoxExtended comboBoxExtended_PartNumber;
+        private StockRoom11net.Controls.ComboBoxExtended.ComboBoxExtended comboBoxExtended_Description;
+        private StockRoom11net.Controls.ComboBoxExtended.ComboBoxExtended comboBoxExtended_Status;
         private CodeVendor.Controls.Grouper grouper_NewItemButtons;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel_Buttons;
         private System.Windows.Forms.Button button_AddNew;
         private System.Windows.Forms.Button button_Save;
         private System.Windows.Forms.Button button_Delete;
-        private MyStuff11net.ComboBoxExtended comboBoxExtended1;
+        private StockRoom11net.Controls.ComboBoxExtended.ComboBoxExtended comboBoxExtended1;
         private System.Windows.Forms.ContextMenuStrip _contextMenuStripTreeView;
         private System.Windows.Forms.ToolStripMenuItem ToolStripMenuItem_singleExpandedNode;
         private System.Windows.Forms.ToolStripMenuItem ToolStripMenuItem_multipleExpandedNodes;
@@ -568,6 +570,6 @@ namespace StockRoom11net
         private System.Windows.Forms.CustomTabControl customTabControl_AddNewComp;
         private System.Windows.Forms.TabPage tabPage1;
         private System.Windows.Forms.TabPage tabPage2;
-        private MyStuff11net.DataGridViewExtend.DataGridViewExtended dataGridViewExtended_AddNewComp;
+        private DataGridViewExtended dataGridViewExtended_AddNewComp;
     }
 }

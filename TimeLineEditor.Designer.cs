@@ -1,5 +1,5 @@
-﻿using MyStuff11net;
-using MyStuff11net.FlexibleTreeView;
+﻿using StockRoom11net.Controls;
+using StockRoom11net.Controls.DataGridViewExtend;
 
 namespace StockRoom11net
 {
@@ -40,7 +40,7 @@ namespace StockRoom11net
             tabPage_DataTreeViewSetting = new TabPage();
             tabPage1 = new TabPage();
             splitContainer_Horizontal = new SplitContainer();
-            dataGridViewExtended_TimeLineEditor = new MyStuff11net.DataGridViewExtend.DataGridViewExtended();
+            dataGridViewExtended_TimeLineEditor = new StockRoom11net.Controls.DataGridViewExtend.DataGridViewExtended();
             ((System.ComponentModel.ISupportInitialize)BindingSourceTreeViewBase).BeginInit();
             ((System.ComponentModel.ISupportInitialize)splitContainer_Vertical).BeginInit();
             splitContainer_Vertical.Panel1.SuspendLayout();
@@ -79,10 +79,10 @@ namespace StockRoom11net
             dataTreeViewToAdd_Cancel_Delete.Name = "dataTreeViewToAdd_Cancel_Delete";
             dataTreeViewToAdd_Cancel_Delete.Size = new Size(478, 507);
             dataTreeViewToAdd_Cancel_Delete.TabIndex = 0;
-            dataTreeViewToAdd_Cancel_Delete.Save_Requested += DataTreeViewToAdd_Cancel_Delete_Save_Requested;
-            dataTreeViewToAdd_Cancel_Delete.SelectedIndexChanged += DataTreeViewToAdd_Cancel_Delete_SelectedIndexChanged;
-            dataTreeViewToAdd_Cancel_Delete.ToolStripMenuItemClick += DataTreeViewToAdd_Cancel_Delete_ToolStripMenuItemClick;
-            dataTreeViewToAdd_Cancel_Delete.Load += DataTreeViewToAdd_Cancel_Delete_Load;
+            dataTreeViewToAdd_Cancel_Delete.Save_Requested          += DataTreeViewToAdd_Cancel_Delete_Save_Requested;
+            dataTreeViewToAdd_Cancel_Delete.SelectedIndexChanged    += DataTreeViewToAdd_Cancel_Delete_SelectedIndexChanged;
+            dataTreeViewToAdd_Cancel_Delete.ToolStripMenuItemClick  += DataTreeViewToAdd_Cancel_Delete_ToolStripMenuItemClick;
+            dataTreeViewToAdd_Cancel_Delete.Load                    += DataTreeViewToAdd_Cancel_Delete_Load;
             // 
             // customTabControl_TimeLine
             // 
@@ -174,7 +174,7 @@ namespace StockRoom11net
             dataGridViewExtended_TimeLineEditor.BindingCompleted = false;
             dataGridViewExtended_TimeLineEditor.CurrentRowBackgroundColor = Color.Blue;
             dataGridViewExtended_TimeLineEditor.CurrentRowBorderColor = Color.DarkBlue;
-            dataGridViewExtended_TimeLineEditor.CustomEdit = MyCode.EditMode.View;
+            dataGridViewExtended_TimeLineEditor.CustomEdit = Utilities.EditMode.View;
             dataGridViewExtended_TimeLineEditor.DividerColor = Color.Red;
             dataGridViewExtended_TimeLineEditor.DividerHeight = 0;
             dataGridViewExtended_TimeLineEditor.Dock = DockStyle.Fill;
@@ -199,7 +199,6 @@ namespace StockRoom11net
             Name = "TimeLineEditor";
             Text = "TimeLineEditor.";
             Load += TimeLineEditor_Load;
-            Shown += TimeLineEditor_Shown;
             ((System.ComponentModel.ISupportInitialize)BindingSourceTreeViewBase).EndInit();
             splitContainer_Vertical.Panel1.ResumeLayout(false);
             splitContainer_Vertical.Panel2.ResumeLayout(false);
@@ -217,7 +216,7 @@ namespace StockRoom11net
 
         #endregion
         private System.Windows.Forms.SplitContainer splitContainer_Vertical;
-        private MyStuff11net.DataGridViewExtend.DataGridViewExtended dataGridViewExtended_TimeLineEditor;
+        private DataGridViewExtended dataGridViewExtended_TimeLineEditor;
         private System.Windows.Forms.SplitContainer splitContainer_Horizontal;
         private Microsoft.AspNetCore.Components.WebView.WindowsForms.BlazorWebView blazorWebView_TimeLine;
         private CustomTabControl customTabControl_TimeLine;

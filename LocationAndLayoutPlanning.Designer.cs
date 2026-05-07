@@ -1,4 +1,6 @@
 ﻿using MyStuff11net;
+using StockRoom11net.Controls;
+using StockRoom11net.Controls.DataGridViewExtend;
 
 namespace StockRoom11net
 {
@@ -49,7 +51,7 @@ namespace StockRoom11net
             this.splitContainer = new System.Windows.Forms.SplitContainer();
             this.PicturesBox_Image = new System.Windows.Forms.PictureBox();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.dataGridViewExtended = new MyStuff11net.DataGridViewExtend.DataGridViewExtended();
+            this.dataGridViewExtended = new StockRoom11net.Controls.DataGridViewExtend.DataGridViewExtended();
             this.contextMenuStripPicturesBox = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.toolStripMenuItem_SetToNoPicturesFound = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem_AddANewPictures = new System.Windows.Forms.ToolStripMenuItem();
@@ -234,7 +236,7 @@ namespace StockRoom11net
             // 
             this.dataGridViewExtended.BindingCompleted = false;
             this.dataGridViewExtended.CurrentEmployeesLogIn = null;
-            this.dataGridViewExtended.CustomEdit = MyCode.EditMode.View;
+            this.dataGridViewExtended.CustomEdit = Utilities.EditMode.View;
             this.dataGridViewExtended.CustomFilter = null;
             this.dataGridViewExtended.DividerColor = System.Drawing.Color.Red;
             this.dataGridViewExtended.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -315,7 +317,7 @@ namespace StockRoom11net
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_estimatedFor;
         private System.Windows.Forms.ToolStripComboBox toolStripComboBox_QuantityEstimated;
         private System.Windows.Forms.SplitContainer splitContainer;
-        private MyStuff11net.DataGridViewExtend.DataGridViewExtended dataGridViewExtended;
+        private DataGridViewExtended dataGridViewExtended;
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.PictureBox PicturesBox_Image;
         private System.Windows.Forms.ContextMenuStrip contextMenuStripPicturesBox;

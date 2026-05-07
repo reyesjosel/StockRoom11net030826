@@ -1,4 +1,4 @@
-﻿using HTMLEditor = MyStuff11net.MyCode.HTMLEditor;
+﻿using HTMLEditor = StockRoom11net.Controls.Utilities.HTMLEditor;
 
 
 namespace StockRoom11net

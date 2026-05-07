@@ -1,40 +1,39 @@
 ﻿using Microsoft.Data.Sqlite;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.VisualBasic.Devices;
-using MyStuff11net;
-using MyStuff11net.DependencyInjection;
-using MyStuff11net.DocumentationBehavior;
-using MyStuff11net.Properties;
-using RawInput_dll;
-using StockRoom11net.Data;
-using StockRoom11net.Production_InventoryDataSetTableAdapters;
+using StockRoom11net.Controls.DependencyInjection;
+using StockRoom11net.Controls.DocumentationBehavior;
+using StockRoom11net.Controls;
+using StockRoom11net.Controls.EmployeeInformation;
+using StockRoom11net.Controls.ThumbViewer;
+using StockRoom11net.Properties;
 using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Data;
-using System.Data.OleDb;
 using System.Data.SQLite;
 using System.Diagnostics;
 using System.Reflection;
 using System.Speech.Synthesis;
-using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
 using WinFormsUI.Docking;
 
-using ActiveDataSheet_EventArgs = MyStuff11net.Custom_Events_Args.ActiveDataSheet_EventArgs;
-using CellDoubleClick_EventArgs = MyStuff11net.Custom_Events_Args.CellDoubleClick_EventArgs;
-using CurrentDeptUserBroadcast_EventArgs = MyStuff11net.Custom_Events_Args.CurrentDeptUserBroadcast_EventArgs;
-using Custom_Events_Args = MyStuff11net.Custom_Events_Args;
-using Need_SaveData_EventArgs = MyStuff11net.Custom_Events_Args.Need_SaveData_EventArgs;
-using Refresh_Requested_EventArgs = MyStuff11net.Custom_Events_Args.Refresh_Requested_EventArgs;
-using Save_Requested_EventArgs = MyStuff11net.Custom_Events_Args.Save_Requested_EventArgs;
-using StatusBarMessage_EventArgs = MyStuff11net.Custom_Events_Args.StatusBarMessage_EventArgs;
-using Tags = MyStuff11net.HTML_Tags;
-using TreeViewUpdateEventArgs = MyStuff11net.Custom_Events_Args.TreeViewUpdateEventArgs;
-using TreeViewUpdateEventHandler = MyStuff11net.Custom_Events_Args.TreeViewUpdateEventHandler;
+using ActiveDataSheet_EventArgs = StockRoom11net.Controls.Custom_Events_Args.ActiveDataSheet_EventArgs;
+using CellDoubleClick_EventArgs = StockRoom11net.Controls.Custom_Events_Args.CellDoubleClick_EventArgs;
+using CurrentDeptUserBroadcast_EventArgs = StockRoom11net.Controls.Custom_Events_Args.CurrentDeptUserBroadcast_EventArgs;
+using Custom_Events_Args = StockRoom11net.Controls.Custom_Events_Args;
+using Need_SaveData_EventArgs = StockRoom11net.Controls.Custom_Events_Args.Need_SaveData_EventArgs;
+using Refresh_Requested_EventArgs = StockRoom11net.Controls.Custom_Events_Args.Refresh_Requested_EventArgs;
+using Save_Requested_EventArgs = StockRoom11net.Controls.Custom_Events_Args.Save_Requested_EventArgs;
+using StatusBarMessage_EventArgs = StockRoom11net.Controls.Custom_Events_Args.StatusBarMessage_EventArgs;
+using Tags = StockRoom11net.Controls.HTML_Tags;
+using TreeViewUpdateEventArgs = StockRoom11net.Controls.Custom_Events_Args.TreeViewUpdateEventArgs;
+using TreeViewUpdateEventHandler = StockRoom11net.Controls.Custom_Events_Args.TreeViewUpdateEventHandler;
+using StockRoom11net.Controls.PdfFileScan;
+using StockRoom11net.Controls.FileSystemEnumerator;
+using StockRoom11net.Controls.MouseKeyboardActivityMonitor.Controls;
+using StockRoom11net.Controls.MouseKeyboardActivityMonitor;
+using StockRoom11net.Controls.RawInput;
 
 [assembly: System.Runtime.Versioning.SupportedOSPlatformAttribute("windows")]
 namespace StockRoom11net
@@ -42,7 +41,7 @@ namespace StockRoom11net
     public partial class Solutions_TempleClass : Form
     {
         private readonly IMyService _myService;
-        private static IHost _appHost;
+        private readonly IServiceProvider _serviceProvider;
 
         // X:\ProductionManagement\AdvanceTec Software\
         // \\advt01s1\atishares\\ProductionManagement\AdvanceTec Software\
@@ -395,7 +394,7 @@ namespace StockRoom11net
         //  public ImportExcel _importExcel;
         //  public ProjectsViewer _projectsViewerForm;
         //  public CalendarViewer _calendarViewerForm;
-        public StockRoom_Inventory _stockRoomForm;
+        public StockRoom_Inventory? _stockRoomForm;
         //  public BOM_Management _bom_ManagementsForm;
         public H7H_Explorer _h7h_ExplorerForm;
         public StockRoomReceive? _stockRoomReceiveForm;
@@ -451,41 +450,18 @@ namespace StockRoom11net
 
         #endregion"Properties and fields"
 
-        /// <summary>
-        /// Initializes a new instance of the Solutions_TempleClass class with the specified service dependency and sets
-        /// up data bindings, UI components, and event handlers required for the form's operation.
-        /// </summary>
-        /// <remarks>This constructor configures data sources, initializes UI elements, and attaches
-        /// necessary event handlers for the form to function correctly. It also sets up error handling for unhandled
-        /// thread exceptions. The form relies on the provided service for certain operations; ensure that the service
-        /// is properly initialized before passing it to the constructor.</remarks>
-        /// <param name="myService">The service instance used to provide application-specific functionality to the form. Cannot be null.</param>
+        
         public Solutions_TempleClass()
         {
-            _appHost = Host.CreateDefaultBuilder()
-                .ConfigureServices((context, services) =>
-                {
-                    // *** MODERN EF CORE SERVICES ***
-                    services.AddDataServices(); // Add EF Core repositories and services
-
-                    // Legacy Services (can be removed gradually)
-                    services.AddSingleton<IMyService, MyService>();
-
-                    // Forms
-                    services.AddTransient<Solutions_TempleClass>();
-                    services.AddTransient<TimeLineEditor>();
-                })
-                .Build();
-
-            // Start WinForms using DI
-            Application.Run(_appHost.Services.GetRequiredService<Solutions_TempleClass>());
+            InitializeComponent();
         }
 
-        public Solutions_TempleClass(IMyService myService)
+        public Solutions_TempleClass(IMyService myService, IServiceProvider serviceProvider)
         {
             InitializeComponent();
 
             _myService = myService ?? throw new ArgumentNullException(nameof(myService), "MyService cannot be null.");
+            _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider), "ServiceProvider cannot be null.");
 
             AutoScaleMode = AutoScaleMode.Dpi;
             Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
@@ -769,7 +745,7 @@ namespace StockRoom11net
 
         public void Solutions_Temple_Shown(object sender, EventArgs e)
         {
-            if (MyCode.IsInDesignMode())
+            if (Utilities.IsInDesignMode())
                 return;
 
             InitializeProperties();
@@ -781,9 +757,10 @@ namespace StockRoom11net
             InitializeThreadTimerCheckStatusTable();
             InitializeBackgroundWorkerFillByLastAccessTime();
 
-            // To use StatusBarMessage event from MyCode.
-            MyCode.StatusBarMessage += OnStatusBarMessage;
-            MyCode.LogFileMessage += LogFileMessage;
+            // TODO: Remove this and use the event in Utilities.
+            // To use StatusBarMessage event from Utilities.
+            //        Utilities.StatusBarMessage += OnStatusBarMessage;
+            //        Utilities.LogFileMessage += LogFileMessage;
 
             // To initialized statusBar item to the right. Alignment property.
             //statusBarPanelHelp.Alignment = ToolStripItemAlignment.Right;
@@ -975,7 +952,7 @@ namespace StockRoom11net
         /// <summary>
         /// _documentationBehavior is initialize in InitializeProperties().
         /// </summary>
-        MyCode.DocumentationBehavior _documentationBehavior = MyCode.DocumentationBehavior.SpecifiedDocument;
+        Utilities.DocumentationBehavior _documentationBehavior = Utilities.DocumentationBehavior.SpecifiedDocument;
 
         int _speechSynthesizerBaseVolume;
         int _speechSynthesizerBaseRate;
@@ -1019,7 +996,7 @@ namespace StockRoom11net
             _speechSynthesizerBaseVolume = Settings.Default.SpeechSynthesizerBaseVolume;
             _speechSynthesizerBaseRate = Settings.Default.SpeechSynthesizerBaseRate;
 
-            _documentationBehavior = (MyCode.DocumentationBehavior)Settings.Default.DocumentationBehavior;
+            _documentationBehavior = (Utilities.DocumentationBehavior)Settings.Default.DocumentationBehavior;
 
             InitializeSpeechSynthesizerBase();
             InitializeThreadTimerCheckStatusTable();
@@ -1235,7 +1212,7 @@ namespace StockRoom11net
 
         public void MenuItem_Print_Click(object sender, EventArgs e)
         {
-            if (_currentEmployeesLogIn.EmployeeAccessLevel == MyCode.AccessLevel.User)
+            if (_currentEmployeesLogIn.EmployeeAccessLevel == Utilities.AccessLevel.User)
             {
                 MessageBox.Show(@"The current User, does not have the right to perform this action.", @"Warning, access denied.",
                                                                                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -1336,7 +1313,7 @@ namespace StockRoom11net
         // F10
         void ToolStripMenuItemStockRoomAddNewComponentClick(object sender, EventArgs e)
         {
-            if (_currentEmployeesLogIn.EmployeeAccessLevel < MyCode.AccessLevel.Administrator)
+            if (_currentEmployeesLogIn.EmployeeAccessLevel < Utilities.AccessLevel.Administrator)
             {
                 MessageBox.Show(@"The current User, does not have the right to perform this action.", @"Warning, access denied.",
                                                                                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -1371,7 +1348,7 @@ namespace StockRoom11net
             if (_currentEmployeesLogIn == null)
                 return;
 
-            if (_currentEmployeesLogIn.EmployeeAccessLevel == MyCode.AccessLevel.Manager)
+            if (_currentEmployeesLogIn.EmployeeAccessLevel == Utilities.AccessLevel.Manager)
             {
                 //menuItemTools.DropDownItems.Add(toolStripMenuItem_BarCodeReaderTools);
                 return;
@@ -1439,7 +1416,7 @@ namespace StockRoom11net
 
         void ToolStripMenuItemExploreH7HFile_Click(object sender, EventArgs e)
         {
-            if (_currentEmployeesLogIn.EmployeeAccessLevel < MyCode.AccessLevel.Manager)
+            if (_currentEmployeesLogIn.EmployeeAccessLevel < Utilities.AccessLevel.Manager)
             {
                 MessageBox.Show(@"The current User, does not have the right to perform this action.", @"Warning, access denied.",
                                                                                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -1649,13 +1626,13 @@ namespace StockRoom11net
 
         void ToolStripMenuItem_ShowTheDocumentsAddressSetting_Click(object? sender, EventArgs e)
         {
-            if (CurrentEmployeesLogIn.EmployeeAccessLevel < MyCode.AccessLevel.Manager)
+            if (CurrentEmployeesLogIn.EmployeeAccessLevel < Utilities.AccessLevel.Manager)
                 using (DocumentsAddressViewer documentsItemsViewer = new DocumentsAddressViewer(CurrentDepartmentLogIn, ListDepartments, false))
                 {
                     documentsItemsViewer.ShowDialog();
                 }
 
-            if (CurrentEmployeesLogIn.EmployeeAccessLevel == MyCode.AccessLevel.Manager)
+            if (CurrentEmployeesLogIn.EmployeeAccessLevel == Utilities.AccessLevel.Manager)
                 using (DocumentsAddressViewer documentsItemsViewer = new DocumentsAddressViewer(CurrentDepartmentLogIn, ListDepartments, true))
                 {
                     documentsItemsViewer.ShowDialog();
@@ -1765,14 +1742,14 @@ namespace StockRoom11net
             if (SpeechSynthesizerBase.State == SynthesizerState.Ready)
             {
                 SpeechSynthesizerBase.Pause();
-                toolStripButtonSpeechSynthesizer.Image = Properties.Resources.speaker_mute;
+             //   toolStripButtonSpeechSynthesizer.Image = Resources.speaker_mute;
                 StatusBarHelp("SpeechSynthesizer has been paused.");
             }
             else
                 if (SpeechSynthesizerBase.State == SynthesizerState.Paused)
             {
                 SpeechSynthesizerBase.Resume();
-                toolStripButtonSpeechSynthesizer.Image = Properties.Resources.speaker;
+             //   toolStripButtonSpeechSynthesizer.Image = Resources.speaker;
                 StatusBarHelp("SpeechSynthesizer has been activated.");
             }
         }
@@ -2473,14 +2450,22 @@ namespace StockRoom11net
                 return;
             }
 
+            /*
             _stockRoomForm = new StockRoom_Inventory(_bindingSourceStockRoomTreeView,
                                                 _bindingSource_StockRoom,
                                                 _bindingSource_CodeTreeView, DepartmentsList)
             {
                 Text = textTitle
+            };*/
+
+            _stockRoomForm = _serviceProvider.GetRequiredService<StockRoom_Inventory>();
+            {
+                Text = textTitle;
             };
+
+
             //An error has been found in the initialization.
-            if (_stockRoomForm.DialogResult == DialogResult.Cancel)
+            if (_stockRoomForm == null || _stockRoomForm.DialogResult == DialogResult.Cancel)
                 return;
                         
             _stockRoomForm.DockStateChanged += StockRoomDockStateChanged;
@@ -2517,7 +2502,8 @@ namespace StockRoom11net
             }
             else
             {
-                 _stockRoomForm.Show(dockPanel);
+                //_stockRoomForm.Dock = DockStyle.Fill;
+                _stockRoomForm.Show(dockPanel);
             }
         }
 
@@ -2529,7 +2515,7 @@ namespace StockRoom11net
                 return;
             }
 
-            if (_currentEmployeesLogIn.EmployeeAccessLevel < MyCode.AccessLevel.Manager)
+            if (_currentEmployeesLogIn.EmployeeAccessLevel < Utilities.AccessLevel.Manager)
             {
                 MessageBox.Show(@"The current User, does not have the right to perform this action.", @"Warning, access denied.",
                                                                                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -2587,7 +2573,7 @@ namespace StockRoom11net
                 return;
             }
 
-            if (_currentEmployeesLogIn.EmployeeAccessLevel < MyCode.AccessLevel.Administrator)
+            if (_currentEmployeesLogIn.EmployeeAccessLevel < Utilities.AccessLevel.Administrator)
             {
                 MessageBox.Show(@"The current User, does not have the right to perform this action.", @"Warning, access denied.",
                                                                                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -2633,7 +2619,7 @@ namespace StockRoom11net
                 return;
             }
 
-            if (_currentEmployeesLogIn.EmployeeAccessLevel < MyCode.AccessLevel.Manager)
+            if (_currentEmployeesLogIn.EmployeeAccessLevel < Utilities.AccessLevel.Manager)
             {
                 MessageBox.Show(@"The current User, does not have the right to perform this action.", @"Warning, access denied.",
                                                                                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -2677,7 +2663,7 @@ namespace StockRoom11net
                 return;
             }
 
-            if (_currentEmployeesLogIn.EmployeeAccessLevel < MyCode.AccessLevel.Manager)
+            if (_currentEmployeesLogIn.EmployeeAccessLevel < Utilities.AccessLevel.Manager)
             {
                 MessageBox.Show(@"The current User, does not have the right to perform this action.", @"Warning, access denied.",
                                                                                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -2835,7 +2821,7 @@ namespace StockRoom11net
 
         public void InitSolutionsProperties(string textTitle)
         {
-            if (_currentEmployeesLogIn.EmployeeAccessLevel < MyCode.AccessLevel.Administrator)
+            if (_currentEmployeesLogIn.EmployeeAccessLevel < Utilities.AccessLevel.Administrator)
             {
                 MessageBox.Show(@"The current User, does not have the right to perform this action.", @"Warning, access denied.",
                                                                                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -2850,7 +2836,7 @@ namespace StockRoom11net
                 _solutionPropertiesForm.Save_Requested += SolutionProperties_Save_Requested;
                 _solutionPropertiesForm.SpeechSynthesizerBase += SpeechSynthesizerBaseSpeak;
 
-                if (MyCode.IsInDesignMode())
+                if (Utilities.IsInDesignMode())
                     _solutionPropertiesForm.TopMost = false;
                 else
                     _solutionPropertiesForm.TopMost = true;
@@ -2871,13 +2857,18 @@ namespace StockRoom11net
                 return;
             }
 
-            // ✅ Get TimeLineEditor from DI with all dependencies injected
-            _timeLineEditorForm = _appHost.Services.GetRequiredService<TimeLineEditor>();
-            {
-                Text = textTitle;
-            };
+             //✅ Get TimeLineEditor from DI with all dependencies injected
+               _timeLineEditorForm = _serviceProvider.GetRequiredService<TimeLineEditor>();
+               {
+                   Text = textTitle;
+               };
 
-            _timeLineEditorForm.BindingSourceTimeLineTreeView = _bindingSource_TimeLine_TreeView;
+            //_timeLineEditorForm._bindingSourceTimeLineTreeView = _bindingSource_TimeLine_TreeView;
+
+           // _timeLineEditorForm = new TimeLineEditor(_bindingSource_TimeLine, _bindingSource_TimeLine_TreeView)
+          //  {
+          //      Text = textTitle
+          //  };
 
             if (_timeLineEditorForm.DialogResult == DialogResult.Cancel)//An error has been found in the initialization.
                 return;
@@ -2914,6 +2905,7 @@ namespace StockRoom11net
             }
             else
             {
+                //_timeLineEditorForm.Dock = DockStyle.Fill;
                 _timeLineEditorForm.Show(dockPanel);
             }
         }
@@ -2924,7 +2916,7 @@ namespace StockRoom11net
 
         void StockRoomCellDoubleClick(object sender, CellDoubleClick_EventArgs e)
         {
-            if (_currentEmployeesLogIn.EmployeeAccessLevel == MyCode.AccessLevel.User)
+            if (_currentEmployeesLogIn.EmployeeAccessLevel == Utilities.AccessLevel.User)
             {
                 MessageBox.Show(@"The current User, does not have the right to perform this action.", @"Warning, access denied.",
                                                                                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -3020,7 +3012,7 @@ namespace StockRoom11net
 
             if (_stockRoomAddNewCompForm.DockState == DockState.Unknown)
             {
-                if (_currentEmployeesLogIn.EmployeeAccessLevel == MyCode.AccessLevel.User)
+                if (_currentEmployeesLogIn.EmployeeAccessLevel == Utilities.AccessLevel.User)
                     toolStripMenuItem__stockRoomAddNewComp.Enabled = false;
                 else
                     toolStripMenuItem__stockRoomAddNewComp.Enabled = true;
@@ -3044,7 +3036,7 @@ namespace StockRoom11net
 
             if (_employees_ManagementsForm.DockState == DockState.Unknown)
             {
-                if (_currentEmployeesLogIn.EmployeeAccessLevel == MyCode.AccessLevel.User)
+                if (_currentEmployeesLogIn.EmployeeAccessLevel == Utilities.AccessLevel.User)
                     toolStripMenuItem_Employees.Enabled = false;
                 else
                     toolStripMenuItem_Employees.Enabled = true;
@@ -3068,7 +3060,7 @@ namespace StockRoom11net
 
             if (_stockRoomForm.DockState == DockState.Unknown)
             {
-                if (_currentEmployeesLogIn.EmployeeAccessLevel == MyCode.AccessLevel.User)
+                if (_currentEmployeesLogIn.EmployeeAccessLevel == Utilities.AccessLevel.User)
                     toolStripMenuItem_stockRoomInventory.Enabled = false;
                 else
                     toolStripMenuItem_stockRoomInventory.Enabled = true;
@@ -3097,7 +3089,7 @@ namespace StockRoom11net
 
             if (_logFile_Management.DockState == DockState.Unknown)
             {
-                if (_currentEmployeesLogIn.EmployeeAccessLevel == MyCode.AccessLevel.Manager)
+                if (_currentEmployeesLogIn.EmployeeAccessLevel == Utilities.AccessLevel.Manager)
                     toolStripMenuItem_logFileManagement.Visible = true;
                 else
                     toolStripMenuItem_logFileManagement.Visible = false;
@@ -3120,7 +3112,7 @@ namespace StockRoom11net
 
             if (_stockRoomReceiveForm.DockState == DockState.Unknown)
             {
-                if (_currentEmployeesLogIn.EmployeeAccessLevel == MyCode.AccessLevel.User)
+                if (_currentEmployeesLogIn.EmployeeAccessLevel == Utilities.AccessLevel.User)
                     toolStripMenuItem_StockRoom_Receive.Enabled = false;
                 else
                     toolStripMenuItem_StockRoom_Receive.Enabled = true;
@@ -3150,7 +3142,7 @@ namespace StockRoom11net
 
             if (_locationAndLayoutDesignForm.DockState == DockState.Unknown)
             {
-                if (_currentEmployeesLogIn.EmployeeAccessLevel == MyCode.AccessLevel.User)
+                if (_currentEmployeesLogIn.EmployeeAccessLevel == Utilities.AccessLevel.User)
                     ToolStripMenuItem_LocationAndLayout.Enabled = false;
                 else
                     ToolStripMenuItem_LocationAndLayout.Enabled = true;
@@ -3173,7 +3165,7 @@ namespace StockRoom11net
 
             if (_timeLineEditorForm.DockState == DockState.Unknown)
             {
-                if (_currentEmployeesLogIn.EmployeeAccessLevel == MyCode.AccessLevel.User)
+                if (_currentEmployeesLogIn.EmployeeAccessLevel == Utilities.AccessLevel.User)
                     ToolStripMenuItem_TimeLineEditor.Enabled = false;
                 else
                     ToolStripMenuItem_TimeLineEditor.Enabled = true;
@@ -3387,7 +3379,7 @@ namespace StockRoom11net
         {
             switch (e.SaveEvent)
             {
-                case MyCode.NotificationEvents.RowInformationChange:
+                case Utilities.NotificationEvents.RowInformationChange:
                     {
                         if (Settings.Default.SaveEachTimeTheInformationIsChanged)
                         {
@@ -3402,7 +3394,7 @@ namespace StockRoom11net
                                         "Warning, Row information changed.",               //notification.Title
                                         e.ComponentInformation.Description,                //notification.Description
                                         (int)ToolTipIcon.Info,                              //notification.MessageIcon
-                                        (int)MyCode.NotificationEvents.RowInformationChange,//notifycation.NotifycationEvents
+                                        (int)Utilities.NotificationEvents.RowInformationChange,//notifycation.NotifycationEvents
                                         Settings.Default.DepartmentName,                    //notification.String_Filter
                                         DateTime.Now,                                       //notification.DateCreated
                                         CurrentEmployeesLogIn.FullName,                     //notification.Created_by
@@ -3411,7 +3403,7 @@ namespace StockRoom11net
                                     ));
                         break;
                     }
-                case MyCode.NotificationEvents.DataBaseUpDated:
+                case Utilities.NotificationEvents.DataBaseUpDated:
                     {
                         //NotificationEvent will be up when the database is saved successfully.
 
@@ -3419,7 +3411,7 @@ namespace StockRoom11net
                         LabelsSMT_SaveRequest();
                         break;
                     }
-                case MyCode.NotificationEvents.ClearAllSelected:
+                case Utilities.NotificationEvents.ClearAllSelected:
                     {
                         UpdateStatusColumn(Production_InventoryDataSet.Table_Labels_SMT);
                         break;
@@ -3438,7 +3430,7 @@ namespace StockRoom11net
                                       "Warning, DataBase updated.",                       // 1 notification.Title
                                       "The database has been updated by an user.",        // 2 notification.Description
                                       (int)ToolTipIcon.Info,                              // 3 notification.MessageIcon
-                                      (int)MyCode.NotificationEvents.DataBaseUpDated,     // 4 notifycation.NotifycationEvents
+                                      (int)Utilities.NotificationEvents.DataBaseUpDated,     // 4 notifycation.NotifycationEvents
                                       Settings.Default.DepartmentName,                    // 5 notification.String_Filter
                                       DateTime.Now,                                       // 6 notification.DateCreated
                                       CurrentEmployeesLogIn.FullName,                     // 7 notification.Created_by
@@ -3538,12 +3530,13 @@ namespace StockRoom11net
         {
             switch (e.SaveEvent)
             {
-                case MyCode.NotificationEvents.RowInformationChange:
+                case Utilities.NotificationEvents.RowInformationChange:
                     {
                         if (Settings.Default.SaveEachTimeTheInformationIsChanged)
                         {
                             NeedSaveData = false;
-                            TimeLineSaveRequest();
+                            // ✅ This is now handled by EF Core in TimeLineEditor
+                            //TimeLineSaveRequest();
                             break;
                         }
 
@@ -3553,7 +3546,7 @@ namespace StockRoom11net
                                         "Warning, Row information changed.",               //notification.Title
                                         e.ComponentInformation.Description,                //notification.Description
                                         (int)ToolTipIcon.Info,                              //notification.MessageIcon
-                                        (int)MyCode.NotificationEvents.RowInformationChange,//notifycation.NotifycationEvents
+                                        (int)Utilities.NotificationEvents.RowInformationChange,//notifycation.NotifycationEvents
                                         Settings.Default.DepartmentName,                    //notification.String_Filter
                                         DateTime.Now,                                       //notification.DateCreated
                                         CurrentEmployeesLogIn.FullName,                     //notification.Created_by
@@ -3562,7 +3555,7 @@ namespace StockRoom11net
                                     ));
                         break;
                     }
-                case MyCode.NotificationEvents.DataBaseUpDated:
+                case Utilities.NotificationEvents.DataBaseUpDated:
                     {
                         NeedSaveData = false;
 
@@ -3574,13 +3567,13 @@ namespace StockRoom11net
 
                         break;
                     }
-                case MyCode.NotificationEvents.ClearAllSelected:
+                case Utilities.NotificationEvents.ClearAllSelected:
                     {
                         UpdateStatusColumn(Production_InventoryDataSet.Table_TimeLine);
 
                         break;
                     }
-                case MyCode.NotificationEvents.TreeViewStockRoomChange:
+                case Utilities.NotificationEvents.TreeViewStockRoomChange:
                     {
                         //TimeLineSaveTreeViewRequested(sender, new EventArgs());
                         break;
@@ -3599,7 +3592,7 @@ namespace StockRoom11net
                                                       "Warning, DataBase updated.",                       // 1 notification.Title
                                                       "The database has been updated by an user.",        // 2 notification.Description
                                                       (int)ToolTipIcon.Info,                              // 3 notification.MessageIcon
-                                                      (int)MyCode.NotificationEvents.DataBaseUpDated,     // 4 notifycation.NotifycationEvents
+                                                      (int)Utilities.NotificationEvents.DataBaseUpDated,     // 4 notifycation.NotifycationEvents
                                                       Settings.Default.DepartmentName,                    // 5 notification.String_Filter
                                                       DateTime.Now,                                       // 6 notification.DateCreated
                                                       CurrentEmployeesLogIn.FullName,                     // 7 notification.Created_by
@@ -3956,7 +3949,7 @@ namespace StockRoom11net
 
             switch (e.SaveEvent)
             {
-                case MyCode.NotificationEvents.RowInformationChange:
+                case Utilities.NotificationEvents.RowInformationChange:
                     {
                         if (Settings.Default.SaveEachTimeTheInformationIsChanged)
                         {
@@ -3971,7 +3964,7 @@ namespace StockRoom11net
                                         "Warning, Row information changed.",               //notification.Title
                                         e.ComponentInformation.Description,                //notification.Description
                                         (int)ToolTipIcon.Info,                              //notification.MessageIcon
-                                        (int)MyCode.NotificationEvents.RowInformationChange,//notifycation.NotifycationEvents
+                                        (int)Utilities.NotificationEvents.RowInformationChange,//notifycation.NotifycationEvents
                                         Settings.Default.DepartmentName,                    //notification.String_Filter
                                         DateTime.Now,                                       //notification.DateCreated
                                         CurrentEmployeesLogIn.FullName,                     //notification.Created_by
@@ -3980,7 +3973,7 @@ namespace StockRoom11net
                                     ));
                         break;
                     }
-                case MyCode.NotificationEvents.DataBaseUpDated:
+                case Utilities.NotificationEvents.DataBaseUpDated:
                     {
                         NeedSaveData = false;
                         if (e.DataTableName.Contains("Table_StockRoom_TreeView"))
@@ -3989,13 +3982,13 @@ namespace StockRoom11net
                             StockRoomSaveRequest();
                         break;
                     }
-                case MyCode.NotificationEvents.ClearAllSelected:
+                case Utilities.NotificationEvents.ClearAllSelected:
                     {
                         UpdateStatusColumn(Production_InventoryDataSet.Table_StockRoom);
 
                         break;
                     }
-                case MyCode.NotificationEvents.TreeViewStockRoomChange:
+                case Utilities.NotificationEvents.TreeViewStockRoomChange:
                     {
                         SaveStockRoomTreeView_Requested();
                         break;
@@ -4014,7 +4007,7 @@ namespace StockRoom11net
                                      "Warning, DataBase updated.",                       // 1 notification.Title
                                      "The database has been updated by an user.",        // 2 notification.Description
                                      (int)ToolTipIcon.Info,                              // 3 notification.MessageIcon
-                                     (int)MyCode.NotificationEvents.DataBaseUpDated,     // 4 notifycation.NotifycationEvents
+                                     (int)Utilities.NotificationEvents.DataBaseUpDated,     // 4 notifycation.NotifycationEvents
                                      Settings.Default.DepartmentName,                    // 5 notification.String_Filter
                                      DateTime.Now,                                       // 6 notification.DateCreated
                                      CurrentEmployeesLogIn.FullName,                     // 7 notification.Created_by
@@ -4706,7 +4699,7 @@ namespace StockRoom11net
         {
             switch (e.SaveEvent)
             {
-                case MyCode.NotificationEvents.Email:
+                case Utilities.NotificationEvents.Email:
                     {
                         //NotificationEvent will be up when the database is saved successfully.
 
@@ -4714,7 +4707,7 @@ namespace StockRoom11net
                         //EmployeesManagementsSave_Requested(e);
                         break;
                     }
-                case MyCode.NotificationEvents.DepartmentInformationChange:
+                case Utilities.NotificationEvents.DepartmentInformationChange:
                     {
                         //NotificationEvent will be up when the database is saved successfully.
 
@@ -4722,7 +4715,7 @@ namespace StockRoom11net
                         EmployeesManagementsSaveRequest();
                         break;
                     }
-                case MyCode.NotificationEvents.EmployeesInformationChange:
+                case Utilities.NotificationEvents.EmployeesInformationChange:
                     {
                         //NotificationEvent will be up when the database is saved successfully.
 
@@ -4730,7 +4723,7 @@ namespace StockRoom11net
                         EmployeesManagementsSaveRequest();
                         break;
                     }
-                case MyCode.NotificationEvents.RowInformationChange:
+                case Utilities.NotificationEvents.RowInformationChange:
                     {
                         if (Settings.Default.SaveEachTimeTheInformationIsChanged)
                         {
@@ -4745,7 +4738,7 @@ namespace StockRoom11net
                                         "Warning, Row information changed.",               //notification.Title
                                         e.ComponentInformation.Description,                //notification.Description
                                         (int)ToolTipIcon.Info,                              //notification.MessageIcon
-                                        (int)MyCode.NotificationEvents.RowInformationChange,//notifycation.NotifycationEvents
+                                        (int)Utilities.NotificationEvents.RowInformationChange,//notifycation.NotifycationEvents
                                         Settings.Default.DepartmentName,                    //notification.String_Filter
                                         DateTime.Now,                                       //notification.DateCreated
                                         CurrentEmployeesLogIn.FullName,                     //notification.Created_by
@@ -4754,7 +4747,7 @@ namespace StockRoom11net
                                     ));
                         break;
                     }
-                case MyCode.NotificationEvents.DataBaseUpDated:
+                case Utilities.NotificationEvents.DataBaseUpDated:
                     {
                         //NotificationEvent will be up when the database is saved successfully.
 
@@ -4762,7 +4755,7 @@ namespace StockRoom11net
                         EmployeesManagementsSaveRequest();
                         break;
                     }
-                case MyCode.NotificationEvents.ClearAllSelected:
+                case Utilities.NotificationEvents.ClearAllSelected:
                     {
                         UpdateStatusColumn(Production_InventoryDataSet.Table_StockRoom);
 
@@ -4782,7 +4775,7 @@ namespace StockRoom11net
                                       "Warning, DataBase updated.",                       // 1 notification.Title
                                       "The database has been updated by an user.",        // 2 notification.Description
                                       (int)ToolTipIcon.Info,                              // 3 notification.MessageIcon
-                                      (int)MyCode.NotificationEvents.DataBaseUpDated,     // 4 notifycation.NotifycationEvents
+                                      (int)Utilities.NotificationEvents.DataBaseUpDated,     // 4 notifycation.NotifycationEvents
                                       Settings.Default.DepartmentName,                    // 5 notification.String_Filter
                                       DateTime.Now,                                       // 6 notification.DateCreated
                                       CurrentEmployeesLogIn.FullName,                     // 7 notification.Created_by
@@ -5171,7 +5164,7 @@ namespace StockRoom11net
 
             switch (_documentationBehavior)
             {
-                case MyCode.DocumentationBehavior.SpecifiedDocument:
+                case Utilities.DocumentationBehavior.SpecifiedDocument:
                     {
                         if (_pdf_explorer_Success)
                             PdfViewerFactory("", null);
@@ -5195,12 +5188,12 @@ namespace StockRoom11net
                             PdfViewerFactory("", null);
                         break;
                     }
-                case MyCode.DocumentationBehavior.LastRevision:
+                case Utilities.DocumentationBehavior.LastRevision:
                     {
                         PdfViewerFactory("LastRevision", null);
                         break;
                     }
-                case MyCode.DocumentationBehavior.AllVersionsFound:
+                case Utilities.DocumentationBehavior.AllVersionsFound:
                     {
                         if (_pdf_explorer_Success)
                             PdfViewerFactory("", null);
@@ -5225,18 +5218,18 @@ namespace StockRoom11net
 
                         break;
                     }
-                case MyCode.DocumentationBehavior.Last2Versions:
+                case Utilities.DocumentationBehavior.Last2Versions:
                     {
                         PdfViewerFactory("", null);
                         PdfViewerFactory("", null);
                         break;
                     }
-                case MyCode.DocumentationBehavior.BrowserForAnVersion:
+                case Utilities.DocumentationBehavior.BrowserForAnVersion:
                     {
                         PdfViewerFactory("", null);
                         break;
                     }
-                case MyCode.DocumentationBehavior.NoDocumentsExist:
+                case Utilities.DocumentationBehavior.NoDocumentsExist:
                     {
                         break;
                     }
@@ -5290,32 +5283,32 @@ namespace StockRoom11net
 
             switch (_documentationBehavior)
             {
-                case MyCode.DocumentationBehavior.SpecifiedDocument:
+                case Utilities.DocumentationBehavior.SpecifiedDocument:
                     {
                         SpecifiedDocumentProcess(e);
                         break;
                     }
-                case MyCode.DocumentationBehavior.LastRevision:
+                case Utilities.DocumentationBehavior.LastRevision:
                     {
                         LastRevisionProcess(e);
                         break;
                     }
-                case MyCode.DocumentationBehavior.AllVersionsFound:
+                case Utilities.DocumentationBehavior.AllVersionsFound:
                     {
                         AllVersionsFoundProcess(e);
                         break;
                     }
-                case MyCode.DocumentationBehavior.Last2Versions:
+                case Utilities.DocumentationBehavior.Last2Versions:
                     {
                         Last2VersionsProcess(e);
                         break;
                     }
-                case MyCode.DocumentationBehavior.BrowserForAnVersion:
+                case Utilities.DocumentationBehavior.BrowserForAnVersion:
                     {
                         BrowserForAnVersionProcess(e);
                         break;
                     }
-                case MyCode.DocumentationBehavior.NoDocumentsExist:
+                case Utilities.DocumentationBehavior.NoDocumentsExist:
                     {
                         break;
                     }
@@ -5393,7 +5386,7 @@ namespace StockRoom11net
             try
             {
                 /*
-                MessagePositionString = "var documentViewer = new Pdf_explorer";
+                MessageDebugPosition = "var documentViewer = new Pdf_explorer";
                 var documentViewer = new PDFjs_explorer
                 {
                    // Text = tabName,
@@ -5408,7 +5401,7 @@ namespace StockRoom11net
                     _pdf_explorer_Success = false;
                     using (var form = new Form { TopMost = true })
                     {
-                        MessageBox.Show(form, @"Break code at position " + MessagePositionString +
+                        MessageBox.Show(form, @"Break code at position " + MessageDebugPosition +
                                               @"Interop.PDFXCviewAxLib.dll file needs to be copied.",
                                               @"Solutions_TempleClass fail in DocumentViewerFactory()",
                                               MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -5461,7 +5454,7 @@ namespace StockRoom11net
                     OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Number of files founded " +
                                                       (_indexOpenedPdfDocuments + 1) + ", " + pathRootFolder +
                                                       @"\" + fileNameToMatch + fileExtToMatch.Replace("*", ""),
-                                                      MyStuff11net.Properties.Resources.OK));
+                                                      Resources.OK));
             }
         }
 
@@ -5560,14 +5553,14 @@ namespace StockRoom11net
 
         #region"MouseKeyEventProvider"
 
-        MyStuff11net.MouseKeyboardActivityMonitor.Controls.MouseKeyEventProvider _mouseKeyEventProvider;
+        MouseKeyEventProvider _mouseKeyEventProvider;
 
         void Initialize_MouseKeyEventProvider()
         {
-            _mouseKeyEventProvider = new MyStuff11net.MouseKeyboardActivityMonitor.Controls.MouseKeyEventProvider
+            _mouseKeyEventProvider = new StockRoom11net.Controls.MouseKeyboardActivityMonitor.Controls.MouseKeyEventProvider
             {
                 Enabled = true,
-                HookType = MyStuff11net.MouseKeyboardActivityMonitor.Controls.HookType.Global
+                HookType = HookType.Global
             };
 
             _mouseKeyEventProvider.MouseMove += mouseKeyEventProvider_StockRoom_MouseMove;
@@ -6385,11 +6378,11 @@ namespace StockRoom11net
                         {
                             stockroomRow.BeginEdit();
 
-                            stockroomRow["OnHoldBy"] = MyCode.Get_String(stockroomRow["OnHoldBy"].ToString());
+                            stockroomRow["OnHoldBy"] = Utilities.Get_String(stockroomRow["OnHoldBy"].ToString());
 
-                            stockroomRow["OnHand"] = MyCode.Get_Value(stockroomRow["OnHand"].ToString());
-                            stockroomRow["OnHold"] = MyCode.Get_Value(stockroomRow["OnHold"].ToString());
-                            stockroomRow["OnAvailable"] = MyCode.Get_Value(stockroomRow["OnAvailable"].ToString());
+                            stockroomRow["OnHand"] = Utilities.Get_Value(stockroomRow["OnHand"].ToString());
+                            stockroomRow["OnHold"] = Utilities.Get_Value(stockroomRow["OnHold"].ToString());
+                            stockroomRow["OnAvailable"] = Utilities.Get_Value(stockroomRow["OnAvailable"].ToString());
 
                             stockroomRow.AcceptChanges();
 
@@ -6423,11 +6416,11 @@ namespace StockRoom11net
                     {
                         stockroomRow.BeginEdit();
 
-                        stockroomRow["OnHoldBy"] = MyCode.Get_String(stockroomRow["OnHoldBy"].ToString());
+                        stockroomRow["OnHoldBy"] = Utilities.Get_String(stockroomRow["OnHoldBy"].ToString());
 
-                        stockroomRow["OnHand"] = MyCode.Get_Value(stockroomRow["OnHand"].ToString());
-                        stockroomRow["OnHold"] = MyCode.Get_Value(stockroomRow["OnHold"].ToString());
-                        stockroomRow["OnAvailable"] = MyCode.Get_Value(stockroomRow["OnAvailable"].ToString());
+                        stockroomRow["OnHand"] = Utilities.Get_Value(stockroomRow["OnHand"].ToString());
+                        stockroomRow["OnHold"] = Utilities.Get_Value(stockroomRow["OnHold"].ToString());
+                        stockroomRow["OnAvailable"] = Utilities.Get_Value(stockroomRow["OnAvailable"].ToString());
 
                         stockroomRow.AcceptChanges();
 
@@ -6641,11 +6634,11 @@ namespace StockRoom11net
                         {
                             stockroomRow.BeginEdit();
 
-                            stockroomRow["OnHoldBy"] = MyCode.Get_String(stockroomRow["OnHoldBy"].ToString());
+                            stockroomRow["OnHoldBy"] = Utilities.Get_String(stockroomRow["OnHoldBy"].ToString());
 
-                            stockroomRow["OnHand"] = MyCode.Get_Value(stockroomRow["OnHand"].ToString());
-                            stockroomRow["OnHold"] = MyCode.Get_Value(stockroomRow["OnHold"].ToString());
-                            stockroomRow["OnAvailable"] = MyCode.Get_Value(stockroomRow["OnAvailable"].ToString());
+                            stockroomRow["OnHand"] = Utilities.Get_Value(stockroomRow["OnHand"].ToString());
+                            stockroomRow["OnHold"] = Utilities.Get_Value(stockroomRow["OnHold"].ToString());
+                            stockroomRow["OnAvailable"] = Utilities.Get_Value(stockroomRow["OnAvailable"].ToString());
 
                             if ((Int32)stockroomRow["OnHold"] == 0)
                             {
@@ -6676,11 +6669,11 @@ namespace StockRoom11net
                     {
                         stockroomRow.BeginEdit();
 
-                        stockroomRow["OnHoldBy"] = MyCode.Get_String(stockroomRow["OnHoldBy"].ToString());
+                        stockroomRow["OnHoldBy"] = Utilities.Get_String(stockroomRow["OnHoldBy"].ToString());
 
-                        stockroomRow["OnHand"] = MyCode.Get_Value(stockroomRow["OnHand"].ToString());
-                        stockroomRow["OnHold"] = MyCode.Get_Value(stockroomRow["OnHold"].ToString());
-                        stockroomRow["OnAvailable"] = MyCode.Get_Value(stockroomRow["OnAvailable"].ToString());
+                        stockroomRow["OnHand"] = Utilities.Get_Value(stockroomRow["OnHand"].ToString());
+                        stockroomRow["OnHold"] = Utilities.Get_Value(stockroomRow["OnHold"].ToString());
+                        stockroomRow["OnAvailable"] = Utilities.Get_Value(stockroomRow["OnAvailable"].ToString());
 
                         if ((int)stockroomRow["OnHold"] == 0)
                         {
@@ -6956,11 +6949,11 @@ namespace StockRoom11net
                         {
                             stockroomRow.BeginEdit();
 
-                            stockroomRow["OnHoldBy"] = "";  // MyCode.Get_String(stockroomRow["OnHoldBy"].ToString());
+                            stockroomRow["OnHoldBy"] = "";  // Utilities.Get_String(stockroomRow["OnHoldBy"].ToString());
 
-                            stockroomRow["OnHand"] = MyCode.Get_Value(stockroomRow["OnHand"].ToString());
-                            stockroomRow["OnHold"] = 0;     // MyCode.Get_Value(stockroomRow["OnHold"].ToString());
-                            stockroomRow["OnAvailable"] = MyCode.Get_Value(stockroomRow["OnAvailable"].ToString());
+                            stockroomRow["OnHand"] = Utilities.Get_Value(stockroomRow["OnHand"].ToString());
+                            stockroomRow["OnHold"] = 0;     // Utilities.Get_Value(stockroomRow["OnHold"].ToString());
+                            stockroomRow["OnAvailable"] = Utilities.Get_Value(stockroomRow["OnAvailable"].ToString());
 
                             count++;
                             stockroomRow.EndEdit();
@@ -6977,11 +6970,11 @@ namespace StockRoom11net
                     {
                         stockroomRow.BeginEdit();
 
-                        stockroomRow["OnHoldBy"] = "";  // MyCode.Get_String(stockroomRow["OnHoldBy"].ToString());
+                        stockroomRow["OnHoldBy"] = "";  // Utilities.Get_String(stockroomRow["OnHoldBy"].ToString());
 
-                        stockroomRow["OnHand"] = MyCode.Get_Value(stockroomRow["OnHand"].ToString());
-                        stockroomRow["OnHold"] = 0;     // MyCode.Get_Value(stockroomRow["OnHold"].ToString());
-                        stockroomRow["OnAvailable"] = MyCode.Get_Value(stockroomRow["OnAvailable"].ToString());
+                        stockroomRow["OnHand"] = Utilities.Get_Value(stockroomRow["OnHand"].ToString());
+                        stockroomRow["OnHold"] = 0;     // Utilities.Get_Value(stockroomRow["OnHold"].ToString());
+                        stockroomRow["OnAvailable"] = Utilities.Get_Value(stockroomRow["OnAvailable"].ToString());
 
                         count++;
                         stockroomRow.EndEdit();
@@ -7331,10 +7324,10 @@ namespace StockRoom11net
                     messageLocation = "notifycationsDone.Add";
                     notificationDone.Add(notification.Key);
 
-                    messageLocation = "switch (MyCode.NotifycationEvents)";
+                    messageLocation = "switch (Utilities.NotifycationEvents)";
                     switch (notification.Value.NotifycationEvents)
                     {
-                        case MyCode.NotificationEvents.Warning:
+                        case Utilities.NotificationEvents.Warning:
                             {
                                 messageLocation = "NotifycationEvents.Warning";
                                 if (_notificationsShowWarnings)
@@ -7345,7 +7338,7 @@ namespace StockRoom11net
                                                                 notification.Value.MessageIcon);
                                 break;
                             }
-                        case MyCode.NotificationEvents.RowInformationChange:
+                        case Utilities.NotificationEvents.RowInformationChange:
                             {
                                 messageLocation = "NotifycationEvents.RowInformationChange";
                                 if (_notificationsShowWarnings)
@@ -7356,7 +7349,7 @@ namespace StockRoom11net
                                                                 notification.Value.MessageIcon);
                                 break;
                             }
-                        case MyCode.NotificationEvents.DataBaseUpDated:
+                        case Utilities.NotificationEvents.DataBaseUpDated:
                             {
                                 messageLocation = "NotifycationEvents.DataBaseUpDated";
                                 if (_notificationsShowDataBaseUpDate)
@@ -7377,7 +7370,7 @@ namespace StockRoom11net
 
                                 break;
                             }
-                        case MyCode.NotificationEvents.Email:
+                        case Utilities.NotificationEvents.Email:
                             {
                                 messageLocation = "NotifycationEvents.Email";
                                 if (_notificationsShowEmails)
@@ -7507,7 +7500,7 @@ namespace StockRoom11net
                 {
                     //NeedSaveDataProject hold the project name.
                     NeedSaveData = false;
-                    StockRoom_ProcessSaveRequest(new object(), new Save_Requested_EventArgs(MyCode.NotificationEvents.DataBaseUpDated));
+                    StockRoom_ProcessSaveRequest(new object(), new Save_Requested_EventArgs(Utilities.NotificationEvents.DataBaseUpDated));
                 }
             }
             catch (Exception errors)
@@ -7545,7 +7538,7 @@ namespace StockRoom11net
                 var logFilePath_Name = Path.Combine(Settings.Default.DataBaseAddress + "\\LogFile\\" + deptNameMonth, logFileNme);
                 var templeFilePath_Name = Settings.Default.DataBaseAddress + "\\Resources\\HTML pages\\LogFileTemple.html";
 
-                _processLogFile = new LogFileProcess(logFilePath_Name, templeFilePath_Name, MyCode.HTMLFileTemple.Application);
+                _processLogFile = new LogFileProcess(logFilePath_Name, templeFilePath_Name, Utilities.HTMLFileTemple.Application);
             }
             catch (Exception error)
             {
@@ -7580,7 +7573,8 @@ namespace StockRoom11net
         
         #region"Instantiate FileSystemWatcher class, set handlers, start monitoring, and display the action message."
 
-        List<FileSystemWatcherAgent> FileSystemWatcherAgentList = new List<FileSystemWatcherAgent>();
+        List<Controls.FileSystemWatcherAgent.FileSystemWatcherAgent> FileSystemWatcherAgentList =
+                                                    new List<Controls.FileSystemWatcherAgent.FileSystemWatcherAgent>();
 
         void InitializeFileSystemWatcher(DepartmentInformation departLogin)
         {
@@ -7593,7 +7587,7 @@ namespace StockRoom11net
                 if (!Directory.Exists(scanPath))
                     continue;
 
-                var watchAgent = new FileSystemWatcherAgent(scanPath);
+                var watchAgent = new StockRoom11net.Controls.FileSystemWatcherAgent.FileSystemWatcherAgent(scanPath);
 
                 watchAgent.FileCreated += WatchAgent_FileCreated;
                 watchAgent.FileDeleted += WatchAgent_FileDeleted;
@@ -7605,27 +7599,27 @@ namespace StockRoom11net
             }
         }
 
-        private void WatchAgent_FileCreated(object sender, System.IO.FileSystemEventArgs e)
+        private void WatchAgent_FileCreated(object sender, FileSystemEventArgs e)
         {
             InvokeOnUiThreadIfRequired(this, () => Text = "File has been created -> " + e.FullPath);
         }
 
-        private void WatchAgent_DirectoryRenamed(object sender, System.IO.RenamedEventArgs e)
+        private void WatchAgent_DirectoryRenamed(object sender, RenamedEventArgs e)
         {
             InvokeOnUiThreadIfRequired(this, () => Text = "Directory has been renamed -> " + e.FullPath);
         }
 
-        private void WatchAgent_FileDeleted(object sender, System.IO.FileSystemEventArgs e)
+        private void WatchAgent_FileDeleted(object sender, FileSystemEventArgs e)
         {
             InvokeOnUiThreadIfRequired(this, () => Text = "File has been deleted -> " + e.FullPath);
         }
 
-        private void WatchAgent_FileRenamed(object sender, System.IO.RenamedEventArgs e)
+        private void WatchAgent_FileRenamed(object sender, RenamedEventArgs e)
         {
             InvokeOnUiThreadIfRequired(this, () => Text = "File has been renamed -> " + e.FullPath);
         }
 
-        void WatchAgent_FileHasChanged(object sender, System.IO.FileSystemEventArgs e)
+        void WatchAgent_FileHasChanged(object sender, FileSystemEventArgs e)
         {
             InvokeOnUiThreadIfRequired(this, () => Text = "File content has changed -> " + e.FullPath);
         }
@@ -7896,7 +7890,7 @@ namespace StockRoom11net
             }
             catch (System.IO.IOException ex)
             {
-                if (MyCode.IsFileLocked(ex))
+                if (Utilities.IsFileLocked(ex))
                 {
                     ThumbsFileToDelete.Add(pathfolder);
                 }
