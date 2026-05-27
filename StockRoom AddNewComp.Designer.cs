@@ -361,7 +361,6 @@ namespace StockRoom11net
             this.dataGridViewExtended_AddNewComp.CurrentColumnActive = null;
             this.dataGridViewExtended_AddNewComp.CurrentDataGridViewRowMouseOver = null;
             this.dataGridViewExtended_AddNewComp.CurrentDataRowViewMouseOver = null;
-            this.dataGridViewExtended_AddNewComp.CurrentEmployeesLogIn = null;
             this.dataGridViewExtended_AddNewComp.CurrentRowBackgroundColor = System.Drawing.Color.DeepSkyBlue;
             this.dataGridViewExtended_AddNewComp.CurrentRowBorderColor = System.Drawing.Color.DarkBlue;
             this.dataGridViewExtended_AddNewComp.CurrentRowMouseOverStatus = null;

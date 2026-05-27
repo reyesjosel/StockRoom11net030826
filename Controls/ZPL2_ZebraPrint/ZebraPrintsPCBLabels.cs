@@ -260,7 +260,7 @@ namespace StockRoom11net.Controls.ZPL2_ZebraPrint
             }
             else
             {
-                EmployeesSelected = new Employee(currentRow);
+                EmployeesSelected = new EmployeeInformation(currentRow);
                 EmployeesSelected.Save_Requested -= EmployeesDepartmentSelected_SaveRequested;
                 EmployeesSelected.Save_Requested += EmployeesDepartmentSelected_SaveRequested;
 

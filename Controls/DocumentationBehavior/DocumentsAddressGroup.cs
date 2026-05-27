@@ -1,11 +1,13 @@
 ﻿using StockRoom11net.Controls.EmployeeInformation;
+using StockRoom11net.Data.Entities;
+using StockRoom11net.Data.Services;
 using System.ComponentModel;
 
 namespace StockRoom11net.Controls.DocumentationBehavior
 {
     public partial class DocumentsAddressGroup : UserControl
     {
-        //documentsAddressItemDefault, it is by default.
+        private ITableEmployeeService _employeesService;
 
         #region "CloseProject"
 
@@ -49,25 +51,19 @@ namespace StockRoom11net.Controls.DocumentationBehavior
         }
 
         bool AllowedEditing;
-        DepartmentInformation Department;
-        List<DepartmentInformation> DepartmentList;
 
         //Needed for design purpose.
         public DocumentsAddressGroup()
         {
             InitializeComponent();
-
-            Department = new DepartmentInformation();
-            DepartmentList = new List<DepartmentInformation>();
         }
 
-        public DocumentsAddressGroup(DepartmentInformation department, List<DepartmentInformation> departmentList, bool allowedEditing)
+        public DocumentsAddressGroup(ITableEmployeeService employeesService, bool allowedEditing)
         {
             InitializeComponent();
 
+            _employeesService = employeesService;
             AllowedEditing = allowedEditing;
-            Department = department;
-            DepartmentList = departmentList;
 
             ButtonAdd.MouseClick += ButtonAdd_MouseClick;
             ButtonDelete.MouseClick += ButtonDelete_MouseClick;
@@ -90,7 +86,7 @@ namespace StockRoom11net.Controls.DocumentationBehavior
             MinimumSize = new Size(Width, (panel_FlowLayoutButtons.Height + 15));
             Size = MinimumSize;
 
-            if (Department.DepartmentDocumentsAddressItems.Count == 0)
+            if (_employeesService.CurrentDepartmentLogIn.DepartmentDocumentsAddressItems.Count == 0)
             {
                 ButtonAdd.Enabled = true;
                 ButtonDelete.Enabled = false;
@@ -118,7 +114,7 @@ namespace StockRoom11net.Controls.DocumentationBehavior
             grouper_DocumentsAddressGroup.Controls.Remove(panel_DocumentsPDFGroupInf);
 
 
-            foreach (DocumentsAddressItem documentAddressItemList in Department.DepartmentDocumentsAddressItems)
+            foreach (DocumentsAddressItem documentAddressItemList in _employeesService.CurrentDepartmentLogIn.DepartmentDocumentsAddressItems)
             {
                 DocumentsAddressItem documentAddressItem;
                 documentAddressItem = new DocumentsAddressItem(documentAddressItemList.DocumentsAddressSet)
@@ -214,7 +210,7 @@ namespace StockRoom11net.Controls.DocumentationBehavior
 
             if (itemToDalete != null)
             {
-                int index = Department.DepartmentDocumentsAddressItems.FindIndex(x => x.ID == itemToDalete.ID);
+                int index = _employeesService.CurrentDepartmentLogIn.DepartmentDocumentsAddressItems.FindIndex(x => x.ID == itemToDalete.ID);
                 if (index == -1)
                 {
                     using (var form = new Form { TopMost = true })
@@ -227,8 +223,8 @@ namespace StockRoom11net.Controls.DocumentationBehavior
                     return;
                 }
 
-                Department.DepartmentDocumentsAddressItems.RemoveAt(index);
-                Department.SaveSetting();
+                _employeesService.CurrentDepartmentLogIn.DepartmentDocumentsAddressItems.RemoveAt(index);
+          //      _employeesService.CurrentDepartmentLogIn.SaveSetting();
 
                 InitializeDocumentsAddress();
             }
@@ -299,7 +295,7 @@ namespace StockRoom11net.Controls.DocumentationBehavior
         {
             try
             {
-                using (var editor = new DocumentsAddressEditor(documentAddressItem, Department, DepartmentList))
+                using (var editor = new DocumentsAddressEditor(documentAddressItem,  _employeesService))
                 {
                     editor.TopMost = true;
                     editor.ShowDialog();
@@ -323,9 +319,9 @@ namespace StockRoom11net.Controls.DocumentationBehavior
         int GetNextID()
         {
             var listID = new List<int>();
-            foreach (DepartmentInformation department in DepartmentList)
-            {
-                foreach (DocumentsAddressItem documentaddressItem in department.DepartmentDocumentsAddressItems)
+            foreach (DepartmentInformation departmentInfo in _employeesService.DepartmentsInformationList)
+            {               
+                foreach (DocumentsAddressItem documentaddressItem in departmentInfo.DepartmentDocumentsAddressItems)
                 {
                     listID.Add(documentaddressItem.ID);
                 }

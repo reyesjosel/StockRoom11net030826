@@ -1,4 +1,5 @@
 ﻿using StockRoom11net.Controls.EmployeeInformation;
+using StockRoom11net.Data.Services;
 using System.ComponentModel;
 
 namespace StockRoom11net.Controls.DataGridViewExtend

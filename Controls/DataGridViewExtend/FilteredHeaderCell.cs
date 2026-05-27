@@ -55,16 +55,15 @@ namespace StockRoom11net.Controls.DataGridViewExtend
                 _dataGridView.EnableHeadersVisualStyles = false;
                 _dataGridView.SelectColumn();
 
-                _dataGridView.MouseMove += _dataGridView_MouseMove;
-                _dataGridView.CellPainting += _dataGridView_CellPainting;
-                _dataGridView.ColumnHeaderMouseClick += _dataGridView_ColumnHeaderMouseClick;
+                _dataGridView.MouseMove += DataGridView_MouseMove;
+                _dataGridView.CellPainting += DataGridView_CellPainting;
+                _dataGridView.ColumnHeaderMouseClick += DataGridView_ColumnHeaderMouseClick;
 
                 _dataGridView.ActiveFilterCollection.Add(FilteredColumnIndex, this);
             }
 
             MouseLocation = new Point(0, 0);
-            PenColumnClearFilterIndicador = new Pen(Color.Black, 1);
-
+            
             IsClearFilterIndicatorPainted = false;
 
             _foreColor = _headerCell.Style.ForeColor;
@@ -132,8 +131,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             }
         }
 
-        public Pen PenColumnClearFilterIndicador;
-
+        public Pen PenColumnClearFilterIndicador = new(Color.Black, 1);
         HitTestInfo _hitTest;
         public HitTestInfo HitTest
         {
@@ -189,7 +187,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             return;
         }
 
-        void _dataGridView_MouseMove(object sender, MouseEventArgs e)
+        void DataGridView_MouseMove(object? sender, MouseEventArgs e)
         {
             HitTest = _dataGridView.HitTest(e.X, e.Y);
 
@@ -208,7 +206,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             }
         }
 
-        void _dataGridView_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)
+        void DataGridView_CellPainting(object? sender, DataGridViewCellPaintingEventArgs e)
         {
             if (e.RowIndex != -1)
                 return;
@@ -242,9 +240,14 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             e.Handled = true;
         }
 
-        void _dataGridView_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        void DataGridView_ColumnHeaderMouseClick(object? sender, DataGridViewCellMouseEventArgs e)
         {
             if (e.ColumnIndex != _headerCell.ColumnIndex)
+                return;
+
+            // This was a click-and-hold (column selection), not a sort click — skip sort.
+            // The flag is reset asynchronously by DataGridViewControlExtended after all handlers run.
+            if (_dataGridView.SuppressSortOnNextColumnHeaderClick)
                 return;
 
             if (IsMouseOverColumnClearFilterIndicator)
@@ -257,10 +260,8 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             DataGridViewColumn oldColumn = _dataGridView.SortedColumn;
             ListSortDirection direction;
 
-            // If oldColumn is null, then the DataGridView is not sorted. 
             if (oldColumn != null)
             {
-                // Sort the same column again, reversing the SortOrder. 
                 if (oldColumn == newColumn &&
                     _dataGridView.SortOrder == SortOrder.Ascending)
                 {
@@ -268,7 +269,6 @@ namespace StockRoom11net.Controls.DataGridViewExtend
                 }
                 else
                 {
-                    // Sort a new column and remove the old SortGlyph.
                     direction = ListSortDirection.Ascending;
                     oldColumn.HeaderCell.SortGlyphDirection = SortOrder.None;
                 }
@@ -278,7 +278,6 @@ namespace StockRoom11net.Controls.DataGridViewExtend
                 direction = ListSortDirection.Ascending;
             }
 
-            // Sort the selected column.
             _dataGridView.Sort(newColumn, direction);
             newColumn.HeaderCell.SortGlyphDirection = direction == ListSortDirection.Ascending ?
                                                     SortOrder.Ascending : SortOrder.Descending;
@@ -292,9 +291,9 @@ namespace StockRoom11net.Controls.DataGridViewExtend
 
             _dataGridView.SelectedColumnCollection.Remove(HitTestColumnDisplayIndex);
 
-            _dataGridView.MouseMove -= _dataGridView_MouseMove;
-            _dataGridView.CellPainting -= _dataGridView_CellPainting;
-            _dataGridView.ColumnHeaderMouseClick -= _dataGridView_ColumnHeaderMouseClick;
+            _dataGridView.MouseMove -= DataGridView_MouseMove;
+            _dataGridView.CellPainting -= DataGridView_CellPainting;
+            _dataGridView.ColumnHeaderMouseClick -= DataGridView_ColumnHeaderMouseClick;
 
             On_RemovedFilter_Event(new Custom_Events_Args.RemovedFilter_EventArgs(_headerCell));
 

@@ -1,4 +1,5 @@
 ﻿using StockRoom11net.Controls.Trictionary;
+using StockRoom11net.Data.Entities;
 using System.Data;
 using System.Runtime.InteropServices;
 
@@ -220,7 +221,7 @@ namespace StockRoom11net.Controls.SMTcontrol
                 return;
             }
 
-            componentInformations = new ComponentInformation((DataRowView)bindingSource[stockRoomIndex]);
+            componentInformations = new ComponentInformation((Table_StockRoom)bindingSource[stockRoomIndex]);
 
             Description = componentInformations.Description + remplacementsComp;
             CompOnHand = componentInformations.OnAvailable;

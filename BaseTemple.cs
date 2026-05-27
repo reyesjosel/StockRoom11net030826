@@ -11,7 +11,7 @@ using CellDoubleClick_EventArgs = StockRoom11net.Controls.Custom_Events_Args.Cel
 using CurrentDeptUserBroadcast_EventArgs = StockRoom11net.Controls.Custom_Events_Args.CurrentDeptUserBroadcast_EventArgs;
 using CurrentStatus = StockRoom11net.Controls.CurrentStatus;
 using DepartmentInformation = StockRoom11net.Controls.EmployeeInformation.DepartmentInformation;
-using Employee = StockRoom11net.Controls.EmployeeInformation.Employee;
+using Employee = StockRoom11net.Controls.EmployeeInformation.EmployeeInformation;
 using LogFileMessageEventArgs = StockRoom11net.Controls.Custom_Events_Args.LogFileMessageEventArgs;
 using MyCode = StockRoom11net.Controls.Utilities;
 using Need_SaveData_EventArgs = StockRoom11net.Controls.Custom_Events_Args.Need_SaveData_EventArgs;
@@ -460,75 +460,6 @@ namespace StockRoom11net
         #endregion
 
         #endregion"Custom Controls Events with custom Arg.*********************"      
-
-        #region"CurrentUserBroadcast"
-        
-        /// <summary>
-        /// Department active in this machine.
-        /// </summary>
-        DepartmentInformation _currentDepartmentLogIn = new DepartmentInformation();
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public DepartmentInformation CurrentDepartmentLogIn
-        {
-            get
-            {
-                return _currentDepartmentLogIn;
-            }
-            set
-            {
-                if (value == null)
-                    return;
-
-                _currentDepartmentLogIn = value;
-
-                _currentDepartmentLogIn.Save_Requested -= CurrentDepartmentLogIn_Save_Requested;
-                _currentDepartmentLogIn.Save_Requested += CurrentDepartmentLogIn_Save_Requested;
-            }
-        }
-
-        void CurrentDepartmentLogIn_Save_Requested(object sender, Save_Requested_EventArgs e)
-        {
-            On_Save_Requested(e);
-        }
-
-        public Action? ProcessCurrentEmployeesLogIn;
-        Employee? _currentEmployeesLogIn = new Employee();
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public Employee CurrentEmployeesLogIn
-        {
-            get
-            {
-                _currentEmployeesLogIn ??= new Employee();
-
-                return _currentEmployeesLogIn;
-            }
-            set
-            {
-                _currentEmployeesLogIn = value;
-
-                if (dataGridViewExtendedBase != null)
-                    dataGridViewExtendedBase.CurrentEmployeesLogIn = _currentEmployeesLogIn;
-
-                if (thumbViewerBasePictures != null)
-                    thumbViewerBasePictures.CurrentEmployeesLogIn = _currentEmployeesLogIn;
-
-                if (thumbViewerBaseLocation != null)
-                    thumbViewerBaseLocation.CurrentEmployeesLogIn = _currentEmployeesLogIn;
-
-                ProcessCurrentEmployeesLogIn?.Invoke();
-            }
-        }
-
-        public void CurrentUserBroadcast_EventHandler(object sender, CurrentDeptUserBroadcast_EventArgs e)
-        {
-            if (e == null)
-                return;
-
-            CurrentEmployeesLogIn = e.Employee;
-            CurrentDepartmentLogIn = e.Deptment;
-        }
-
-        #endregion"CurrentUserBroadcast"
 
         #region"thumbViewerBase"
         public void InitializeThumbViewerPicturesBase(ThumbViewer thumbViewer)

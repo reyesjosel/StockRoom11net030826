@@ -4,6 +4,8 @@ using System.ComponentModel;
 namespace StockRoom11net.Data.Services;
 
 /// <summary>
+/// ✅ SERVICE — business logic: : search by name, validate, process,
+/// Data access delegated to repository via UnitOfWork.
 /// Service layer for TimeLine business logic using scaffolded entities
 /// </summary>
 public partial interface ITableTimeLineService
@@ -17,6 +19,8 @@ public partial interface ITableTimeLineService
     Task<BindingList<Table_TimeLine>> GetTimeLinesByFilterAsync(string filter);
 }
 
+/// ✅ SERVICE — business logic: : search by name, validate, process,
+/// Data access delegated to repository via UnitOfWork.
 public partial class TableTimeLineService : ITableTimeLineService
 {
     private readonly IUnitOfWork _unitOfWork;

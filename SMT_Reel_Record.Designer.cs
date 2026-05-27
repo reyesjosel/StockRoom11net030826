@@ -77,7 +77,6 @@ namespace StockRoom11net
             this.dataGridViewExtended_ReelRecord.CurrentColumnActive = null;
             this.dataGridViewExtended_ReelRecord.CurrentDataGridViewRowMouseOver = null;
             this.dataGridViewExtended_ReelRecord.CurrentDataRowViewMouseOver = null;
-            this.dataGridViewExtended_ReelRecord.CurrentEmployeesLogIn = null;
             this.dataGridViewExtended_ReelRecord.CurrentRowBackgroundColor = System.Drawing.Color.DeepSkyBlue;
             this.dataGridViewExtended_ReelRecord.CurrentRowBorderColor = System.Drawing.Color.DarkBlue;
             this.dataGridViewExtended_ReelRecord.CurrentRowMouseOverStatus = null;
@@ -314,7 +313,7 @@ namespace StockRoom11net
             this.label_EmployeeID_Value.Name = "label_EmployeeID_Value";
             this.label_EmployeeID_Value.Size = new System.Drawing.Size(240, 28);
             this.label_EmployeeID_Value.TabIndex = 7;
-            this.label_EmployeeID_Value.Text = "Employee ID";
+            this.label_EmployeeID_Value.Text = "EmployeeInformation ID";
             this.label_EmployeeID_Value.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // label_NewRecord_Start_Panel
@@ -325,7 +324,7 @@ namespace StockRoom11net
             this.label_NewRecord_Start_Panel.Name = "label_NewRecord_Start_Panel";
             this.label_NewRecord_Start_Panel.Size = new System.Drawing.Size(240, 16);
             this.label_NewRecord_Start_Panel.TabIndex = 5;
-            this.label_NewRecord_Start_Panel.Text = "Employee ID";
+            this.label_NewRecord_Start_Panel.Text = "EmployeeInformation ID";
             this.label_NewRecord_Start_Panel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // groupBox_NewRecord_ProjectName

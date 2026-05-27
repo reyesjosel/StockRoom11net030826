@@ -1,4 +1,4 @@
-﻿using Microsoft.Data.Sqlite;
+using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.DependencyInjection;
 using StockRoom11net.Controls.DependencyInjection;
 using StockRoom11net.Controls.DocumentationBehavior;
@@ -6,6 +6,7 @@ using StockRoom11net.Controls;
 using StockRoom11net.Controls.EmployeeInformation;
 using StockRoom11net.Controls.ThumbViewer;
 using StockRoom11net.Properties;
+using StockRoom11net.Data;
 using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -34,14 +35,18 @@ using StockRoom11net.Controls.FileSystemEnumerator;
 using StockRoom11net.Controls.MouseKeyboardActivityMonitor.Controls;
 using StockRoom11net.Controls.MouseKeyboardActivityMonitor;
 using StockRoom11net.Controls.RawInput;
+using StockRoom11net.Data.Services;
+using StockRoom11net.Data.Entities;
 
 [assembly: System.Runtime.Versioning.SupportedOSPlatformAttribute("windows")]
 namespace StockRoom11net
 {
     public partial class Solutions_TempleClass : Form
     {
-        private readonly IMyService _myService;
+        // Injected EF Core services
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IServiceProvider _serviceProvider;
+        private ITableEmployeeService _employeesService;
 
         // X:\ProductionManagement\AdvanceTec Software\
         // \\advt01s1\atishares\\ProductionManagement\AdvanceTec Software\
@@ -301,6 +306,7 @@ namespace StockRoom11net
             NeedSaveDataIni(e.ControlName + ":" + e.NeedSaveData);
         }
 
+
         bool _hasInternetConnectionAvailable = false;
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public bool HasInternetConnectionAvailable
@@ -331,52 +337,7 @@ namespace StockRoom11net
         /// </summary>
         int RowsChanged;
         string _rowHasError = "";
-        /// <summary>
-        /// Keep the records changed at the last save call.....
-        /// </summary>
-        DataTable? changedRecordsTable;
-
-        int _lastID;
-        /// <summary>
-        /// Top value for ID field, option filter to select a group of row.
-        /// table.Compute("MAX(ID)", "filter condition"), itself inc.
-        /// </summary>
-        int LastID
-        {
-            get
-            {
-                ++_lastID;
-                return _lastID;
-            }
-            set
-            {
-                _lastID = value;
-
-            }
-        }
-
-        Employee lastEmployeeLogIn;
-        /// <summary>
-        /// Keep a information about the last user name log in.
-        /// </summary>
-        Employee LastEmployeeLOgIN
-        {
-            get
-            {
-                return lastEmployeeLogIn;
-            }
-            set
-            {
-                if (value.Name.Contains("No User Log On"))
-                    return;
-
-                lastEmployeeLogIn = value;
-            }
-        }
-
-        /// <summary>
-        ///
-        /// </summary>
+        
         bool TestBarCodeReader;
 
         /// <summary>
@@ -405,34 +366,7 @@ namespace StockRoom11net
         public Employees_Management _employees_ManagementsForm;
         public LocationAndLayoutPlanning? _locationAndLayoutDesignForm;
         public TimeLineEditor? _timeLineEditorForm;
-
-        static BindingSource _bindingSource_Labels_SMT;
-        static BindingSource _bindingSource_Marshall;
-        static BindingSource _bindingSource_CodeTreeView;
-        static BindingSource _bindingSource_Employees;
-        static BindingSource _bindingSource_StockRoom;
-        static BindingSource _bindingSourceStockRoomTreeView;
-        static BindingSource _bindingSource_Projects;
-        static BindingSource _bindingSource_EmployeesTreeView;
-        static BindingSource _bindingSource_LocationsTreeView;
-        static BindingSource _bindingSource_Locations;
-        static BindingSource _bindingSource_ProjectsTreeView;
-        static BindingSource _bindingSource_Status;
-        static BindingSource _bindingSource_TimeLine;
-        static BindingSource _bindingSource_TimeLine_TreeView;
-
-        /// <summary>
-        /// It's use in StockRoomRepository to filter data to ProductionsController.
-        /// </summary>
-        static BindingSource _bindingSource_Products;
-        /// <summary>
-        /// It's use in StockRoomRepository to filter data to ProductionsController.
-        /// Select the filter active by user on mobile-phone.
-        /// </summary>
-        static BindingSource _bindingSource_SRTreeView;
-
-
-        static Production_InventoryDataSet Production_InventoryDataSet;
+               
                       
         private static SqliteConnection? DataBaseSqliteConnection;
         private static string ApplicationDefaultHtmlPages = "";
@@ -450,18 +384,26 @@ namespace StockRoom11net
 
         #endregion"Properties and fields"
 
-        
+        // To catch missing registrations early, you can also mark the parameterless
+        // constructor with[Obsolete] so it shows a compiler warning whenever it's accidentally used:
+        [Browsable(false)]
+        [Obsolete("Use DI constructor. Missing service registration may be causing this call.")]
         public Solutions_TempleClass()
         {
             InitializeComponent();
         }
 
-        public Solutions_TempleClass(IMyService myService, IServiceProvider serviceProvider)
+        public Solutions_TempleClass(ITableEmployeeService employeesService, IServiceProvider serviceProvider)
         {
             InitializeComponent();
 
-            _myService = myService ?? throw new ArgumentNullException(nameof(myService), "MyService cannot be null.");
+            _unitOfWork = serviceProvider.GetRequiredService<IUnitOfWork>() ?? throw new ArgumentNullException(nameof(serviceProvider), "IUnitOfWork service is not registered.");
             _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider), "ServiceProvider cannot be null.");
+            _employeesService = employeesService ?? throw new ArgumentNullException(nameof(employeesService), "EmployeesService cannot be null.");
+            _employeesService.CurrentEmployeeLogInChanged += (s, e) =>
+            {
+                Solutions_TempleClass_CurrentDeptUserBroadcast_Requested();
+            };
 
             AutoScaleMode = AutoScaleMode.Dpi;
             Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
@@ -470,151 +412,14 @@ namespace StockRoom11net
             {
                 SuspendLayout();
 
-                #region"Initialize_SMT_InventoryDataSet"
-
-                // SMT_InventoryDataSet
-                Production_InventoryDataSet = new Production_InventoryDataSet();
-                ((ISupportInitialize)(Production_InventoryDataSet)).BeginInit();
-                Production_InventoryDataSet.DataSetName = nameof(Production_InventoryDataSet);
-                Production_InventoryDataSet.SchemaSerializationMode = SchemaSerializationMode.IncludeSchema;
-                ((ISupportInitialize)(Production_InventoryDataSet)).EndInit();
-
-                #endregion"Initialize_SMT_InventoryDataSet"
-
-                #region"Initialize_bindingSource"
-
-                // _bindingSource_Labels_SMT
-                _bindingSource_Labels_SMT = new BindingSource(components);
-                ((ISupportInitialize)(_bindingSource_Labels_SMT)).BeginInit();
-                _bindingSource_Labels_SMT.DataMember = "Table_Labels_SMT";
-                _bindingSource_Labels_SMT.DataSource = Production_InventoryDataSet;
-                ((ISupportInitialize)(_bindingSource_Labels_SMT)).EndInit();
-
-                // _bindingSource_tableMarshallTreeView
-                _bindingSource_CodeTreeView = new BindingSource(components);
-                ((ISupportInitialize)(_bindingSource_CodeTreeView)).BeginInit();
-                _bindingSource_CodeTreeView.DataMember = "Table_Marshall_TreeView";
-                _bindingSource_CodeTreeView.DataSource = Production_InventoryDataSet;
-                // _bindingSource_tableMarshallTreeView.BindingComplete +=
-                ((ISupportInitialize)(_bindingSource_CodeTreeView)).EndInit();
-
-                // _bindingSourceStockRoomTreeView
-                _bindingSourceStockRoomTreeView = new BindingSource(components);
-                ((ISupportInitialize)(_bindingSourceStockRoomTreeView)).BeginInit();
-                _bindingSourceStockRoomTreeView.DataMember = "Table_StockRoom_TreeView";
-                _bindingSourceStockRoomTreeView.DataSource = Production_InventoryDataSet;
-                ((ISupportInitialize)(_bindingSourceStockRoomTreeView)).EndInit();
-
-                // _bindingSource_tableStockRoom
-                _bindingSource_StockRoom = new BindingSource(components);
-                ((ISupportInitialize)(_bindingSource_StockRoom)).BeginInit();
-                _bindingSource_StockRoom.DataMember = "Table_StockRoom";
-                _bindingSource_StockRoom.DataSource = Production_InventoryDataSet;
-                ((ISupportInitialize)(_bindingSource_StockRoom)).EndInit();
-
-                // _bindingSource_Products
-                _bindingSource_Products = new BindingSource(components);
-                ((ISupportInitialize)(_bindingSource_Products)).BeginInit();
-                DataView dataViewProducts = new DataView(Production_InventoryDataSet.Tables["Table_StockRoom"], "", "[PartNumber] ASC", DataViewRowState.CurrentRows);
-                _bindingSource_Products.DataSource = dataViewProducts;
-                ((ISupportInitialize)(_bindingSource_Products)).EndInit();
-
-                // _bindingSource_SRTreeView
-                _bindingSource_SRTreeView = new BindingSource(components);
-                ((ISupportInitialize)(_bindingSource_SRTreeView)).BeginInit();
-                DataView dataViewSRTreeView = new DataView(Production_InventoryDataSet.Tables["Table_StockRoom_TreeView"], "", "[ID] ASC", DataViewRowState.CurrentRows);
-                _bindingSource_SRTreeView.DataSource = dataViewSRTreeView;
-                ((ISupportInitialize)(_bindingSource_SRTreeView)).EndInit();
-
-                // _bindingSource_tableMarshall
-                _bindingSource_Marshall = new BindingSource(components);
-                ((ISupportInitialize)(_bindingSource_Marshall)).BeginInit();
-                _bindingSource_Marshall.DataMember = "Table_Marshall";
-                _bindingSource_Marshall.DataSource = Production_InventoryDataSet;
-                ((ISupportInitialize)(_bindingSource_Marshall)).EndInit();
-
-                // _bindingSource_tableProjects
-                _bindingSource_Projects = new BindingSource(components);
-                ((ISupportInitialize)(_bindingSource_Projects)).BeginInit();
-                _bindingSource_Projects.DataMember = "Table_Projects";
-                _bindingSource_Projects.DataSource = Production_InventoryDataSet;
-                ((ISupportInitialize)(_bindingSource_Projects)).EndInit();
-
-                // _bindingSource_tableProjectsTreeView
-                _bindingSource_ProjectsTreeView = new BindingSource(components);
-                ((ISupportInitialize)(_bindingSource_ProjectsTreeView)).BeginInit();
-                _bindingSource_ProjectsTreeView.DataMember = "Table_Projects_TreeView";
-                _bindingSource_ProjectsTreeView.DataSource = Production_InventoryDataSet;
-                ((ISupportInitialize)(_bindingSource_ProjectsTreeView)).EndInit();
-
-                // _bindingSource_Employees
-                _bindingSource_Employees = new BindingSource(components);
-                ((ISupportInitialize)(_bindingSource_Employees)).BeginInit();
-                _bindingSource_Employees.DataMember = "Table_Employees";
-                _bindingSource_Employees.DataSource = Production_InventoryDataSet;
-                ((ISupportInitialize)(_bindingSource_Employees)).EndInit();
-
-                // _bindingSource_EmployeesTreeView
-                _bindingSource_EmployeesTreeView = new BindingSource(components);
-                ((ISupportInitialize)(_bindingSource_EmployeesTreeView)).BeginInit();
-                _bindingSource_EmployeesTreeView.DataMember = "Table_Employees_TreeView";
-                _bindingSource_EmployeesTreeView.DataSource = Production_InventoryDataSet;
-                ((ISupportInitialize)(_bindingSource_EmployeesTreeView)).EndInit();
-
-                // _bindingSource_Locations
-                _bindingSource_Locations = new BindingSource(components);
-                ((ISupportInitialize)(_bindingSource_Locations)).BeginInit();
-                _bindingSource_Locations.DataMember = "Table_Locations";
-                _bindingSource_Locations.DataSource = Production_InventoryDataSet;
-                ((ISupportInitialize)(_bindingSource_Locations)).EndInit();
-
-                // _bindingSource_LocationsTreeView
-                _bindingSource_LocationsTreeView = new BindingSource(components);
-                ((ISupportInitialize)(_bindingSource_LocationsTreeView)).BeginInit();
-                _bindingSource_LocationsTreeView.DataMember = "Table_Location_TreeView";
-                _bindingSource_LocationsTreeView.DataSource = Production_InventoryDataSet;
-                ((ISupportInitialize)(_bindingSource_LocationsTreeView)).EndInit();
-
-                // _bindingSource_Status
-                _bindingSource_Status = new BindingSource(components);
-                ((ISupportInitialize)(_bindingSource_Status)).BeginInit();
-                _bindingSource_Status.DataMember = "Table_Status";
-                _bindingSource_Status.DataSource = Production_InventoryDataSet;
-                ((ISupportInitialize)(_bindingSource_Status)).EndInit();
-
-                // _bindingSource_TimeLine
-                _bindingSource_TimeLine = new BindingSource(components);
-                ((ISupportInitialize)(_bindingSource_TimeLine)).BeginInit();
-                _bindingSource_TimeLine.DataMember = "Table_TimeLine";
-                _bindingSource_TimeLine.DataSource = Production_InventoryDataSet;
-                ((ISupportInitialize)(_bindingSource_TimeLine)).EndInit();
-
-                // _bindingSource_TimeLine_TreeView
-                _bindingSource_TimeLine_TreeView = new BindingSource(components);
-                ((ISupportInitialize)(_bindingSource_TimeLine_TreeView)).BeginInit();
-                _bindingSource_TimeLine_TreeView.DataMember = "Table_TimeLine_TreeView";
-                _bindingSource_TimeLine_TreeView.DataSource = Production_InventoryDataSet;
-                ((ISupportInitialize)(_bindingSource_TimeLine_TreeView)).EndInit();
-
-                #endregion"Initialize_bindingSource"
-
-                _currentEmployeesLogIn = new Employee();
-
-                changedRecordsTable = new DataTable("ChangedRecordsTable");
-
                 showRightToLeft.Checked = true;
                 _mDeserializeDockContent = new DeserializeDockContent(GetContentFromPersistString);
-
-                _bindingSource_StockRoom.RaiseListChangedEvents = true;
 
                 dockPanel.Dock = DockStyle.Fill;
                 dockPanel.Theme = vS2005Theme;
                 dockPanel.ShowDocumentIcon = true;
 
                 InitializeDocumentationBehaviorTimer(1);
-
-                Application.ThreadException += Application_ThreadException;
-
                 ResumeLayout(false);
             }
             catch (Exception error)
@@ -628,18 +433,9 @@ namespace StockRoom11net
             }
 
             InitializeStatusBarTimer();
-
-            //  RegisterDLLOriginal registrar = new RegisterDLLOriginal(
-            //  Path.GetDirectoryName(Environment.CurrentDirectory) + "\\Release\\BarcodeSample.UI.WinForms.Interop.dll");
-            //  registrar.RegisterComDLL();
-            //  finalizer = new Finalizer(registrar);
         }
 
-        static void Application_ThreadException(object sender, ThreadExceptionEventArgs e)
-        {
-            return;
-        }
-
+        
         public void SolutionsBaseLoad(object sender, EventArgs e)
         {           
             try
@@ -678,53 +474,10 @@ namespace StockRoom11net
 
                 InitializeCurrentUserBroadcastTimer();
 
-                Write_LogFile(new object(), new Custom_Events_Args.LogFileMessageEventArgs(new List<string>
-                    {
-                        Tags.NewLine(""),
-                        Tags.NewLineBold(_currentEmployeesLogIn.FullName),
-                        Tags.NewLine("Starting the application at " + DateTime.Now),
-                        Tags.StraigthLine
-                    }));
-
                 toolStripTextBox_Log_User.Visible = false;
 
-                CurrentDeptUserBroadcast_Requested += Solutions_TempleClass_CurrentDeptUserBroadcast_Requested;
+            //    CurrentDeptUserBroadcast_Requested += 123Solutions_TempleClass_CurrentDeptUserBroadcast_Requested;
                 ScannedDataEvent += Solutions_TempleClass_ScannedDataEvent;
-
-                #region"Load all tables."
-
-                Write_LogFile(new object(), new Custom_Events_Args.LogFileMessageEventArgs(new List<string>
-                    {
-                        Tags.NewLine(""),
-                        Tags.NewLineBold(_currentEmployeesLogIn.FullName),
-                        Tags.NewLine("Full ConnectionString string = " + Settings.Default.DataBaseConnectionStringSQLite),
-                        Tags.NewLine("Starting load all tables at " + DateTime.Now),
-                    }));
-
-                BackgroundWorker_Load_Table_Stockroom();
-                BackgroundWorker_Load_Table_StockroomTreeView();
-
-                //BackgroundWorker_Load_Table_Marshall();
-                //BackgroundWorker_Load_Table_Marshall_TreeView();
-
-                BackgroundWorker_Load_Table_Employees();
-                BackgroundWorker_Load_Table_EmployeesTreeView();
-
-                BackgroundWorker_Load_Table_Labels_SMT();
-
-                //BackgroundWorker_Load_Table_Components();
-                //BackgroundWorker_Load_Table_Placements();
-
-                //BackgroundWorker_Load_Table_Locations();
-                //BackgroundWorker_Load_Table_LocationsTreeView();
-
-                //BackgroundWorker_Load_Table_Projects_TreeView();
-
-                BackgroundWorker_Load_Table_TimeLine();
-
-                BackgroundWorker_Load_Table_TimeLineTreeView();
-
-                #endregion"Load all tables if the binding source no is ready"
 
                 var configFile = Path.Combine(Path.GetDirectoryName(Application.ExecutablePath), "DockPanel.config");
 
@@ -745,9 +498,6 @@ namespace StockRoom11net
 
         public void Solutions_Temple_Shown(object sender, EventArgs e)
         {
-            if (Utilities.IsInDesignMode())
-                return;
-
             InitializeProperties();
 
             InitSolutionsTemple(@"Solution Temple.");
@@ -755,7 +505,6 @@ namespace StockRoom11net
             Initialize_MouseKeyEventProvider();
 
             InitializeThreadTimerCheckStatusTable();
-            InitializeBackgroundWorkerFillByLastAccessTime();
 
             // TODO: Remove this and use the event in Utilities.
             // To use StatusBarMessage event from Utilities.
@@ -796,17 +545,17 @@ namespace StockRoom11net
                 {
                     string configFile = Path.Combine(Path.GetDirectoryName(Application.ExecutablePath), "DockPanel.config");
 
-                    if (m_bSaveLayout)
-                        dockPanel.SaveAsXml(configFile);
-                    else if (File.Exists(configFile))
-                        File.Delete(configFile);
+                 //   if (m_bSaveLayout)
+                 //       dockPanel.SaveAsXml(configFile);
+                 //   else if (File.Exists(configFile))
+                 //       File.Delete(configFile);
                 }
             }
             catch (Exception error)
             {
                 int ee = error.HResult;
-                //  MessageBox.Show(new Form() { TopMost = true }, @"StockRoom_Solutions_FormClosing(), error is " + error.Message,
-                //                   @"Solutions Temple has generated an error.", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                  MessageBox.Show(new Form() { TopMost = true }, @"StockRoom_Solutions_FormClosing(), error is " + error.Message,
+                                   @"Solutions Temple has generated an error.", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -820,12 +569,12 @@ namespace StockRoom11net
                     notifyIconStatusTable.Dispose();
                 }
 
-                if (_currentEmployeesLogIn != null)
+                if (_employeesService.CurrentEmployeeLogIn != null)
                 {
                     Write_LogFile(new object(), new Custom_Events_Args.LogFileMessageEventArgs(new List<string>
                     {
                         Tags.NewLine(""),
-                        Tags.NewLineBold(_currentEmployeesLogIn.FullName ),
+                        Tags.NewLineBold(Table_Employee.FullName ),
                         Tags.NewLine("Closing the application at " + DateTime.Now),
                         Tags.StraigthLine,
                         Tags.PageBreak
@@ -854,8 +603,7 @@ namespace StockRoom11net
 
             try
             {
-                var builder = new SqliteConnectionStringBuilder(
-                    Settings.Default.DataBaseConnectionStringSQLite);
+                var builder = new SqliteConnectionStringBuilder(Settings.Default.DataBaseConnectionStringSQLite);
 
                 dbPath = builder.DataSource;
                 return !string.IsNullOrWhiteSpace(dbPath);
@@ -976,7 +724,6 @@ namespace StockRoom11net
 
             InitializeDepartment(Settings.Default.DepartmentName);
 
-            _notificationsSendMyOwn = Settings.Default.NotificationsSendMyOwn;
             _notificationsShowMyOwn = Settings.Default.NotificationsShowMyOwn;
             _notificationsShowWarnings = Settings.Default.NotificationsShowWarnings;
             _notificationsShowDataBaseUpDate = Settings.Default.NotificationsShowDataBaseUpDate;
@@ -1005,22 +752,33 @@ namespace StockRoom11net
             Init_USB_BarCode();
         }
 
-        void CallSolutionsProperties()
+        /// <summary>
+        /// Displays the solutions properties dialog for department selection during installation and validates the
+        /// assigned department name.
+        /// </summary>
+        /// <remarks>The dialog is displayed in installation mode with TopMost set to true. If the user
+        /// cancels or selects an invalid department name containing "No set to any department", an error message is
+        /// displayed.</remarks>
+        void CallSolutionsProperties(bool isInstallationMode)
         {
-            using (_solutionPropertiesForm = new SolutionsProperties(CurrentDepartmentLogIn, ListDepartments))
+            using (SolutionsProperties solutionProperties = _serviceProvider.GetRequiredService<SolutionsProperties>())
             {
-                if (_solutionPropertiesForm.DialogResult == DialogResult.Cancel)//An error has been found in the initialization.
+                solutionProperties.Text = "Select a Department to be assigned at this computer.";
+                solutionProperties.SpeechSynthesizerBase += SpeechSynthesizerBaseSpeak;
+                solutionProperties.IsInstallationMode = isInstallationMode;
+                solutionProperties.TopMost = true;
+                solutionProperties.ShowDialog();
+                // When the dialog is closed, the application will return here.
+
+                // No, you don't need to detach it manually here — because SolutionsProperties is inside a using block.
+                //•	The using calls Dispose() on solutionProperties when the block exits
+                //•	Dispose() will clean up all resources, including event handlers, so you don't have to worry about detaching them manually.
+                //•	A WinForms Form.Dispose() automatically clears all event subscriptions on the form's own events.
+                solutionProperties.SpeechSynthesizerBase -= SpeechSynthesizerBaseSpeak; // ✅ explicit, clear intent
+
+                if (solutionProperties.DialogResult == DialogResult.Cancel)//An error has been found in the initialization.
                     return;
 
-                _solutionPropertiesForm.SpeechSynthesizerBase += SpeechSynthesizerBaseSpeak;
-
-                _solutionPropertiesForm.TopMost = false;
-                _solutionPropertiesForm.Text = "Select a Department to be assigned at this computer.";
-
-                _solutionPropertiesForm.CurrentUserBroadcast_EventHandler(new object(), new CurrentDeptUserBroadcast_EventArgs(null, _currentEmployeesLogIn));
-                _solutionPropertiesForm.ShowDialog();
-                // The application will return here.
-                _solutionPropertiesForm = null;
                 SolutionPropertiesFormClosed(new object(), new FormClosedEventArgs(CloseReason.FormOwnerClosing));
             }
 
@@ -1035,30 +793,10 @@ namespace StockRoom11net
                 }
             }
         }
-
-        static bool CheckIfInstallationWasDone()
-        {
-            if (Settings.Default.InstallationFirstDate < DateTime.Now)
-            {
-                InstallationFirstDate = Settings.Default.InstallationFirstDate;
-                InstallationDaysAfter = DateTime.Now.Subtract(Settings.Default.InstallationFirstDate);
-                return true;
-            }
-
-            using (var solutionProperties = new SolutionsProperties("Installation Mode"))
-            {
-                solutionProperties.TopMost = true;
-                solutionProperties.ShowDialog();
-
-                InstallationDaysAfter = TimeSpan.Zero;
-                InstallationFirstDate = DateTime.Now;
-
-                return false;
-            }
-        }
-
+        
         /// <summary>
-        /// Is called when SolutionsProperties windows is closed.
+        /// It is called when the SolutionsProperties form is closed, to initialize
+        /// the properties and start the application if the installation was done.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -1212,7 +950,7 @@ namespace StockRoom11net
 
         public void MenuItem_Print_Click(object sender, EventArgs e)
         {
-            if (_currentEmployeesLogIn.EmployeeAccessLevel == Utilities.AccessLevel.User)
+            if (_employeesService.CurrentEmployeeLogIn.IsUser)
             {
                 MessageBox.Show(@"The current User, does not have the right to perform this action.", @"Warning, access denied.",
                                                                                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -1313,7 +1051,7 @@ namespace StockRoom11net
         // F10
         void ToolStripMenuItemStockRoomAddNewComponentClick(object sender, EventArgs e)
         {
-            if (_currentEmployeesLogIn.EmployeeAccessLevel < Utilities.AccessLevel.Administrator)
+            if (_employeesService.CurrentEmployeeLogIn.IsAdministrator)
             {
                 MessageBox.Show(@"The current User, does not have the right to perform this action.", @"Warning, access denied.",
                                                                                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -1345,10 +1083,7 @@ namespace StockRoom11net
 
         void MenuItemToolsDropDownOpening(object sender, EventArgs e)
         {
-            if (_currentEmployeesLogIn == null)
-                return;
-
-            if (_currentEmployeesLogIn.EmployeeAccessLevel == Utilities.AccessLevel.Manager)
+            if (_employeesService.CurrentEmployeeLogIn.IsManager)
             {
                 //menuItemTools.DropDownItems.Add(toolStripMenuItem_BarCodeReaderTools);
                 return;
@@ -1402,21 +1137,14 @@ namespace StockRoom11net
             fixOnAvailableToolStripMenuItem.Enabled = false;
 
             //   FixOnAvailable();
-
-            InitEasyProgressBar_FixOnAvailables();
-            BeginInvoke(new EventHandler(Start_easyProgressBar_FixOnAvailables));
-
         }
 
         void Reset_OnHoldByToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            InitEasyProgressBar_OnHoldBy();
-            BeginInvoke(new EventHandler(Start_easyProgressBar_Reset_OnHoldBy));
-        }
+        {}
 
         void ToolStripMenuItemExploreH7HFile_Click(object sender, EventArgs e)
         {
-            if (_currentEmployeesLogIn.EmployeeAccessLevel < Utilities.AccessLevel.Manager)
+            if (_employeesService.CurrentEmployeeLogIn.IsManager)
             {
                 MessageBox.Show(@"The current User, does not have the right to perform this action.", @"Warning, access denied.",
                                                                                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -1482,23 +1210,23 @@ namespace StockRoom11net
                         This process access information into the field "PartNumber" and "Status",
                         test if those columns are available before call it.
             */
-            if (!Production_InventoryDataSet.Table_StockRoom.Columns.Contains("PartNumber") ||
-                !Production_InventoryDataSet.Table_StockRoom.Columns.Contains("Status"))
-                return;
+      //      if (!Production_InventoryDataSet.Table_StockRoom.Columns.Contains("PartNumber") ||
+      //          !Production_InventoryDataSet.Table_StockRoom.Columns.Contains("Status"))
+      //          return;
 
-            _bindingSource_StockRoom.RemoveSort();
-            _bindingSource_StockRoom.SuspendBinding();
-            Production_InventoryDataSet.Table_StockRoom.BeginLoadData();
+      //      _bindingSource_StockRoom.RemoveSort();
+       //     _bindingSource_StockRoom.SuspendBinding();
+       //     Production_InventoryDataSet.Table_StockRoom.BeginLoadData();
 
             var taskA = await Task.Run(() =>
             {
-                var pdfFileScan = new PdfFileScan(_bindingSource_StockRoom, CurrentDepartmentLogIn);
+     //           var pdfFileScan = new PdfFileScan(_bindingSource_StockRoom, CurrentDepartmentLogIn);
 
-                pdfFileScan.StatusReportEvent += PdfFileScan_StatusReportEvent;
-                pdfFileScan.RowProcessDoneEvent += PdfFileScan_RowProcessDoneEvent;
-                pdfFileScan.ScanProcessDoneEvent += PdfFileScan_ScanProcessDoneEvent;
+     //           pdfFileScan.StatusReportEvent += PdfFileScan_StatusReportEvent;
+     //           pdfFileScan.RowProcessDoneEvent += PdfFileScan_RowProcessDoneEvent;
+     //           pdfFileScan.ScanProcessDoneEvent += PdfFileScan_ScanProcessDoneEvent;
 
-                pdfFileScan.StarScanning();
+      //          pdfFileScan.StarScanning();
 
                 string Done = "Done";
 
@@ -1519,15 +1247,16 @@ namespace StockRoom11net
         {
             InvokeOnUiThreadIfRequired(this, () =>
             {
-                _bindingSource_StockRoom.ResumeBinding();
+       //         _bindingSource_StockRoom.ResumeBinding();
                 toolStripMenuItem_ScanPdfFiles.Enabled = true;
-                Production_InventoryDataSet.Table_StockRoom.EndLoadData();
+       //         Production_InventoryDataSet.Table_StockRoom.EndLoadData();
                 //Production_InventoryDataSet.Table_StockRoom.AcceptChanges();
             });
         }
 
         void PdfFileScan_RowProcessDoneEvent(string partNumber, List<Tuple<string, string>> listDocInf)
         {
+            /*
             InvokeOnUiThreadIfRequired(this, () =>
             {
                 _bindingSource_StockRoom.SuspendBinding();
@@ -1545,6 +1274,7 @@ namespace StockRoom11net
 
                 _bindingSource_StockRoom.ResumeBinding();
             });
+            */
         }
 
         #endregion"toolStripMenuItem_ScanPathPdfDoc_Click"
@@ -1569,8 +1299,8 @@ namespace StockRoom11net
         /// </summary>
         void ToolStripMenuItem_ClearAllDocumentsInformation_Click(object sender, EventArgs e)
         {
-            ClearHeaderInfStatusColumn(Production_InventoryDataSet.Table_StockRoom);
-            StockRoomSaveRequest();
+         //   ClearHeaderInfStatusColumn(Production_InventoryDataSet.Table_StockRoom);
+         //   StockRoomSaveRequest();
         }
 
         #endregion"Tools"
@@ -1626,14 +1356,14 @@ namespace StockRoom11net
 
         void ToolStripMenuItem_ShowTheDocumentsAddressSetting_Click(object? sender, EventArgs e)
         {
-            if (CurrentEmployeesLogIn.EmployeeAccessLevel < Utilities.AccessLevel.Manager)
-                using (DocumentsAddressViewer documentsItemsViewer = new DocumentsAddressViewer(CurrentDepartmentLogIn, ListDepartments, false))
+            if (_employeesService.CurrentEmployeeLogIn.EmployeeAccessLevel < Utilities.AccessLevel.Manager)
+                using (DocumentsAddressViewer documentsItemsViewer = new DocumentsAddressViewer(_employeesService, false))
                 {
                     documentsItemsViewer.ShowDialog();
                 }
 
-            if (CurrentEmployeesLogIn.EmployeeAccessLevel == Utilities.AccessLevel.Manager)
-                using (DocumentsAddressViewer documentsItemsViewer = new DocumentsAddressViewer(CurrentDepartmentLogIn, ListDepartments, true))
+            if (_employeesService.CurrentEmployeeLogIn.IsManager)
+                using (DocumentsAddressViewer documentsItemsViewer = new DocumentsAddressViewer(_employeesService, true))
                 {
                     documentsItemsViewer.ShowDialog();
                 }
@@ -1716,18 +1446,12 @@ namespace StockRoom11net
 
         void ToolStripMenuItem_lastUserLogIn_Click(object? sender, EventArgs e)
         {
-            if (LastEmployeeLOgIN == null)
-            {
-                Text = "No user has been logged.";
-                return;
-            }
-
-            Text = LastEmployeeLOgIN.Name + ", " + LastEmployeeLOgIN.Position + ".";
+            Text = _employeesService.CurrentEmployeeLogIn.Name + ", " + _employeesService.CurrentEmployeeLogIn.Position + ".";
         }
 
         void ToolStripMenuItem_departmentName_Click(object? sender, EventArgs e)
         {
-            Text = "This computer has been assigned to " + CurrentDepartmentLogIn.DeptName + " department.";
+            Text = "This computer has been assigned to " + _employeesService.CurrentDepartmentLogIn.DepartmentName + " department.";
         }
 
         void ToolStripMenuItem_dataBaseAddress_Click(object? sender, EventArgs e)
@@ -1757,12 +1481,7 @@ namespace StockRoom11net
         #endregion"ToolStrip"
 
         #region"User Log On"
-
-        /// <summary>
-        /// When no user has been login, we load the parameters front the user
-        /// index 0, who is any user with no rights.
-        /// </summary>
-        int noUserLogIn = 0;
+                
         /// <summary>
         /// Maintains a record of login attempts, if a problem winth the database occurrs,
         /// and the system manager tries for 3 times,we give access to certain resources.
@@ -1770,21 +1489,20 @@ namespace StockRoom11net
         int intentLogin = 0;
         string _password = "";
         string _hidepassword = "";
+        int last6DigitInt = 0;
 
+        /// <summary>
+        /// All initialization are done at EmployeeService constructor.
+        /// </summary>
         void InitializeUser()
         {
-            int employeeIndex = _bindingSource_Employees.Find("Last6Digit", noUserLogIn);
-            if (employeeIndex != -1)
-                CurrentEmployeesLogIn = new Employee((DataRowView)_bindingSource_Employees[employeeIndex]);
-            else
-                CurrentEmployeesLogIn = new Employee();
+            //All initialization are done at _employeesService constructor.
 
-            Invoke((System.Windows.Forms.MethodInvoker)delegate
-            {
-                On_CurrentDeptUserBroadcast_Requested(new CurrentDeptUserBroadcast_EventArgs(CurrentDepartmentLogIn, CurrentEmployeesLogIn));
-            });
+            // If no user has been login, we load the parameters front the user index 0, who is any user with no rights.
+            // ✅ Push the logged-in employee into the service — event fires automatically
+            //_ = _employeesService.InitializeEmployeeAsync(_employeesService.NoUserLogIn);
 
-            StatusBarHelp("User LogIn done at " + CurrentEmployeesLogIn.Name + ".");
+            //StatusBarHelp("User LogIn done at " + _employeesService.CurrentEmployeeLogIn.Name + ".");
         }
 
         void ToolStripLabel_Log_User_Click(object sender, EventArgs e)
@@ -1823,81 +1541,57 @@ namespace StockRoom11net
 
             toolStripLabel_Log_User.Visible = true;
             toolStripTextBox_Log_User.Visible = false;
-            toolStripTextBox_Log_User.Tag = "Log On process.";
+            toolStripTextBox_Log_User.Tag = "LogIn On process.";
 
             toolStripTextBox_Log_User.Text = "";
 
-            LogInProcess(_password);
+            LogInProcessAsync(_password);
         }
 
         void ToolStripButton_Log_out_Click(object sender, EventArgs e)
         {
-            LogOutProcess();
+            LogOutProcessAsync();
         }
 
         void ToolStripTextBox_Log_User_Leave(object sender, EventArgs e)
         {
-            if (toolStripTextBox_Log_User.Tag.ToString().Contains("Log On process."))
+            if (toolStripTextBox_Log_User.Tag.ToString().Contains("LogIn On process."))
             {
                 toolStripTextBox_Log_User.Tag = "User Leave";
                 return;
             }
 
-            LogOutProcess();
+            LogOutProcessAsync();
         }
 
-        void LogInProcess(string password)
+        async Task LogInProcessAsync(string last6Digit)
         {
             try
             {
                 #region"EmployeesInformation"
+                
+                last6DigitInt = int.TryParse(last6Digit, out last6DigitInt) ? last6DigitInt : 0;
 
-                Employee employeeInformation = new Employee();
+                //var userLogIn = await _unitOfWork.TableEmployees.FirstOrDefaultAsync(e => e.Last6Digit == last6DigitInt);
 
-                int employeeIndex = _bindingSource_Employees.Find("Last6Digit", Convert.ToInt32(password));
+                bool employeeInitialized = await _employeesService.InitializeEmployeeAsync(last6DigitInt);
 
-                if (employeeIndex == -1)
-                {
-                    if (password.Contains("811266"))
-                    {
-                        intentLogin++;
-                        if (intentLogin >= 3)
-                            employeeInformation = new Employee("811266");
-                    }
-                    else
-                    {
-                        employeeIndex = _bindingSource_Employees.Find("Last6Digit", 0);
-                        employeeInformation = new Employee((DataRowView)_bindingSource_Employees[employeeIndex]);
-                    }
-                }
-                else
-                    employeeInformation = new Employee((DataRowView)_bindingSource_Employees[employeeIndex]);
+                if (!employeeInitialized)
+                    await _employeesService.InitializeEmployeeAsync(_employeesService.NoUserLogIn);
 
                 #endregion"EmployeesInformation"
-
-                #region"DepartmentInformation"
-                // More data on DepartmentInformation see #region"CurrentDeptment Log On"
-
-                CurrentDeptUserBroadcast_EventArgs currentDeptUserBroadcast_EventArgs;
-                currentDeptUserBroadcast_EventArgs = new CurrentDeptUserBroadcast_EventArgs(_currentDepartmentLogIn, employeeInformation);
-
-                #endregion"DepartmentInformation"
-
-                On_CurrentDeptUserBroadcast_Requested(currentDeptUserBroadcast_EventArgs);
-
-                StopThreadTimerCurrentUserBroadcast();
+                                              
             }
             catch (Exception)
             {
-                MessageBox.Show("Employee information erroneous", "Missing Employee Data.", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("EmployeeInformation information erroneous", "Missing EmployeeInformation Data.", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
-                if (password.Contains("811266"))
-                    On_CurrentDeptUserBroadcast_Requested(new CurrentDeptUserBroadcast_EventArgs(_currentDepartmentLogIn,
-                                                          new Employee("811266")));
+                if (last6DigitInt == _employeesService.MasterPassword)
+                    await _employeesService.InitializeEmployeeAsync(_employeesService.NoUserLogIn);
             }
         }
 
-        void LogOutProcess()
+        async Task LogOutProcessAsync()
         {
             _password = "";
             _hidepassword = "";
@@ -1910,101 +1604,26 @@ namespace StockRoom11net
 
             toolStripTextBox_Log_User.Tag = "Log On process.";
 
-            int employeeIndex = _bindingSource_Employees.Find("Last6Digit", 0);
-            if (employeeIndex == -1)
-                On_CurrentDeptUserBroadcast_Requested(new CurrentDeptUserBroadcast_EventArgs(_currentDepartmentLogIn,
-                                                      new Employee()));
-            else
-                On_CurrentDeptUserBroadcast_Requested(new CurrentDeptUserBroadcast_EventArgs(_currentDepartmentLogIn,
-                                                      new Employee((DataRowView)_bindingSource_Employees[employeeIndex])));
-
+            await _employeesService.InitializeEmployeeAsync(_employeesService.NoUserLogIn);
         }
 
         private static readonly char[] separator = new[] { ',' };
 
         #endregion"User Log On"
+
         #region"CurrentDeptment LogOn"
-
-        /// <summary>
-        /// If the application has not been set to any depart yet
-        /// load the default parameter front noSetToAnyDepart.
-        /// </summary>
-        //int noSetToAnyDepart = 53; //No set to any department yet
-
-        /// <summary>
-        /// Keep a reference to the last CurrentDeptUserBroadcast_EventArgs used.
-        /// </summary>
-        CurrentDeptUserBroadcast_EventArgs LastCurrentDeptUserBroadcast_EventArgs;
-
-        /// <summary>
-        /// Department active in this machine.
-        /// </summary>
-        DepartmentInformation _currentDepartmentLogIn = new DepartmentInformation();
-        /// <summary>
-        /// CurrentDepartmentLogIn object initialized at InitializeDepartmentLogIn().
-        /// </summary>
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public DepartmentInformation CurrentDepartmentLogIn
-        {
-            get
-            {
-                return _currentDepartmentLogIn;
-            }
-            set
-            {
-                _currentDepartmentLogIn = value;
-            }
-        }
-
-        /// <summary>
-        /// List of department available in the system, use this list to setup the
-        /// computer department name.
-        /// </summary>
-        List<DepartmentInformation> ListDepartments = new List<DepartmentInformation>();
-        List<string> DepartmentsList = new List<string>();
-
-        void InitializeDepartmentLogInList()
-        {
-            foreach (object department in _bindingSource_Employees)
-            {
-                DataRowView departmentRow = (DataRowView)department;
-                if (departmentRow["Department"].ToString().Contains("Department"))
-                {
-                    DepartmentsList.Add(departmentRow["Name"].ToString());
-                    ListDepartments.Add(new DepartmentInformation(departmentRow));
-                }
-            }
-        }
-
+ 
         void InitializeDepartment(string departmentName)
-        {
+        {            
             try
             {
-                int deptmentIndex = _bindingSource_Employees.Find("Name", departmentName);
-                if (deptmentIndex != -1)
-                    CurrentDepartmentLogIn = new DepartmentInformation((DataRowView)_bindingSource_Employees[deptmentIndex]);
-                else
-                {
-                    deptmentIndex = _bindingSource_Employees.Find("Name", "No set to any department yet");
-                    if (deptmentIndex != -1)
-                        CurrentDepartmentLogIn = new DepartmentInformation((DataRowView)_bindingSource_Employees[deptmentIndex]);
-                }
-
-                _currentDepartmentLogIn.Save_Requested -= _currentDepartmentLogIn_Save_Requested;
-                _currentDepartmentLogIn.Save_Requested += _currentDepartmentLogIn_Save_Requested;
-
+                // Department are initialize at EmployeeService constructor.
                 ProcessCurrentDepartment();
             }
             catch (Exception ex)
             {
                 string message = ex.Message;
             }
-        }
-
-        void _currentDepartmentLogIn_Save_Requested(object sender, Save_Requested_EventArgs e)
-        {
-            _currentDepartmentLogIn = e.DepartmentInformation;
-            EmployeesManagements_ProcessSaveRequest(sender, e);
         }
 
         /// <summary>
@@ -2015,15 +1634,15 @@ namespace StockRoom11net
         {
             try
             {
-                InitializeFileSystemWatcher(CurrentDepartmentLogIn);
-                InvokeOnUiThreadIfRequired(this, () => Text = CurrentDepartmentLogIn.DeptName);
+                InitializeFileSystemWatcher(_employeesService);
+                InvokeOnUiThreadIfRequired(this, () => Text = _employeesService.CurrentDepartmentLogIn.DepartmentName);
                 InvokeOnUiThreadIfRequired(this, () => InitializedLogFile());
 
-                if (Production_InventoryDataSet.Table_StockRoom_TreeView.Columns.Contains(" AvalaibleDepartments"))
-                {
-                    InvokeOnUiThreadIfRequired(this, () => _bindingSourceStockRoomTreeView.Filter = " AvalaibleDepartments LIKE '*" +
-                                                           CurrentDepartmentLogIn.DeptName + "*'");
-                }
+          //      if (Production_InventoryDataSet.Table_StockRoom_TreeView.Columns.Contains(" AvalaibleDepartments"))
+          //      {
+          //          InvokeOnUiThreadIfRequired(this, () => _bindingSourceStockRoomTreeView.Filter = " AvalaibleDepartments LIKE '*" +
+           //                                                _employeesService.CurrentDepartmentLogIn.DepartmentName + "*'");
+           //     }
             }
             catch (Exception ex)
             {
@@ -2031,9 +1650,7 @@ namespace StockRoom11net
             }
         }
 
-        #endregion"CurrentDeptment LogOn"
-
-        #region"CurrentUserBroadcast"
+        
         /// <summary>
         /// This field is used to execute the Kill command when it is received by SMS,
         /// note its processing inside the SmSController, the 
@@ -2053,36 +1670,12 @@ namespace StockRoom11net
         bool IsFirstTaskOnMasterTimerDone;
         bool IsInitializeWebApiProcessDone;
 
-        /// <summary>
-        /// Employee active in this machine.
-        /// </summary>
-        Employee _currentEmployeesLogIn;
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public Employee CurrentEmployeesLogIn
-        {
-            get
-            {
-                return _currentEmployeesLogIn;
-            }
-            set
-            {
-                _currentEmployeesLogIn = value;
-            }
-        }
-
-
-
         void InitializeCurrentUserBroadcastTimer()
         {
             stopwatchAppRunningTime = Stopwatch.StartNew();
 
             _delayToLogInCurrentUser = TimeSpan.FromSeconds(_sec);
-
-            _currentEmployeesLogIn = new Employee();
-
-            _currentEmployeesLogIn.Save_Requested -= CurrentEmployeesLogIn_Save_Requested;
-            _currentEmployeesLogIn.Save_Requested += CurrentEmployeesLogIn_Save_Requested;
-
+            
             //CurrentUserBroadcastDelay_Tick = procedure to callback, null = object pass to, First interval = 1000 ms, subsequent intervals = 1000 ms
             AppPeriodicTimer_5seg = new System.Threading.Timer(new TimerCallback(AppPeriodicTimer_5seg_Tick), null, 2000, 2000);
         }
@@ -2121,44 +1714,24 @@ namespace StockRoom11net
         }
 
 
-        void CurrentEmployeesLogIn_Save_Requested(object sender, Save_Requested_EventArgs e)
+        void Solutions_TempleClass_CurrentDeptUserBroadcast_Requested()
         {
-            _currentEmployeesLogIn = e.EmployeesInformation;
-            EmployeesManagements_ProcessSaveRequest(sender, e);
+            toolStripLabel_Log_User.Text = _employeesService.CurrentEmployeeLogIn.LastName + ", " +
+                                           _employeesService.CurrentEmployeeLogIn.EmployeeAccessLevel +
+                                           ", Login at " + DateTime.Now;
 
-            //Do not broadcast here, this create a loop......
-            //On_CurrentDeptUserBroadcast_Requested(new CurrentDeptUserBroadcast_EventArgs(_currentDepartmentLogIn, _currentEmployeesLogIn));
-        }
-
-        void Solutions_TempleClass_CurrentDeptUserBroadcast_Requested(object sender, CurrentDeptUserBroadcast_EventArgs e)
-        {
-            if (e == null)
-                return;
-
-            LastCurrentDeptUserBroadcast_EventArgs = e;
-
-            _currentEmployeesLogIn = e.Employee;
-
-            _currentEmployeesLogIn.Save_Requested -= CurrentEmployeesLogIn_Save_Requested;
-            _currentEmployeesLogIn.Save_Requested += CurrentEmployeesLogIn_Save_Requested;
-
-            LastEmployeeLOgIN = _currentEmployeesLogIn;
-
-            toolStripLabel_Log_User.Text = _currentEmployeesLogIn.LastName + ", " + _currentEmployeesLogIn.EmployeeAccessLevel +
-                                                                                                    ", Login at " + DateTime.Now;
-
-            StatusBarHelp("User " + _currentEmployeesLogIn.LastName + " LogIn at " + DateTime.Now + ".");
+            StatusBarHelp("User " + _employeesService.CurrentEmployeeLogIn.LastName + " LogIn at " + DateTime.Now + ".");
 
             Write_LogFile(new object(), new Custom_Events_Args.LogFileMessageEventArgs(new List<string>
                 {
                     Tags.NewLine(""),
-                    Tags.NewLineBold(_currentEmployeesLogIn.FullName),
-                    Tags.NewLineRed(_currentEmployeesLogIn.EmployeeAccessLevel.ToString()),
+                    Tags.NewLineBold(_employeesService.CurrentEmployeeLogIn.FullName),
+                    Tags.NewLineRed(_employeesService.CurrentEmployeeLogIn.EmployeeAccessLevel.ToString()),
                     Tags.NewLine("A User LogIn at " + DateTime.Now),
                     Tags.StraigthLine
                 }));
 
-            if (_currentEmployeesLogIn.IsUser)
+            if (_employeesService.CurrentEmployeeLogIn.IsUser)
             {
                 #region"User"
 
@@ -2186,7 +1759,7 @@ namespace StockRoom11net
                 #endregion"User"
             }
 
-            if (_currentEmployeesLogIn.IsEditor)
+            if (_employeesService.CurrentEmployeeLogIn.IsEditor)
             {
                 #region"Editor"
 
@@ -2214,7 +1787,7 @@ namespace StockRoom11net
                 #endregion"Editor"
             }
 
-            if (_currentEmployeesLogIn.IsAdministrator)
+            if (_employeesService.CurrentEmployeeLogIn.IsAdministrator)
             {
                 #region"Administrator"
 
@@ -2240,7 +1813,7 @@ namespace StockRoom11net
                 #endregion"Administrator"
             }
 
-            if (_currentEmployeesLogIn.IsManager)
+            if (_employeesService.CurrentEmployeeLogIn.IsManager)
             {
                 #region"Manager"
 
@@ -2267,7 +1840,7 @@ namespace StockRoom11net
             }
         }
 
-        #endregion"CurrentUserBroadcast"
+        #endregion"CurrentDeptment LogOn"
 
         #region"WaitingTaskProcess"
         /// <summary>
@@ -2277,16 +1850,15 @@ namespace StockRoom11net
 
         void FirstTaskOnMasterTimer()
         {
-            IsFirstTaskOnMasterTimerDone = true;           
+            IsFirstTaskOnMasterTimerDone = true;
 
-            InitializeDepartmentLogInList();
+            if (!IsDoneInstallation)
+                InvokeOnUiThreadIfRequired(this, () => CallSolutionsProperties(true));
+
             InitializeDepartment(Settings.Default.DepartmentName);
             /// We initialize user at the end to make sure that the department has already been initialized
             /// and propagate both information together in the same event.
             InitializeUser();
-
-            if (!IsDoneInstallation)
-                InvokeOnUiThreadIfRequired(this, () => CallSolutionsProperties());
         }
 
         void ProcessWaitingTaskList()
@@ -2296,6 +1868,7 @@ namespace StockRoom11net
                 var action = WaitingTaskQueue.Dequeue();
                 action();
                 //ThreadSafeInvoke(action);
+                InvokeOnUiThreadIfRequired(this, action);
             }
         }
 
@@ -2324,9 +1897,7 @@ namespace StockRoom11net
 
         private static void InitSolutionsTemple(string textTitle)
         {
-            Production_InventoryDataSet.CaseSensitive = Settings.Default.ProductionInventoryDataSetCaseSensitive;
-            Production_InventoryDataSet.EnforceConstraints = false;
-
+           
         }
 
         public void InitLabelsSMTPrint(string textTitle)
@@ -2338,27 +1909,27 @@ namespace StockRoom11net
             }
 
             //ZebraPrintsPCBLabels zebraPrints = new ZebraPrintsPCBLabels(_bindingSource_Labels_SMT);
-            _LabelsPrintsSMT = new LabelsPrintsSMT(_bindingSource_Labels_SMT, LastCurrentDeptUserBroadcast_EventArgs)
-            {
-                Text = textTitle
-            };
+      //      _LabelsPrintsSMT = new LabelsPrintsSMT(_bindingSource_Labels_SMT, LastCurrentDeptUserBroadcast_EventArgs)
+       //     {
+      //          Text = textTitle
+     //       };
 
             if (_LabelsPrintsSMT.DialogResult == DialogResult.Cancel)
                 return; //An error has been found in the initialization.
 
             _LabelsPrintsSMT.LogFileMessage += Write_LogFile;
             _LabelsPrintsSMT.StatusBarMessageEvent += OnStatusBarMessage;
-            _LabelsPrintsSMT.Save_Requested += LabelsSMT_ProcessSaveRequest;
+         //   _LabelsPrintsSMT.Save_Requested += LabelsSMT_ProcessSaveRequest;
             _LabelsPrintsSMT.SpeechSynthesizerBase += SpeechSynthesizerBaseSpeak;
 
-            CurrentDeptUserBroadcast_Requested += _LabelsPrintsSMT.CurrentUserBroadcast_EventHandler;
+       //     CurrentDeptUserBroadcast_Requested += _LabelsPrintsSMT.CurrentUserBroadcast_EventHandler;
 
             Write_LogFile(new object(), new Custom_Events_Args.LogFileMessageEventArgs(new List<string>
                     {
                         Tags.NewLine("Initialized LabelsPrintsSMT (_bindingSource_Labels_SMT); ( LabelsSMT ) application at " + DateTime.Now),
                     }));
 
-            _LabelsPrintsSMT.CurrentUserBroadcast_EventHandler(new object(), LastCurrentDeptUserBroadcast_EventArgs);
+         //   _LabelsPrintsSMT.CurrentUserBroadcast_EventHandler(new object(), LastCurrentDeptUserBroadcast_EventArgs);
 
             _LabelsPrintsSMT.TopMost = true;
             _LabelsPrintsSMT.Show();
@@ -2372,10 +1943,10 @@ namespace StockRoom11net
                 return;
             }
 
-            _SMT_Reel_Record = new SMT_Reel_Record(_bindingSource_Employees)
-            {
-                Text = textTitle
-            };
+         //   _SMT_Reel_Record = new SMT_Reel_Record(_bindingSource_Employees)
+         //   {
+         //       Text = textTitle
+         //   };
 
             if (_SMT_Reel_Record.DialogResult == DialogResult.Cancel)//An error has been found in the initialization.
             {
@@ -2388,7 +1959,7 @@ namespace StockRoom11net
             _SMT_Reel_Record.SpeechSynthesizerBase += SpeechSynthesizerBaseSpeak;
 
             ScannedDataEvent += _SMT_Reel_Record.OnBarcodeScanned_EventHandler;
-            CurrentDeptUserBroadcast_Requested += _SMT_Reel_Record.CurrentUserBroadcast_EventHandler;
+      //      CurrentDeptUserBroadcast_Requested += _SMT_Reel_Record.CurrentUserBroadcast_EventHandler;
 
             if (dockPanel.DocumentStyle == DocumentStyle.SystemMdi)
             {
@@ -2400,7 +1971,7 @@ namespace StockRoom11net
                 _SMT_Reel_Record.Show(dockPanel);
             }
 
-            _SMT_Reel_Record.CurrentUserBroadcast_EventHandler(new object(), LastCurrentDeptUserBroadcast_EventArgs);
+       //     _SMT_Reel_Record.CurrentUserBroadcast_EventHandler(new object(), LastCurrentDeptUserBroadcast_EventArgs);
         }
         void SMTReelRecord_FormClosing(object? sender, FormClosingEventArgs e)
         {
@@ -2427,7 +1998,7 @@ namespace StockRoom11net
             _ordersProcess.SpeechSynthesizerBase += SpeechSynthesizerBaseSpeak;
 
             ScannedDataEvent += _ordersProcess.OnBarcodeScanned_EventHandler;
-            CurrentDeptUserBroadcast_Requested += _ordersProcess.CurrentUserBroadcast_EventHandler;
+       //     CurrentDeptUserBroadcast_Requested += _ordersProcess.CurrentUserBroadcast_EventHandler;
 
             if (dockPanel.DocumentStyle == DocumentStyle.SystemMdi)
             {
@@ -2439,16 +2010,16 @@ namespace StockRoom11net
                 _ordersProcess.Show(dockPanel);
             }
 
-            _ordersProcess.CurrentUserBroadcast_EventHandler(new object(), LastCurrentDeptUserBroadcast_EventArgs);
+     //       _ordersProcess.CurrentUserBroadcast_EventHandler(new object(), LastCurrentDeptUserBroadcast_EventArgs);
         }
 
         public void InitStockRoom(string textTitle)
         {
-            if (!IsDoneInstallation)
-            {
-                WaitingTaskQueue.Enqueue(new Action(() => InitStockRoom(textTitle)));
-                return;
-            }
+          //  if (!IsDoneInstallation)
+          //  {
+          //      WaitingTaskQueue.Enqueue(new Action(() => InitStockRoom(textTitle)));
+          //      return;
+          //  }
 
             /*
             _stockRoomForm = new StockRoom_Inventory(_bindingSourceStockRoomTreeView,
@@ -2471,10 +2042,10 @@ namespace StockRoom11net
             _stockRoomForm.DockStateChanged += StockRoomDockStateChanged;
             _stockRoomForm.LogFileMessage += Write_LogFile;
             _stockRoomForm.StatusBarMessageEvent += OnStatusBarMessage;
-            _stockRoomForm.Save_Requested += StockRoom_ProcessSaveRequest;
+          //  _stockRoomForm.Save_Requested += StockRoom_ProcessSaveRequest;
             _stockRoomForm.CellDoubleClick_Event += StockRoomCellDoubleClick;
-            _stockRoomForm.SaveTreeView_Requested += StockRoomSaveTreeViewRequested;
-            _stockRoomForm.AddNewItemSaveTreeViewRequested += AddNewItemSaveTreeViewRequested;
+          //  _stockRoomForm.SaveTreeView_Requested += StockRoomSaveTreeViewRequested;
+         //   _stockRoomForm.AddNewItemSaveTreeViewRequested += AddNewItemSaveTreeViewRequested;
         //    _stockRoomForm.Refresh_Requested += StockRoomRefreshRequested;
 
             _stockRoomForm.Node_PDF += StockRoomNodePdf;
@@ -2482,9 +2053,9 @@ namespace StockRoom11net
             _stockRoomForm.NotificationsToSends += NotificationsToSendsProcessor;
             _stockRoomForm.SpeechSynthesizerBase += SpeechSynthesizerBaseSpeak;
 
-            _stockRoomForm.CurrentUserBroadcast_EventHandler(new object(), LastCurrentDeptUserBroadcast_EventArgs);
+            //_stockRoomForm.CurrentUserBroadcast_EventHandler(new object(), LastCurrentDeptUserBroadcast_EventArgs);
 
-            CurrentDeptUserBroadcast_Requested += _stockRoomForm.CurrentUserBroadcast_EventHandler;
+       //     CurrentDeptUserBroadcast_Requested += _stockRoomForm.CurrentUserBroadcast_EventHandler;
 
             ScannedDataEvent += _stockRoomForm.OnBarcodeScanned_EventHandler;
 
@@ -2515,7 +2086,7 @@ namespace StockRoom11net
                 return;
             }
 
-            if (_currentEmployeesLogIn.EmployeeAccessLevel < Utilities.AccessLevel.Manager)
+            if (_employeesService.CurrentEmployeeLogIn.IsManager)
             {
                 MessageBox.Show(@"The current User, does not have the right to perform this action.", @"Warning, access denied.",
                                                                                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -2532,7 +2103,7 @@ namespace StockRoom11net
                 return;
             }
 
-            _locationAndLayoutDesignForm = new LocationAndLayoutPlanning(_bindingSource_Locations, _bindingSource_LocationsTreeView, _currentEmployeesLogIn, DepartmentsList)
+            _locationAndLayoutDesignForm = new LocationAndLayoutPlanning()
             {
                 Text = textTitle
             };
@@ -2544,11 +2115,11 @@ namespace StockRoom11net
             _locationAndLayoutDesignForm.LogFileMessage += Write_LogFile;
             _locationAndLayoutDesignForm.StatusBarMessageEvent += OnStatusBarMessage;
             _locationAndLayoutDesignForm.VisibleChanged += LocationLayoutDesignVisibleChanged;
-            _locationAndLayoutDesignForm.Save_Requested += LocationAndLayoutDesignSaveRequested;
-            _locationAndLayoutDesignForm.SaveTreeView_Requested += LocationAndLayoutDesignSaveTreeViewRequested;
+         //   _locationAndLayoutDesignForm.Save_Requested += LocationAndLayoutDesignSaveRequested;
+         //   _locationAndLayoutDesignForm.SaveTreeView_Requested += LocationAndLayoutDesignSaveTreeViewRequested;
             _locationAndLayoutDesignForm.SpeechSynthesizerBase += SpeechSynthesizerBaseSpeak;
 
-            CurrentDeptUserBroadcast_Requested += _locationAndLayoutDesignForm.CurrentUserBroadcast_EventHandler;
+      //      CurrentDeptUserBroadcast_Requested += _locationAndLayoutDesignForm.CurrentUserBroadcast_EventHandler;
             ScannedDataEvent += _locationAndLayoutDesignForm.OnBarcodeScanned;
 
             Write_LogFile(new object(), new Custom_Events_Args.LogFileMessageEventArgs(new List<string>
@@ -2573,23 +2144,23 @@ namespace StockRoom11net
                 return;
             }
 
-            if (_currentEmployeesLogIn.EmployeeAccessLevel < Utilities.AccessLevel.Administrator)
+            if (_employeesService.CurrentEmployeeLogIn.EmployeeAccessLevel < Utilities.AccessLevel.Administrator)
             {
                 MessageBox.Show(@"The current User, does not have the right to perform this action.", @"Warning, access denied.",
                                                                                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
-            _stockRoomReceiveForm = new StockRoomReceive(_bindingSourceStockRoomTreeView, _bindingSource_StockRoom)
-            {
-                Text = textTitle
-            };
+        //    _stockRoomReceiveForm = new StockRoomReceive(_bindingSourceStockRoomTreeView, _bindingSource_StockRoom)
+        //    {
+        //        Text = textTitle
+        //    };
 
             if (_stockRoomReceiveForm.DialogResult == DialogResult.Cancel)//An error has been found in the initialization.
                 return;
 
             _stockRoomReceiveForm.DockStateChanged += StockRoomReceiveDockStateChanged;
-            _stockRoomReceiveForm.Save_Requested += StockRoom_ProcessSaveRequest;
+         //   _stockRoomReceiveForm.Save_Requested += StockRoom_ProcessSaveRequest;
             _stockRoomReceiveForm.SpeechSynthesizerBase += SpeechSynthesizerBaseSpeak;
 
             CellDoubleClick_Event += _stockRoomReceiveForm.CellDoubleClick_Event;
@@ -2619,7 +2190,7 @@ namespace StockRoom11net
                 return;
             }
 
-            if (_currentEmployeesLogIn.EmployeeAccessLevel < Utilities.AccessLevel.Manager)
+            if (_employeesService.CurrentEmployeeLogIn.EmployeeAccessLevel < Utilities.AccessLevel.Manager)
             {
                 MessageBox.Show(@"The current User, does not have the right to perform this action.", @"Warning, access denied.",
                                                                                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -2663,15 +2234,15 @@ namespace StockRoom11net
                 return;
             }
 
-            if (_currentEmployeesLogIn.EmployeeAccessLevel < Utilities.AccessLevel.Manager)
+            if (_employeesService.CurrentEmployeeLogIn.EmployeeAccessLevel < Utilities.AccessLevel.Manager)
             {
                 MessageBox.Show(@"The current User, does not have the right to perform this action.", @"Warning, access denied.",
                                                                                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
-            DataTable dataTableInventory = ((DataSet)_bindingSource_StockRoom.DataSource).Tables[_bindingSource_StockRoom.DataMember];
-
+      //      DataTable dataTableInventory = ((DataSet)_bindingSource_StockRoom.DataSource).Tables[_bindingSource_StockRoom.DataMember];
+            /*
             _employees_ManagementsForm = new Employees_Management(_bindingSource_Employees, _bindingSource_EmployeesTreeView, DepartmentsList)
             {
                 Text = textTitle,
@@ -2683,8 +2254,8 @@ namespace StockRoom11net
 
             _employees_ManagementsForm.DockStateChanged += EmployeesManagementsDockStateChanged;
        //     _employees_ManagementsForm.Refresh_Requested += EmployeesManagementsRefreshRequested;
-            _employees_ManagementsForm.Save_Requested += EmployeesManagements_ProcessSaveRequest;
-            _employees_ManagementsForm.SaveTreeView_Requested += EmployeesManagementsSaveTreeViewRequested;
+         //   _employees_ManagementsForm.Save_Requested += EmployeesManagements_ProcessSaveRequest;
+         //   _employees_ManagementsForm.SaveTreeView_Requested += EmployeesManagementsSaveTreeViewRequested;
             _employees_ManagementsForm.StatusBarMessageEvent += OnStatusBarMessage;
             _employees_ManagementsForm.SpeechSynthesizerBase += SpeechSynthesizerBaseSpeak;
 
@@ -2695,7 +2266,7 @@ namespace StockRoom11net
             Write_LogFile(new object(), new Custom_Events_Args.LogFileMessageEventArgs(new List<string>
                     {
                         Tags.NewLine(""),
-                        Tags.NewLineBold(_currentEmployeesLogIn.FullName),
+                        Tags.NewLineBold(_employeesService.CurrentEmployeeLogIn.FullName),
                         Tags.NewLine("Employees Information application at " + DateTime.Now),
                     }));
 
@@ -2708,6 +2279,7 @@ namespace StockRoom11net
                 _employees_ManagementsForm.Show(dockPanel);
 
             _employees_ManagementsForm.CurrentUserBroadcast_EventHandler(new object(), LastCurrentDeptUserBroadcast_EventArgs);
+            */
         }
 
         public void InitBomManagements(string textTitle)
@@ -2719,7 +2291,7 @@ namespace StockRoom11net
                 return;
             }
 
-            if (_currentEmployeesLogIn.EmployeeAccessLevel < MyCode.AccessLevel.Administrator)
+            if (_employeesService.CurrentEmployeeLogIn.EmployeeAccessLevel < MyCode.AccessLevel.Administrator)
             {
                 MessageBox.Show(@"The current User, does not have the right to perform this action.", @"Warning, access denied.",
                                                                                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -2729,7 +2301,7 @@ namespace StockRoom11net
             toolStripMenuItem_BOM_Managements.Enabled = false;
             menuItemTools.HideDropDown();
 
-            _bom_ManagementsForm = new BOM_Management(_bindingSourceStockRoomTreeView, _bindingSource_StockRoom, _currentEmployeesLogIn, DepartmentsList)
+            _bom_ManagementsForm = new BOM_Management(_bindingSourceStockRoomTreeView, _bindingSource_StockRoom, _employeesService.CurrentEmployeeLogIn, DepartmentsList)
             {
                 Text = textTitle
             };
@@ -2773,11 +2345,11 @@ namespace StockRoom11net
                 return;
             }
 
-            _stockRoomAddNewCompForm = new StockRoom_AddNewComp(_bindingSource_StockRoom,
-                                                            _bindingSource_CodeTreeView, DepartmentsList)
-            {
-                Text = textTitle
-            };
+     //       _stockRoomAddNewCompForm = new StockRoom_AddNewComp(_bindingSource_StockRoom,
+     //                                                       _bindingSource_CodeTreeView, DepartmentsList)
+     //       {
+    //            Text = textTitle
+    //        };
 
             if (_stockRoomAddNewCompForm.DialogResult == DialogResult.Cancel)//An error has been found in the initialization.
                 return;
@@ -2786,16 +2358,16 @@ namespace StockRoom11net
             _stockRoomAddNewCompForm.DockStateChanged += StockRoomAddNewCompDockStateChanged;
             //   _stockRoomAddNewComp.LogFileMessage     += Write_LogFile;
             _stockRoomAddNewCompForm.StatusBarMessageEvent += OnStatusBarMessage;
-            _stockRoomAddNewCompForm.Save_Requested += StockRoom_ProcessSaveRequest;
+          //  _stockRoomAddNewCompForm.Save_Requested += StockRoom_ProcessSaveRequest;
 
-            _stockRoomAddNewCompForm.SaveTreeView_Requested += StockRoomSaveTreeViewRequested;
+         //   _stockRoomAddNewCompForm.SaveTreeView_Requested += StockRoomSaveTreeViewRequested;
             //   _stockRoomAddNewComp.AddNewItemSaveTreeViewRequested += AddNewItemSaveTreeViewRequested;
             //   _stockRoomAddNewComp.Refresh_Requested      += StockRoomRefreshRequested;
 
             //   _stockRoomAddNewComp.NotificationsToSends   += StockRoomNotificationsToSends;
             _stockRoomAddNewCompForm.SpeechSynthesizerBase += SpeechSynthesizerBaseSpeak;
 
-            CurrentDeptUserBroadcast_Requested += _stockRoomAddNewCompForm.CurrentUserBroadcast_EventHandler;
+      //      CurrentDeptUserBroadcast_Requested += _stockRoomAddNewCompForm.CurrentUserBroadcast_EventHandler;
             //   TreeViewUpdate                      += _stockRoomAddNewComp.TreeViewUpdate_EventHandler;
             //   ScannedData                         += _stockRoomAddNewComp.OnBarcodeScanned;
 
@@ -2816,37 +2388,19 @@ namespace StockRoom11net
                 _stockRoomAddNewCompForm.Show(dockPanel);
             }
 
-            _stockRoomAddNewCompForm.CurrentUserBroadcast_EventHandler(new object(), LastCurrentDeptUserBroadcast_EventArgs);
+      //      _stockRoomAddNewCompForm.CurrentUserBroadcast_EventHandler(new object(), LastCurrentDeptUserBroadcast_EventArgs);
         }
 
         public void InitSolutionsProperties(string textTitle)
         {
-            if (_currentEmployeesLogIn.EmployeeAccessLevel < Utilities.AccessLevel.Administrator)
+            if (_employeesService.CurrentEmployeeLogIn.EmployeeAccessLevel < Utilities.AccessLevel.Administrator)
             {
                 MessageBox.Show(@"The current User, does not have the right to perform this action.", @"Warning, access denied.",
                                                                                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
-            using (_solutionPropertiesForm = new SolutionsProperties(CurrentDepartmentLogIn, ListDepartments))
-            {
-                if (_solutionPropertiesForm.DialogResult == DialogResult.Cancel)
-                    return;
-
-                _solutionPropertiesForm.Save_Requested += SolutionProperties_Save_Requested;
-                _solutionPropertiesForm.SpeechSynthesizerBase += SpeechSynthesizerBaseSpeak;
-
-                if (Utilities.IsInDesignMode())
-                    _solutionPropertiesForm.TopMost = false;
-                else
-                    _solutionPropertiesForm.TopMost = true;
-
-                _solutionPropertiesForm.CurrentUserBroadcast_EventHandler(new object(), new CurrentDeptUserBroadcast_EventArgs(null, _currentEmployeesLogIn));
-                _solutionPropertiesForm.ShowDialog();
-                // The application will return here.
-                _solutionPropertiesForm = null;
-                SolutionPropertiesFormClosed(new object(), new FormClosedEventArgs(CloseReason.FormOwnerClosing));
-            }
+           CallSolutionsProperties(false);
         }
 
         public void InitTimeLineEditor(string textTitle)
@@ -2857,7 +2411,7 @@ namespace StockRoom11net
                 return;
             }
 
-             //✅ Get TimeLineEditor from DI with all dependencies injected
+             //? Get TimeLineEditor from DI with all dependencies injected
                _timeLineEditorForm = _serviceProvider.GetRequiredService<TimeLineEditor>();
                {
                    Text = textTitle;
@@ -2876,9 +2430,9 @@ namespace StockRoom11net
             _timeLineEditorForm.DockStateChanged += TimeLineDockStateChanged;
             //_timeLineEditorForm.LogFileMessage += Write_LogFile;
             _timeLineEditorForm.StatusBarMessageEvent += OnStatusBarMessage;
-            _timeLineEditorForm.Save_Requested += TimeLine_ProcessSaveRequest;
+            //_timeLineEditorForm.Save_Requested += TimeLine_ProcessSaveRequest;
             // _timeLineEditorForm.CellDoubleClick_Event += StockRoomCellDoubleClick;
-            _timeLineEditorForm.SaveTreeView_Requested += TimeLineSaveTreeViewRequested;
+           // _timeLineEditorForm.SaveTreeView_Requested += TimeLineSaveTreeViewRequested;
             //_timeLineEditorForm.AddNewItemSaveTreeViewRequested += AddNewItemSaveTreeViewRequested;
             //_timeLineEditorForm.Refresh_Requested += StockRoomRefreshRequested;
 
@@ -2887,9 +2441,9 @@ namespace StockRoom11net
             //_timeLineEditorForm.NotificationsToSends += StockRoomNotificationsToSends;
             _timeLineEditorForm.SpeechSynthesizerBase += SpeechSynthesizerBaseSpeak;
 
-            _timeLineEditorForm.CurrentUserBroadcast_EventHandler(new object(), LastCurrentDeptUserBroadcast_EventArgs);
+           // _timeLineEditorForm.CurrentUserBroadcast_EventHandler(new object(), LastCurrentDeptUserBroadcast_EventArgs);
 
-            CurrentDeptUserBroadcast_Requested += _timeLineEditorForm.CurrentUserBroadcast_EventHandler;
+          //  CurrentDeptUserBroadcast_Requested += _timeLineEditorForm.CurrentUserBroadcast_EventHandler;
 
             ToolStripMenuItem_TimeLineEditor.Enabled = false;
 
@@ -2916,7 +2470,7 @@ namespace StockRoom11net
 
         void StockRoomCellDoubleClick(object sender, CellDoubleClick_EventArgs e)
         {
-            if (_currentEmployeesLogIn.EmployeeAccessLevel == Utilities.AccessLevel.User)
+            if (_employeesService.CurrentEmployeeLogIn.EmployeeAccessLevel == Utilities.AccessLevel.User)
             {
                 MessageBox.Show(@"The current User, does not have the right to perform this action.", @"Warning, access denied.",
                                                                                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -3012,7 +2566,7 @@ namespace StockRoom11net
 
             if (_stockRoomAddNewCompForm.DockState == DockState.Unknown)
             {
-                if (_currentEmployeesLogIn.EmployeeAccessLevel == Utilities.AccessLevel.User)
+                if (_employeesService.CurrentEmployeeLogIn.IsUser)
                     toolStripMenuItem__stockRoomAddNewComp.Enabled = false;
                 else
                     toolStripMenuItem__stockRoomAddNewComp.Enabled = true;
@@ -3023,7 +2577,7 @@ namespace StockRoom11net
                 Write_LogFile(new object(), new Custom_Events_Args.LogFileMessageEventArgs(new List<string>
                     {
                         Tags.NewLine(""),
-                        Tags.NewLineBold(_currentEmployeesLogIn.FullName),
+                        Tags.NewLineBold(Table_Employee.FullName),
                         Tags.NewLine("Closing the Add new Comp at " + DateTime.Now)
                     }));
             }
@@ -3036,7 +2590,7 @@ namespace StockRoom11net
 
             if (_employees_ManagementsForm.DockState == DockState.Unknown)
             {
-                if (_currentEmployeesLogIn.EmployeeAccessLevel == Utilities.AccessLevel.User)
+                if (_employeesService.CurrentEmployeeLogIn.IsUser)
                     toolStripMenuItem_Employees.Enabled = false;
                 else
                     toolStripMenuItem_Employees.Enabled = true;
@@ -3047,7 +2601,7 @@ namespace StockRoom11net
                 Write_LogFile(new object(), new Custom_Events_Args.LogFileMessageEventArgs(new List<string>
                     {
                         Tags.NewLine(""),
-                        Tags.NewLineBold(_currentEmployeesLogIn.FullName),
+                        Tags.NewLineBold(Table_Employee.FullName),
                         Tags.NewLine("Closing the Employees Managements at " + DateTime.Now)
                     }));
             }
@@ -3060,22 +2614,22 @@ namespace StockRoom11net
 
             if (_stockRoomForm.DockState == DockState.Unknown)
             {
-                if (_currentEmployeesLogIn.EmployeeAccessLevel == Utilities.AccessLevel.User)
+                if (_employeesService.CurrentEmployeeLogIn.IsUser)
                     toolStripMenuItem_stockRoomInventory.Enabled = false;
                 else
                     toolStripMenuItem_stockRoomInventory.Enabled = true;
 
                 _stockRoomForm.DockStateChanged -= StockRoomDockStateChanged;
-                _stockRoomForm.Save_Requested -= StockRoom_ProcessSaveRequest;
+             //   _stockRoomForm.Save_Requested -= StockRoom_ProcessSaveRequest;
                 _stockRoomForm.CellDoubleClick_Event -= StockRoomCellDoubleClick;
-                _stockRoomForm.SaveTreeView_Requested -= StockRoomSaveTreeViewRequested;
+             //   _stockRoomForm.SaveTreeView_Requested -= StockRoomSaveTreeViewRequested;
 
               //  _stockRoomForm = null;
 
                 Write_LogFile(new object(), new Custom_Events_Args.LogFileMessageEventArgs(new List<string>
                     {
                         Tags.NewLine(""),
-                        Tags.NewLineBold(_currentEmployeesLogIn.FullName),
+                        Tags.NewLineBold(Table_Employee.FullName),
                         Tags.NewLine("Closing the StockRoom Managements at " + DateTime.Now)
                     }));
             }
@@ -3089,7 +2643,7 @@ namespace StockRoom11net
 
             if (_logFile_Management.DockState == DockState.Unknown)
             {
-                if (_currentEmployeesLogIn.EmployeeAccessLevel == Utilities.AccessLevel.Manager)
+                if (_employeesService.CurrentEmployeeLogIn.IsManager)
                     toolStripMenuItem_logFileManagement.Visible = true;
                 else
                     toolStripMenuItem_logFileManagement.Visible = false;
@@ -3099,7 +2653,7 @@ namespace StockRoom11net
                 Write_LogFile(new object(), new Custom_Events_Args.LogFileMessageEventArgs(new List<string>
                     {
                         Tags.NewLine(""),
-                        Tags.NewLineBold(_currentEmployeesLogIn.FullName),
+                        Tags.NewLineBold(Table_Employee.FullName),
                         Tags.NewLine("Closing the LogFile Managements at " + DateTime.Now)
                     }));
             }
@@ -3112,13 +2666,13 @@ namespace StockRoom11net
 
             if (_stockRoomReceiveForm.DockState == DockState.Unknown)
             {
-                if (_currentEmployeesLogIn.EmployeeAccessLevel == Utilities.AccessLevel.User)
+                if (_employeesService.CurrentEmployeeLogIn.IsUser)
                     toolStripMenuItem_StockRoom_Receive.Enabled = false;
                 else
                     toolStripMenuItem_StockRoom_Receive.Enabled = true;
 
                 _stockRoomReceiveForm.DockStateChanged -= StockRoomReceiveDockStateChanged;
-                _stockRoomReceiveForm.Save_Requested -= StockRoom_ProcessSaveRequest;
+            //    _stockRoomReceiveForm.Save_Requested -= StockRoom_ProcessSaveRequest;
 
                 CellDoubleClick_Event -= _stockRoomReceiveForm.CellDoubleClick_Event;
 
@@ -3129,7 +2683,7 @@ namespace StockRoom11net
                 Write_LogFile(new object(), new Custom_Events_Args.LogFileMessageEventArgs(new List<string>
                     {
                         Tags.NewLine(""),
-                        Tags.NewLineBold(_currentEmployeesLogIn.FullName),
+                        Tags.NewLineBold(Table_Employee.FullName),
                         Tags.NewLine("Closing the Receive Managements at " + DateTime.Now)
                     }));
             }
@@ -3142,7 +2696,7 @@ namespace StockRoom11net
 
             if (_locationAndLayoutDesignForm.DockState == DockState.Unknown)
             {
-                if (_currentEmployeesLogIn.EmployeeAccessLevel == Utilities.AccessLevel.User)
+                if (_employeesService.CurrentEmployeeLogIn.IsUser)
                     ToolStripMenuItem_LocationAndLayout.Enabled = false;
                 else
                     ToolStripMenuItem_LocationAndLayout.Enabled = true;
@@ -3152,7 +2706,7 @@ namespace StockRoom11net
                 Write_LogFile(new object(), new Custom_Events_Args.LogFileMessageEventArgs(new List<string>
                     {
                         Tags.NewLine(""),
-                        Tags.NewLineBold(_currentEmployeesLogIn.FullName),
+                        Tags.NewLineBold(Table_Employee.FullName),
                         Tags.NewLine("Closing the Location and Layout Desing at " + DateTime.Now)
                     }));
             }
@@ -3165,7 +2719,7 @@ namespace StockRoom11net
 
             if (_timeLineEditorForm.DockState == DockState.Unknown)
             {
-                if (_currentEmployeesLogIn.EmployeeAccessLevel == Utilities.AccessLevel.User)
+                if (_employeesService.CurrentEmployeeLogIn.IsUser)
                     ToolStripMenuItem_TimeLineEditor.Enabled = false;
                 else
                     ToolStripMenuItem_TimeLineEditor.Enabled = true;
@@ -3177,7 +2731,7 @@ namespace StockRoom11net
                 Write_LogFile(new object(), new Custom_Events_Args.LogFileMessageEventArgs(new List<string>
                     {
                         Tags.NewLine(""),
-                        Tags.NewLineBold(_currentEmployeesLogIn.FullName),
+                        Tags.NewLineBold(Table_Employee.FullName),
                         Tags.NewLine("Closing the TimeLineEditor at " + DateTime.Now)
                     }));
             }
@@ -3371,1722 +2925,6 @@ namespace StockRoom11net
 
         #endregion"VisibleChanged"
         
-        #region"Save Requested"
-
-        #region "Table_Labels_SMT"
-
-        void LabelsSMT_ProcessSaveRequest(object sender, Save_Requested_EventArgs e)
-        {
-            switch (e.SaveEvent)
-            {
-                case Utilities.NotificationEvents.RowInformationChange:
-                    {
-                        if (Settings.Default.SaveEachTimeTheInformationIsChanged)
-                        {
-                            NeedSaveData = false;
-                            LabelsSMT_SaveRequest();
-                            break;
-                        }
-
-                        NotificationsToSendsProcessor(new object(), new Notification
-                                    (
-                                        "Row information has been changed.",               //notification.Text
-                                        "Warning, Row information changed.",               //notification.Title
-                                        e.ComponentInformation.Description,                //notification.Description
-                                        (int)ToolTipIcon.Info,                              //notification.MessageIcon
-                                        (int)Utilities.NotificationEvents.RowInformationChange,//notifycation.NotifycationEvents
-                                        Settings.Default.DepartmentName,                    //notification.String_Filter
-                                        DateTime.Now,                                       //notification.DateCreated
-                                        CurrentEmployeesLogIn.FullName,                     //notification.Created_by
-                                        e.ComponentInformation.PartNumber,                  //notification.Properties
-                                        "Status"                                            //notification.Status
-                                    ));
-                        break;
-                    }
-                case Utilities.NotificationEvents.DataBaseUpDated:
-                    {
-                        //NotificationEvent will be up when the database is saved successfully.
-
-                        NeedSaveData = false;
-                        LabelsSMT_SaveRequest();
-                        break;
-                    }
-                case Utilities.NotificationEvents.ClearAllSelected:
-                    {
-                        UpdateStatusColumn(Production_InventoryDataSet.Table_Labels_SMT);
-                        break;
-                    }
-            }
-        }
-
-        public void LabelsSMT_SaveRequest()
-        {
-            try
-            {
-                if (SaveLabelsSMT_Requested())
-                    NotificationsToSendsProcessor(new object(), new Notification
-                                  (
-                                      "Labels SMT DataBase has been updated.",            // 0 notification.Text
-                                      "Warning, DataBase updated.",                       // 1 notification.Title
-                                      "The database has been updated by an user.",        // 2 notification.Description
-                                      (int)ToolTipIcon.Info,                              // 3 notification.MessageIcon
-                                      (int)Utilities.NotificationEvents.DataBaseUpDated,     // 4 notifycation.NotifycationEvents
-                                      Settings.Default.DepartmentName,                    // 5 notification.String_Filter
-                                      DateTime.Now,                                       // 6 notification.DateCreated
-                                      CurrentEmployeesLogIn.FullName,                     // 7 notification.Created_by
-                                      "properties",                                       // 8 notification.Properties
-                                      "Status"                                            // 9 notification.Status
-                                 ));
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(@"Error while trying to save the DataBase." + ex.Message,
-                                @"Error on DataBase Labels SMT.",
-                                MessageBoxButtons.RetryCancel, MessageBoxIcon.Error);
-            }
-        }
-
-        public bool SaveLabelsSMT_Requested()
-        {
-            try
-            {
-                _bindingSource_Labels_SMT.EndEdit();
-                UpdateStatusColumn(Production_InventoryDataSet.Table_Labels_SMT);
-
-                changedRecordsTable = Production_InventoryDataSet.Table_Labels_SMT.GetChanges();
-                if (changedRecordsTable != null)
-                    RowsChanged = changedRecordsTable.Rows.Count;
-
-                if (RowsChanged == 0)
-                {
-                    Write_LogFile(new object(), new Custom_Events_Args.LogFileMessageEventArgs(new List<string>
-                    {
-                        Tags.NewLine(""),
-                        Tags.NewLineBold(_currentEmployeesLogIn.FullName),
-                        Tags.NewLine("Save Labels_SMT Requested at " + DateTime.Now),
-                        Tags.NewLine("No rows changed, nothing to save.")
-                    }));
-                    OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("No rows changed, nothing to save.", Resources.error_alert));
-                    return true;
-                }
-                // Save the changes to the database.
-                RowsSaved = adapterTable_Labels_SMT.Update(Production_InventoryDataSet.Table_Labels_SMT);
-
-                if (RowsSaved == RowsChanged)
-                {
-                    Production_InventoryDataSet.Table_Labels_SMT.AcceptChanges();
-                    OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Labels_SMT, save request, has already been processed, " + RowsSaved + " rows saved.", Resources.OK));
-                    Write_LogFile(new object(), new Custom_Events_Args.LogFileMessageEventArgs(new List<string>
-                    {
-                        Tags.NewLine(""),
-                        Tags.NewLineBold(_currentEmployeesLogIn.FullName),
-                        Tags.NewLine("Save Labels_SMT Requested at " + DateTime.Now),
-                        Tags.NewLine("Saved rows = " + RowsSaved + ".")
-                    }));
-                    RowsSaved = RowsChanged = 0;
-                    return true;
-                }
-                else
-                {
-                    OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Error while trying to save the DataBase Labels SMT.", Resources.ErrorIcon));
-                    Write_LogFile(new object(), new Custom_Events_Args.LogFileMessageEventArgs(new List<string>
-                    {
-                        Tags.NewLine(""),
-                        Tags.NewLineBold(_currentEmployeesLogIn.FullName),
-                        Tags.NewLine("Save Labels_SMT Requested at " + DateTime.Now),
-                        Tags.NewLine("No rows have been saved.")
-                    }));
-                    return false;
-                }
-            }
-            catch (Exception ex)
-            {
-                if (Production_InventoryDataSet.Table_Labels_SMT.HasErrors)
-                {
-                    _bindingSource_Labels_SMT.Sort = "Status DESC";
-                    UpdateStatusColumnHasError(Production_InventoryDataSet.Table_Labels_SMT);
-                }
-
-                Write_LogFile(new object(), new Custom_Events_Args.LogFileMessageEventArgs(new List<string>
-                    {
-                        Tags.NewLine(""),
-                        Tags.NewLineBold(_currentEmployeesLogIn.FullName),
-                        Tags.NewLine("Error while trying to save the Labels_SMT at " + DateTime.Now),
-                        Tags.NewLine(_count + " rows are mark with error.")
-                    }));
-                MessageBox.Show(@"Error while trying to save the DataBase" + ex.Message +
-                                "Numbers of rows changed by.... " + RowsChanged,
-                                @"Error on Save process of Labels_SMT DataBase.",
-                                MessageBoxButtons.OKCancel, MessageBoxIcon.Error);
-                return false;
-            }
-        }
-
-        #endregion "Table_Labels_SMT"
-
-        #region "Table_TimeLine"
-
-        void TimeLine_ProcessSaveRequest(object sender, Save_Requested_EventArgs e)
-        {
-            switch (e.SaveEvent)
-            {
-                case Utilities.NotificationEvents.RowInformationChange:
-                    {
-                        if (Settings.Default.SaveEachTimeTheInformationIsChanged)
-                        {
-                            NeedSaveData = false;
-                            // ✅ This is now handled by EF Core in TimeLineEditor
-                            //TimeLineSaveRequest();
-                            break;
-                        }
-
-                        NotificationsToSendsProcessor(new object(), new Notification
-                                    (
-                                        "Row information has been changed.",               //notification.Text
-                                        "Warning, Row information changed.",               //notification.Title
-                                        e.ComponentInformation.Description,                //notification.Description
-                                        (int)ToolTipIcon.Info,                              //notification.MessageIcon
-                                        (int)Utilities.NotificationEvents.RowInformationChange,//notifycation.NotifycationEvents
-                                        Settings.Default.DepartmentName,                    //notification.String_Filter
-                                        DateTime.Now,                                       //notification.DateCreated
-                                        CurrentEmployeesLogIn.FullName,                     //notification.Created_by
-                                        e.ComponentInformation.PartNumber,                  //notification.Properties
-                                        "Status"                                            //notification.Status
-                                    ));
-                        break;
-                    }
-                case Utilities.NotificationEvents.DataBaseUpDated:
-                    {
-                        NeedSaveData = false;
-
-                        if (e.DataTableName == "Table_TimeLine_TreeView")
-                            SaveTimeLineTreeView_Requested();
-
-                        if (e.DataTableName == "Table_TimeLine")
-                            TimeLineSaveRequest();
-
-                        break;
-                    }
-                case Utilities.NotificationEvents.ClearAllSelected:
-                    {
-                        UpdateStatusColumn(Production_InventoryDataSet.Table_TimeLine);
-
-                        break;
-                    }
-                case Utilities.NotificationEvents.TreeViewStockRoomChange:
-                    {
-                        //TimeLineSaveTreeViewRequested(sender, new EventArgs());
-                        break;
-                    }
-            }
-        }
-
-        public void TimeLineSaveRequest()
-        {
-            try
-            {
-                if (SaveTimeLine_Requested())
-                    NotificationsToSendsProcessor(new object(), new Notification
-                                                  (
-                                                      "DataBase has been updated.",                       // 0 notification.Text
-                                                      "Warning, DataBase updated.",                       // 1 notification.Title
-                                                      "The database has been updated by an user.",        // 2 notification.Description
-                                                      (int)ToolTipIcon.Info,                              // 3 notification.MessageIcon
-                                                      (int)Utilities.NotificationEvents.DataBaseUpDated,     // 4 notifycation.NotifycationEvents
-                                                      Settings.Default.DepartmentName,                    // 5 notification.String_Filter
-                                                      DateTime.Now,                                       // 6 notification.DateCreated
-                                                      CurrentEmployeesLogIn.FullName,                     // 7 notification.Created_by
-                                                      "properties",                                       // 8 notification.Properties
-                                                      "Status"                                            // 9 notification.Status
-                                                 ));
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(@"Error while trying to save the DataBase." + ex.Message,
-                                @"Error on DataBase. TimeLine.",
-                                MessageBoxButtons.RetryCancel, MessageBoxIcon.Error);
-            }
-        }
-
-        public bool SaveTimeLine_Requested()
-        {
-            try
-            {
-                _bindingSource_TimeLine.EndEdit();
-                UpdateStatusColumn(Production_InventoryDataSet.Table_TimeLine);
-
-                changedRecordsTable = Production_InventoryDataSet.Table_TimeLine.GetChanges();
-                if (changedRecordsTable != null)
-                    RowsChanged = changedRecordsTable.Rows.Count;
-                if (RowsChanged == 0)
-                {
-                    Write_LogFile(new object(), new Custom_Events_Args.LogFileMessageEventArgs(new List<string>
-                    {
-                        Tags.NewLine(""),
-                        Tags.NewLineBold(_currentEmployeesLogIn.FullName),
-                        Tags.NewLine("Save TimeLine Requested at " + DateTime.Now),
-                        Tags.NewLine("No rows changed, nothing to save.")
-                    }));
-                    OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("No rows changed, nothing to save.", Resources.error_alert));
-                    return true;
-                }
-                // Save the changes to the database.
-                RowsSaved = adapterTable_TimeLine.Update(Production_InventoryDataSet.Table_TimeLine);
-
-                if (RowsSaved == RowsChanged)
-                {
-                    Production_InventoryDataSet.Table_TimeLine.AcceptChanges();
-                    OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("TimeLine, save request has already been processed, " + RowsSaved + " rows saved.", Resources.OK));
-                    Write_LogFile(new object(), new Custom_Events_Args.LogFileMessageEventArgs(new List<string>
-                    {
-                        Tags.NewLine(""),
-                        Tags.NewLineBold(_currentEmployeesLogIn.FullName),
-                        Tags.NewLine("Save TimeLine Requested at " + DateTime.Now),
-                        Tags.NewLine("Saved rows = " + RowsSaved + ".")
-                    }));
-                    RowsSaved = RowsChanged = 0;
-                    return true;
-                }
-                else
-                {
-                    OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Error while trying to save the DataBase TimeLine.", Resources.ErrorIcon));
-                    Write_LogFile(new object(), new Custom_Events_Args.LogFileMessageEventArgs(new List<string>
-                    {
-                        Tags.NewLine(""),
-                        Tags.NewLineBold(_currentEmployeesLogIn.FullName),
-                        Tags.NewLine("Save TimeLine Requested at " + DateTime.Now),
-                        Tags.NewLine("No rows have been saved.")
-                    }));
-                    return false;
-                }
-            }
-            catch (Exception ex)
-            {
-                if (Production_InventoryDataSet.Table_TimeLine.HasErrors)
-                {
-                    _bindingSource_TimeLine.Sort = "Status DESC";
-                    UpdateStatusColumnHasError(Production_InventoryDataSet.Table_TimeLine);
-                }
-
-                Write_LogFile(new object(), new Custom_Events_Args.LogFileMessageEventArgs(new List<string>
-                    {
-                        Tags.NewLine(""),
-                        Tags.NewLineBold(_currentEmployeesLogIn.FullName),
-                        Tags.NewLine("Error while trying to save the DataBase at " + DateTime.Now),
-                        Tags.NewLine(_count + " rows are mark with error.")
-                    }));
-                MessageBox.Show(@"Error while trying to save the DataBase" + ex.Message +
-                                "Numbers of rows changed by.... " + RowsChanged,
-                                @"Error on Save process of TimeLine DataBase.",
-                                MessageBoxButtons.OKCancel, MessageBoxIcon.Error);
-                return false;
-            }
-        }
-
-        #endregion "Table_TimeLine"
-
-        #region"Table_TimeLine_TreeView"
-
-        public void TimeLineSaveTreeViewRequested(object sender, EventArgs e)
-        {
-            SaveTimeLineTreeView_Requested();
-        }
-
-        public bool SaveTimeLineTreeView_Requested()
-        {
-            try
-            {
-                _bindingSource_TimeLine_TreeView.RaiseListChangedEvents = false;
-                _bindingSource_TimeLine_TreeView.SuspendBinding();
-                _bindingSource_TimeLine_TreeView.EndEdit();
-
-                UpdateStatusColumn(Production_InventoryDataSet.Table_TimeLine_TreeView);
-                changedRecordsTable = Production_InventoryDataSet.Table_TimeLine_TreeView.GetChanges();
-                if (changedRecordsTable != null)
-                    RowsChanged = changedRecordsTable.Rows.Count;
-
-                if (RowsChanged == 0)
-                {
-                    Write_LogFile(new object(), new Custom_Events_Args.LogFileMessageEventArgs(new List<string>
-                    {
-                        Tags.NewLine(""),
-                        Tags.NewLineBold(_currentEmployeesLogIn.FullName),
-                        Tags.NewLine("Save TimeLineTreeView Requested at " + DateTime.Now),
-                        Tags.NewLine("No rows changed, nothing to save.")
-                    }));
-                    OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("No rows changed, nothing to save.", Resources.error_alert));
-                    return true;
-                }
-                // Save the changes to the database.
-                RowsSaved = adapterTable_TimeLineTreeView.Update(Production_InventoryDataSet.Table_TimeLine_TreeView);
-
-                if (RowsSaved == RowsChanged)
-                {
-                    Production_InventoryDataSet.Table_TimeLine_TreeView.AcceptChanges();
-                    OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("TimeLine TreeView, save request, has already been processed, " + RowsSaved + " rows saved.", Resources.OK));
-                    Write_LogFile(new object(), new Custom_Events_Args.LogFileMessageEventArgs(new List<string>
-                    {
-                        Tags.NewLine(""),
-                        Tags.NewLineBold(_currentEmployeesLogIn.FullName),
-                        Tags.NewLine("Save TimeLineTreeView Requested at " + DateTime.Now),
-                        Tags.NewLine("Saved rows = " + RowsSaved + ".")
-                    }));
-                    RowsSaved = RowsChanged = 0;
-
-                    _bindingSource_TimeLine_TreeView.ResumeBinding();
-                     _bindingSource_TimeLine_TreeView.RaiseListChangedEvents = true;
-                    return true;
-                }
-                else
-                {
-                    OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Error while trying to save the DataBase TimeLine TreeView.", Resources.ErrorIcon));
-                    Write_LogFile(new object(), new Custom_Events_Args.LogFileMessageEventArgs(new List<string>
-                    {
-                        Tags.NewLine(""),
-                        Tags.NewLineBold(_currentEmployeesLogIn.FullName),
-                        Tags.NewLine("Save TimeLineTreeView Requested at " + DateTime.Now),
-                        Tags.NewLine("No rows have been saved.")
-                    }));
-                    return false;
-                }
-            }
-            catch (Exception ex)
-            {
-                if (Production_InventoryDataSet.Table_TimeLine_TreeView.HasErrors)
-                {
-                    // _bindingSource_TimeLine_TreeView.Sort = "Status DESC";
-                    UpdateStatusColumnHasError(Production_InventoryDataSet.Table_TimeLine_TreeView);
-                }
-
-                Write_LogFile(new object(), new Custom_Events_Args.LogFileMessageEventArgs(new List<string>
-                    {
-                        Tags.NewLine(""),
-                        Tags.NewLineBold(_currentEmployeesLogIn.FullName),
-                        Tags.NewLine("Save StockRoomTreeView found errors at " + DateTime.Now),
-                        Tags.NewLine(_count + " rows are mark with error.")
-                    }));
-                MessageBox.Show(@"Error al tratar de salvar TimeLine TreeView DataBase" + ex.Message, @"Error on DataBase.",
-                                 MessageBoxButtons.RetryCancel, MessageBoxIcon.Error);
-                return false;
-            }
-
-        }
-
-        #endregion"Table_TimeLine_TreeView"
-
-        #region"Table_Projects"
-
-        public void StockRoom_Projections_Save_Requested(object sender, EventArgs e)
-        {
-            SaveProjections_Requested();
-        }
-
-        public bool SaveProjections_Requested()
-        {
-            try
-            {
-                _bindingSource_Projects.EndEdit();
-                UpdateStatusColumn(Production_InventoryDataSet.Table_Projects);
-                changedRecordsTable = Production_InventoryDataSet.Table_Projects.GetChanges();
-                if (changedRecordsTable != null)
-                    RowsChanged = changedRecordsTable.Rows.Count;
-
-                if (RowsChanged == 0)
-                {
-                    Write_LogFile(new object(), new Custom_Events_Args.LogFileMessageEventArgs(new List<string>
-                    {
-                        Tags.NewLine(""),
-                        Tags.NewLineBold(_currentEmployeesLogIn.FullName),
-                        Tags.NewLine("Save Projections Requested at " + DateTime.Now),
-                        Tags.NewLine("No rows changed, nothing to save.")
-                    }));
-                    OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("No rows changed, nothing to save.", Resources.error_alert));
-                    return true;
-                }
-                // Save the changes to the database.
-                RowsSaved = adapterTable_Projects.Update(Production_InventoryDataSet.Table_Projects);
-
-                if (RowsSaved == RowsChanged)
-                {
-                    Production_InventoryDataSet.Table_Projects.AcceptChanges();
-                    OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("StockRoom Projections, save request, has already been processed", Resources.OK));
-                    Write_LogFile(new object(), new Custom_Events_Args.LogFileMessageEventArgs(new List<string>
-                    {
-                        Tags.NewLine(""),
-                        Tags.NewLineBold(_currentEmployeesLogIn.FullName),
-                        Tags.NewLine("Save Projections Requested at " + DateTime.Now),
-                        Tags.NewLine("Saved rows = " + RowsSaved + ".")
-                    }));
-                    RowsSaved = RowsChanged = 0;
-                    return true;
-                }
-                else
-                {
-                    OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("No rows have been saved.", Resources.error_alert));
-                    Write_LogFile(new object(), new Custom_Events_Args.LogFileMessageEventArgs(new List<string>
-                    {
-                        Tags.NewLine(""),
-                        Tags.NewLineBold(_currentEmployeesLogIn.FullName),
-                        Tags.NewLine("Save Projections Requested at " + DateTime.Now),
-                        Tags.NewLine("No rows have been saved.")
-                    }));
-                    return false;
-                }
-            }
-            catch (Exception ex)
-            {
-                if (Production_InventoryDataSet.Table_Projects.HasErrors)
-                {
-                    _bindingSource_Projects.Sort = "Status DESC";
-                    UpdateStatusColumnHasError(Production_InventoryDataSet.Table_Projects);
-                }
-
-                Write_LogFile(new object(), new Custom_Events_Args.LogFileMessageEventArgs(new List<string>
-                    {
-                        Tags.NewLine(""),
-                        Tags.NewLineBold(_currentEmployeesLogIn.FullName),
-                        Tags.NewLine("Save Projections found errors at " + DateTime.Now),
-                        Tags.NewLine(_count + " rows are mark with error.")
-                    }));
-                MessageBox.Show(@"Error al tratar de salvar la DataBase" + ex.Message, @"Error on DataBase.",
-                                MessageBoxButtons.RetryCancel, MessageBoxIcon.Error);
-                return false;
-            }
-
-        }
-
-        public void _projectViewer_Save_Requested(object sender, EventArgs e)
-        {
-            SaveProjectViewer_Requested();
-        }
-
-        public bool SaveProjectViewer_Requested()
-        {
-            try
-            {
-                _bindingSource_ProjectsTreeView.EndEdit();
-                UpdateStatusColumn(Production_InventoryDataSet.Table_Projects_TreeView);
-                changedRecordsTable = Production_InventoryDataSet.Table_Projects_TreeView.GetChanges();
-                if (changedRecordsTable != null)
-                    RowsChanged = changedRecordsTable.Rows.Count;
-
-                if (RowsChanged == 0)
-                {
-                    Write_LogFile(new object(), new Custom_Events_Args.LogFileMessageEventArgs(new List<string>
-                    {
-                        Tags.NewLine(""),
-                        Tags.NewLineBold(_currentEmployeesLogIn.FullName),
-                        Tags.NewLine("Save Projects Viewer Requested at " + DateTime.Now),
-                        Tags.NewLine("No rows changed, nothing to save.")
-                    }));
-                    OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("No rows changed, nothing to save.", Resources.error_alert));
-                    return true;
-                }
-                // Save the changes to the database.
-                RowsSaved = adapterTable_ProjectsTreeView.Update(Production_InventoryDataSet.Table_Projects_TreeView);
-
-                if (RowsSaved == RowsChanged)
-                {
-                    Production_InventoryDataSet.Table_Projects_TreeView.AcceptChanges();
-                    OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Project Viewer, save request has already been processed, " + RowsSaved + " rows saved.", Resources.OK));
-                    Write_LogFile(new object(), new Custom_Events_Args.LogFileMessageEventArgs(
-                    [
-                        Tags.NewLine(""),
-                        Tags.NewLineBold(_currentEmployeesLogIn.FullName),
-                        Tags.NewLine("Save Projects Viewer Requested at " + DateTime.Now),
-                        Tags.NewLine("Saved rows = " + RowsSaved + ".")
-                    ]));
-                    RowsSaved = RowsChanged = 0;
-                    return true;
-                }
-                else
-                {
-                    OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("No rows have been saved.", Resources.error_alert));
-                    Write_LogFile(new object(), new Custom_Events_Args.LogFileMessageEventArgs(
-                    [
-                        Tags.NewLine(""),
-                        Tags.NewLineBold(_currentEmployeesLogIn.FullName),
-                        Tags.NewLine("Save Projects Viewer Requested at " + DateTime.Now),
-                        Tags.NewLine("No rows have been saved.")
-                    ]));
-                    return false;
-                }
-            }
-            catch (Exception ex)
-            {
-                if (Production_InventoryDataSet.Table_Projects_TreeView.HasErrors)
-                {
-                    _bindingSource_ProjectsTreeView.Sort = "Status DESC";
-                    UpdateStatusColumnHasError(Production_InventoryDataSet.Table_Projects_TreeView);
-                }
-
-                Write_LogFile(new object(), new Custom_Events_Args.LogFileMessageEventArgs(
-                    [
-                        Tags.NewLine(""),
-                        Tags.NewLineBold(_currentEmployeesLogIn.FullName),
-                        Tags.NewLine("Save Projects Viewer found errors at " + DateTime.Now),
-                        Tags.NewLine(_count + " rows are mark with error.")
-                    ]));
-                MessageBox.Show(@"Error al tratar de salvar la DataBase" + ex.Message, @"Error on DataBase.",
-                                MessageBoxButtons.RetryCancel, MessageBoxIcon.Error);
-                return false;
-            }
-
-        }
-
-        #endregion"Table_Projects"
-
-        #region "Table_StockRoom"
-
-        void StockRoom_ProcessSaveRequest(object sender, Save_Requested_EventArgs e)
-        {
-            StatusBarMessage_EventArgs statusBarMessage = new StatusBarMessage_EventArgs()
-            {
-                StatusBarMessage = e.Message,
-                StatusBarIcon = Resources.info
-            };
-            OnStatusBarMessage(sender, statusBarMessage);
-
-            switch (e.SaveEvent)
-            {
-                case Utilities.NotificationEvents.RowInformationChange:
-                    {
-                        if (Settings.Default.SaveEachTimeTheInformationIsChanged)
-                        {
-                            NeedSaveData = false;
-                            StockRoomSaveRequest();
-                            break;
-                        }
-
-                        NotificationsToSendsProcessor(new object(), new Notification
-                                    (
-                                        "Row information has been changed.",               //notification.Text
-                                        "Warning, Row information changed.",               //notification.Title
-                                        e.ComponentInformation.Description,                //notification.Description
-                                        (int)ToolTipIcon.Info,                              //notification.MessageIcon
-                                        (int)Utilities.NotificationEvents.RowInformationChange,//notifycation.NotifycationEvents
-                                        Settings.Default.DepartmentName,                    //notification.String_Filter
-                                        DateTime.Now,                                       //notification.DateCreated
-                                        CurrentEmployeesLogIn.FullName,                     //notification.Created_by
-                                        e.ComponentInformation.PartNumber,                  //notification.Properties
-                                        "Status"                                            //notification.Status
-                                    ));
-                        break;
-                    }
-                case Utilities.NotificationEvents.DataBaseUpDated:
-                    {
-                        NeedSaveData = false;
-                        if (e.DataTableName.Contains("Table_StockRoom_TreeView"))
-                            SaveStockRoomTreeView_Requested();
-                        else
-                            StockRoomSaveRequest();
-                        break;
-                    }
-                case Utilities.NotificationEvents.ClearAllSelected:
-                    {
-                        UpdateStatusColumn(Production_InventoryDataSet.Table_StockRoom);
-
-                        break;
-                    }
-                case Utilities.NotificationEvents.TreeViewStockRoomChange:
-                    {
-                        SaveStockRoomTreeView_Requested();
-                        break;
-                    }
-            }
-        }
-
-        public void StockRoomSaveRequest()
-        {
-            try
-            {
-                if (SaveStockRoom_Requested())
-                    NotificationsToSendsProcessor(new object(), new Notification
-                                 (
-                                     "DataBase has been updated.",                       // 0 notification.Text
-                                     "Warning, DataBase updated.",                       // 1 notification.Title
-                                     "The database has been updated by an user.",        // 2 notification.Description
-                                     (int)ToolTipIcon.Info,                              // 3 notification.MessageIcon
-                                     (int)Utilities.NotificationEvents.DataBaseUpDated,     // 4 notifycation.NotifycationEvents
-                                     Settings.Default.DepartmentName,                    // 5 notification.String_Filter
-                                     DateTime.Now,                                       // 6 notification.DateCreated
-                                     CurrentEmployeesLogIn.FullName,                     // 7 notification.Created_by
-                                     "properties",                                       // 8 notification.Properties
-                                     "Status"                                            // 9 notification.Status
-                                ));
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(@"Error while trying to save the DataBase." + ex.Message,
-                                @"Error on DataBase. StockRoom Inventory.",
-                                MessageBoxButtons.RetryCancel, MessageBoxIcon.Error);
-            }
-        }
-
-        public bool SaveStockRoom_Requested()
-        {
-            try
-            {
-                _bindingSource_StockRoom.EndEdit();
-
-                UpdateStatusColumn(Production_InventoryDataSet.Table_StockRoom);
-                changedRecordsTable = Production_InventoryDataSet.Table_StockRoom.GetChanges();
-                if (changedRecordsTable != null)
-                    RowsChanged = changedRecordsTable.Rows.Count;
-
-                if (RowsChanged == 0)
-                {
-                    Write_LogFile(new object(), new Custom_Events_Args.LogFileMessageEventArgs(
-                    [
-                        Tags.NewLine(""),
-                        Tags.NewLineBold(_currentEmployeesLogIn.FullName),
-                        Tags.NewLine("Save StockRoom Requested at " + DateTime.Now),
-                        Tags.NewLine("No rows changed, nothing to save.")
-                    ]));
-                    OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("No rows changed, nothing to save.", Resources.error_alert));
-                    return true;
-                }
-
-                RowsSaved = adapterTable_Stockroom.Update(Production_InventoryDataSet.Table_StockRoom);
-
-                if (RowsSaved == RowsChanged)
-                {
-                    Production_InventoryDataSet.Table_StockRoom.AcceptChanges();
-                    OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("StockRoom Control, save request, has already been processed, "
-                                                               + RowsSaved + " rows have been saved out of a total of "
-                                                               + RowsChanged + " modified rows.", Resources.OK));
-                    Write_LogFile(new object(), new Custom_Events_Args.LogFileMessageEventArgs(new List<string>
-                    {
-                        Tags.NewLine(""),
-                        Tags.NewLineBold(_currentEmployeesLogIn.FullName),
-                        Tags.NewLine("Save StockRoom Requested at " + DateTime.Now),
-                        Tags.NewLine("Saved rows = " + RowsSaved + ".")
-                    }));
-                    RowsSaved = RowsChanged = 0;
-                    return true;
-                }
-                else
-                {
-                    OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Error while trying to save the DataBase StockRoom, " + RowsSaved + " rows saved out of a total of " + RowsChanged + " modified rows.", Resources.error_alert));
-                    Write_LogFile(new object(), new Custom_Events_Args.LogFileMessageEventArgs(
-                    [
-                        Tags.NewLine(""),
-                        Tags.NewLineBold(_currentEmployeesLogIn.FullName),
-                        Tags.NewLine("Save StockRoom Requested at " + DateTime.Now),
-                        Tags.NewLine("No rows have been saved.")
-                    ]));
-                    return false;
-                }
-            }
-            catch (Exception ex)
-            {
-                if (Production_InventoryDataSet.Table_StockRoom.HasErrors)
-                {
-                    _bindingSource_StockRoom.Sort = "Status DESC";
-                    UpdateStatusColumnHasError(Production_InventoryDataSet.Table_StockRoom);
-                }
-
-                Write_LogFile(new object(), new Custom_Events_Args.LogFileMessageEventArgs(
-                    [
-                        Tags.NewLine(""),
-                        Tags.NewLineBold(_currentEmployeesLogIn.FullName),
-                        Tags.NewLine("Error while trying to save the DataBase at " + DateTime.Now),
-                        Tags.NewLine(_count + " rows are mark with error.")
-                    ]));
-                MessageBox.Show(@"Error while trying to save the DataBase" + ex.Message +
-                                "Numbers of rows changed by.... " + RowsChanged,
-                                @"Error on Save process of Stockroom DataBase.",
-                                MessageBoxButtons.OKCancel, MessageBoxIcon.Error);
-                return false;
-            }
-        }
-
-        #endregion "Table_StockRoom"
-
-        #region"Table_StockRoom_TreeView"
-
-        public void StockRoomSaveTreeViewRequested(object sender, EventArgs e)
-        {
-            SaveStockRoomTreeView_Requested();
-        }
-
-        public bool SaveStockRoomTreeView_Requested()
-        {
-            try
-            {
-                _bindingSourceStockRoomTreeView.RaiseListChangedEvents = false;
-                _bindingSourceStockRoomTreeView.SuspendBinding();
-                _bindingSourceStockRoomTreeView.EndEdit();
-
-                UpdateStatusColumn(Production_InventoryDataSet.Table_StockRoom_TreeView);
-                changedRecordsTable = Production_InventoryDataSet.Table_StockRoom_TreeView.GetChanges();
-                if (changedRecordsTable != null)
-                    RowsChanged = changedRecordsTable.Rows.Count;
-
-                if(Production_InventoryDataSet.Table_StockRoom_TreeView.HasErrors)
-                {
-                    _bindingSourceStockRoomTreeView.Sort = "Status DESC";
-                    UpdateStatusColumnHasError(Production_InventoryDataSet.Table_StockRoom_TreeView);
-                    return false;
-                }
-
-                if (RowsChanged == 0)
-                {
-                    Write_LogFile(new object(), new Custom_Events_Args.LogFileMessageEventArgs(
-                    [
-                        Tags.NewLine(""),
-                        Tags.NewLineBold(_currentEmployeesLogIn.FullName),
-                        Tags.NewLine("Save StockRoomTreeView Requested at " + DateTime.Now),
-                        Tags.NewLine("No rows changed, nothing to save.")
-                    ]));
-                    OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("No rows changed, nothing to save.", Resources.ErrorIcon));
-                    return true;
-                }
-
-                RowsSaved = adapterTable_StockroomTreeView.Update(Production_InventoryDataSet.Table_StockRoom_TreeView);
-
-                if (RowsSaved == RowsChanged)
-                {
-                    Production_InventoryDataSet.Table_StockRoom_TreeView.AcceptChanges();
-                    OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("StockRoom TreeView, save request, has already been processed, " + RowsSaved + " rows saved.", Resources.OK));
-                    Write_LogFile(new object(), new Custom_Events_Args.LogFileMessageEventArgs(
-                    [
-                        Tags.NewLine(""),
-                        Tags.NewLineBold(_currentEmployeesLogIn.FullName),
-                        Tags.NewLine("Save StockRoomTreeView Requested at " + DateTime.Now),
-                        Tags.NewLine("Saved rows = " + RowsSaved + ".")
-                    ]));
-                    RowsSaved = RowsChanged = 0;
-
-                    _bindingSourceStockRoomTreeView.ResumeBinding();
-                    _bindingSourceStockRoomTreeView.RaiseListChangedEvents = true;
-
-                    return true;
-                }
-                else
-                {
-                    Write_LogFile(new object(), new Custom_Events_Args.LogFileMessageEventArgs(
-                    [
-                        Tags.NewLine(""),
-                        Tags.NewLineBold(_currentEmployeesLogIn.FullName),
-                        Tags.NewLine("Save StockRoomTreeView Requested at " + DateTime.Now),
-                        Tags.NewLine("No rows have been saved.")
-                    ]));
-                    return false;
-                }
-            }
-            catch (Exception ex)
-            {
-                _bindingSourceStockRoomTreeView.ResumeBinding();
-                _bindingSourceStockRoomTreeView.RaiseListChangedEvents = true;
-
-                if (Production_InventoryDataSet.Table_StockRoom_TreeView.HasErrors)
-                {
-                    _bindingSourceStockRoomTreeView.Sort = "Status DESC";
-                    UpdateStatusColumnHasError(Production_InventoryDataSet.Table_StockRoom_TreeView);
-                }
-
-                Write_LogFile(new object(), new Custom_Events_Args.LogFileMessageEventArgs(
-                    [
-                        Tags.NewLine(""),
-                        Tags.NewLineBold(_currentEmployeesLogIn.FullName),
-                        Tags.NewLine("Save StockRoomTreeView found errors at " + DateTime.Now),
-                        Tags.NewLine(_count + " rows are mark with error.")
-                    ]));
-                MessageBox.Show(@"Error al tratar de salvar StockRoom TreeView DataBase" + ex.Message, @"Error on DataBase.",
-                                 MessageBoxButtons.RetryCancel, MessageBoxIcon.Error);
-                return false;
-            }
-
-        }
-
-        #endregion"Table_StockRoom_TreeView"
-
-        #region"Table_Locations"
-
-        public void LocationAndLayoutDesignSaveRequested(object sender, Save_Requested_EventArgs e)
-        {
-            LocationsSaveRequested(sender, new EventArgs());
-        }
-
-        public void LocationsSaveRequested(object sender, EventArgs e)
-        {
-            SaveLocations_Requested();
-        }
-
-        public bool SaveLocations_Requested()
-        {
-            try
-            {
-                _bindingSource_Locations.EndEdit();
-                UpdateStatusColumn(Production_InventoryDataSet.Table_Locations);
-                changedRecordsTable = Production_InventoryDataSet.Table_Locations.GetChanges();
-                if (changedRecordsTable != null)
-                    RowsChanged = changedRecordsTable.Rows.Count;
-
-                if (RowsChanged == 0)
-                {
-                    Write_LogFile(new object(), new Custom_Events_Args.LogFileMessageEventArgs(new List<string>
-                    {
-                        Tags.NewLine(""),
-                        Tags.NewLineBold(_currentEmployeesLogIn.FullName),
-                        Tags.NewLine("Save Locations Requested at " + DateTime.Now),
-                        Tags.NewLine("No rows changed, nothing to save.")
-                    }));
-                    OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("No rows changed, nothing to save.", Resources.error_alert));
-                    return true;
-                }
-
-                RowsSaved = adapterTable_Locations.Update(Production_InventoryDataSet.Table_Locations);
-
-                if (RowsSaved == RowsChanged)
-                {
-                    Production_InventoryDataSet.Table_Locations.AcceptChanges();
-                    OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Locations, save request, has already been processed, " + RowsSaved + " rows saved.", Resources.OK));
-                    Write_LogFile(new object(), new Custom_Events_Args.LogFileMessageEventArgs(new List<string>
-                    {
-                        Tags.NewLine(""),
-                        Tags.NewLineBold(_currentEmployeesLogIn.FullName),
-                        Tags.NewLine("Save Locations Requested at " + DateTime.Now),
-                        Tags.NewLine("Saved rows = " + RowsSaved + ".")
-                    }));
-                    RowsSaved = RowsChanged = 0;
-                    return true;
-                }
-                else
-                {
-                    OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Error while trying to save the DataBase Locations, " + RowsSaved + " rows saved out of a total of " + RowsChanged + " modified rows.", Resources.error_alert));
-                    Write_LogFile(new object(), new Custom_Events_Args.LogFileMessageEventArgs(new List<string>
-                    {
-                        Tags.NewLine(""),
-                        Tags.NewLineBold(_currentEmployeesLogIn.FullName),
-                        Tags.NewLine("Save Locations Requested at " + DateTime.Now),
-                        Tags.NewLine("No rows have been saved.")
-                    }));
-                    return false;
-                }
-            }
-            catch (Exception ex)
-            {
-                if (Production_InventoryDataSet.Table_Locations.HasErrors)
-                {
-                    _bindingSource_Locations.Sort = "Status DESC";
-                    UpdateStatusColumnHasError(Production_InventoryDataSet.Table_Locations);
-                }
-
-                Write_LogFile(new object(), new Custom_Events_Args.LogFileMessageEventArgs(new List<string>
-                    {
-                        Tags.NewLine(""),
-                        Tags.NewLineBold(_currentEmployeesLogIn.FullName),
-                        Tags.NewLine("Save Locations found errors at " + DateTime.Now),
-                        Tags.NewLine(_count + " rows are mark with error.")
-                    }));
-                MessageBox.Show(@"Error al tratar de salvar Locations DataBase" + ex.Message, @"Error on DataBase.",
-                                MessageBoxButtons.OKCancel, MessageBoxIcon.Error);
-                return false;
-            }
-        }
-
-        #endregion"Table_Locations"
-
-        #region"Table_LocationsTreeView"
-
-        public void LocationAndLayoutDesignSaveTreeViewRequested(object sender, Save_Requested_EventArgs e)
-        {
-            LocationsSaveTreeViewRequested(sender, new EventArgs());
-        }
-
-        public void LocationsSaveTreeViewRequested(object sender, EventArgs e)
-        {
-            SaveLocationsTreeView_Requested();
-        }
-
-        public bool SaveLocationsTreeView_Requested()
-        {
-            try
-            {
-                _bindingSource_LocationsTreeView.RaiseListChangedEvents = false;
-                _bindingSource_LocationsTreeView.SuspendBinding();
-                _bindingSource_LocationsTreeView.EndEdit();
-
-                UpdateStatusColumn(Production_InventoryDataSet.Table_Location_TreeView);
-                changedRecordsTable = Production_InventoryDataSet.Table_Location_TreeView.GetChanges();
-                if (changedRecordsTable != null)
-                    RowsChanged = changedRecordsTable.Rows.Count;
-
-                if (RowsChanged == 0)
-                {
-                    Write_LogFile(new object(), new Custom_Events_Args.LogFileMessageEventArgs(new List<string>
-                    {
-                        Tags.NewLine(""),
-                        Tags.NewLineBold(_currentEmployeesLogIn.FullName),
-                        Tags.NewLine("Save LocationsTreeView Requested at " + DateTime.Now),
-                        Tags.NewLine("No rows changed, nothing to save.")
-                    }));
-                    OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("No rows changed, nothing to save.", Resources.error_alert));
-                    return true;
-                }
-
-                RowsSaved = adapterTable_LocationsTreeView.Update(Production_InventoryDataSet.Table_Location_TreeView);
-                if (RowsSaved == RowsChanged)
-                {
-                    Production_InventoryDataSet.Table_Location_TreeView.AcceptChanges();
-                    OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("LocationsTreeView, save request, has already been processed, " + RowsSaved + " rows saved.", Resources.OK));
-                    Write_LogFile(new object(), new Custom_Events_Args.LogFileMessageEventArgs(new List<string>
-                    {
-                        Tags.NewLine(""),
-                        Tags.NewLineBold(_currentEmployeesLogIn.FullName),
-                        Tags.NewLine("Save LocationsTreeView Requested at " + DateTime.Now),
-                        Tags.NewLine("Saved rows = " + RowsSaved + ".")
-                    }));
-                    RowsSaved = RowsChanged = 0;
-
-                    _bindingSource_LocationsTreeView.ResumeBinding();
-                    _bindingSource_LocationsTreeView.RaiseListChangedEvents = true;
-                    return true;
-                }
-                else
-                {
-                    Write_LogFile(new object(), new Custom_Events_Args.LogFileMessageEventArgs(new List<string>
-                    {
-                        Tags.NewLine(""),
-                        Tags.NewLineBold(_currentEmployeesLogIn.FullName),
-                        Tags.NewLine("Save LocationsTreeView Requested at " + DateTime.Now),
-                        Tags.NewLine("No rows have been saved.")
-                    }));
-                    return false;
-                }
-            }
-            catch (Exception ex)
-            {
-                if (Production_InventoryDataSet.Table_Location_TreeView.HasErrors)
-                {
-                    _bindingSource_LocationsTreeView.Sort = "Status DESC";
-                    UpdateStatusColumnHasError(Production_InventoryDataSet.Table_Location_TreeView);
-                }
-
-                Write_LogFile(new object(), new Custom_Events_Args.LogFileMessageEventArgs(new List<string>
-                    {
-                        Tags.NewLine(""),
-                        Tags.NewLineBold(_currentEmployeesLogIn.FullName),
-                        Tags.NewLine("Save LocationsTreeView found errors at " + DateTime.Now),
-                        Tags.NewLine(_count + " rows are mark with error.")
-                    }));
-                MessageBox.Show(@"Error al tratar de salvar Locations TreeView DataBase" + ex.Message, @"Error on DataBase.",
-                                 MessageBoxButtons.RetryCancel, MessageBoxIcon.Error);
-                return false;
-            }
-
-        }
-
-        #endregion"Table_LocationsTreeView"
-
-        #region"Table_Marshall & Table_Marshall_TreeView"
-
-        public void AddNewItemSaveTreeViewRequested(object sender, EventArgs e)
-        {
-            SaveMarshallTreeView_Requested();
-        }
-
-        public void CalendarViewerSaveTreeViewRequested(object sender, EventArgs e)
-        {
-            if (SaveMarshallTreeView_Requested())
-                OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Marshall TreeView Table, save request, has already been processed", Resources.OK));
-
-            if (SaveComponents_Requested())
-                OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Components Table, save request, has already been processed", Resources.OK));
-
-            if (SavePlacements_Requested())
-                OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Placements Table, save request, has already been processed", Resources.OK));
-        }
-
-        public void CalendarViewerSaveStockRoomRequested(object sender, EventArgs e)
-        {
-            SaveStockRoom_Requested();
-        }
-
-        public void MarshallExplorerSaveRequested(object sender, EventArgs e)
-        {
-            SaveMarshall_Requested();
-
-            SaveMarshallTreeView_Requested();
-
-            SaveStockRoom_Requested();
-        }
-
-        public bool SaveMarshall_Requested()
-        {
-            try
-            {
-                _bindingSource_Marshall.EndEdit();
-                UpdateStatusColumn(Production_InventoryDataSet.Table_Marshall);
-                changedRecordsTable = Production_InventoryDataSet.Table_Marshall.GetChanges();
-                if (changedRecordsTable != null)
-                    RowsChanged = changedRecordsTable.Rows.Count;
-
-                if (RowsChanged == 0)
-                {
-                    Write_LogFile(new object(), new Custom_Events_Args.LogFileMessageEventArgs(new List<string>
-                    {
-                        Tags.NewLine(""),
-                        Tags.NewLineBold(_currentEmployeesLogIn.FullName),
-                        Tags.NewLine("Save Marshall Requested at " + DateTime.Now),
-                        Tags.NewLine("No rows changed, nothing to save.")
-                    }));
-                    OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("No rows changed, nothing to save.", Resources.error_alert));
-                    return true;
-                }
-                // Save the changes to the database.
-                RowsSaved = adapterTable_Marshall.Update(Production_InventoryDataSet.Table_Marshall);
-
-                if (RowsSaved == RowsChanged)
-                {
-                    Production_InventoryDataSet.Table_Marshall.AcceptChanges();
-                    OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Marshall Control, save request, has already been processed, " + RowsSaved + " rows saved.", Resources.OK));
-                    Write_LogFile(new object(), new Custom_Events_Args.LogFileMessageEventArgs(new List<string>
-                    {
-                        Tags.NewLine(""),
-                        Tags.NewLineBold(_currentEmployeesLogIn.FullName),
-                        Tags.NewLine("Save Marshall Requested at " + DateTime.Now),
-                        Tags.NewLine("Saved rows = " + RowsSaved + ".")
-                    }));
-                    RowsSaved = RowsChanged = 0;
-                    return true;
-                }
-                else
-                {
-                    OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Marshall Control, save request, has already been processed, but no rows have been saved.", Resources.error_alert));
-                    Write_LogFile(new object(), new Custom_Events_Args.LogFileMessageEventArgs(new List<string>
-                    {
-                        Tags.NewLine(""),
-                        Tags.NewLineBold(_currentEmployeesLogIn.FullName),
-                        Tags.NewLine("Save Marshall Requested at " + DateTime.Now),
-                        Tags.NewLine("No rows have been saved.")
-                    }));
-                    return false;
-                }
-            }
-            catch (Exception ex)
-            {
-                if (Production_InventoryDataSet.Table_Marshall.HasErrors)
-                {
-                    _bindingSource_Marshall.Sort = "Status DESC";
-
-                    UpdateStatusColumnHasError(Production_InventoryDataSet.Table_Marshall);
-                }
-
-                Write_LogFile(new object(), new Custom_Events_Args.LogFileMessageEventArgs(new List<string>
-                    {
-                        Tags.NewLine(""),
-                        Tags.NewLineBold(_currentEmployeesLogIn.FullName),
-                        Tags.NewLine("Save Marshall found errors at " + DateTime.Now),
-                        Tags.NewLine(_count + " rows are mark with error."),
-                    }));
-
-                MessageBox.Show(@"Error al tratar de salvar Marshall DataBase" + ex.Message, @"Error on DataBase.",
-                                MessageBoxButtons.RetryCancel, MessageBoxIcon.Error);
-                return false;
-            }
-        }
-
-        public bool SaveMarshallTreeView_Requested()
-        {
-            try
-            {
-                _bindingSource_CodeTreeView.RaiseListChangedEvents = false;
-                _bindingSource_CodeTreeView.SuspendBinding();
-                _bindingSource_CodeTreeView.EndEdit();
-
-                UpdateStatusColumn(Production_InventoryDataSet.Table_Marshall_TreeView);
-                changedRecordsTable = Production_InventoryDataSet.Table_Marshall_TreeView.GetChanges();
-                if (changedRecordsTable != null)
-                    RowsChanged = changedRecordsTable.Rows.Count;
-
-                if (RowsChanged == 0)
-                {
-                    Write_LogFile(new object(), new Custom_Events_Args.LogFileMessageEventArgs(new List<string>
-                    {
-                        Tags.NewLine(""),
-                        Tags.NewLineBold(_currentEmployeesLogIn.FullName),
-                        Tags.NewLine("Save MarshallTreeView Requested at " + DateTime.Now),
-                        Tags.NewLine("No rows changed, nothing to save.")
-                    }));
-                    OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("No rows changed, nothing to save.", Resources.error_alert));
-                    return true;
-                }
-
-                RowsSaved = adapterTable_Marshall_TreeView.Update(Production_InventoryDataSet.Table_Marshall_TreeView);
-
-                if (RowsSaved == RowsChanged)
-                {
-                    Production_InventoryDataSet.Table_Marshall_TreeView.AcceptChanges();
-                    OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Marshall TreeView, save request, has already been processed, " + RowsSaved + " rows saved.", Resources.OK));
-                    Write_LogFile(new object(), new Custom_Events_Args.LogFileMessageEventArgs(new List<string>
-                    {
-                        Tags.NewLine(""),
-                        Tags.NewLineBold(_currentEmployeesLogIn.FullName),
-                        Tags.NewLine("Save MarshallTreeView Requested at " + DateTime.Now),
-                        Tags.NewLine("Saved rows = " + RowsSaved + ".")
-                    }));
-                    RowsSaved = RowsChanged = 0;
-
-                    _bindingSource_CodeTreeView.ResumeBinding();
-                    _bindingSource_CodeTreeView.RaiseListChangedEvents = true;
-                    return true;
-                }
-                else
-                {
-                    OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Marshall TreeView, save request, has already been processed, but no rows have been saved.", Resources.error_alert));
-                    Write_LogFile(new object(), new Custom_Events_Args.LogFileMessageEventArgs(new List<string>
-                    {
-                        Tags.NewLine(""),
-                        Tags.NewLineBold(_currentEmployeesLogIn.FullName),
-                        Tags.NewLine("Save MarshallTreeView Requested at " + DateTime.Now),
-                        Tags.NewLine("No rows have been saved.")
-                    }));
-                    return false;
-                }
-            }
-            catch (Exception ex)
-            {
-                if (Production_InventoryDataSet.Table_Marshall_TreeView.HasErrors)
-                {
-                    _bindingSource_CodeTreeView.Sort = "Status DESC";
-                    UpdateStatusColumnHasError(Production_InventoryDataSet.Table_Marshall_TreeView);
-                }
-
-                Write_LogFile(new object(), new Custom_Events_Args.LogFileMessageEventArgs(new List<string>
-                    {
-                        Tags.NewLine(""),
-                        Tags.NewLineBold(_currentEmployeesLogIn.FullName),
-                        Tags.NewLine("Save MarshallTreeView found errors at " + DateTime.Now),
-                        Tags.NewLine(_count + " rows are mark with error."),
-                    }));
-                MessageBox.Show(@"Error al tratar de salvar TreeViewMarshall DataBase " + ex.Message, @"Error on DataBase.",
-                                MessageBoxButtons.RetryCancel, MessageBoxIcon.Error);
-                return false;
-            }
-        }
-
-        public bool SaveComponents_Requested()
-        {
-            // This method is currently commented out in the original code, so we return true for now.
-            return true;/*
-            try
-            {
-                _bindingSourceComponents.EndEdit();
-
-                UpdateStatusColumn(Production_InventoryDataSet.Table_Components);
-
-                if (Production_InventoryDataSet.Table_Components.HasErrors)
-                {
-                    using (var dv = new DataView(Production_InventoryDataSet.Table_Components, "", "", DataViewRowState.Deleted))
-                    {
-                        // If Count == 0, no row mach.
-                        if (dv.Count != 0)
-                        {
-                            foreach (DataRowView row in dv)
-                            {
-                                MessageBox.Show(new Form() { TopMost = true }, @"Rom marked as deleted is " + row["PartNumber"] + " " +
-                                row["PartNumber"], @"MarshallTreeView has generated an error.", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                            }
-                        }
-                    }
-                }
-
-                RowsSaved = table_ComponentsTableAdapter.Update(Production_InventoryDataSet.Table_Components);
-                Write_LogFile(new object(), new Custom_Events_Args.LogFileMessageEventArgs(new List<string>
-                    {
-                        Tags.NewLine(""),
-                        Tags.NewLineBold(_currentEmployeesLogIn.FullName),
-                        Tags.NewLine("Save Components Requested at " + DateTime.Now),
-                        Tags.NewLine("Saved rows = " + RowsSaved + ".")
-                    }));
-
-                return true;
-            }
-            catch (Exception ex)
-            {
-                if (Production_InventoryDataSet.Table_Components.HasErrors)
-                {
-                    _bindingSourceComponents.Sort = "Status DESC";
-
-                    UpdateStatusColumnHasError(Production_InventoryDataSet.Table_Components);
-                }
-
-                Write_LogFile(new object(), new Custom_Events_Args.LogFileMessageEventArgs(new List<string>
-                    {
-                        Tags.NewLine(""),
-                        Tags.NewLineBold(_currentEmployeesLogIn.FullName),
-                        Tags.NewLine("Save Components found errors at " + DateTime.Now),
-                        Tags.NewLine(_count + " rows are mark with error."),
-                    }));
-
-                MessageBox.Show(@"Error al tratar de salvar Camponents DataBase " + ex.Message, @"Error on DataBase.",
-                                MessageBoxButtons.RetryCancel, MessageBoxIcon.Error);
-                return false;
-            }
-            */
-        }
-
-        public bool SavePlacements_Requested()
-        {
-            // This method is currently commented out in the original code, so we return true for now.
-            return true;
-            /*
-            try
-            {
-                _bindingSourcePlacements.EndEdit();
-
-                UpdateStatusColumn(Production_InventoryDataSet.Table_Placements);
-
-                if (Production_InventoryDataSet.Table_Placements.HasErrors)
-                {
-                    using (var dv = new DataView(Production_InventoryDataSet.Table_Placements, "", "", DataViewRowState.Deleted))
-                    {
-                        // If Count == 0, no row mach.
-                        if (dv.Count != 0)
-                        {
-                            foreach (DataRowView row in dv)
-                            {
-                                MessageBox.Show(new Form() { TopMost = true }, @"Rom marked as deleted is " + row["Placement_ID"] + " " +
-                                row["Placement_ID"], @"MarshallTreeView has generated an error.", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                            }
-                        }
-                    }
-                }
-
-                RowsSaved = table_PlacementsTableAdapter.Update(Production_InventoryDataSet.Table_Placements);
-                Write_LogFile(new object(), new Custom_Events_Args.LogFileMessageEventArgs(new List<string>
-                    {
-                        Tags.NewLine(""),
-                        Tags.NewLineBold(_currentEmployeesLogIn.FullName),
-                        Tags.NewLine("Save Placements Requested at " + DateTime.Now),
-                        Tags.NewLine("Saved rows = " + RowsSaved + ".")
-                    }));
-
-                return true;
-            }
-            catch (Exception ex)
-            {
-                if (Production_InventoryDataSet.Table_Placements.HasErrors)
-                {
-                    _bindingSourcePlacements.Sort = "Status DESC";
-
-                    UpdateStatusColumnHasError(Production_InventoryDataSet.Table_Placements);
-                }
-
-                Write_LogFile(new object(), new Custom_Events_Args.LogFileMessageEventArgs(new List<string>
-                    {
-                        Tags.NewLine(""),
-                        Tags.NewLineBold(_currentEmployeesLogIn.FullName),
-                        Tags.NewLine("Save Placements found errors at " + DateTime.Now),
-                        Tags.NewLine(_count + " rows are mark with error."),
-                    }));
-
-                MessageBox.Show(@"Error al tratar de salvar Placements DataBase " + ex.Message, @"Error on DataBase.",
-                                MessageBoxButtons.RetryCancel, MessageBoxIcon.Error);
-                return false;
-            }
-            */
-        }
-
-        #endregion"Table_Marshall & Table_Marshall_TreeView"
-
-        #region"Table_Employees & Table_Employees_TreeView"
-
-        public void EmployeesManagements_ProcessSaveRequest(object sender, Save_Requested_EventArgs e)
-        {
-            switch (e.SaveEvent)
-            {
-                case Utilities.NotificationEvents.Email:
-                    {
-                        //NotificationEvent will be up when the database is saved successfully.
-
-                        //NeedSaveData = false;
-                        //EmployeesManagementsSave_Requested(e);
-                        break;
-                    }
-                case Utilities.NotificationEvents.DepartmentInformationChange:
-                    {
-                        //NotificationEvent will be up when the database is saved successfully.
-
-                        NeedSaveData = false;
-                        EmployeesManagementsSaveRequest();
-                        break;
-                    }
-                case Utilities.NotificationEvents.EmployeesInformationChange:
-                    {
-                        //NotificationEvent will be up when the database is saved successfully.
-
-                        NeedSaveData = false;
-                        EmployeesManagementsSaveRequest();
-                        break;
-                    }
-                case Utilities.NotificationEvents.RowInformationChange:
-                    {
-                        if (Settings.Default.SaveEachTimeTheInformationIsChanged)
-                        {
-                            NeedSaveData = false;
-                            EmployeesManagementsSaveRequest();
-                            break;
-                        }
-
-                        NotificationsToSendsProcessor(new object(), new Notification
-                                    (
-                                        "Row information has been changed.",               //notification.Text
-                                        "Warning, Row information changed.",               //notification.Title
-                                        e.ComponentInformation.Description,                //notification.Description
-                                        (int)ToolTipIcon.Info,                              //notification.MessageIcon
-                                        (int)Utilities.NotificationEvents.RowInformationChange,//notifycation.NotifycationEvents
-                                        Settings.Default.DepartmentName,                    //notification.String_Filter
-                                        DateTime.Now,                                       //notification.DateCreated
-                                        CurrentEmployeesLogIn.FullName,                     //notification.Created_by
-                                        e.ComponentInformation.PartNumber,                  //notification.Properties
-                                        "Status"                                            //notification.Status
-                                    ));
-                        break;
-                    }
-                case Utilities.NotificationEvents.DataBaseUpDated:
-                    {
-                        //NotificationEvent will be up when the database is saved successfully.
-
-                        NeedSaveData = false;
-                        EmployeesManagementsSaveRequest();
-                        break;
-                    }
-                case Utilities.NotificationEvents.ClearAllSelected:
-                    {
-                        UpdateStatusColumn(Production_InventoryDataSet.Table_StockRoom);
-
-                        break;
-                    }
-            }
-        }
-
-        void EmployeesManagementsSaveRequest()
-        {
-            try
-            {
-                if (EmployeesManagementsSave_Requested())
-                    NotificationsToSendsProcessor(new object(), new Notification
-                                  (
-                                      "DataBase has been updated.",                       // 0 notification.Text
-                                      "Warning, DataBase updated.",                       // 1 notification.Title
-                                      "The database has been updated by an user.",        // 2 notification.Description
-                                      (int)ToolTipIcon.Info,                              // 3 notification.MessageIcon
-                                      (int)Utilities.NotificationEvents.DataBaseUpDated,     // 4 notifycation.NotifycationEvents
-                                      Settings.Default.DepartmentName,                    // 5 notification.String_Filter
-                                      DateTime.Now,                                       // 6 notification.DateCreated
-                                      CurrentEmployeesLogIn.FullName,                     // 7 notification.Created_by
-                                      "properties",                                       // 8 notification.Properties
-                                      "Status"                                            // 9 notification.Status
-                                 ));
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(@"Error while trying to save the DataBase." + ex.Message,
-                                @"Error on DataBase Employees.",
-                                MessageBoxButtons.RetryCancel, MessageBoxIcon.Error);
-            }
-        }
-
-        public void EmployeesManagementsSaveTreeViewRequested(object sender, EventArgs e)
-        {
-            EmployeesTreeVieManagements_Requested();
-        }
-
-        bool EmployeesManagementsSave_Requested()
-        {
-            try
-            {
-                _bindingSource_Employees.EndEdit();
-                UpdateStatusColumn(Production_InventoryDataSet.Table_Employees);
-
-                changedRecordsTable = Production_InventoryDataSet.Table_Employees.GetChanges();
-                if (changedRecordsTable != null)
-                    RowsChanged = changedRecordsTable.Rows.Count;
-
-                if (RowsChanged == 0)
-                {
-                    Write_LogFile(new object(), new Custom_Events_Args.LogFileMessageEventArgs(new List<string>
-                        {
-                            Tags.NewLine(""),
-                            Tags.NewLineBold(_currentEmployeesLogIn.FullName),
-                            Tags.NewLine("Save Employees Requested at " + DateTime.Now),
-                            Tags.NewLine("No rows changed, nothing to save.")
-                        }));
-                    OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("No rows changed, nothing to save.", Resources.error_alert));
-                    return true;
-                }
-
-                RowsSaved = adapterTable_Employees.Update(Production_InventoryDataSet.Table_Employees);
-
-                if (RowsSaved == RowsChanged)
-                {
-                    Production_InventoryDataSet.Table_Employees.AcceptChanges();
-                    OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Employees, save request, has already been processed, " + RowsSaved + " rows saved.", Resources.OK));
-                    Write_LogFile(new object(), new Custom_Events_Args.LogFileMessageEventArgs(new List<string>
-                    {
-                        Tags.NewLine(""),
-                        Tags.NewLineBold(_currentEmployeesLogIn.FullName),
-                        Tags.NewLine("Save Employees Requested at " + DateTime.Now),
-                        Tags.NewLine("Saved rows = " + RowsSaved + ".")
-                    }));
-                    RowsSaved = RowsChanged = 0;
-                    return true;
-                }
-                else
-                {
-                    OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Employees, save request, has already been processed, but no rows have been saved.", Resources.ErrorIcon));
-                    Write_LogFile(new object(), new Custom_Events_Args.LogFileMessageEventArgs(new List<string>
-                        {
-                            Tags.NewLine(""),
-                            Tags.NewLineBold(_currentEmployeesLogIn.FullName),
-                            Tags.NewLine("Save Employees Requested at " + DateTime.Now),
-                            Tags.NewLine("No rows have been saved.")
-                        }));
-                    return false;
-                }
-            }
-            catch (Exception errors)
-            {
-                if (Production_InventoryDataSet.Table_Employees.HasErrors)
-                {
-                    _bindingSource_Employees.Sort = "Status DESC";
-                    UpdateStatusColumnHasError(Production_InventoryDataSet.Table_Employees);
-                }
-
-                Write_LogFile(new object(), new Custom_Events_Args.LogFileMessageEventArgs(new List<string>
-                    {
-                        Tags.NewLine(""),
-                        Tags.NewLineBold(_currentEmployeesLogIn.FullName),
-                        Tags.NewLine("Save Employees found errors at " + DateTime.Now),
-                        Tags.NewLine(_count + " rows are mark with error."),
-                    }));
-                MessageBox.Show(@"Error al tratar de salvar la table Employees " + errors.Message, @"Error on DataBase.",
-                               MessageBoxButtons.RetryCancel, MessageBoxIcon.Error);
-                return false;
-            }
-        }
-
-        bool EmployeesTreeVieManagements_Requested()
-        {
-            try
-            {
-                _bindingSource_EmployeesTreeView.RaiseListChangedEvents = false;
-                _bindingSource_EmployeesTreeView.SuspendBinding();
-                _bindingSource_EmployeesTreeView.EndEdit();
-                UpdateStatusColumn(Production_InventoryDataSet.Table_Employees_TreeView);
-
-                changedRecordsTable = Production_InventoryDataSet.Table_Employees_TreeView.GetChanges();
-                if (changedRecordsTable != null)
-                    RowsChanged = changedRecordsTable.Rows.Count;
-
-                if (RowsChanged == 0)
-                {
-                    Write_LogFile(new object(), new Custom_Events_Args.LogFileMessageEventArgs(new List<string>
-                        {
-                            Tags.NewLine(""),
-                            Tags.NewLineBold(_currentEmployeesLogIn.FullName),
-                            Tags.NewLine("EmployeesTreeView Save Requested at " + DateTime.Now),
-                            Tags.NewLine("No rows changed, nothing to save.")
-                        }));
-                    OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("No rows changed, nothing to save.", Resources.error_alert));
-                    return true;
-                }
-
-                RowsSaved = adapterTable_EmployeesTreeView.Update(Production_InventoryDataSet.Table_Employees_TreeView);
-
-                if (RowsSaved == RowsChanged)
-                {
-                    Production_InventoryDataSet.Table_Employees_TreeView.AcceptChanges();
-                    OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("EmployeesTreeView, save request, has already been processed, " + RowsSaved + " rows saved.", Resources.OK));
-                    Write_LogFile(new object(), new Custom_Events_Args.LogFileMessageEventArgs(new List<string>
-                        {
-                            Tags.NewLine(""),
-                            Tags.NewLineBold(_currentEmployeesLogIn.FullName),
-                            Tags.NewLine("EmployeesTreeView Save Requested at " + DateTime.Now),
-                            Tags.NewLine("Saved rows = " + RowsSaved + ".")
-                        }));
-                    RowsSaved = RowsChanged = 0;
-
-                    _bindingSource_EmployeesTreeView.ResumeBinding();
-                    _bindingSource_EmployeesTreeView.RaiseListChangedEvents = true;
-                    return true;
-                }
-                else
-                {
-                    OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("EmployeesTreeView, save request, has already been processed, but no rows have been saved.", Resources.ErrorIcon));
-                    Write_LogFile(new object(), new Custom_Events_Args.LogFileMessageEventArgs(new List<string>
-                        {
-                            Tags.NewLine(""),
-                            Tags.NewLineBold(_currentEmployeesLogIn.FullName),
-                            Tags.NewLine("EmployeesTreeView Save Requested at " + DateTime.Now),
-                            Tags.NewLine("No rows have been saved.")
-                        }));
-                    return false;
-                }
-            }
-            catch (Exception ex)
-            {
-                if (Production_InventoryDataSet.Table_Employees_TreeView.HasErrors)
-                {
-                    _bindingSource_EmployeesTreeView.Sort = "Status DESC";
-                    UpdateStatusColumnHasError(Production_InventoryDataSet.Table_Employees_TreeView);
-                }
-
-                Write_LogFile(new object(), new Custom_Events_Args.LogFileMessageEventArgs(new List<string>
-                    {
-                        Environment.NewLine,
-                        "EmployeesTreeView Save found errors at " + DateTime.Now,
-                        _count + " rows are mark with error.",
-                        _rowHasError
-                    }));
-                MessageBox.Show(@"Error al tratar de salvar la table Employees TreeView " + ex.Message, @"Error on DataBase.",
-                                MessageBoxButtons.RetryCancel, MessageBoxIcon.Error);
-                return false;
-            }
-        }
-
-        #endregion"Table_Employees & Table_Employees_TreeView"
-
-        private void SolutionProperties_Save_Requested(object sender, Save_Requested_EventArgs e)
-        {
-            EmployeesManagements_ProcessSaveRequest(sender, e);
-        }
-
-        /// <summary>
-        /// Check Status column for "Locked:False","Selected:True", "Unerasable:False" and "Status IS NULL"
-        /// Will unselect any selected row, Lock any unlocked row.
-        /// </summary>
-        /// <param name="dataTableToUpdateStatus"></param>
-        static void UpdateStatusColumn(DataTable dataTableToUpdateStatus)
-        {
-            if (dataTableToUpdateStatus.Columns.Contains("Status"))
-            {
-                #region"Check Status column for "Locked:False","Selected:True", "Unerasable:False" and "Status IS NULL""
-
-                using (var dv = new DataView(dataTableToUpdateStatus, "Status LIKE '*Locked␟False*' OR " +
-                                                                      "Status LIKE '*Locked:False*' OR " +
-                                                                      "Status LIKE '*Selected␟True*' OR " +
-                                                                      "Status LIKE '*Selected:True*' OR " +
-                                                                      "Status LIKE '*Unerasable␟False*' OR " +
-                                                                      "Status LIKE '*Unerasable:False*' OR " +
-                                                                      "Status IS NULL",
-                                                                      "Status DESC", DataViewRowState.CurrentRows))
-                {
-                    if (dv.Count != 0)
-                    {
-                        foreach (DataRowView item in dv)
-                        {
-                            DataRow row = item.Row;
-                            string rowStatus = item.Row.Field<String>("Status");
-
-                            if (string.IsNullOrEmpty(rowStatus) || string.IsNullOrWhiteSpace(rowStatus))
-                            {
-                                row["Status"] = CurrentStatus.StatusDefaultValueNewRow;
-                                row.EndEdit();
-                                continue;
-                            }
-
-                            if (rowStatus.Contains("Locked␟False"))
-                                row["Status"] = rowStatus.Replace("Locked␟False", "Locked␟True");
-
-                            if (rowStatus.Contains("Selected␟True"))
-                                row["Status"] = rowStatus.Replace("Selected␟True", "Selected␟False");
-
-                            if (rowStatus.Contains("Unerasable␟False"))
-                                row["Status"] = rowStatus.Replace("Unerasable␟False", "Unerasable␟True");
-
-                            row.EndEdit();
-                        }
-                    }
-                }
-
-                #endregion"Check Status column for "Locked:False","Selected:True", "Unerasable:False" and "Status IS NULL""
-            }
-        }
-
-        /// <summary>
-        /// Check Status column for "HeaderInf:pdf|ATxxx;",
-        /// Will clear any information where status column contains a different "HeaderInf:Null".
-        /// </summary>
-        /// <param name="dataTableToUpdateStatus"></param>
-        static void ClearHeaderInfStatusColumn(DataTable dataTableToUpdateStatus)
-        {
-            if (dataTableToUpdateStatus.Columns.Contains("Status"))
-            {
-                #region"Check Status column for "HeaderInf:Null""
-
-                using (var dv = new DataView(dataTableToUpdateStatus, "Status NOT LIKE '*HeaderInf␟Null*' OR Status IS NULL",
-                                                                      "Status DESC", DataViewRowState.CurrentRows))
-                {
-                    // If Count == 0, no row match.
-                    if (dv.Count != 0)
-                    {
-                        foreach (DataRowView row in dv)
-                        {
-                            var rowStatus = row["Status"].ToString();
-
-                            if (string.IsNullOrEmpty(rowStatus) || string.IsNullOrWhiteSpace(rowStatus))
-                            {
-                                row["Status"] = CurrentStatus.StatusDefaultValueNewRow;
-                                row.EndEdit();
-                                continue;
-                            }
-
-                            if (rowStatus.Contains("HeaderInf␟"))
-                            {
-                                var HeaderInfIndex = rowStatus.IndexOf("HeaderInf␟");
-                                rowStatus = rowStatus.Remove(HeaderInfIndex);
-                            }
-
-                            row["Status"] = rowStatus + "HeaderInf␟Null";
-                            row.EndEdit();
-                        }
-                    }
-                }
-
-                #endregion"Check Status column for "HeaderInf:Null""
-            }
-
-            if (dataTableToUpdateStatus.Columns.Contains("CountPDF"))
-            {
-                #region"Check CountPDF column for value > 0"
-
-                using (var dv = new DataView(dataTableToUpdateStatus, "CountPDF > 0 OR CountPDF IS NULL",
-                                                                      "CountPDF DESC", DataViewRowState.CurrentRows))
-                {
-                    if (dv.Count != 0)
-                    {
-                        foreach (DataRowView row in dv)
-                        {
-                            row["CountPDF"] = 0;
-                            row.EndEdit();
-                        }
-                    }
-                }
-
-                #endregion"Check CountPDF column for value > 0"
-            }
-        }
-
-        static void UpdateStatusColumnHasError(DataTable dataTableToUpdateStatusHassError)
-        {
-            foreach (DataRow row in dataTableToUpdateStatusHassError.Rows)
-            {
-                if (row.HasErrors && row.RowState != DataRowState.Deleted)
-                {
-                    string rowStatus = row["Status"].ToString();
-                    if (rowStatus.Contains("Selected␟False"))
-                        row["Status"] = rowStatus.Replace("Selected␟False", "Selected␟True");
-                }
-            }
-        }
-
-        #endregion"Save Requested"
-
         #region"NotifycationsToSend"
 
         void NotificationsToSendsProcessor(object sender, Notification e)
@@ -5316,7 +3154,7 @@ namespace StockRoom11net
         }
 
         /// <summary>
-        /// if DataSheet_File column contains a file name out ext, hire we add
+        /// if DataSheet_File column contains a file name out ext, we add
         /// Settings.Default.DataBaseAddress + DataSheet_File + ext .pdf
         /// </summary>
         void SpecifiedDocumentProcess(ActiveDataSheet_EventArgs e)
@@ -5356,7 +3194,7 @@ namespace StockRoom11net
         {
             ProcessDataSheet(e);
 
-            foreach (DocumentsAddressItem documentsAddressItem in CurrentDepartmentLogIn.DepartmentDocumentsAddressItems)
+            foreach (DocumentsAddressItem documentsAddressItem in _employeesService.CurrentDepartmentLogIn.DepartmentDocumentsAddressItems)
             {
                 if (!Directory.Exists(documentsAddressItem.DocumentsAddressValueDirectory))
                 {
@@ -5425,8 +3263,6 @@ namespace StockRoom11net
                 }
             }
         }
-
-
 
         /// <summary>
         /// Will scan the pathRootFolder parameter directory and found any file match fileToMach parameter.
@@ -5647,7 +3483,7 @@ namespace StockRoom11net
 
             if (e.BarcodeData.Length == 6)
             {
-                LogInProcess(e.BarcodeData);
+                LogInProcessAsync(e.BarcodeData);
             }
 
             #endregion"EmployeeID Scanned"
@@ -5702,1328 +3538,12 @@ namespace StockRoom11net
         }
 
         #endregion"USB-BarCode initialization & BarcodeScanned"
-
-        #region"Load Tables"
-
-        /// <summary>
-        /// Count the numbers of rows loaded by Fill process.
-        /// </summary>
-        int _rowLoaded;
-        /// <summary>
-        /// Mark the location if an error is found.
-        /// </summary>
-        string messageLocation = "";
-
-        #region"BackgroundWorker_Load_Table_Labels_SMT"
-
-        SQLiteConnection connectionTable_Labels_SMT;
-        SQLiteDataAdapter adapterTable_Labels_SMT;
-
-        void BackgroundWorker_Load_Table_Labels_SMT()
-        {
-            var backgroundWorker_LoadTableLabelsSMT = new BackgroundWorker { };
-            backgroundWorker_LoadTableLabelsSMT.DoWork += BackgroundWorker_LoadTableLabels_SMT_DoWork;
-
-            backgroundWorker_LoadTableLabelsSMT.RunWorkerAsync();
-        }
-
-        void BackgroundWorker_LoadTableLabels_SMT_DoWork(object sender, DoWorkEventArgs e)
-        {
-            try
-            {
-                string query = "SELECT * FROM Table_Labels_SMT";
-                connectionTable_Labels_SMT = new SQLiteConnection(Settings.Default.DataBaseConnectionStringSQLite);
-                adapterTable_Labels_SMT = new SQLiteDataAdapter(query, connectionTable_Labels_SMT);
-                SQLiteCommandBuilder scb = new SQLiteCommandBuilder(adapterTable_Labels_SMT);
-                scb.ConflictOption = ConflictOption.OverwriteChanges;
-                adapterTable_Labels_SMT.UpdateCommand = scb.GetUpdateCommand();
-
-                _rowLoaded = adapterTable_Labels_SMT.Fill(Production_InventoryDataSet.Table_Labels_SMT);
-
-                if (_rowLoaded == 0)
-                {
-                    OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("No rows loaded from Table_Labels_SMT", Resources.ErrorIcon));
-                    return;
-                }
-
-                OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Rows loaded from Table_Labels_SMT = " + _rowLoaded, Resources.OK));
-            }
-            catch (Exception errors)
-            {
-                OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Error loading Table_Labels_SMT " + errors.Message, Resources.ErrorIcon));
-            }
-        }
-
-        #endregion"BackgroundWorker_Load_Table_Labels_SMT"
-
-        #region"BackgroundWorker_Load_Table_Stockroom"
-
-        SQLiteConnection connectionTable_Stockroom;
-        SQLiteDataAdapter adapterTable_Stockroom;
-
-        void BackgroundWorker_Load_Table_Stockroom()
-        {
-            var backgroundWorker_LoadTableStockRoom = new BackgroundWorker { };
-            backgroundWorker_LoadTableStockRoom.DoWork += BackgroundWorker_LoadTableStockRoom_DoWork;
-
-            backgroundWorker_LoadTableStockRoom.RunWorkerAsync();
-        }
-
-        void BackgroundWorker_LoadTableStockRoom_DoWork(object sender, DoWorkEventArgs e)
-        {
-            try
-            {
-                string query = "SELECT * FROM Table_StockRoom ORDER BY PartNumber";
-                connectionTable_Stockroom = new SQLiteConnection(Settings.Default.DataBaseConnectionStringSQLite);
-                adapterTable_Stockroom = new SQLiteDataAdapter(query, connectionTable_Stockroom);
-                SQLiteCommandBuilder scb = new SQLiteCommandBuilder(adapterTable_Stockroom);
-                scb.ConflictOption = ConflictOption.OverwriteChanges;
-                adapterTable_Stockroom.UpdateCommand = scb.GetUpdateCommand();
-
-                _rowLoaded = adapterTable_Stockroom.Fill(Production_InventoryDataSet.Table_StockRoom);
-
-                if (_rowLoaded == 0)
-                {
-                    OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("No rows loaded from Table_StockRoom", Resources.ErrorIcon));
-                    return;
-                }
-
-                OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Rows loaded from Table_StockRoom = " + _rowLoaded, Resources.OK));
-            }
-            catch (Exception errors)
-            {
-                OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Error loading Table_StockRoom " + errors.Message, Resources.ErrorIcon));
-            }
-        }
-
-        #endregion"BackgroundWorker_Load_Table_Stockroom"
-
-        #region"BackgroundWorker_Load_Table_StockroomTreeView"
-
-        SQLiteConnection connectionTable_StockroomTreeView;
-        SQLiteDataAdapter adapterTable_StockroomTreeView;
-
-        void BackgroundWorker_Load_Table_StockroomTreeView()
-        {
-            var backgroundWorker_LoadTableStockroomTreeView = new BackgroundWorker { };
-            backgroundWorker_LoadTableStockroomTreeView.DoWork += BackgroundWorker_LoadTableStockroomTreeView_DoWork;
-
-            backgroundWorker_LoadTableStockroomTreeView.RunWorkerAsync();
-        }
-
-        void BackgroundWorker_LoadTableStockroomTreeView_DoWork(Object? sender, DoWorkEventArgs e)
-        {
-            try
-            {
-                string query = "SELECT * FROM Table_StockRoom_TreeView ORDER BY \"ID\"";
-                connectionTable_StockroomTreeView = new SQLiteConnection(Settings.Default.DataBaseConnectionStringSQLite);
-                adapterTable_StockroomTreeView = new SQLiteDataAdapter(query, connectionTable_StockroomTreeView);
-                SQLiteCommandBuilder scb = new SQLiteCommandBuilder(adapterTable_StockroomTreeView);
-                scb.ConflictOption = ConflictOption.OverwriteChanges;
-                adapterTable_StockroomTreeView.UpdateCommand = scb.GetUpdateCommand();
-
-                _rowLoaded = adapterTable_StockroomTreeView.Fill(Production_InventoryDataSet.Table_StockRoom_TreeView);
-                if (_rowLoaded == 0)
-                {
-                    OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("No rows loaded from Table_StockRoom_TreeView", Resources.ErrorIcon));
-                    return;
-                }
-
-                OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Rows loaded from Table_StockRoom_TreeView = " + _rowLoaded, Resources.OK));
-            }
-            catch (Exception errors)
-            {
-                OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Error loading Table_StockRoom_TreeView " + errors.Message, Resources.ErrorIcon));
-            }
-        }
-
-        #endregion"BackgroundWorker_Load_Table_Stockroom"
-
-        #region"BackgroundWorker_Load_Table_Marshall"
-
-        SQLiteConnection connectionTable_Marshall;
-        SQLiteDataAdapter adapterTable_Marshall;
-
-        void BackgroundWorker_Load_Table_Marshall()
-        {
-            var backgroundWorker_LoadTableMarshall = new BackgroundWorker { };
-            backgroundWorker_LoadTableMarshall.DoWork += BackgroundWorker_LoadTableMarshall_DoWork;
-
-            backgroundWorker_LoadTableMarshall.RunWorkerAsync();
-        }
-
-        void BackgroundWorker_LoadTableMarshall_DoWork(Object sender, DoWorkEventArgs e)
-        {
-            try
-            {
-                string query = "SELECT * FROM Table_Marshall";
-                connectionTable_Marshall = new SQLiteConnection(Settings.Default.DataBaseConnectionStringSQLite);
-                adapterTable_Marshall = new SQLiteDataAdapter(query, connectionTable_Marshall);
-                SQLiteCommandBuilder scb = new SQLiteCommandBuilder(adapterTable_Marshall);
-                scb.ConflictOption = ConflictOption.OverwriteChanges;
-                adapterTable_Marshall.UpdateCommand = scb.GetUpdateCommand();
-
-                _rowLoaded = adapterTable_Marshall.Fill(Production_InventoryDataSet.Table_Marshall);
-
-                if (_rowLoaded == 0)
-                {
-                    OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("No rows loaded from Table_Marshall", Resources.ErrorIcon));
-                    return;
-                }
-
-                OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Rows loaded from Table_Marshall = " + _rowLoaded, Resources.OK));
-            }
-            catch (Exception errors)
-            {
-                OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Error loading Table_Marshall " + errors.Message, Resources.ErrorIcon));
-            }
-        }
-
-        #endregion"BackgroundWorker_Load_Table_Marshall"
-
-        #region"BackgroundWorker_Load_Table_Marshall_TreeView"
-
-        SQLiteConnection connectionTable_Marshall_TreeView;
-        SQLiteDataAdapter adapterTable_Marshall_TreeView;
-
-        void BackgroundWorker_Load_Table_Marshall_TreeView()
-        {
-            var backgroundWorker_LoadTableMarshall_TreeView = new BackgroundWorker { };
-            backgroundWorker_LoadTableMarshall_TreeView.DoWork += BackgroundWorker_LoadTableMarshall_TreeView_DoWork;
-
-            backgroundWorker_LoadTableMarshall_TreeView.RunWorkerAsync();
-        }
-
-        void BackgroundWorker_LoadTableMarshall_TreeView_DoWork(Object sender, DoWorkEventArgs e)
-        {
-            try
-            {
-                string query = "SELECT * FROM Table_Marshall_TreeView ORDER BY \"Index\"";
-                connectionTable_Marshall_TreeView = new SQLiteConnection(Settings.Default.DataBaseConnectionStringSQLite);
-                adapterTable_Marshall_TreeView = new SQLiteDataAdapter(query, connectionTable_Marshall_TreeView);
-                SQLiteCommandBuilder scb = new SQLiteCommandBuilder(adapterTable_Marshall_TreeView);
-                scb.ConflictOption = ConflictOption.OverwriteChanges;
-                adapterTable_Marshall_TreeView.UpdateCommand = scb.GetUpdateCommand();
-
-                _rowLoaded = adapterTable_Marshall_TreeView.Fill(Production_InventoryDataSet.Table_Marshall_TreeView);
-
-                if (_rowLoaded == 0)
-                {
-                    OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("No rows loaded from Table_Marshall_TreeView", Resources.ErrorIcon));
-                    return;
-                }
-
-                OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Rows loaded from Table_Marshall_TreeView = " + _rowLoaded, Resources.OK));
-            }
-            catch (Exception errors)
-            {
-                OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Error loading Table_Marshall_TreeView " + errors.Message, Resources.ErrorIcon));
-            }
-        }
-
-        #endregion"BackgroundWorker_Load_Table_Marshall_TreeView"
-
-        #region"BackgroundWorker_Load_Table_Projections"
-
-        SQLiteConnection connectionProjections;
-        SQLiteDataAdapter adapterTable_Projects;
-
-        void BackgroundWorker_Load_Table_Projections()
-        {
-            var backgroundWorker_LoadTableProjections = new BackgroundWorker { };
-            backgroundWorker_LoadTableProjections.DoWork += Backgroundworker_LoadTableProjections_DoWork;
-
-            backgroundWorker_LoadTableProjections.RunWorkerAsync();
-        }
-
-        void Backgroundworker_LoadTableProjections_DoWork(Object sender, DoWorkEventArgs e)
-        {
-            try
-            {
-                string query = "SELECT * FROM Table_Projects";
-                connectionProjections = new SQLiteConnection(Settings.Default.DataBaseConnectionStringSQLite);
-                adapterTable_Projects = new SQLiteDataAdapter(query, connectionProjections);
-                SQLiteCommandBuilder scb = new SQLiteCommandBuilder(adapterTable_Projects);
-                scb.ConflictOption = ConflictOption.OverwriteChanges;
-                adapterTable_Projects.UpdateCommand = scb.GetUpdateCommand();
-
-                _rowLoaded = adapterTable_Projects.Fill(Production_InventoryDataSet.Table_Projects);
-
-                if (_rowLoaded == 0)
-                {
-                    OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("No rows loaded from Table_Projects", Resources.ErrorIcon));
-                    return;
-                }
-
-                OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Rows loaded from Table_Projects = " + _rowLoaded, Resources.OK));
-            }
-            catch (Exception errors)
-            {
-                OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Error loading Table_Projects " + errors.Message, Resources.ErrorIcon));
-            }
-        }
-
-        #endregion"BackgroundWorker_Load_Table_Projections"
-
-        #region"BackgroundWorker_Load_Table_Employees"
-
-        SQLiteConnection connectionTable_Employees;
-        SQLiteDataAdapter adapterTable_Employees;
-
-        void BackgroundWorker_Load_Table_Employees()
-        {
-            var backgroundWorker_LoadTable_Employees = new BackgroundWorker { };
-            backgroundWorker_LoadTable_Employees.DoWork += BackgroundWorker_LoadTable_Employees_DoWork;
-
-            backgroundWorker_LoadTable_Employees.RunWorkerAsync();
-        }
-
-        void BackgroundWorker_LoadTable_Employees_DoWork(Object sender, DoWorkEventArgs e)
-        {
-            try
-            {
-                string query = "SELECT * FROM Table_Employees";
-                connectionTable_Employees = new SQLiteConnection(Settings.Default.DataBaseConnectionStringSQLite);
-                adapterTable_Employees = new SQLiteDataAdapter(query, connectionTable_Employees);
-                SQLiteCommandBuilder scb = new SQLiteCommandBuilder(adapterTable_Employees);
-                scb.ConflictOption = ConflictOption.OverwriteChanges;
-                adapterTable_Employees.UpdateCommand = scb.GetUpdateCommand();
-
-                _rowLoaded = adapterTable_Employees.Fill(Production_InventoryDataSet.Table_Employees);
-                if (_rowLoaded == 0)
-                {
-                    OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("No rows loaded from Table_Employees", Resources.ErrorIcon));
-                    return;
-                }
-                OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Rows loaded from Table_Employees = " + _rowLoaded, Resources.OK));
-            }
-            catch (Exception errors)
-            {
-                OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Error loading Table_Employees " + errors.Message, Resources.ErrorIcon));
-            }
-        }
-
-        #endregion"BackgroundWorker_Load_Table_Employees"
-
-        #region"BackgroundWorker_Load_Table_EmployeesTreeView"
-
-        SQLiteConnection connectionTable_EmployeesTreeView;
-        SQLiteDataAdapter adapterTable_EmployeesTreeView;
-
-        void BackgroundWorker_Load_Table_EmployeesTreeView()
-        {
-            var backgroundWorker_LoadTable_Employees_TreeView = new BackgroundWorker { };
-            backgroundWorker_LoadTable_Employees_TreeView.DoWork += new DoWorkEventHandler(BackgroundWorker_LoadTable_EmployeesTreeView_DoWork);
-
-            backgroundWorker_LoadTable_Employees_TreeView.RunWorkerAsync();
-        }
-
-        void BackgroundWorker_LoadTable_EmployeesTreeView_DoWork(object sender, DoWorkEventArgs e)
-        {
-            try
-            {
-                string query = "SELECT * FROM Table_Employees_TreeView";
-                connectionTable_EmployeesTreeView = new SQLiteConnection(Settings.Default.DataBaseConnectionStringSQLite);
-                adapterTable_EmployeesTreeView = new SQLiteDataAdapter(query, connectionTable_EmployeesTreeView);
-                SQLiteCommandBuilder scb = new SQLiteCommandBuilder(adapterTable_EmployeesTreeView);
-                scb.ConflictOption = ConflictOption.OverwriteChanges;
-                adapterTable_EmployeesTreeView.UpdateCommand = scb.GetUpdateCommand();
-
-                _rowLoaded = adapterTable_EmployeesTreeView.Fill(Production_InventoryDataSet.Table_Employees_TreeView);
-                if (_rowLoaded == 0)
-                {
-                    OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("No data found in Table_Employees_TreeView.", Resources.ErrorIcon));
-                    return;
-                }
-                OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Table_Employees_TreeView loaded with " + _rowLoaded + " rows.", Resources.OK));
-            }
-            catch (Exception errors)
-            {
-                OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Error loading Table_Employees_TreeView " + errors.Message, Resources.ErrorIcon));
-            }
-        }
-
-        #endregion"BackgroundWorker_Load_Table_Employees_TreeView"
-
-        #region"BackgroundWorker_Load_Table_Locations"
-
-        SQLiteConnection connectionTable_Locations;
-        SQLiteDataAdapter adapterTable_Locations;
-
-        void BackgroundWorker_Load_TableLocations()
-        {
-            var backgroundWorker_LoadTableLocations = new BackgroundWorker { };
-            backgroundWorker_LoadTableLocations.DoWork += BackGroundWorker_Load_TableLocations_DoWork;
-
-            backgroundWorker_LoadTableLocations.RunWorkerAsync();
-        }
-
-        void BackGroundWorker_Load_TableLocations_DoWork(Object sender, DoWorkEventArgs e)
-        {
-            try
-            {
-                string query = "SELECT * FROM Table_Locations";
-                connectionTable_Locations = new SQLiteConnection(Settings.Default.DataBaseConnectionStringSQLite);
-                adapterTable_Locations = new SQLiteDataAdapter(query, connectionTable_Locations);
-                SQLiteCommandBuilder scb = new SQLiteCommandBuilder(adapterTable_Locations);
-                scb.ConflictOption = ConflictOption.OverwriteChanges;
-                adapterTable_Locations.UpdateCommand = scb.GetUpdateCommand();
-
-                _rowLoaded = adapterTable_Locations.Fill(Production_InventoryDataSet.Table_Locations);
-
-                if (_rowLoaded == 0)
-                {
-                    OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("No data found in Table_Locations.", Resources.ErrorIcon));
-                    return;
-                }
-
-                OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Table_Locations loaded with " + _rowLoaded + " rows.", Resources.OK));
-            }
-            catch (Exception errors)
-            {
-                OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Error loading Table_Locations " + errors.Message, Resources.ErrorIcon));
-            }
-        }
-
-        #endregion"BackgroundWorker_Load_Table_Locations"
-
-        #region"BackgroundWorker_Load_Table_LocationsTreeView"
-
-        SQLiteConnection connectionTable_LocationsTreeView;
-        SQLiteDataAdapter adapterTable_LocationsTreeView;
-
-        void BackGroundWorker_Load_TableLocationsTreeView()
-        {
-            var backgroundWorker_LoadTableLocationsTreeView = new BackgroundWorker { };
-            backgroundWorker_LoadTableLocationsTreeView.DoWork += BackGroundWorker_Load_TableLocationsTreeView_DoWork;
-
-            backgroundWorker_LoadTableLocationsTreeView.RunWorkerAsync();
-        }
-
-        void BackGroundWorker_Load_TableLocationsTreeView_DoWork(Object sender, DoWorkEventArgs e)
-        {
-            try
-            {
-                string query = "SELECT * FROM Table_Locations_TreeView";
-                connectionTable_LocationsTreeView = new SQLiteConnection(Settings.Default.DataBaseConnectionStringSQLite);
-                adapterTable_LocationsTreeView = new SQLiteDataAdapter(query, connectionTable_LocationsTreeView);
-                SQLiteCommandBuilder scb = new SQLiteCommandBuilder(adapterTable_LocationsTreeView);
-                scb.ConflictOption = ConflictOption.OverwriteChanges;
-                adapterTable_LocationsTreeView.UpdateCommand = scb.GetUpdateCommand();
-
-                _rowLoaded = adapterTable_LocationsTreeView.Fill(Production_InventoryDataSet.Table_Location_TreeView);
-
-                if (_rowLoaded == 0)
-                {
-                    OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("No data found in Table_Locations_TreeView.", Resources.ErrorIcon));
-                    return;
-                }
-
-                OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Table_Locations_TreeView loaded with " + _rowLoaded + " rows.", Resources.OK));
-            }
-            catch (Exception errors)
-            {
-                OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Error loading Table_Locations_TreeView " + errors.Message, Resources.ErrorIcon));
-            }
-        }
-
-        #endregion"BackgroundWorker_Load_Table_Locations"
-
-        #region"BackgroundWorker_Load_Table_Components"
-
-        SQLiteConnection connectionTable_Components;
-        SQLiteDataAdapter adapterTable_Components;
-
-        public void BackgroundWorker_Load_Table_Components()
-        {
-            var backgroundWorker_LoadTable_Components = new BackgroundWorker { };
-            backgroundWorker_LoadTable_Components.DoWork += BackgroundWorker_LoadTable_Components_DoWork;
-
-            backgroundWorker_LoadTable_Components.RunWorkerAsync();
-        }
-
-        void BackgroundWorker_LoadTable_Components_DoWork(object sender, DoWorkEventArgs e)
-        {
-            try
-            {
-                string query = "SELECT * FROM Table_Components";
-                connectionTable_Components = new SQLiteConnection(Settings.Default.DataBaseConnectionStringSQLite);
-                adapterTable_Components = new SQLiteDataAdapter(query, connectionTable_Components);
-                SQLiteCommandBuilder scb = new SQLiteCommandBuilder(adapterTable_Components);
-                scb.ConflictOption = ConflictOption.OverwriteChanges;
-                adapterTable_Components.UpdateCommand = scb.GetUpdateCommand();
-
-                //  _rowLoaded = adapterTable_Components.Fill(Production_InventoryDataSet.table_);
-
-                if (_rowLoaded == 0)
-                {
-                    OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("No data found in Table_Components.", Resources.error_alert));
-                    return;
-                }
-
-                OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Table_Components loaded with " + _rowLoaded + " rows.", Resources.OK));
-            }
-            catch (Exception errors)
-            {
-                OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Error loading Table_Components " + errors.Message, Resources.ErrorIcon));
-            }
-        }
-
-        #endregion"BackgroundWorker_Load_Table_Components"
-
-        #region"BackgroundWorker_Load_Table_Placements"
-
-        SQLiteConnection connectionTable_Placements;
-        SQLiteDataAdapter adapterTable_Placements;
-
-        public void BackgroundWorker_Load_Table_Placements()
-        {
-            var backgroundWorker_LoadTable_Placements = new BackgroundWorker { };
-            backgroundWorker_LoadTable_Placements.DoWork += BackgroundWorker_LoadTable_Placements_DoWork;
-
-            backgroundWorker_LoadTable_Placements.RunWorkerAsync();
-        }
-
-        void BackgroundWorker_LoadTable_Placements_DoWork(object sender, DoWorkEventArgs e)
-        {
-            try
-            {
-                string query = "SELECT * FROM Table_Placements";
-                connectionTable_Placements = new SQLiteConnection(Settings.Default.DataBaseConnectionStringSQLite);
-                adapterTable_Placements = new SQLiteDataAdapter(query, connectionTable_Placements);
-                SQLiteCommandBuilder scb = new SQLiteCommandBuilder(adapterTable_Placements);
-                scb.ConflictOption = ConflictOption.OverwriteChanges;
-                adapterTable_Placements.UpdateCommand = scb.GetUpdateCommand();
-
-                //    _rowLoaded = adapterTable_Placements.Fill(Production_InventoryDataSet.Table_);
-
-                if (_rowLoaded == 0)
-                {
-                    OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("No data found in Table_Placements.", Resources.ErrorIcon));
-                    return;
-                }
-                OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Table_Placements loaded with " + _rowLoaded + " rows.", Resources.OK));
-            }
-            catch (Exception errors)
-            {
-                OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Error loading Table_Placements " + errors.Message, Resources.ErrorIcon));
-            }
-        }
-
-        #endregion"BackgroundWorker_Load_Table_Placements"
-
-        #region"BackgroundWorker_Load_Table_Projects_TreeView"
-
-        SQLiteConnection connectionTable_ProjectsTreeView;
-        SQLiteDataAdapter adapterTable_ProjectsTreeView;
-
-        public void BackgroundWorker_Load_Table_Projects_TreeView()
-        {
-            var backgroundWorker_LoadTable_Projects_TreeView = new BackgroundWorker { };
-
-            backgroundWorker_LoadTable_Projects_TreeView.WorkerReportsProgress = false;
-
-            backgroundWorker_LoadTable_Projects_TreeView.DoWork += BackgroundWorker_LoadTable_Projects_TreeView_DoWork;
-            backgroundWorker_LoadTable_Projects_TreeView.RunWorkerCompleted += BackgroundWorker_LoadTable_Projects_TreeView_RunWorkerCompleted;
-
-            backgroundWorker_LoadTable_Projects_TreeView.RunWorkerAsync();
-        }
-
-        void BackgroundWorker_LoadTable_Projects_TreeView_DoWork(object sender, DoWorkEventArgs e)
-        {
-            try
-            {
-                string query = "SELECT * FROM Table_Projects_TreeView";
-                connectionTable_ProjectsTreeView = new SQLiteConnection(Settings.Default.DataBaseConnectionStringSQLite);
-                adapterTable_ProjectsTreeView = new SQLiteDataAdapter(query, connectionTable_ProjectsTreeView);
-                SQLiteCommandBuilder scb = new SQLiteCommandBuilder(adapterTable_ProjectsTreeView);
-                scb.ConflictOption = ConflictOption.OverwriteChanges;
-                adapterTable_ProjectsTreeView.UpdateCommand = scb.GetUpdateCommand();
-
-                _rowLoaded = adapterTable_ProjectsTreeView.Fill(Production_InventoryDataSet.Table_Projects_TreeView);
-
-                if (_rowLoaded == 0)
-                {
-                    OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("No data found in Table_Projects_TreeView.", Resources.ErrorIcon));
-                    return;
-                }
-
-                OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Table_Projects_TreeView loaded with " + _rowLoaded + " rows.", Resources.OK));
-            }
-            catch (Exception errors)
-            {
-                OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Error loading Projects_TreeView " + errors.Message, Resources.ErrorIcon));
-            }
-        }
-
-        void BackgroundWorker_LoadTable_Projects_TreeView_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-        {
-            //InitializeCurrentProjectsList();
-        }
-
-        #endregion"BackgroundWorker_Load_Table_Projects_TreeView"
-
-        #region"BackgroundWorker_Load_Table_TimeLine"
-
-        SQLiteConnection connectionTable_TimeLine;
-        SQLiteDataAdapter adapterTable_TimeLine;
-        public void BackgroundWorker_Load_Table_TimeLine()
-        {
-            var backgroundWorker_LoadTable_TimeLine = new BackgroundWorker { };
-            backgroundWorker_LoadTable_TimeLine.DoWork += BackgroundWorker_LoadTable_TimeLine_DoWork;
-
-            backgroundWorker_LoadTable_TimeLine.RunWorkerAsync();
-        }
-
-        void BackgroundWorker_LoadTable_TimeLine_DoWork(object sender, DoWorkEventArgs e)
-        {
-            try
-            {
-                string query = "SELECT * FROM Table_TimeLine";
-                connectionTable_TimeLine = new SQLiteConnection(Settings.Default.DataBaseConnectionStringSQLite);
-                adapterTable_TimeLine = new SQLiteDataAdapter(query, connectionTable_TimeLine);
-                SQLiteCommandBuilder scb = new SQLiteCommandBuilder(adapterTable_TimeLine);
-                scb.ConflictOption = ConflictOption.OverwriteChanges;
-                adapterTable_TimeLine.UpdateCommand = scb.GetUpdateCommand();
-
-                _rowLoaded = adapterTable_TimeLine.Fill(Production_InventoryDataSet.Table_TimeLine);
-
-                if (_rowLoaded == 0)
-                {
-                    OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("No data found in Table_TimeLine.", Resources.ErrorIcon));
-                    return;
-                }
-
-                OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Table_TimeLine loaded with " + _rowLoaded + " rows.", Resources.OK));
-            }
-            catch (Exception errors)
-            {
-                OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Error loading TimeLine " + errors.Message, Resources.ErrorIcon));
-            }
-        }
-
-        #endregion"BackgroundWorker_Load_Table_TimeLine"
-
-        #region"BackgroundWorker_Load_Table_TimeLine_TreeView"
-
-        SQLiteConnection connectionTable_TimeLineTreeView;
-        SQLiteDataAdapter adapterTable_TimeLineTreeView;
-        public void BackgroundWorker_Load_Table_TimeLineTreeView()
-        {
-            var backgroundWorker_LoadTable_TimeLineTreeView = new BackgroundWorker { };
-            backgroundWorker_LoadTable_TimeLineTreeView.DoWork += BackgroundWorker_LoadTable_TimeLineTreeView_DoWork;
-
-            backgroundWorker_LoadTable_TimeLineTreeView.RunWorkerAsync();
-        }
-
-        void BackgroundWorker_LoadTable_TimeLineTreeView_DoWork(object sender, DoWorkEventArgs e)
-        {
-            try
-            {
-                string query = "SELECT * FROM Table_TimeLine_TreeView";
-                connectionTable_TimeLineTreeView = new SQLiteConnection(Settings.Default.DataBaseConnectionStringSQLite);
-                adapterTable_TimeLineTreeView = new SQLiteDataAdapter(query, connectionTable_TimeLineTreeView);
-                SQLiteCommandBuilder scb = new SQLiteCommandBuilder(adapterTable_TimeLineTreeView);
-                scb.ConflictOption = ConflictOption.OverwriteChanges;
-                adapterTable_TimeLineTreeView.UpdateCommand = scb.GetUpdateCommand();
-
-                _rowLoaded = adapterTable_TimeLineTreeView.Fill(Production_InventoryDataSet.Table_TimeLine_TreeView);
-
-                if (_rowLoaded == 0)
-                {
-                    OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("No data found in Table_TimeLine_TreeView.", Resources.ErrorIcon));
-                    return;
-                }
-
-                OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Table_TimeLine_TreeView loaded with " + _rowLoaded + " rows.", Resources.OK));
-            }
-            catch (Exception errors)
-            {
-                OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Error loading TimeLineTreeView " + errors.Message, Resources.ErrorIcon));
-            }
-        }
-
-        #endregion"BackgroundWorker_Load_Table_TimeLine"
-
-        #endregion"Load Tables"
-
-        #region"BackgroundWorker_FixOnAvailable"
-
-        BackgroundWorker BackgroundWorker_FixOnAvailable;
-        void FixOnAvailable()
-        {
-            BackgroundWorker_FixOnAvailable = new BackgroundWorker { };
-
-            BackgroundWorker_FixOnAvailable.WorkerReportsProgress = true;
-
-            BackgroundWorker_FixOnAvailable.DoWork += BackgroundWorker_FixOnAvailable_DoWork;
-            BackgroundWorker_FixOnAvailable.ProgressChanged += BackgroundWorker_FixOnAvailable_ProgressChanged;
-            BackgroundWorker_FixOnAvailable.RunWorkerCompleted += BackgroundWorker_FixOnAvailable_RunWorkerCompleted;
-
-            BackgroundWorker_FixOnAvailable.RunWorkerAsync();
-        }
-
-        void BackgroundWorker_FixOnAvailable_DoWork(object sender, DoWorkEventArgs e)
-        {
-            try
-            {
-                _bindingSource_StockRoom.SuspendBinding();
-
-                if (InvokeRequired)
-                {
-                    Invoke(new EventHandler(delegate (object o, EventArgs ee)
-                    {
-                        int count = 0;
-                        foreach (DataRow stockroomRow in Production_InventoryDataSet.Table_StockRoom)
-                        {
-                            stockroomRow.BeginEdit();
-
-                            stockroomRow["OnHoldBy"] = Utilities.Get_String(stockroomRow["OnHoldBy"].ToString());
-
-                            stockroomRow["OnHand"] = Utilities.Get_Value(stockroomRow["OnHand"].ToString());
-                            stockroomRow["OnHold"] = Utilities.Get_Value(stockroomRow["OnHold"].ToString());
-                            stockroomRow["OnAvailable"] = Utilities.Get_Value(stockroomRow["OnAvailable"].ToString());
-
-                            stockroomRow.AcceptChanges();
-
-                            if ((int)stockroomRow["OnHold"] == 0)
-                            {
-                                stockroomRow["OnAvailable"] = stockroomRow["OnHand"];
-                            }
-                            else
-                            {
-                                int value = ((int)stockroomRow["OnHand"]) - ((int)stockroomRow["OnHold"]);
-
-                                if (value < 0)
-                                    value = 0;
-
-                                stockroomRow["OnAvailable"] = value;
-                            }
-
-                            count++;
-                            stockroomRow.EndEdit();
-                            BackgroundWorker_FixOnAvailable.ReportProgress(count, stockroomRow);
-                        }
-
-                        _bindingSource_StockRoom.ResumeBinding();
-
-                    }));
-                }
-                else
-                {
-                    int count = 0;
-                    foreach (DataRow stockroomRow in Production_InventoryDataSet.Table_StockRoom)
-                    {
-                        stockroomRow.BeginEdit();
-
-                        stockroomRow["OnHoldBy"] = Utilities.Get_String(stockroomRow["OnHoldBy"].ToString());
-
-                        stockroomRow["OnHand"] = Utilities.Get_Value(stockroomRow["OnHand"].ToString());
-                        stockroomRow["OnHold"] = Utilities.Get_Value(stockroomRow["OnHold"].ToString());
-                        stockroomRow["OnAvailable"] = Utilities.Get_Value(stockroomRow["OnAvailable"].ToString());
-
-                        stockroomRow.AcceptChanges();
-
-                        if ((int)stockroomRow["OnHold"] == 0)
-                        {
-                            stockroomRow["OnAvailable"] = stockroomRow["OnHand"];
-                        }
-                        else
-                        {
-                            int value = ((int)stockroomRow["OnHand"]) - ((int)stockroomRow["OnHold"]);
-
-                            if (value < 0)
-                                value = 0;
-
-                            stockroomRow["OnAvailable"] = value;
-                        }
-
-                        count++;
-                        stockroomRow.EndEdit();
-                        BackgroundWorker_FixOnAvailable.ReportProgress(count, stockroomRow);
-                    }
-
-                    _bindingSource_StockRoom.ResumeBinding();
-                }
-            }
-            catch (ThreadAbortException)
-            {
-                // Write log message.
-                OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs(string.Format("Channel Aborted !!!, The {0} is destroyed and stopped at {1:F}",
-                                                                                    Thread.CurrentThread.Name, DateTime.Now)));
-            }
-        }
-
-        void BackgroundWorker_FixOnAvailable_ProgressChanged(object sender, ProgressChangedEventArgs e)
-        {
-            DataRow _row = (DataRow)e.UserState;
-            OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Fixing OnAvailable column, PartNumber " + _row["PartNumber"].ToString() + ", row : " +
-                                                         e.ProgressPercentage + " of " + _bindingSource_StockRoom.Count));
-        }
-
-        void BackgroundWorker_FixOnAvailable_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-        {
-            fixOnAvailableToolStripMenuItem.Enabled = true;
-            OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Fixing OnAvailable column, end."));
-        }
-
-        #endregion"BackgroundWorker_FixOnAvailable"
-
-        #region"BackgroundWorkerFillByLastAccessTime"
-        /// <summary>
-        /// Pass DateTime value to backgroundWorker.
-        /// </summary>
-        DateTime LastAccessTime;
-        BackgroundWorker BackgroundWorkerFillByLastAccessTime;
-
-        void InitializeBackgroundWorkerFillByLastAccessTime()
-        {
-            LastAccessTime = DateTime.Now;
-            BackgroundWorkerFillByLastAccessTime = new BackgroundWorker { };
-
-            BackgroundWorkerFillByLastAccessTime.DoWork += BackgroundWorkerFillByLastAccessTime_DoWork;
-            BackgroundWorkerFillByLastAccessTime.RunWorkerCompleted += BackgroundWorkerFillByLastAccessTime_RunWorkerCompleted;
-
-            // BackgroundWorkerFillByLastAccessTime.RunWorkerAsync();
-        }
-
-        void BackgroundWorkerFillByLastAccessTime_DoWork(Object sender, DoWorkEventArgs e)
-        {
-            try
-            {
-                using SQLiteConnection connection = new(Settings.Default.DataBaseConnectionStringSQLite);
-                connection.Open();
-
-            //    _rowLoaded = adapterTable_Stockroom.FillByLastAccessTime(
-            //        Production_InventoryDataSet.Table_StockRoom, LastAccessTime.AddMinutes(-5d));
-
-                connection.Close();
-            }
-            catch (Exception errors)
-            {
-                OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Error loading Table_StockRoom by LastAccessTime. " + errors.Message, Resources.ErrorIcon));
-            }
-        }
-
-        void BackgroundWorkerFillByLastAccessTime_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-        {
-            OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Finished loading table StockRoom by LastAccessTime... Rows loaded = " + _rowLoaded));
-        }
-
-        #endregion"BackgroundWorkerFillByLastAccessTime"
-
-        #region"InitEasyProgressBar_FixOnAvailable"
-
-        /// <summary>
-        /// Text message to be show into easyProgressBar.
-        /// it self cleen when the time up.
-        /// </summary>
-        Thread progressThread_FixOnAvailable;
-        bool isProgressStarted_FixOnAvailable;
-        //   EasyProgressBar.EasyProgressBar easyProgressBar_FixOnAvailable;
-
-        void InitEasyProgressBar_FixOnAvailables()
-        {
-            /*
-            easyProgressBar_FixOnAvailable = new EasyProgressBar.EasyProgressBar();
-
-            easyProgressBar_FixOnAvailable.BackColor = System.Drawing.SystemColors.Window;
-            easyProgressBar_FixOnAvailable.BackgroundGradient.ColorStart = System.Drawing.Color.White;
-            easyProgressBar_FixOnAvailable.BackgroundGradient.IsBlendedForBackground = true;
-            easyProgressBar_FixOnAvailable.BorderColor = System.Drawing.Color.Gray;
-            easyProgressBar_FixOnAvailable.DigitBoxGradient.BorderColor = System.Drawing.Color.Silver;
-            easyProgressBar_FixOnAvailable.DigitBoxGradient.ColorEnd = System.Drawing.Color.AntiqueWhite;
-            easyProgressBar_FixOnAvailable.DigitBoxGradient.ColorStart = System.Drawing.Color.White;
-            easyProgressBar_FixOnAvailable.DigitBoxGradient.IsBlendedForBackground = true;
-            easyProgressBar_FixOnAvailable.DisplayFormat = "";
-            easyProgressBar_FixOnAvailable.Font = new Font("Verdana", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
-            easyProgressBar_FixOnAvailable.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            easyProgressBar_FixOnAvailable.IsDigitDrawEnabled = false;
-            easyProgressBar_FixOnAvailable.Location = new Point(((ClientSize.Width / 2) - 300), ((ClientSize.Height / 2) + 30));
-            easyProgressBar_FixOnAvailable.Name = nameof(easyProgressBar_FixOnAvailable);
-            easyProgressBar_FixOnAvailable.ProgressColorizer.Alpha = ((byte)(113));
-            easyProgressBar_FixOnAvailable.ProgressColorizer.Blue = ((byte)(140));
-            easyProgressBar_FixOnAvailable.ProgressColorizer.Green = ((byte)(200));
-            easyProgressBar_FixOnAvailable.ProgressColorizer.Red = ((byte)(230));
-            easyProgressBar_FixOnAvailable.ProgressGradient.ColorEnd = System.Drawing.Color.Wheat;
-            easyProgressBar_FixOnAvailable.ProgressGradient.ColorStart = System.Drawing.Color.WhiteSmoke;
-            easyProgressBar_FixOnAvailable.ProgressGradient.IsBlendedForProgress = true;
-            easyProgressBar_FixOnAvailable.Size = new Size(600, 65);
-            easyProgressBar_FixOnAvailable.TabIndex = 0;
-            easyProgressBar_FixOnAvailable.Text = "40% ";
-            easyProgressBar_FixOnAvailable.Value = 40;
-            easyProgressBar_FixOnAvailable.DockUndockProgressBar = false;
-            easyProgressBar_FixOnAvailable.Visible = false;
-            easyProgressBar_FixOnAvailable.EasyProgressBarClosing += easyProgressBar_Reset_OnHoldBy_EasyProgressBarClosing;
-            */
-        }
-
-        // Starts or stops the current progressThread.
-        void Start_easyProgressBar_FixOnAvailables(object? sender, EventArgs e)
-        {
-            /*
-            if (!isProgressStarted_FixOnAvailable)
-            {
-                easyProgressBar_FixOnAvailable.TextMessage = "Fixing OnAvailable column.";
-                easyProgressBar_FixOnAvailable.Visible = true;
-                easyProgressBar_FixOnAvailable.Focus();
-                easyProgressBar_FixOnAvailable.Value = 0;
-                easyProgressBar_FixOnAvailable.Maximum = _bindingSource_StockRoom.Count + 1;
-
-                easyProgressBar_FixOnAvailable.ValueChanged += (thrower, ea) =>
-                {
-                    if (easyProgressBar_FixOnAvailable.Value == easyProgressBar_FixOnAvailable.Maximum)
-                        isProgressStarted_FixOnAvailable = false;
-                };
-
-                progressThread_FixOnAvailable = new Thread(new ParameterizedThreadStart(ProgressChannel_FixOnAvailables));
-                progressThread_FixOnAvailable.Name = "ProgressBar_FixOnAvailable thread";
-                progressThread_FixOnAvailable.IsBackground = true;
-
-                ParameterizedThreadClass pThread = new ParameterizedThreadClass(_bindingSource_StockRoom);
-                progressThread_FixOnAvailable.Start(pThread);
-
-                // Set new value.
-                isProgressStarted_FixOnAvailable = true;
-
-                // Write log message.
-                //      status.Text = String.Format("Channel Started !!!, The {0} is started at {1:F}", progressThread.Name, DateTime.Now);
-
-                // Update button text.
-                //      button1.Text = "Stop";
-            }
-            else
-            {
-                if (progressThread_FixOnAvailable.IsAlive)
-                {
-                    easyProgressBar_FixOnAvailable.Visible = false;
-
-                    // Tell the progressThread to abort itself immediately, raises a ThreadAbortException in the progressThread after calling the Thread.Join() method.
-                    progressThread_FixOnAvailable.Abort();
-
-                    // Wait for the progressThread to finish.
-                    progressThread_FixOnAvailable.Join();
-
-                    isProgressStarted_FixOnAvailable = false;
-
-                    // Update button text.
-                    //     button1.Text = "Resume Progress";
-                }
-            }
-            */
-        }
-
-        void easyProgressBar_FixOnAvailables_EasyProgressBarClosing(object? sender, out bool cancel)
-        {
-            if (MessageBox.Show("Do you want to close the control window?", Application.ProductName, MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) == System.Windows.Forms.DialogResult.No)
-                cancel = true;
-            else
-                cancel = false;
-        }
-
-        void ProgressChannel_FixOnAvailables(object instance)
-        {
-            try
-            {
-                if (InvokeRequired)
-                {
-                    Invoke(new EventHandler(delegate (object o, EventArgs ee)
-                    {
-                        int count = 0;
-                        foreach (DataRow stockroomRow in Production_InventoryDataSet.Table_StockRoom)
-                        {
-                            stockroomRow.BeginEdit();
-
-                            stockroomRow["OnHoldBy"] = Utilities.Get_String(stockroomRow["OnHoldBy"].ToString());
-
-                            stockroomRow["OnHand"] = Utilities.Get_Value(stockroomRow["OnHand"].ToString());
-                            stockroomRow["OnHold"] = Utilities.Get_Value(stockroomRow["OnHold"].ToString());
-                            stockroomRow["OnAvailable"] = Utilities.Get_Value(stockroomRow["OnAvailable"].ToString());
-
-                            if ((Int32)stockroomRow["OnHold"] == 0)
-                            {
-                                stockroomRow["OnAvailable"] = stockroomRow["OnHand"];
-                            }
-                            else
-                            {
-                                Int32 value = ((Int32)stockroomRow["OnHand"]) - ((Int32)stockroomRow["OnHold"]);
-
-                                if (value < 0)
-                                    value = 0;
-
-                                stockroomRow["OnAvailable"] = value;
-                            }
-
-                            count++;
-                            stockroomRow.EndEdit();
-                            UpdateProgressBar_FixOnAvailables(count);
-                        }
-
-                        UpdateProgressBar_FixOnAvailables(_bindingSource_StockRoom.Count + 1);
-                    }));
-                }
-                else
-                {
-                    int count = 0;
-                    foreach (DataRow stockroomRow in Production_InventoryDataSet.Table_StockRoom)
-                    {
-                        stockroomRow.BeginEdit();
-
-                        stockroomRow["OnHoldBy"] = Utilities.Get_String(stockroomRow["OnHoldBy"].ToString());
-
-                        stockroomRow["OnHand"] = Utilities.Get_Value(stockroomRow["OnHand"].ToString());
-                        stockroomRow["OnHold"] = Utilities.Get_Value(stockroomRow["OnHold"].ToString());
-                        stockroomRow["OnAvailable"] = Utilities.Get_Value(stockroomRow["OnAvailable"].ToString());
-
-                        if ((int)stockroomRow["OnHold"] == 0)
-                        {
-                            stockroomRow["OnAvailable"] = stockroomRow["OnHand"];
-                        }
-                        else
-                        {
-                            int value = ((int)stockroomRow["OnHand"]) - ((int)stockroomRow["OnHold"]);
-
-                            if (value < 0)
-                                value = 0;
-
-                            stockroomRow["OnAvailable"] = value;
-                        }
-
-                        count++;
-                        stockroomRow.EndEdit();
-                        UpdateProgressBar_FixOnAvailables(count);
-                    }
-
-                    UpdateProgressBar_FixOnAvailables(_bindingSource_StockRoom.Count + 1);
-                }
-            }
-            catch (Exception error)
-            {
-                OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Error" + error.Message));
-            }
-        }
-
-        void UpdateStatusBar_FixOnAvailables(string statusText)
-        {
-            //       status.Text = statusText;
-        }
-
-        void UpdateProgressBar_FixOnAvailables(int currentValue)
-        {
-            /*
-            if (currentValue == _bindingSource_StockRoom.Count)
-                Invoke(new EventHandler(easyProgressBar_FixOnAvailables_Hide));
-
-            if (easyProgressBar_FixOnAvailable.InvokeRequired)
-                easyProgressBar_FixOnAvailable.Invoke(new SetProgressValue(UpdateProgressBar_FixOnAvailables), new object[] { currentValue });
-            else
-            {
-                easyProgressBar_FixOnAvailable.Value = currentValue;
-
-            }
-            */
-        }
-
-        void easyProgressBar_FixOnAvailables_Hide(object sender, EventArgs e)
-        {
-            //   easyProgressBar_FixOnAvailable.Hide();
-            fixOnAvailableToolStripMenuItem.Enabled = true;
-        }
-
-
-        #region"Class ParameterizedThreadClass"
-
-        class ParameterizedThreadClass
-        {
-            DataTable _tableComp;
-            BindingSource _bindingsource;
-            int minimum;
-            int maximum;
-            int progressValue;
-
-            public ParameterizedThreadClass(DataTable tableComp)
-            {
-                _tableComp = tableComp;
-            }
-
-            public ParameterizedThreadClass(BindingSource bindingsource)
-            {
-                _bindingsource = bindingsource;
-            }
-
-            public ParameterizedThreadClass(BindingSource bindingsource, string usethis)
-            {
-                // No es buena idea, los datos solo se actualizan aqui.
-                _tableComp = new DataTable();
-                _tableComp.Columns.Add("PartNumber", typeof(string));
-                _tableComp.Columns.Add("Component_Name", typeof(string));
-                _tableComp.Columns.Add("Comp_for_Production", typeof(int));
-                _tableComp.Columns.Add("Comp_On_Hand", typeof(int));
-                _tableComp.Columns.Add("Status", typeof(string));
-
-                foreach (object obj in bindingsource)
-                {
-                    DataRowView row = (DataRowView)obj;
-                    DataRow newrow = _tableComp.NewRow();
-
-                    newrow["PartNumber"] = row["PartNumber"];
-                    newrow["Component_Name"] = row["Component_Name"];
-                    newrow["Comp_for_Production"] = row["Comp_for_Production"];
-                    newrow["Comp_On_Hand"] = row["Comp_On_Hand"];
-                    newrow["Status"] = row["Status"];
-
-                    _tableComp.Rows.Add(newrow);
-                    newrow.AcceptChanges();
-                    newrow.SetModified();
-                    newrow.EndEdit();
-                }
-
-            }
-
-            public ParameterizedThreadClass(int minimum, int maximum, int progressValue)
-            {
-                this.minimum = minimum;
-                this.maximum = maximum;
-                this.progressValue = progressValue;
-            }
-
-            public int Minimum
-            {
-                get { return minimum; }
-            }
-
-            public int Maximum
-            {
-                get { return maximum; }
-            }
-
-            public int ProgressValue
-            {
-                get { return progressValue; }
-            }
-
-            public DataTable TableComp
-            {
-                get { return _tableComp; }
-            }
-
-            public BindingSource BindingComp
-            {
-                get { return _bindingsource; }
-            }
-
-            public int RowCount
-            {
-                get
-                {
-                    if (_tableComp != null)
-                        return _tableComp.Rows.Count;
-
-                    return _bindingsource.Count;
-                }
-            }
-        }
-
-        #endregion"Class ParameterizedThreadClass"
-
-
-        #endregion"InitEasyProgressBar_FixOnAvailable"
-
-        #region"InitEasyProgressBar_Reset_OnHoldBy"
-
-        /// <summary>
-        /// Text message to be show into easyProgressBar.
-        /// it self cleen when the time up.
-        /// </summary>
-
-        Thread progressThread_Reset_OnHoldBy;
-        delegate void SetProgressValueReset_OnHoldBy(int value);
-        //  EasyProgressBar.EasyProgressBar easyProgressBar_Reset_OnHoldBy;
-
-        void InitEasyProgressBar_OnHoldBy()
-        {
-            /*
-            easyProgressBar_Reset_OnHoldBy = new EasyProgressBar.EasyProgressBar();
-
-            easyProgressBar_Reset_OnHoldBy.BackColor = System.Drawing.SystemColors.Window;
-            easyProgressBar_Reset_OnHoldBy.BackgroundGradient.ColorStart = System.Drawing.Color.White;
-            easyProgressBar_Reset_OnHoldBy.BackgroundGradient.IsBlendedForBackground = true;
-            easyProgressBar_Reset_OnHoldBy.BorderColor = System.Drawing.Color.Gray;
-            easyProgressBar_Reset_OnHoldBy.DigitBoxGradient.BorderColor = System.Drawing.Color.Silver;
-            easyProgressBar_Reset_OnHoldBy.DigitBoxGradient.ColorEnd = System.Drawing.Color.AntiqueWhite;
-            easyProgressBar_Reset_OnHoldBy.DigitBoxGradient.ColorStart = System.Drawing.Color.White;
-            easyProgressBar_Reset_OnHoldBy.DigitBoxGradient.IsBlendedForBackground = true;
-            easyProgressBar_Reset_OnHoldBy.DisplayFormat = "";
-            easyProgressBar_Reset_OnHoldBy.Font = new Font("Verdana", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
-            easyProgressBar_Reset_OnHoldBy.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            easyProgressBar_Reset_OnHoldBy.IsDigitDrawEnabled = false;
-            easyProgressBar_Reset_OnHoldBy.Location = new Point(((ClientSize.Width / 2) - 300), ((ClientSize.Height / 2) + 30));
-            easyProgressBar_Reset_OnHoldBy.Name = nameof(easyProgressBar_Reset_OnHoldBy);
-            easyProgressBar_Reset_OnHoldBy.ProgressColorizer.Alpha = ((byte)(113));
-            easyProgressBar_Reset_OnHoldBy.ProgressColorizer.Blue = ((byte)(140));
-            easyProgressBar_Reset_OnHoldBy.ProgressColorizer.Green = ((byte)(200));
-            easyProgressBar_Reset_OnHoldBy.ProgressColorizer.Red = ((byte)(230));
-            easyProgressBar_Reset_OnHoldBy.ProgressGradient.ColorEnd = System.Drawing.Color.Wheat;
-            easyProgressBar_Reset_OnHoldBy.ProgressGradient.ColorStart = System.Drawing.Color.WhiteSmoke;
-            easyProgressBar_Reset_OnHoldBy.ProgressGradient.IsBlendedForProgress = true;
-            easyProgressBar_Reset_OnHoldBy.Size = new Size(600, 65);
-            easyProgressBar_Reset_OnHoldBy.TabIndex = 0;
-            easyProgressBar_Reset_OnHoldBy.Text = "40% ";
-            easyProgressBar_Reset_OnHoldBy.Value = 40;
-            easyProgressBar_Reset_OnHoldBy.DockUndockProgressBar = false;
-            easyProgressBar_Reset_OnHoldBy.Visible = false;
-            easyProgressBar_Reset_OnHoldBy.EasyProgressBarClosing += easyProgressBar_Reset_OnHoldBy_EasyProgressBarClosing;
-            */
-        }
-
-        // Starts or stops the current progressThread.
-        void Start_easyProgressBar_Reset_OnHoldBy(object sender, EventArgs e)
-        {
-            /*
-            if (progressThread_Reset_OnHoldBy.IsAlive)
-            {
-                easyProgressBar_Reset_OnHoldBy.Visible = false;
-
-                // Tell the progressThread to abort itself immediately, raises a ThreadAbortException in the progressThread after calling the Thread.Join() method.
-                progressThread_Reset_OnHoldBy.Abort();
-
-                // Wait for the progressThread to finish.
-                progressThread_FixOnAvailable.Join();
-
-                isProgressStarted_FixOnAvailable = false;
-
-                // Update button text.
-                //     button1.Text = "Resume Progress";
-
-                return;
-            }
-
-            easyProgressBar_Reset_OnHoldBy.TextMessage = "Fixing OnHoldBy column.";
-            easyProgressBar_Reset_OnHoldBy.Visible = true;
-            easyProgressBar_Reset_OnHoldBy.Focus();
-            easyProgressBar_Reset_OnHoldBy.Value = 0;
-            easyProgressBar_Reset_OnHoldBy.Maximum = _bindingSource_StockRoom.Count + 1;
-
-            easyProgressBar_Reset_OnHoldBy.ValueChanged += (thrower, ea) =>
-            {
-                if (easyProgressBar_Reset_OnHoldBy.Value == easyProgressBar_Reset_OnHoldBy.Maximum)
-                    isProgressStarted_FixOnAvailable = false;
-            };
-
-            progressThread_Reset_OnHoldBy = new Thread(new ParameterizedThreadStart(ProgressChannel_Reset_OnHoldBy));
-            progressThread_Reset_OnHoldBy.Name = "ProgressBar_OnHoldBy thread";
-            progressThread_Reset_OnHoldBy.IsBackground = true;
-
-            ParameterizedThreadClass pThread = new ParameterizedThreadClass(_bindingSource_StockRoom);
-            progressThread_Reset_OnHoldBy.Start(pThread);
-
-            // Set new value.
-            isProgressStarted_FixOnAvailable = true;
-
-            // Write log message.
-            //      status.Text = String.Format("Channel Started !!!, The {0} is started at {1:F}", progressThread.Name, DateTime.Now);
-
-            // Update button text.
-            //      button1.Text = "Stop";
-            */
-        }
-
-        void easyProgressBar_Reset_OnHoldBy_EasyProgressBarClosing(object sender, out bool cancel)
-        {
-            if (MessageBox.Show("Do you want to close the control window?", Application.ProductName, MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) == System.Windows.Forms.DialogResult.No)
-                cancel = true;
-            else
-                cancel = false;
-        }
-
-        void ProgressChannel_Reset_OnHoldBy(object instance)
-        {
-            try
-            {
-                if (InvokeRequired)
-                {
-                    Invoke(new EventHandler(delegate (object o, EventArgs ee)
-                    {
-                        int count = 0;
-                        foreach (DataRow stockroomRow in Production_InventoryDataSet.Table_StockRoom)
-                        {
-                            stockroomRow.BeginEdit();
-
-                            stockroomRow["OnHoldBy"] = "";  // Utilities.Get_String(stockroomRow["OnHoldBy"].ToString());
-
-                            stockroomRow["OnHand"] = Utilities.Get_Value(stockroomRow["OnHand"].ToString());
-                            stockroomRow["OnHold"] = 0;     // Utilities.Get_Value(stockroomRow["OnHold"].ToString());
-                            stockroomRow["OnAvailable"] = Utilities.Get_Value(stockroomRow["OnAvailable"].ToString());
-
-                            count++;
-                            stockroomRow.EndEdit();
-                            UpdateProgressBar_Reset_OnHoldBy(count);
-                        }
-
-                        UpdateProgressBar_Reset_OnHoldBy(_bindingSource_StockRoom.Count + 1);
-                    }));
-                }
-                else
-                {
-                    int count = 0;
-                    foreach (DataRow stockroomRow in Production_InventoryDataSet.Table_StockRoom)
-                    {
-                        stockroomRow.BeginEdit();
-
-                        stockroomRow["OnHoldBy"] = "";  // Utilities.Get_String(stockroomRow["OnHoldBy"].ToString());
-
-                        stockroomRow["OnHand"] = Utilities.Get_Value(stockroomRow["OnHand"].ToString());
-                        stockroomRow["OnHold"] = 0;     // Utilities.Get_Value(stockroomRow["OnHold"].ToString());
-                        stockroomRow["OnAvailable"] = Utilities.Get_Value(stockroomRow["OnAvailable"].ToString());
-
-                        count++;
-                        stockroomRow.EndEdit();
-                        UpdateProgressBar_Reset_OnHoldBy(count);
-                    }
-
-                    UpdateProgressBar_Reset_OnHoldBy(_bindingSource_StockRoom.Count + 1);
-                }
-            }
-            catch (Exception error)
-            {
-                OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Error" + error.Message));
-            }
-        }
-
-        void UpdateStatusBar_Reset_OnHoldBy(string statusText)
-        {
-            //       status.Text = statusText;
-        }
-
-        void UpdateProgressBar_Reset_OnHoldBy(int currentValue)
-        {
-            /*
-            if (currentValue == _bindingSource_StockRoom.Count)
-                Invoke(new EventHandler(easyProgressBar_Reset_OnHoldBy_Hide));
-
-            if (easyProgressBar_Reset_OnHoldBy.InvokeRequired)
-                easyProgressBar_Reset_OnHoldBy.Invoke(new SetProgressValue(UpdateProgressBar_Reset_OnHoldBy), new object[] { currentValue });
-            else
-            {
-                easyProgressBar_Reset_OnHoldBy.Value = currentValue;
-
-            }
-            */
-        }
-
-        void easyProgressBar_Reset_OnHoldBy_Hide(object sender, EventArgs e)
-        {
-            //  easyProgressBar_Reset_OnHoldBy.Hide();
-            fixOnAvailableToolStripMenuItem.Enabled = true;
-        }
-
-
-
-        #endregion"InitEasyProgressBar_Reset_OnHoldBy"
-
+       
         #region"InitializeThreadTimer Check status table. Notifications"
 
         System.Threading.Timer timerCheckStatusTable;
+        string messageLocation = "";
+        DateTime LastAccessTime;
 
         /// <summary>
         /// List of notifications pendient to send.
@@ -7124,6 +3644,7 @@ namespace StockRoom11net
         void ProcessNotificationPendingToBeSendAndClearTheList()
         {
             #region"Process notification pending to be send and clear the List"
+
             using (SQLiteConnection statusConnectionString = new(Settings.Default.DataBaseConnectionStringSQLite))
             {
                 if (_notificationsSendMyOwn)
@@ -7157,6 +3678,7 @@ namespace StockRoom11net
 
                 NotificationsToSends.Clear();
             }
+
             #endregion"Process notification pending to be send and clear the List"
         }
 
@@ -7361,11 +3883,11 @@ namespace StockRoom11net
 
                                 if (!Settings.Default.DepartmentName.Contains(notification.Value.DepartmentName))
                                 {
-                                    if (BackgroundWorkerFillByLastAccessTime.IsBusy)
-                                        return;
+                                    //if (BackgroundWorkerFillByLastAccessTime.IsBusy)
+                                    //    return;
 
                                     LastAccessTime = notification.Value.DateCreated;
-                                    BackgroundWorkerFillByLastAccessTime.RunWorkerAsync();
+                                   // BackgroundWorkerFillByLastAccessTime.RunWorkerAsync();
                                 }
 
                                 break;
@@ -7407,7 +3929,7 @@ namespace StockRoom11net
             try
             {
                 #region"Start new project row"
-
+                /*
                 // We ask per the lastID just before used.
                 if (Production_InventoryDataSet.Table_Status.Rows.Count > 0)
                     LastID = (int)Production_InventoryDataSet.Table_Status.Compute("MAX(ID)", "ID is Not null");
@@ -7431,7 +3953,7 @@ namespace StockRoom11net
                 newProject["String_Filter"] = "Warning";
                 newProject["ItemCount"] = 0;
                 newProject["DateCreated"] = DataBaseTime;
-                newProject["Created_by"] = _currentEmployeesLogIn.Name;
+                newProject["Created_by"] = CurrentEmployeeLogIn.Name;
                 newProject[nameof(Properties)] = "";
                 newProject["Message_String"] = "";
                 newProject["Status"] = "Open";
@@ -7439,7 +3961,7 @@ namespace StockRoom11net
                 newProject.EndEdit();
 
                 _bindingSource_Status.EndEdit();
-
+                */
                 #endregion"Start new project row"
             }
             catch (Exception error)
@@ -7488,7 +4010,7 @@ namespace StockRoom11net
             else
             {
                 StopThreadTimerSaveEveryInterval();
-                OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Stopped process Saved by timer..."));
+           //     OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Stopped process Saved by timer..."));
             }
         }
 
@@ -7500,7 +4022,7 @@ namespace StockRoom11net
                 {
                     //NeedSaveDataProject hold the project name.
                     NeedSaveData = false;
-                    StockRoom_ProcessSaveRequest(new object(), new Save_Requested_EventArgs(Utilities.NotificationEvents.DataBaseUpDated));
+             //       StockRoom_ProcessSaveRequest(new object(), new Save_Requested_EventArgs(Utilities.NotificationEvents.DataBaseUpDated));
                 }
             }
             catch (Exception errors)
@@ -7533,8 +4055,8 @@ namespace StockRoom11net
         {
             try
             {
-                var logFileNme = CurrentDepartmentLogIn.DeptName + " " + DateTime.Now.ToString("dddd, dd-MM-yy") + ".html";
-                var deptNameMonth = CurrentDepartmentLogIn.DeptName + "\\" + DateTime.Now.ToString("MMMM");
+                var logFileNme = _employeesService.CurrentDepartmentLogIn.DepartmentName + " " + DateTime.Now.ToString("dddd, dd-MM-yy") + ".html";
+                var deptNameMonth = _employeesService.CurrentDepartmentLogIn.DepartmentName + "\\" + DateTime.Now.ToString("MMMM");
                 var logFilePath_Name = Path.Combine(Settings.Default.DataBaseAddress + "\\LogFile\\" + deptNameMonth, logFileNme);
                 var templeFilePath_Name = Settings.Default.DataBaseAddress + "\\Resources\\HTML pages\\LogFileTemple.html";
 
@@ -7576,11 +4098,11 @@ namespace StockRoom11net
         List<Controls.FileSystemWatcherAgent.FileSystemWatcherAgent> FileSystemWatcherAgentList =
                                                     new List<Controls.FileSystemWatcherAgent.FileSystemWatcherAgent>();
 
-        void InitializeFileSystemWatcher(DepartmentInformation departLogin)
+        void InitializeFileSystemWatcher(ITableEmployeeService departLogin)
         {
             FileSystemWatcherAgentList.Clear();
 
-            foreach (ScanDocumentsAddressItem documentAddressItem in departLogin.DepartmentScanDocumentsAddressItems)
+            foreach (ScanDocumentsAddressItem documentAddressItem in departLogin.CurrentDepartmentLogIn.DepartmentScanDocumentsAddressItems)
             {
                 var scanPath = documentAddressItem.ScanDocumentsAddressValueDirectory;
 
@@ -7705,7 +4227,7 @@ namespace StockRoom11net
         void ProcessFileFolderFounded()
         {
             int countThumbs = 0;
-            _bindingSource_ProjectsTreeView.SuspendBinding();
+            //_bindingSource_ProjectsTreeView.SuspendBinding();
 
             /*
                         Parallel.ForEach(LastScan, item =>
@@ -7733,7 +4255,7 @@ namespace StockRoom11net
 
                             projectRow.EndEdit();
 
-                        });*/
+                        });
 
 
             foreach (FileDirectoryModel item in LastScan)
@@ -7769,10 +4291,8 @@ namespace StockRoom11net
 
             _bindingSource_ProjectsTreeView.EndEdit();
             _bindingSource_ProjectsTreeView.ResumeBinding();
-
-            _projectViewer_Save_Requested(new object(), new EventArgs());
-
-            BackgroundWorker_Load_Table_Projects_TreeView();
+            */
+           // _projectViewer_Save_Requested(new object(), new EventArgs());
         }
 
         #endregion"Task FileFolderScann"
@@ -8031,6 +4551,7 @@ namespace StockRoom11net
                 action.Invoke();
             }
         }
+
 
         bool _mouseInToolStripStatusLabel_Progress = false;
         void ToolStripStatusLabel_Progress_MouseEnter(object sender, EventArgs e)

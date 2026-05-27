@@ -546,9 +546,10 @@ namespace StockRoom11net.Controls
 
         /// <summary>
         /// Defined the user access level :
-        /// User : Only can view basis information.
-        /// Editor : Allowed to edit, add, delete the basis information.
-        /// Administrator : Allowed access to all information.
+        /// User            : Only can view basis information.
+        /// Editor          : Allowed to edit, add, delete the basis information.
+        /// Administrator   : Allowed access to all information.
+        /// Manager         : Allowed access to managerial information.
         /// </summary>
         public enum AccessLevel
         {
@@ -978,63 +979,6 @@ namespace StockRoom11net.Controls
                     dict.Add(projectNameValue[0].Trim(), value);
                 }
             }
-            return dict;
-        }
-
-        public static SortedDictionary<string, int> GetDict(string stringDict, SortedDictionary<string, int> dict)
-        {
-            if (string.IsNullOrEmpty(stringDict) || string.IsNullOrWhiteSpace(stringDict))
-                return dict;
-
-            // Divide all pairs (remove empty strings)
-            string[] allRecords = new string[] { stringDict };
-            if (stringDict.Contains(";"))
-                allRecords = stringDict.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
-
-            // Walk through each item
-            int countError = 0;
-            foreach (string projectRecord in allRecords)
-            {
-                if (!projectRecord.Contains(":"))
-                {
-                    countError++;
-                    dict.Add("Error Information Loss : " + countError, 0);
-                    continue;
-                }
-
-                if (projectRecord.Count(x => x == ':') > 1)
-                {
-                    countError++;
-                    dict.Add("Error Information Founded twice : " + countError, 0);
-                    continue;
-                }
-
-                int value = 0;
-                string[] projectNameValue = projectRecord.Split(new char[] { ':' }, StringSplitOptions.RemoveEmptyEntries);
-
-                // Parse the int (this can throw)
-                try
-                {
-                    value = int.Parse(projectNameValue[(projectNameValue.Length - 1)]);
-                }
-                catch (Exception)
-                {
-                    value = 0;
-                    countError++;
-                    dict.Add("Error Information Parse value " + projectNameValue[(projectNameValue.Length - 1)] + countError, 0);
-                }
-
-                // Fill the value in the sorted dictionary
-                if (dict.ContainsKey(projectNameValue[0]))
-                {
-                    dict[projectNameValue[0]] = value;
-                }
-                else
-                {
-                    dict.Add(projectNameValue[0].Trim(), value);
-                }
-            }
-
             return dict;
         }
 

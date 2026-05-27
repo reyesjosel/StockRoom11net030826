@@ -31,10 +31,11 @@ namespace StockRoom11net
         #region "Properties"
 
         // Injected EF Core services
+        private readonly IUnitOfWork _unitOfWork;
+        private ITableEmployeeService _employeesService;
         private readonly IStockRoomService _stockRoomService;
         private readonly ITableStockRoomTreeViewService _tableStockRoomTreeViewService;
-        private readonly IUnitOfWork _unitOfWork;
-
+        
         // ✅ Updated to use scaffolded entity
         private BindingList<Table_StockRoom> _stockRoomBindingList;
         private BindingList<Table_StockRoom_TreeView> _stockRoomTreeViewBindingList;
@@ -42,22 +43,12 @@ namespace StockRoom11net
         // Declare as extended type
         public BindingSourceValidating<Table_StockRoom> _bindingSourceStockRoomVal;
         public BindingSourceValidating<Table_Base_TreeView> _bindingSourceStockRoomTreeViewVal;
-
-        BindingSource _bindingSourceStockRoom;
-        BindingSource _bindingSourceStockRoomTreeView;
-
+                
         DataColumnCollection _stockroomColumns;
 
         readonly AppState _appState = new();
         readonly AppService _appService = new();
                 
-        /// <summary>
-        /// Reference to table of Code and Range used to defined the database content.
-        /// </summary>
-        readonly BindingSource _bindingSource_CodeTreeView;
-
-        readonly DataTable codeDataTable = new DataTable("CodeDataTable");
-
         bool _settingMode = false;
         /// <summary>
         /// Indicates whether the setting mode is enabled.
@@ -91,7 +82,7 @@ namespace StockRoom11net
         #region"On_ScannedData"
 
         string returnToTabPage = "tabPage_Pictures";
-        public void OnBarcodeScanned_EventHandler(object sender, RawInputEventArg e)
+        public void OnBarcodeScanned_EventHandler(object? sender, RawInputEventArg e)
         {
             if (e == null)
                 return;
@@ -111,7 +102,7 @@ namespace StockRoom11net
 
             #region"Set Location field"
 
-            if (CurrentEmployeesLogIn.IsManager && dataGridViewExtendedBase.IsColumnVisible("Location"))
+            if (_employeesService.CurrentEmployeeLogIn.IsManager && dataGridViewExtendedBase.IsColumnVisible("Location"))
             {
                 if (_currentColumnActive != null && _currentColumnActive.ColumnName.Contains("Location"))
                 {
@@ -199,14 +190,17 @@ namespace StockRoom11net
         readonly DataTable _dataTableStockRoom;
         readonly DataTable _dataTableTreeListView;
 
-        //To catch missing registrations early, you can also mark the parameterless constructor with[Obsolete] so it shows a compiler warning whenever it's accidentally used:
+        // To catch missing registrations early, you can also mark the parameterless
+        // constructor with[Obsolete] so it shows a compiler warning whenever it's accidentally used:
+        [Browsable(false)]
         [Obsolete("Use DI constructor. Missing service registration may be causing this call.")]
         public StockRoom_Inventory()
         {
             InitializeComponent();
         }
 
-        public StockRoom_Inventory(IStockRoomService stockRoomService,
+        public StockRoom_Inventory(ITableEmployeeService employeesService,
+                                    IStockRoomService stockRoomService,
                                     ITableStockRoomTreeViewService tableStockRoomTreeViewService,
                                     IUnitOfWork unitOfWork)
         {
@@ -215,18 +209,24 @@ namespace StockRoom11net
             AutoScaleMode = AutoScaleMode.Dpi;
             DockAreas = WinFormsUI.Docking.DockAreas.Document | WinFormsUI.Docking.DockAreas.Float;
 
+            _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
+            _employeesService = employeesService ?? throw new ArgumentNullException(nameof(employeesService));
+            _employeesService.CurrentEmployeeLogInChanged += (s, e) =>
+            {                
+                dataTreeViewToAdd_Cancel_Delete.CurrentDepartmentLogIn = _employeesService.CurrentDepartmentLogIn.DepartmentName;
+            };
             _stockRoomService = stockRoomService ?? throw new ArgumentNullException(nameof(stockRoomService));
             _tableStockRoomTreeViewService = tableStockRoomTreeViewService ?? throw new ArgumentNullException(nameof(tableStockRoomTreeViewService));
-            _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
-
+            
             Name = "StockRoom_Inventory";
+
+            // We need pass employeeService, at initialization we call currentEmployeeLogIn
+            dataGridViewExtended.EmployeesService = _employeesService;
 
             // ✅ Pass unitOfWork to the EXISTING designer instance, don't replace it
             dataTreeViewToAdd_Cancel_Delete.SetUnitOfWork(_unitOfWork);
 
-            InitializeBlazorWebView();
-
-            LoadDataEF();
+            InitializeBlazorWebView();            
         }
 
         void InitializeBlazorWebView()
@@ -292,8 +292,6 @@ namespace StockRoom11net
             try
             {
                 MessageDebugPosition = "Starting LoadTimeLineDataAsync()";
-                Cursor = Cursors.WaitCursor;
-                StatusBarMessage(new StatusBarMessage_EventArgs("Loading TimeLine data..."));
 
                 // ✅ Load data from database
                 _stockRoomBindingList = await _stockRoomService.LoadStockRoomsAsync();
@@ -366,7 +364,7 @@ namespace StockRoom11net
 
                 MessageDebugPosition = "Assign BindingSource to TreeView";
                 dataTreeViewToAdd_Cancel_Delete.BindingSourceTreeView = _bindingSourceStockRoomTreeViewVal;
-                
+
                 StatusBarMessage(new StatusBarMessage_EventArgs($"Loaded {_stockRoomBindingList.Count} StockRoom records"));
             }
             catch (Exception ex)
@@ -378,7 +376,7 @@ namespace StockRoom11net
             }
             finally
             {
-                Cursor = Cursors.Default;
+                
             }
         }
 
@@ -429,33 +427,16 @@ namespace StockRoom11net
                     dataTreeViewToAdd_Cancel_Delete.EnsureVisibledNode(0);
             }
         }
-
-        #region"BindingSource_CodeTreeView"
-
-        void BindingSource_CodeTreeView_PositionChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        void BindingSource_CodeTreeView_BindingComplete(object sender, BindingCompleteEventArgs e)
-        {
-
-        }
-
-        void BindingSource_CodeTreeView_ListChanged(object sender, ListChangedEventArgs e)
-        {
-           
-        }
-
-        #endregion"BindingSource_CodeTreeView"
-
+        
         #region "StockRoomInventory Load, Shown, FormClosing"
 
-        void StockRoomInventoryLoad(object sender, EventArgs e)
+        void StockRoomInventoryLoad(object? sender, EventArgs e)
         {
             MessageDebugPosition = "Starting Try/Catch procedure.";
             try
             {
+                LoadDataEF();
+
                 MessageDebugPosition = "Initialize_DataGridView()";
                 Initialize_DataGridView();
 
@@ -497,11 +478,11 @@ namespace StockRoom11net
         }
 
         System.Windows.Forms.Timer _initialDelay;
-        async void StockRoomInventoryShown(object sender, EventArgs e)
+        async void StockRoomInventoryShown(object? sender, EventArgs e)
         {
             try
             {
-                dataTreeViewToAdd_Cancel_Delete.CurrentDepartmentLogIn = CurrentDepartmentLogIn.DeptName;
+                dataTreeViewToAdd_Cancel_Delete.CurrentDepartmentLogIn = _employeesService.CurrentDepartmentLogIn.DepartmentName;
                 MessageDebugPosition = "ListChangedType.Reset";
 
                 // ✅ Use Reset instead of ItemMoved — Reset does not require a valid index
@@ -548,21 +529,14 @@ namespace StockRoom11net
                         BindingSource_Table_StockroomTreeView_ListChanged(sender, new ListChangedEventArgs(ListChangedType.Reset, -1));
                 }
 
-                InitializeBindingSource();
-
-                InitializeBindingSourceStockRoomEvents();
-
+                FaultColumnPartNumber = !dataGridViewExtended._dataGridView.Columns.Contains("PartNumber");
+                
              //   SortColumnPartNumber();
              //   AddColumnSortDoc_PDF_Doc_Docx();               
              //   ProcessBOMrows();
             }
             catch (Exception)
             { }
-        }
-
-        void StockRoomInventory_FormClosing(object? sender, FormClosingEventArgs e)
-        {
-            dataGridViewExtended.DataSource = null;
         }
 
         void InitializeProperties()
@@ -589,33 +563,15 @@ namespace StockRoom11net
         }
 
         #endregion "StockRoomInventory Load, Shown, FormClosing"
-
-        #region"StockRoom bindingSource"
-        void InitializeBindingSourceStockRoomEvents()
-        {
-            // _bindingSource_StockRoom.CurrentChanged += _bindingSource_StockRoom_CurrentChanged;
-            //_bindingSource_StockRoom.PositionChanged += _bindingSource_StockRoom_PositionChanged;
-        }
-
-        private void _bindingSource_StockRoom_PositionChanged(object sender, EventArgs e)
-        {
-            string err = e.ToString();
-        }
-
-        private void _bindingSource_StockRoom_CurrentChanged(object sender, EventArgs e)
-        {
-            string err = e.ToString();
-        }
-        #endregion"StockRoom bindingSource"
-
+        
         #region"DataTreeListView"
 
-        void DataTreeViewToAdd_Cancel_Delete_Load(object sender, EventArgs e)
+        void DataTreeViewToAdd_Cancel_Delete_Load(object? sender, EventArgs e)
         {
             
         }
 
-        async void DataTreeViewToAdd_Cancel_Delete_SelectedIndexChangedAsync(object sender, TreeViewSelectedIndexChangedEventArgs e)
+        async void DataTreeViewToAdd_Cancel_Delete_SelectedIndexChangedAsync(object? sender, TreeViewSelectedIndexChangedEventArgs e)
         {
             try
             {
@@ -647,13 +603,13 @@ namespace StockRoom11net
             }
         }
 
-        void DataTreeViewToAdd_Cancel_Delete_Save_Requested(object sender, Save_Requested_EventArgs e)
+        void DataTreeViewToAdd_Cancel_Delete_Save_Requested(object? sender, Save_Requested_EventArgs e)
         {
             e.Message = "DataTreeViewToAdd_Cancel_Delete_Save_Requested, BaseTemple.On_Save_Requested(e).";
             On_Save_Requested(e);
         }
 
-        void DataTreeViewToAdd_Cancel_Delete_Switch_DataTable(object sender, Switch_DataTable_EventArgs e)
+        void DataTreeViewToAdd_Cancel_Delete_Switch_DataTable(object? sender, Switch_DataTable_EventArgs e)
         {
             if(dataGridViewExtended.DataSource == _bindingSourceStockRoomVal)
                 dataGridViewExtended.DataSource = _bindingSourceStockRoomTreeViewVal;
@@ -680,82 +636,40 @@ namespace StockRoom11net
 
             dataGridViewExtended.Name = "StockRoom Inventory";
 
-            dataGridViewExtended.CellBegingEditEvent += DataGridViewExtendedInventoryCellBeggingEditEvent;
-            dataGridViewExtended.CellEndEditEvent += DataGridViewExtendedInventoryCellEndEditEvent;
-            dataGridViewExtended.CellClickEvent += DataGridViewExtended_StockRoom_CellClick_Event;
-            dataGridViewExtended.CellDoubleClickEvent += DataGridViewExtended_StockRoom_CellDoubleClick_Event;
+            dataGridViewExtended.CellBegingEditEvent    += DataGridViewExtendedInventoryCellBeggingEditEvent;
+            dataGridViewExtended.CellEndEditEvent       += DataGridViewExtendedInventoryCellEndEditEvent;
+            dataGridViewExtended.CellClickEvent         += DataGridViewExtended_StockRoom_CellClick_Event;
+            dataGridViewExtended.CellDoubleClickEvent   += DataGridViewExtended_StockRoom_CellDoubleClick_Event;
 
-            dataGridViewExtended.CellMouseEnter += DataGridViewExtended_CellMouseEnter;
+            dataGridViewExtended.CellMouseEnter         += DataGridViewExtended_CellMouseEnter;
 
-            dataGridViewExtended.RowsRemoved += DataGridViewExtendedInventoryRowsRemoved;
-            dataGridViewExtended.RowsMouseEnter += DataGridViewExtended_RowsMouseEnter;
-            dataGridViewExtended.UserDeletedRow += DataGridViewExtendedInventoryUserDeletedRow;
+            dataGridViewExtended.RowsRemoved            += DataGridViewExtendedInventoryRowsRemoved;
+            dataGridViewExtended.RowsMouseEnter         += DataGridViewExtended_RowsMouseEnter;
+            dataGridViewExtended.UserDeletedRow         += DataGridViewExtendedInventoryUserDeletedRow;
             dataGridViewExtended.CurrentRowActivesEvent += DataGridViewExtendedInventoryCurrentRowActive;
 
-            dataGridViewExtended.FindRemplace += DataGridViewExtended_Inventory_Find_Replace;
+            dataGridViewExtended.FindRemplace           += DataGridViewExtended_Inventory_Find_Replace;
 
-            dataGridViewExtended.RefreshRequested += DataGridViewExtendedInventoryRefreshRequested;
+            dataGridViewExtended.RefreshRequested       += DataGridViewExtendedInventoryRefreshRequested;
 
             dataGridViewExtended.DataGridViewMouseEnterEvent += DataGridViewExtendedInventoryMouseEnterEvent;
-            dataGridViewExtended.DataGridViewSort += DataGridViewExtendedInventoryDataGridViewSort;
+            dataGridViewExtended.DataGridViewSort       += DataGridViewExtendedInventoryDataGridViewSort;
             dataGridViewExtended.BindingNavigatorAddNewItemEvent += DataGridViewExtended_AddNewItemEvent;
 
-            dataGridViewExtended.AddNoteEvent += DataGridViewExtended_AddNoteEvent;
-            dataGridViewExtended.EditNoteEvent += DataGridViewExtended_EditNoteEvent;
+            dataGridViewExtended.AddNoteEvent           += DataGridViewExtended_AddNoteEvent;
+            dataGridViewExtended.EditNoteEvent          += DataGridViewExtended_EditNoteEvent;
 
-            dataGridViewExtended.LogFileMessage += DataGridViewExtendedInventoryLogFileMessage;
+            dataGridViewExtended.LogFileMessage         += DataGridViewExtendedInventoryLogFileMessage;
 
             dataGridViewExtended.ContextMenuStripItemClicked += DataGridViewExtended_ContextMenuStripItemClicked;
             dataGridViewExtended.ContextMenuStripPrintCompLabel += DataGridViewExtended_PrintCompLabel;
             
             dataGridViewExtended.ResumeLayout();
         }
-
-        class Item
-        {
-            public string PartNumber
-            {
-                get;
-                set;
-            }
-
-            public string Description
-            {
-                get;
-                set;
-            }
-
-            public string Status
-            {
-                get;
-                set;
-            }
-
-            public DataRowView DataBoundItem
-            {
-                get;
-                set;
-            }
-        }
-
-        void InitializeBindingSource()
-        {
-            //dataGridViewExtended.DataSource = _bindingSource_StockRoom;
-
-            FaultColumnPartNumber = !dataGridViewExtended._dataGridView.Columns.Contains("PartNumber");
-        }
-
+        
         public System.Collections.IList Rows;
         public IDictionary<object, BindingSourceGroups.GroupRow> GroupsDict;
-
-        public static T Clone<T>(T source)
-        {
-            var serialized = JsonConvert.SerializeObject(source, Formatting.Indented,
-                             new JsonSerializerSettings() { ReferenceLoopHandling = ReferenceLoopHandling.Ignore });
-
-            return JsonConvert.DeserializeObject<T>(serialized);
-        }
-
+               
 
         #region"Add Column method"
 
@@ -788,11 +702,10 @@ namespace StockRoom11net
 
         #endregion"Add Column method"
               
-
         string editorPageLocation;
         string editorTinyMce;
         //NoteEvent: DataGridViewExtended_EditNoteEvent.
-        void DataGridViewExtended_EditNoteEvent(object sender, EventArgs e)
+        void DataGridViewExtended_EditNoteEvent(object? sender, EventArgs e)
         {
             TabControl_Inventory.ShowTab(nameof(tabPage_NoteEditor));
             TabControl_Inventory.SelectTab(nameof(tabPage_NoteEditor));
@@ -810,13 +723,13 @@ namespace StockRoom11net
         int count_ChromeWebBrowserDelayTick;
 
         //NoteEvent: DataGridViewExtended_AddNoteEvent.
-        void DataGridViewExtended_AddNoteEvent(object sender, EventArgs e)
+        void DataGridViewExtended_AddNoteEvent(object? sender, EventArgs e)
         {
             TabControl_Inventory.ShowTab(nameof(tabPage_NoteEditor));
             TabControl_Inventory.SelectTab(nameof(tabPage_NoteEditor));
         }
 
-        void DataGridViewExtended_AddNewItemEvent(object sender, EventArgs e)
+        void DataGridViewExtended_AddNewItemEvent(object? sender, EventArgs e)
         {
             var tempFilter = _bindingSource_StockRoom.Filter;
             _bindingSource_StockRoom.Filter = null;
@@ -840,7 +753,7 @@ namespace StockRoom11net
             InitializeTab_AddNewItem();
         }
 
-        void AddNewItemSaveTreeViewRequest(object sender, Save_Requested_EventArgs saveRequestedEventArgs)
+        void AddNewItemSaveTreeViewRequest(object? sender, Save_Requested_EventArgs saveRequestedEventArgs)
         {
             try
             {
@@ -857,13 +770,13 @@ namespace StockRoom11net
             }
         }
 
-        void DataGridViewExtendedInventoryCellEndEditEvent(object sender, DataGridViewCellEventArgs e)
+        void DataGridViewExtendedInventoryCellEndEditEvent(object? sender, DataGridViewCellEventArgs e)
         {
             NeedSaveData = true;
             if (CurrentRowViewActive["LastAccessTime"] != null)
             {
                 CurrentRowViewActive["LastAccessTime"] = DateTime.Now;
-                CurrentRowViewActive["ModifiedBy"] = CurrentEmployeesLogIn.FullName;
+                CurrentRowViewActive["ModifiedBy"] = Table_Employee.FullName;
             }
 
             #region"OnHand column, update OnHold and Onavailable"
@@ -887,12 +800,12 @@ namespace StockRoom11net
             #endregion"OnHand column, update OnHold and Onavailable"
         }
 
-        void DataGridViewExtendedInventoryCellBeggingEditEvent(object sender, DataGridViewCellCancelEventArgs e)
+        void DataGridViewExtendedInventoryCellBeggingEditEvent(object? sender, DataGridViewCellCancelEventArgs e)
         {
             try
             {
                 MessageDebugPosition = "CellBeggingEditEvent";
-                if (CurrentEmployeesLogIn.IsUser)
+                if (_employeesService.CurrentEmployeeLogIn.IsUser)
                 {
                     MessageBox.Show(@"The current User, does not have the right to perform this action.",
                                      @"Warning, access denied.", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -910,7 +823,7 @@ namespace StockRoom11net
                                                          (int)Utilities.NotificationEvents.Warning,             //notifycation.NotifycationEvents
                                                          Settings.Default.DepartmentName,                   //notification.DepartmentName
                                                          DateTime.Now,                                       //notification.DateCreated
-                                                         CurrentEmployeesLogIn.FullName,                     //notification.Created_by
+                                                         Table_Employee.FullName,                     //notification.Created_by
                                                          "Properties",                                       //notification.Properties
                                                          "Status"                                            //notification.Status
                                                         ));
@@ -927,27 +840,26 @@ namespace StockRoom11net
             }
         }
 
-        void DataGridViewExtendedInventoryLogFileMessage(object sender, LogFileMessageEventArgs e)
+        void DataGridViewExtendedInventoryLogFileMessage(object? sender, LogFileMessageEventArgs e)
         {
             On_LogFileMessage(e);
         }
 
-        void DataGridViewExtendedInventoryDataGridViewSort(object sender, DataGridViewSort_EventArgs e)
+        void DataGridViewExtendedInventoryDataGridViewSort(object? sender, DataGridViewSort_EventArgs e)
         {
             //  if (chart_Components.Visible)
             // Start_EasyProgressBar_GraphicChart();
         }
 
-
-        void DataGridViewExtended_CellMouseEnter(object sender, DataGridViewCellEventArgs e)
+        void DataGridViewExtended_CellMouseEnter(object? sender, DataGridViewCellEventArgs e)
         { }
 
-        void DataGridViewExtended_RowsMouseEnter(object sender, CurrentRowMouseEnterEventArgs e)
+        void DataGridViewExtended_RowsMouseEnter(object? sender, CurrentRowMouseEnterEventArgs e)
         {
             WhoUsesThisProcess(e);
         }
 
-        void DataGridViewExtendedInventoryCurrentRowActive(object sender, CurrentRowActive_EventArgs e)
+        void DataGridViewExtendedInventoryCurrentRowActive(object? sender, CurrentRowActive_EventArgs e)
         {
             try
             {
@@ -1008,21 +920,15 @@ namespace StockRoom11net
                 MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        void DataGridViewExtended_StockRoom_CellClick_Event(object sender, CellClick_EventArgs e)
+                
+        void DataGridViewExtended_StockRoom_CellClick_Event(object? sender, CellClick_EventArgs e)
         {
           //  _currentColumnActive = CurrentDataColumnActive(e.ColumnIndex);
         }
 
-        void DataGridViewExtended_StockRoom_CellDoubleClick_Event(object sender, CellDoubleClick_EventArgs e)
+        void DataGridViewExtended_StockRoom_CellDoubleClick_Event(object? sender, CellDoubleClick_EventArgs e)
         {
-            if (CurrentEmployeesLogIn.IsUser)
+            if (_employeesService.CurrentEmployeeLogIn.IsUser)
             {
                 MessageBox.Show(@"The current User, does not have the right to perform this action.",
                                  @"Warning, access denied.", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -1068,12 +974,12 @@ namespace StockRoom11net
             On_CellDoubleClick_Event(e);
         }
 
-        void DataGridViewExtended_Inventory_Find_Replace(object sender, DataGridViewExtended.FindRemplaceEventArgs e)
+        void DataGridViewExtended_Inventory_Find_Replace(object? sender, DataGridViewExtended.FindRemplaceEventArgs e)
         {
 
         }
 
-        void DataGridViewExtendedInventoryRefreshRequested(object sender, Refresh_Requested_EventArgs e)
+        void DataGridViewExtendedInventoryRefreshRequested(object? sender, Refresh_Requested_EventArgs e)
         {
             if (CurrentRowViewActive == null)
                 On_Refresh_Requested(new Refresh_Requested_EventArgs("PartNumber Like 'Is Not Null'"));
@@ -1086,7 +992,7 @@ namespace StockRoom11net
             }
         }
 
-        void DataGridViewExtendedInventoryUserDeletedRow(object sender, DataGridViewRowEventArgs e)
+        void DataGridViewExtendedInventoryUserDeletedRow(object? sender, DataGridViewRowEventArgs e)
         {
             if (e.Row.Cells[0].Value == null)
             {
@@ -1135,13 +1041,13 @@ namespace StockRoom11net
                                                      (int)Utilities.NotificationEvents.RowRemoved,          //notifycation.NotifycationEvents
                                                      Settings.Default.DepartmentName + ";",   //notification.String_Filter
                                                      DateTime.Now,                                       //notification.DateCreated
-                                                     CurrentEmployeesLogIn.FullName,                     //notification.Created_by
+                                                     Table_Employee.FullName,                     //notification.Created_by
                                                      "Properties",                                       //notification.Properties
                                                      "Status"                                            //notification.Status
                                                     ));
         }
 
-        void DataGridViewExtendedInventoryRowsRemoved(object sender, DataGridViewRowsRemovedEventArgs e)
+        void DataGridViewExtendedInventoryRowsRemoved(object? sender, DataGridViewRowsRemovedEventArgs e)
         {
             //*****************************************************************************************************************
 
@@ -1155,13 +1061,13 @@ namespace StockRoom11net
                                                      (int)Utilities.NotificationEvents.RowRemoved,          //notification.NotificationEvents
                                                      Settings.Default.DepartmentName + ";",              //notification.String_Filter
                                                      DateTime.Now,                                       //notification.DateCreated
-                                                     CurrentEmployeesLogIn.FullName,                     //notification.Created_by
+                                                     Table_Employee.FullName,                     //notification.Created_by
                                                      "Properties",                                       //notification.Properties
                                                      "Status"                                            //notification.Status
                                                     ));
         }
 
-        void DataGridViewExtendedInventoryMouseEnterEvent(object sender, DataGridViewMouseEnterEventArgs e)
+        void DataGridViewExtendedInventoryMouseEnterEvent(object? sender, DataGridViewMouseEnterEventArgs e)
         {
             dataGridViewExtended._dataGridView.Focus();
 
@@ -1188,12 +1094,12 @@ namespace StockRoom11net
             thumbViewer_Pictures.PathFromPartNumber = CurrentPartNumber;
         }
 
-        void DataGridViewExtended_ContextMenuStripItemClicked(object sender, EventArgs e)
+        void DataGridViewExtended_ContextMenuStripItemClicked(object? sender, EventArgs e)
         {
             throw new NotImplementedException();
         }
 
-        void DataGridViewExtended_PrintCompLabel(object sender, EventArgs e)
+        void DataGridViewExtended_PrintCompLabel(object? sender, EventArgs e)
         {
             string partNumber = CurrentRowViewActive["PartNumber"]?.ToString();
             string description = CurrentRowViewActive["Description"]?.ToString();
@@ -1251,8 +1157,6 @@ namespace StockRoom11net
 
             if (_bindingSource_table_StockroomTreeView.Count == 0)
                 return;
-
-
 
             #region"Description Short"
 
@@ -1312,7 +1216,7 @@ namespace StockRoom11net
           //  splitContainer_DataTreeView.Panel2Collapsed = true;
         }
 
-        void TabControl_Inventory_SelectedIndexChanged(object sender, EventArgs e)
+        void TabControl_Inventory_SelectedIndexChanged(object? sender, EventArgs e)
         {
             if (TabControl_Inventory.SelectedTab.Name == "tabPage_TreeViewSetting")
             {
@@ -1328,7 +1232,7 @@ namespace StockRoom11net
 
         }
 
-        void TabControl_Inventory_MouseUpResizeGripEvent(object sender, MouseEventArgs e)
+        void TabControl_Inventory_MouseUpResizeGripEvent(object? sender, MouseEventArgs e)
         {
             ShowResizeRectangle.Close();
 
@@ -1343,7 +1247,7 @@ namespace StockRoom11net
             //  SaveUserSetting();
         }
 
-        void TabControl_Inventory_MouseDownResizeGripEvent(object sender, MouseEventArgs e)
+        void TabControl_Inventory_MouseDownResizeGripEvent(object? sender, MouseEventArgs e)
         {
             Point location = splitContainerVertical.SplitterRectangle.Location;
             Size sizeCon = splitContainerVertical.Panel2.ClientSize;
@@ -1359,7 +1263,7 @@ namespace StockRoom11net
             TabControl_Inventory.Visible = false;
         }
 
-        void TabControl_Inventory_ResizeGripEvent(object sender, Custom_Events_Args.ResizeGrip_EventArgs e)
+        void TabControl_Inventory_ResizeGripEvent(object? sender, Custom_Events_Args.ResizeGrip_EventArgs e)
         {
             ShowResizeRectangle.Location = new Point(ShowResizeRectangle.Location.X + e.X, ShowResizeRectangle.Location.Y);
             ShowResizeRectangle.ClientSize = new Size(ShowResizeRectangle.ClientSize.Width - e.X, ShowResizeRectangle.ClientSize.Height + e.Y);
@@ -1382,7 +1286,7 @@ namespace StockRoom11net
             thumbViewer_Pictures.InformationStatus += ThumbViewer_Pictures_InformationStatus; ;
         }
 
-        private void ThumbViewer_Pictures_InformationStatus(object sender, InformationStatus_EventArgs e)
+        private void ThumbViewer_Pictures_InformationStatus(object? sender, InformationStatus_EventArgs e)
         {
             if (e.InformationStatus == true)
             {
@@ -1411,7 +1315,7 @@ namespace StockRoom11net
             thumbViewer_Location.InformationStatus += ThumbViewer_Location_InformationStatus;
         }
 
-        void ThumbViewer_Location_InformationStatus(object sender, Custom_Events_Args.InformationStatus_EventArgs e)
+        void ThumbViewer_Location_InformationStatus(object? sender, Custom_Events_Args.InformationStatus_EventArgs e)
         {
             if (e.InformationStatus == true)
             {
@@ -1477,7 +1381,7 @@ namespace StockRoom11net
             button_Delete.Enabled = false;
         }
 
-        void Button_AddNew_Click(object sender, EventArgs e)
+        void Button_AddNew_Click(object? sender, EventArgs e)
         {
             button_AddNew.Enabled = false;
             button_Save.Enabled = true;
@@ -1502,14 +1406,14 @@ namespace StockRoom11net
                                                                                     newDataRowView["PartNumber"].ToString()));
         }
 
-        void Button_Save_Click(object sender, EventArgs e)
+        void Button_Save_Click(object? sender, EventArgs e)
         {
             button_Save.Enabled = false;
 
             On_Save_Requested(new Save_Requested_EventArgs(Utilities.NotificationEvents.DataBaseUpDated));
         }
 
-        void Button_Delete_Click(object sender, EventArgs e)
+        void Button_Delete_Click(object? sender, EventArgs e)
         {
             string partNumberDataGridView = dataGridViewExtended.CurrentRowActive.Cells["PartNumber"].Value.ToString();
 
@@ -1579,7 +1483,7 @@ namespace StockRoom11net
 
             DeleteOriginalFile = Settings.Default.DeleteOriginalFile;
 
-            _nodeSetting = new NodeSetting(BindingSourceTreeViewBase, ColumnsCollection, CurrentEmployeesLogIn, DepartList, CurrentDepartmentLogIn);
+            _nodeSetting = new NodeSetting(BindingSourceTreeViewBase, ColumnsCollection, _employeesService);
 
             _nodeSetting.SaveRequested += NodeSetting_Save_Requested;
             _nodeSetting.StatusBarMessage += NodeSetting_StatusBarMessage;
@@ -1778,7 +1682,7 @@ namespace StockRoom11net
 
         }
 
-        void Chart_Components_CursorPositionChanging(object sender)
+        void Chart_Components_CursorPositionChanging(object? sender)
         {
             /*
             if (double.IsNaN(e.NewPosition))
@@ -2590,8 +2494,7 @@ namespace StockRoom11net
             textBoxUpDateModifPartNumber.Text = CurrentPartNumber;
 
 
-            currentCompInformation.ProcessNewCompInformation(CurrentRowViewActive,
-                                                             customPanel_ContainerComp);
+        //    currentCompInformation.ProcessNewCompInformation(CurrentRowViewActive, customPanel_ContainerComp);
 
             //currentCompInformation = new ComponentInformation(CurrentRowViewActive, customPanel_ContainerComp);
                                                 
@@ -2606,7 +2509,7 @@ namespace StockRoom11net
         #endregion"Tab_ThumbsViewer_Pictures"
 
 
-        async void TimeLineToolStripMenuItem_Click(object sender, EventArgs e)
+        async void TimeLineToolStripMenuItem_Click(object? sender, EventArgs e)
         {
             string dataObject = @"{""title"": {
             ""media"": {

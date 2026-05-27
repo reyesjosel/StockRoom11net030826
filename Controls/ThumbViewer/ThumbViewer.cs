@@ -128,10 +128,10 @@ namespace StockRoom11net.Controls.ThumbViewer
         private string EmployeeLastName = "";
         private Utilities.AccessLevel EmployeeAccessLevel = Utilities.AccessLevel.User;
         private Utilities.EditMode EmployeeEditMode = Utilities.EditMode.View;
-        private Employee _currentEmployeesLogIn;
+        private EmployeeInformation.EmployeeInformation _currentEmployeesLogIn;
 
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public Employee CurrentEmployeesLogIn
+        public EmployeeInformation.EmployeeInformation CurrentEmployeesLogIn
         {
             get
             {

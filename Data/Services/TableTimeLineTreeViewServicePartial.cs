@@ -1,10 +1,10 @@
-using StockRoom11net.Data;
 using StockRoom11net.Data.Entities;
-using System.ComponentModel;
 
 namespace StockRoom11net.Data.Services;
 
 /// <summary>
+/// ✅ SERVICE — business logic: : search by name, validate, process,
+/// Data access delegated to repository via UnitOfWork.
 /// Service interface for Table_TimeLine_TreeView business logic
 /// </summary>
 public partial interface ITableTimeLineTreeViewService
@@ -40,6 +40,8 @@ public partial interface ITableTimeLineTreeViewService
 }
 
 /// <summary>
+/// ✅ SERVICE — business logic: : search by name, validate, process,
+/// Data access delegated to repository via UnitOfWork.
 /// Service implementation for Table_TimeLine_TreeView business logic
 /// </summary>
 public partial class TableTimeLineTreeViewService : ITableTimeLineTreeViewService

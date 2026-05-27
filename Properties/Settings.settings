@@ -86,9 +86,6 @@
     <Setting Name="NotificationsSendMyOwn" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="ProductionInventoryDataSetCaseSensitive" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
-    </Setting>
     <Setting Name="splitContainerBomFtvSectionSplitterDistance" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>

@@ -359,18 +359,6 @@ namespace StockRoom11net.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool ProductionInventoryDataSetCaseSensitive {
-            get {
-                return ((bool)(this["ProductionInventoryDataSetCaseSensitive"]));
-            }
-            set {
-                this["ProductionInventoryDataSetCaseSensitive"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("0")]
         public int splitContainerBomFtvSectionSplitterDistance {
             get {

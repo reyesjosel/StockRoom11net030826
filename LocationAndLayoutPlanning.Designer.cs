@@ -235,7 +235,6 @@ namespace StockRoom11net
             // dataGridViewExtended
             // 
             this.dataGridViewExtended.BindingCompleted = false;
-            this.dataGridViewExtended.CurrentEmployeesLogIn = null;
             this.dataGridViewExtended.CustomEdit = Utilities.EditMode.View;
             this.dataGridViewExtended.CustomFilter = null;
             this.dataGridViewExtended.DividerColor = System.Drawing.Color.Red;

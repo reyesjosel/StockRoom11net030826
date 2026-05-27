@@ -1,13 +1,13 @@
 ﻿using StockRoom11net.Controls.EmployeeInformation;
+using StockRoom11net.Data.Services;
 
 namespace StockRoom11net.Controls.DocumentationBehavior
 {
     public partial class DocumentsAddressEditor : Form
     {
+        private ITableEmployeeService _employeesService;
         Dictionary<string, int> ExtCountDict;
-        DepartmentInformation Department;
         DocumentsAddressItem DocumentAddressItem;
-        List<DepartmentInformation> DepartmentList = new List<DepartmentInformation>();
 
         string ExtAcepted { get; set; }
         string AccessLevel { get; set; }
@@ -18,14 +18,12 @@ namespace StockRoom11net.Controls.DocumentationBehavior
             InitializeComponent();
         }
 
-        public DocumentsAddressEditor(DocumentsAddressItem documentAddressItem, DepartmentInformation department, List<DepartmentInformation> departmentList)
+        public DocumentsAddressEditor(DocumentsAddressItem documentAddressItem, ITableEmployeeService employeesService)
         {
             try
             {
                 InitializeComponent();
-
-                Department = department;
-                DepartmentList = departmentList;
+                _employeesService = employeesService;
 
                 DocumentAddressItem = documentAddressItem;
 
@@ -245,27 +243,27 @@ namespace StockRoom11net.Controls.DocumentationBehavior
                 UpDateDocumentAddressItem();
 
                 IsSaveEject = true;
-                var departmentAddressExist = Department.DepartmentDocumentsAddressItems.Exists(item => item.ID == DocumentAddressItem.ID);
+                var departmentAddressExist = _employeesService.CurrentDepartmentLogIn.DepartmentDocumentsAddressItems.Exists(item => item.ID == DocumentAddressItem.ID);
 
                 if (radioButton_Public.Checked)
                 {
-                    foreach (DepartmentInformation departInList in DepartmentList)
+                    foreach (DocumentsAddressItem departInList in _employeesService.CurrentDepartmentLogIn.DepartmentDocumentsAddressItems)
                     {
-                        departmentAddressExist = departInList.DepartmentDocumentsAddressItems.Exists(item => item.ID == DocumentAddressItem.ID);
+                        departmentAddressExist = _employeesService.CurrentDepartmentLogIn.DepartmentDocumentsAddressItems.Exists(item => item.ID == DocumentAddressItem.ID);
 
                         if (departmentAddressExist)
-                            departInList.UpDateDocumentAddressItem(DocumentAddressItem);
+                            _employeesService.CurrentDepartmentLogIn.UpDateDocumentAddressItem(DocumentAddressItem);
                         else
-                            departInList.AddDocumentAddressItem(DocumentAddressItem);
+                            _employeesService.CurrentDepartmentLogIn.AddDocumentAddressItem(DocumentAddressItem);
                     }
                 }
 
                 if (radioButton_Private.Checked)
                 {
                     if (departmentAddressExist)
-                        Department.UpDateDocumentAddressItem(DocumentAddressItem);
+                        _employeesService.CurrentDepartmentLogIn.UpDateDocumentAddressItem(DocumentAddressItem);
                     else
-                        Department.AddDocumentAddressItem(DocumentAddressItem);
+                        _employeesService.CurrentDepartmentLogIn.AddDocumentAddressItem(DocumentAddressItem);
                 }
 
             }

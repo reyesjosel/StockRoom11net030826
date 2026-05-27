@@ -18,14 +18,14 @@ namespace StockRoom11net
         public int Index { get; set; }
 
 
-        Employee _currentEmployeesLogIn;
+        EmployeeInformation _currentEmployeesLogIn;
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public Employee CurrentEmployeesLogIn
+        public EmployeeInformation CurrentEmployeesLogIn
         {
             get
             {
                 if (_currentEmployeesLogIn == null)
-                    _currentEmployeesLogIn = new Employee();
+                    _currentEmployeesLogIn = new EmployeeInformation();
 
                 return _currentEmployeesLogIn;
             }

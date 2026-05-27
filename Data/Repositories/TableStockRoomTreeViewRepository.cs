@@ -4,6 +4,7 @@ using StockRoom11net.Data.Entities;
 namespace StockRoom11net.Data.Repositories;
 
 /// <summary>
+/// ✅ REPOSITORY — only data access, no logic
 /// Repository interface for TableStockRoomTreeView operations
 /// </summary>
 public interface ITableStockRoomTreeViewRepository : IRepository<Table_StockRoom_TreeView>
@@ -31,6 +32,7 @@ public interface ITableStockRoomTreeViewRepository : IRepository<Table_StockRoom
 
 
 /// <summary>
+/// ✅ REPOSITORY — only data access, no logic
 /// Repository implementation for TableStockRoomTreeView entity
 /// </summary>
 public class TableStockRoomTreeViewRepository : Repository<Table_StockRoom_TreeView>, ITableStockRoomTreeViewRepository

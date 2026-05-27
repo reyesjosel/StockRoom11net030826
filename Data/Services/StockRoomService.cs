@@ -5,8 +5,9 @@ using System.ComponentModel;
 namespace StockRoom11net.Data.Services;
 
 /// <summary>
+/// ✅ SERVICE — business logic: : search by name, validate, process,
+/// Data access delegated to repository via UnitOfWork.
 /// Service layer for StockRoom business logic
-/// Replaces direct TableAdapter calls with modern async patterns
 /// Returns BindingList for WinForms DataGridView compatibility
 /// </summary>
 public interface IStockRoomService
@@ -22,6 +23,11 @@ public interface IStockRoomService
     Task<BindingList<Table_StockRoom>> FilterByStringFilterAsync(string stringFilter);
 }
 
+/// <summary>
+/// ✅ SERVICE — business logic: : search by name, validate, process,
+/// Data access delegated to repository via UnitOfWork.
+/// Returns BindingList for WinForms DataGridView compatibility
+/// </summary>
 public class StockRoomService : IStockRoomService
 {
     private readonly IUnitOfWork _unitOfWork;

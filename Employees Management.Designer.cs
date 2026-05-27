@@ -307,7 +307,7 @@ namespace StockRoom11net
             tabPage_Employee.Padding = new Padding(5);
             tabPage_Employee.Size = new Size(1150, 418);
             tabPage_Employee.TabIndex = 1;
-            tabPage_Employee.Text = "   Employee";
+            tabPage_Employee.Text = "   EmployeeInformation";
             tabPage_Employee.UseVisualStyleBackColor = true;
             // 
             // grouper_AccessRight
@@ -538,7 +538,7 @@ namespace StockRoom11net
             grouper_EmployeeInformations.Dock = DockStyle.Top;
             grouper_EmployeeInformations.Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Bold);
             grouper_EmployeeInformations.GroupImage = null;
-            grouper_EmployeeInformations.GroupTitle = "Employee Informations";
+            grouper_EmployeeInformations.GroupTitle = "EmployeeInformation Informations";
             grouper_EmployeeInformations.Location = new Point(5, 5);
             grouper_EmployeeInformations.Margin = new Padding(0);
             grouper_EmployeeInformations.MinimumSize = new Size(250, 230);
@@ -888,7 +888,7 @@ namespace StockRoom11net
             button_AddNewEmployee.Name = "button_AddNewEmployee";
             button_AddNewEmployee.Size = new Size(162, 30);
             button_AddNewEmployee.TabIndex = 0;
-            button_AddNewEmployee.Text = "Add New Employee";
+            button_AddNewEmployee.Text = "Add New EmployeeInformation";
             button_AddNewEmployee.UseVisualStyleBackColor = true;
             button_AddNewEmployee.Click += Button_AddEmployee_Click;
             // 
@@ -898,7 +898,7 @@ namespace StockRoom11net
             button_SaveEmployee.Name = "button_SaveEmployee";
             button_SaveEmployee.Size = new Size(139, 30);
             button_SaveEmployee.TabIndex = 2;
-            button_SaveEmployee.Text = "Save Employee";
+            button_SaveEmployee.Text = "Save EmployeeInformation";
             button_SaveEmployee.UseVisualStyleBackColor = true;
             button_SaveEmployee.Click += Button_SaveEmployee_Click;
             // 
@@ -908,7 +908,7 @@ namespace StockRoom11net
             button_DeleteEmployee.Name = "button_DeleteEmployee";
             button_DeleteEmployee.Size = new Size(150, 30);
             button_DeleteEmployee.TabIndex = 3;
-            button_DeleteEmployee.Text = "Delete Employee";
+            button_DeleteEmployee.Text = "Delete EmployeeInformation";
             button_DeleteEmployee.UseVisualStyleBackColor = true;
             button_DeleteEmployee.Click += Button_DeleteEmployee_Click;
             // 

@@ -1,6 +1,8 @@
 ﻿using StockRoom11net.Controls.BindingSourceExt;
 using StockRoom11net.Controls.EmployeeInformation;
 using StockRoom11net.Controls.FindAndReplace;
+using StockRoom11net.Data;
+using StockRoom11net.Data.Services;
 using StockRoom11net.Properties;
 using System.ComponentModel;
 using System.Data;
@@ -57,6 +59,8 @@ namespace StockRoom11net.Controls.DataGridViewExtend
         {
             components = new Container();
             ComponentResourceManager resources = new ComponentResourceManager(typeof(DataGridViewExtended));
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
             _contextMenuStrip_DataGridView = new ContextMenuStrip(components);
             toolStripTextBox_SearchBy = new ToolStripTextBox();
             toolStripSeparatorSearchBy = new ToolStripSeparator();
@@ -86,6 +90,8 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             toolStripSeparator4 = new ToolStripSeparator();
             toolStripMenuItem_SortByPDF = new ToolStripMenuItem();
             ToolStripMenuItem_columnsMaintenance = new ToolStripMenuItem();
+            ToolStripMenuItem_Font = new ToolStripMenuItem();
+            boltRegularToolStripMenuItem = new ToolStripMenuItem();
             ToolStripMenuItem_Alignment = new ToolStripMenuItem();
             leftToolStripMenuItem = new ToolStripMenuItem();
             centerToolStripMenuItem = new ToolStripMenuItem();
@@ -166,7 +172,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             _contextMenuStrip_DataGridView.Name = "PreviewDataGridViewContextMenuStrip";
             _contextMenuStrip_DataGridView.RenderMode = ToolStripRenderMode.Professional;
             _contextMenuStrip_DataGridView.ShowImageMargin = false;
-            _contextMenuStrip_DataGridView.Size = new Size(257, 708);
+            _contextMenuStrip_DataGridView.Size = new Size(257, 730);
             _contextMenuStrip_DataGridView.Opening += ContextMenuStripDataGridViewOpening;
             // 
             // toolStripTextBox_SearchBy
@@ -199,9 +205,9 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             ToolStripMenuItem_RemoveGroup.Text = "Remove Grouping";
             ToolStripMenuItem_RemoveGroup.Click += Tool_strip_menu_item_remove_group_click;
             // 
-            // ToolStripMenuItem_CollaseAll
+            // ToolStripMenuItem_CollapseAll
             // 
-            ToolStripMenuItem_CollapseAll.Name = "ToolStripMenuItem_CollaseAll";
+            ToolStripMenuItem_CollapseAll.Name = "ToolStripMenuItem_CollapseAll";
             ToolStripMenuItem_CollapseAll.Size = new Size(256, 26);
             ToolStripMenuItem_CollapseAll.Text = "Collapse All";
             ToolStripMenuItem_CollapseAll.Click += Tool_strip_menu_item_collase_all_click;
@@ -218,10 +224,10 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             toolStripSeparator1.Name = "toolStripSeparator1";
             toolStripSeparator1.Size = new Size(253, 6);
             // 
-            // ToolStripMenuItem_FilterbythisCell
+            // ToolStripMenuItem_FilterByThisCell
             // 
             ToolStripMenuItem_FilterByThisCell.DisplayStyle = ToolStripItemDisplayStyle.Text;
-            ToolStripMenuItem_FilterByThisCell.Name = "ToolStripMenuItem_FilterbythisCell";
+            ToolStripMenuItem_FilterByThisCell.Name = "ToolStripMenuItem_FilterByThisCell";
             ToolStripMenuItem_FilterByThisCell.Size = new Size(256, 26);
             ToolStripMenuItem_FilterByThisCell.Text = "Filter by this cell";
             ToolStripMenuItem_FilterByThisCell.Click += Tool_strip_menu_item_filterbythis_cell_click;
@@ -234,11 +240,11 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             toolStripMenuItem_Custom_Filter.Text = "Custom Filter";
             toolStripMenuItem_Custom_Filter.Click += Tool_strip_menu_item_custom_filter_click;
             // 
-            // ToolStripMenuItem_RemovethisFilter
+            // ToolStripMenuItem_RemoveThisFilter
             // 
             ToolStripMenuItem_RemoveThisFilter.DisplayStyle = ToolStripItemDisplayStyle.Text;
             ToolStripMenuItem_RemoveThisFilter.Font = new Font("Segoe UI", 12F);
-            ToolStripMenuItem_RemoveThisFilter.Name = "ToolStripMenuItem_RemovethisFilter";
+            ToolStripMenuItem_RemoveThisFilter.Name = "ToolStripMenuItem_RemoveThisFilter";
             ToolStripMenuItem_RemoveThisFilter.Size = new Size(256, 26);
             ToolStripMenuItem_RemoveThisFilter.Tag = "False";
             ToolStripMenuItem_RemoveThisFilter.Text = "Remove this Filter";
@@ -249,19 +255,19 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             toolStripSeparator2.Name = "toolStripSeparator2";
             toolStripSeparator2.Size = new Size(253, 6);
             // 
-            // ToolStripMenuItem_HidethisColumn
+            // ToolStripMenuItem_HideThisColumn
             // 
             ToolStripMenuItem_HideThisColumn.BackColor = Color.LightGoldenrodYellow;
             ToolStripMenuItem_HideThisColumn.DisplayStyle = ToolStripItemDisplayStyle.Text;
-            ToolStripMenuItem_HideThisColumn.Name = "ToolStripMenuItem_HidethisColumn";
+            ToolStripMenuItem_HideThisColumn.Name = "ToolStripMenuItem_HideThisColumn";
             ToolStripMenuItem_HideThisColumn.Size = new Size(256, 26);
             ToolStripMenuItem_HideThisColumn.Text = "Hide this Column";
             ToolStripMenuItem_HideThisColumn.Click += Tool_strip_menu_item_hidethis_column_click;
             // 
-            // ToolStripMenuItem_FrozenuntilHere
+            // ToolStripMenuItem_FrozenUntilHere
             // 
             ToolStripMenuItem_FrozenUntilHere.DisplayStyle = ToolStripItemDisplayStyle.Text;
-            ToolStripMenuItem_FrozenUntilHere.Name = "ToolStripMenuItem_FrozenuntilHere";
+            ToolStripMenuItem_FrozenUntilHere.Name = "ToolStripMenuItem_FrozenUntilHere";
             ToolStripMenuItem_FrozenUntilHere.Size = new Size(256, 26);
             ToolStripMenuItem_FrozenUntilHere.Text = "Frozen until here";
             ToolStripMenuItem_FrozenUntilHere.Click += Tool_strip_menu_item_frozenuntil_here_click;
@@ -384,10 +390,27 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             // 
             // ToolStripMenuItem_columnsMaintenance
             // 
-            ToolStripMenuItem_columnsMaintenance.DropDownItems.AddRange(new ToolStripItem[] { ToolStripMenuItem_Alignment, ToolStripMenuItem_AutoSizeMode });
+            ToolStripMenuItem_columnsMaintenance.DropDownItems.AddRange(new ToolStripItem[] { ToolStripMenuItem_Font, ToolStripMenuItem_Alignment, ToolStripMenuItem_AutoSizeMode });
             ToolStripMenuItem_columnsMaintenance.Name = "ToolStripMenuItem_columnsMaintenance";
             ToolStripMenuItem_columnsMaintenance.Size = new Size(256, 26);
             ToolStripMenuItem_columnsMaintenance.Text = "Columns Setting";
+            // 
+            // ToolStripMenuItem_Font
+            // 
+            ToolStripMenuItem_Font.BackColor = Color.LightGoldenrodYellow;
+            ToolStripMenuItem_Font.DropDownItems.AddRange(new ToolStripItem[] { boltRegularToolStripMenuItem });
+            ToolStripMenuItem_Font.Name = "ToolStripMenuItem_Font";
+            ToolStripMenuItem_Font.Size = new Size(185, 26);
+            ToolStripMenuItem_Font.Text = "Font / Style";
+            ToolStripMenuItem_Font.DropDownItemClicked += ToolStripMenuItem_Font_DropDownItemClicked;
+            ToolStripMenuItem_Font.Click += ToolStripMenuItem_Font_Click;
+            // 
+            // boltRegularToolStripMenuItem
+            // 
+            boltRegularToolStripMenuItem.BackColor = Color.LightGoldenrodYellow;
+            boltRegularToolStripMenuItem.Name = "boltRegularToolStripMenuItem";
+            boltRegularToolStripMenuItem.Size = new Size(180, 26);
+            boltRegularToolStripMenuItem.Text = "Bolt / Regular";
             // 
             // ToolStripMenuItem_Alignment
             // 
@@ -524,10 +547,10 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             ToolStripMenuItem_Tools.Size = new Size(129, 26);
             ToolStripMenuItem_Tools.Text = "Tools";
             // 
-            // ToolStripMenuItem_Proyects_References
+            // ToolStripMenuItem_Project_References
             // 
             ToolStripMenuItem_Project_References.BackColor = Color.LightGoldenrodYellow;
-            ToolStripMenuItem_Project_References.Name = "ToolStripMenuItem_Proyects_References";
+            ToolStripMenuItem_Project_References.Name = "ToolStripMenuItem_Project_References";
             ToolStripMenuItem_Project_References.Size = new Size(215, 26);
             ToolStripMenuItem_Project_References.Text = "Projects References";
             ToolStripMenuItem_Project_References.ToolTipText = "Open a dialog windows where can be fixed or add a references to any projects.";
@@ -601,7 +624,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             _bindingNavigator.Name = "_bindingNavigator";
             _bindingNavigator.Padding = new Padding(0, 0, 2, 0);
             _bindingNavigator.PositionItem = bindingNavigatorPositionItem;
-            _bindingNavigator.Size = new Size(1365, 28);
+            _bindingNavigator.Size = new Size(1213, 28);
             _bindingNavigator.TabIndex = 1;
             _bindingNavigator.Text = "bindingNavigator";
             // 
@@ -641,7 +664,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             bindingNavigatorPositionItem.AutoSize = false;
             bindingNavigatorPositionItem.Font = new Font("Segoe UI", 9F);
             bindingNavigatorPositionItem.Name = "bindingNavigatorPositionItem";
-            bindingNavigatorPositionItem.Size = new Size(73, 23);
+            bindingNavigatorPositionItem.Size = new Size(65, 23);
             bindingNavigatorPositionItem.Text = "0";
             bindingNavigatorPositionItem.ToolTipText = "Current position";
             // 
@@ -746,13 +769,13 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             ToolStripButton_print.Text = "&Print";
             ToolStripButton_print.Click += ToolStripButtonPrintClick;
             // 
-            // toolStripMenuItem_ExportToExcell
+            // toolStripMenuItem_ExportToExcel
             // 
             toolStripMenuItem_ExportToExcel.BackColor = Color.LightGoldenrodYellow;
             toolStripMenuItem_ExportToExcel.BackgroundImageLayout = ImageLayout.None;
-            toolStripMenuItem_ExportToExcel.Image = Properties.Resources.goldstar3;
-            toolStripMenuItem_ExportToExcel.Name = "toolStripMenuItem_ExportToExcell";
-            toolStripMenuItem_ExportToExcel.Size = new Size(223, 26);
+            toolStripMenuItem_ExportToExcel.Image = Resources.goldstar3;
+            toolStripMenuItem_ExportToExcel.Name = "toolStripMenuItem_ExportToExcel";
+            toolStripMenuItem_ExportToExcel.Size = new Size(225, 26);
             toolStripMenuItem_ExportToExcel.Text = "Export to Excel ...";
             toolStripMenuItem_ExportToExcel.TextAlign = ContentAlignment.MiddleLeft;
             toolStripMenuItem_ExportToExcel.TextImageRelation = TextImageRelation.Overlay;
@@ -761,17 +784,17 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             // toolStripMenuItemExportToCSV
             // 
             toolStripMenuItemExportToCSV.BackColor = Color.LightGoldenrodYellow;
-            toolStripMenuItemExportToCSV.Image = Properties.Resources.Document_CSV;
+            toolStripMenuItemExportToCSV.Image = Resources.Document_CSV;
             toolStripMenuItemExportToCSV.Name = "toolStripMenuItemExportToCSV";
-            toolStripMenuItemExportToCSV.Size = new Size(223, 26);
+            toolStripMenuItemExportToCSV.Size = new Size(225, 26);
             toolStripMenuItemExportToCSV.Text = "Export to CSV ...";
             // 
             // toolStripMenuItemExportToTXT
             // 
             toolStripMenuItemExportToTXT.BackColor = Color.LightGoldenrodYellow;
-            toolStripMenuItemExportToTXT.Image = Properties.Resources.Document_TXT;
+            toolStripMenuItemExportToTXT.Image = Resources.Document_TXT;
             toolStripMenuItemExportToTXT.Name = "toolStripMenuItemExportToTXT";
-            toolStripMenuItemExportToTXT.Size = new Size(223, 26);
+            toolStripMenuItemExportToTXT.Size = new Size(225, 26);
             toolStripMenuItemExportToTXT.Text = "Export to TXT ...";
             // 
             // toolStripMenuItemExportToWebPage
@@ -779,7 +802,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             toolStripMenuItemExportToWebPage.BackColor = Color.LightGoldenrodYellow;
             toolStripMenuItemExportToWebPage.Image = (Image)resources.GetObject("toolStripMenuItemExportToWebPage.Image");
             toolStripMenuItemExportToWebPage.Name = "toolStripMenuItemExportToWebPage";
-            toolStripMenuItemExportToWebPage.Size = new Size(223, 26);
+            toolStripMenuItemExportToWebPage.Size = new Size(225, 26);
             toolStripMenuItemExportToWebPage.Text = "Export to WebPage ...";
             // 
             // toolStripLabel1
@@ -854,12 +877,11 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             panel.Location = new Point(0, 0);
             panel.Margin = new Padding(0);
             panel.Name = "panel";
-            panel.Size = new Size(1365, 788);
+            panel.Size = new Size(1213, 600);
             panel.TabIndex = 3;
             // 
             // _dataGridView
             // 
-            _dataGridView.ActiveFilter = "";
             _dataGridView.AllowUserToAddRows = false;
             _dataGridView.AllowUserToDeleteRows = false;
             _dataGridView.AllowUserToOrderColumns = true;
@@ -867,28 +889,32 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             _dataGridView.BorderStyle = BorderStyle.None;
             _dataGridView.CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
             _dataGridView.ClipboardCopyMode = DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            _dataGridView.ColumnHeadersHeight = 30;
-            _dataGridView.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
+            dataGridViewCellStyle1.Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Bold, GraphicsUnit.Point, 161);
+            _dataGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             _dataGridView.ContextMenuStrip = _contextMenuStrip_DataGridView;
-            _dataGridView.CurrentColumnActive = null;
-            _dataGridView.CurrentDataGridViewRowMouseEnter = null;
-            _dataGridView.CurrentDataRowviewMouseEnter = null;
             _dataGridView.CurrentRowBackgroundColor = Color.DeepSkyBlue;
             _dataGridView.CurrentRowBorderColor = Color.DarkBlue;
-            _dataGridView.CurrentRowMouseEnterStatus = null;
+            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = SystemColors.Window;
+            dataGridViewCellStyle2.Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Regular, GraphicsUnit.Point, 161);
+            dataGridViewCellStyle2.ForeColor = SystemColors.ControlText;
+            dataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.False;
+            _dataGridView.DefaultCellStyle = dataGridViewCellStyle2;
             _dataGridView.DividerColor = Color.Red;
             _dataGridView.DividerHeight = 0;
             _dataGridView.Dock = DockStyle.Fill;
             _dataGridView.EditMode = DataGridViewEditMode.EditProgrammatically;
-            _dataGridView.LastColumnActive = null;
+            _dataGridView.Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Regular, GraphicsUnit.Point, 161);
             _dataGridView.Location = new Point(0, 28);
-            _dataGridView.Margin = new Padding(4, 5, 4, 5);
+            _dataGridView.Margin = new Padding(4);
             _dataGridView.Name = "_dataGridView";
             _dataGridView.RowHeadersWidth = 30;
             _dataGridView.SelectionBorderWidth = 3;
             _dataGridView.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             _dataGridView.ShowCellToolTips = false;
-            _dataGridView.Size = new Size(1365, 760);
+            _dataGridView.Size = new Size(1213, 572);
             _dataGridView.TabIndex = 3;
             // 
             // dataGridViewTextBoxColumn1
@@ -898,12 +924,12 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             // 
             // DataGridViewExtended
             // 
-            AutoScaleDimensions = new SizeF(9F, 21F);
+            AutoScaleDimensions = new SizeF(8F, 16F);
             AutoScaleMode = AutoScaleMode.Font;
             Controls.Add(panel);
-            Margin = new Padding(4, 5, 4, 5);
+            Margin = new Padding(4);
             Name = "DataGridViewExtended";
-            Size = new Size(1365, 788);
+            Size = new Size(1213, 600);
             _contextMenuStrip_DataGridView.ResumeLayout(false);
             _contextMenuStrip_DataGridView.PerformLayout();
             ((ISupportInitialize)_bindingNavigator).EndInit();
@@ -1018,15 +1044,20 @@ namespace StockRoom11net.Controls.DataGridViewExtend
 
         #endregion"designer"
 
-        private readonly System.Windows.Forms.Timer initialDelay;
+        private ITableEmployeeService _employeesService;
+        private EmployeeInformation.EmployeeInformation _currentEmployeeLogIn;
+
+        //TODO: To be remove, just for test the delay of initial loading of the control.
+        //private readonly System.Windows.Forms.Timer initialDelay;
 
         /// <summary>
-        /// The user setting name, we save control.Name + _dataGridView.DataMember.
+        /// The user setting name, we save _dataGridView.Name + _dataGridView.DataMember.
         /// We saved the datasource name because in some cases,
         /// the same dataGridView manipulates different dataSources.
         /// </summary>
         private string userSettingName = "";
-                
+        private ToolStripMenuItem ToolStripMenuItem_Font;
+        private ToolStripMenuItem boltRegularToolStripMenuItem;
         bool _isMouseDrivenEvent;
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         /// <summary>
@@ -1126,14 +1157,10 @@ namespace StockRoom11net.Controls.DataGridViewExtend
         /// </summary>
         int _rowIndexBindingSource;
 
-
         /// <summary>
         /// Gets a value indicating whether the currently active cell is being edited.
         /// </summary>
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        /// <summary>
-        /// Gets a value indicating whether the currently active cell is being edited.
-        /// </summary>
         public bool IsCurrentCellInEditMode
         {
             get
@@ -1183,11 +1210,6 @@ namespace StockRoom11net.Controls.DataGridViewExtend
         /// Mouse over column header this will be null.
         /// </summary>
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        /// <summary>
-        /// Current row ( DataGridViewRow ) where mouse is over, it's update in CellMouseEnter.
-        /// The DataGridView have not RowMouseEnter, so we use CellMouseEnter.
-        /// Mouse over column header this will be null.
-        /// </summary>
         public DataGridViewRow CurrentDataGridViewRowMouseOver
         {
             get
@@ -1204,11 +1226,6 @@ namespace StockRoom11net.Controls.DataGridViewExtend
         /// Mouse over column header this will be null.
         /// </summary>
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        /// <summary>
-        /// Current row ( DataRowView ) where mouse is over, it's update in CellMouseEnter.
-        /// The DataGridView have not RowMouseEnter, so we use CellMouseEnter.
-        /// Mouse over column header this will be null.
-        /// </summary>
         public DataRowView CurrentDataRowViewMouseOver
         {
             get
@@ -1294,27 +1311,27 @@ namespace StockRoom11net.Controls.DataGridViewExtend
 
                 foreach (var column in columnsList)
                 {
-                    if (!_dataGridView.Columns.Contains(column.Name))
+                    DataGridViewColumn dgvColumn = _dataGridView.Columns[column.Name];
+                    if (dgvColumn == null)
                         continue;
 
                     #region"Column Visible"                        
 
                     if (!column.VisibleSystemSetting)
-
                     {
-                        _dataGridView.Columns[column.Name].Visible = false;
+                        dgvColumn.Visible = false;
                         continue;
                     }
                     else
                     {
                         if (column.Visible)
-                            _dataGridView.Columns[column.Name].Visible = true;
+                            dgvColumn.Visible = true;
                         else
                         {
                             if (!ToolStripMenuItem_Columns.DropDownItems.Contains(toolStripMenuItem_Show_all_hide))
                                 ToolStripMenuItem_Columns.DropDownItems.Add(toolStripMenuItem_Show_all_hide);
 
-                            HideThisColumn(_dataGridView.Columns[column.Name]);
+                            HideThisColumn(dgvColumn);
                         }
                     }
 
@@ -1325,12 +1342,17 @@ namespace StockRoom11net.Controls.DataGridViewExtend
                     if (column.onlyShow)
                         continue;
 
-                    if (column.DisplayIndex < _dataGridView.Columns.Count)
-                        _dataGridView.Columns[column.Name].DisplayIndex = column.DisplayIndex;
                     if (column.Name.Contains("RowHeaderColumn"))
+                    {
                         _dataGridView.RowHeadersWidth = column.Width;
+                    }
                     else
-                        _dataGridView.Columns[column.Name].Width = column.Width;
+                    {
+                        if (column.DisplayIndex < _dataGridView.Columns.Count)
+                            dgvColumn.DisplayIndex = column.DisplayIndex;
+
+                        dgvColumn.Width = column.Width;
+                    }
 
                     #endregion"Column Width"
 
@@ -1351,8 +1373,8 @@ namespace StockRoom11net.Controls.DataGridViewExtend
 
                     #endregion"Column Edit"
 
-                    _dataGridView.Columns[column.Name].HeaderCell.Style.Alignment = column.Alignment;
-                    _dataGridView.Columns[column.Name].DefaultCellStyle.Alignment = column.Alignment;
+                    dgvColumn.HeaderCell.Style.Alignment = column.Alignment;
+                    dgvColumn.DefaultCellStyle.Alignment = column.Alignment;
                 }
 
                 _dataGridView.ResumeLayout();
@@ -1371,14 +1393,17 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             timerColumnsNotReady = new System.Threading.Timer(new TimerCallback(DoSomething), null, _firstInterval, 1000);
         }
 
-        void DoSomething(object obj)
+        void DoSomething(object? obj)
         {
             //it executes a second
             StopThreadTimer();
 
+            if (IsDisposed || !IsHandleCreated)
+                return;
+
             if (InvokeRequired)
             {
-                Invoke(new EventHandler(delegate (object o, EventArgs e)
+                Invoke(new EventHandler(delegate (object? o, EventArgs e)
                 {
                     //Do your work here.
                     SettingColumns = _settingColumns;
@@ -1409,10 +1434,6 @@ namespace StockRoom11net.Controls.DataGridViewExtend
         /// Get a collection that contains all the columns in the control.
         /// </summary>
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-
-        /// <summary>
-        /// Get a collection that contains all the columns in the control.
-        /// </summary>
         public DataGridViewColumnCollection ColumnsCollection
         {
             get
@@ -1486,9 +1507,6 @@ namespace StockRoom11net.Controls.DataGridViewExtend
         /// Enable or disable the bindingNavigator option to add a new item.
         /// </summary>
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        /// <summary>
-        /// Enable or disable the bindingNavigator option to add a new item.
-        /// </summary>
         public bool BindingNavigatorAddNewItemEnable
         {
             get
@@ -1505,9 +1523,6 @@ namespace StockRoom11net.Controls.DataGridViewExtend
         /// Enable or disable the bindingNavigator option to delete a item.
         /// </summary>
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        /// <summary>
-        /// Enable or disable the bindingNavigator option to delete a item.
-        /// </summary>
         public bool BindingNavigatorDeleteItemEnable
         {
             get
@@ -1734,7 +1749,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
                     MessageDebugPosition = "BindingSourceValidating<T>";
                     bool isBindingSourceGeneric = value.GetType().IsGenericType;
 
-                    if(!isBindingSourceGeneric)
+                    if (!isBindingSourceGeneric)
                         return;
 
                     bool isBindingSource = value.GetType().GetGenericTypeDefinition() == typeof(BindingSourceValidating<>);
@@ -2131,10 +2146,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
                 // Only process this call one time.
                 if (!_bindingCompleted)
                     _bindingCompleted = value;
-
             }
-
-
         }
 
         bool _needSaveData;
@@ -2171,9 +2183,6 @@ namespace StockRoom11net.Controls.DataGridViewExtend
 
         #endregion
 
-
-
-
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public CurrentStatus CurrentRowMouseOverStatus
 
@@ -2186,13 +2195,12 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             set { }
         }
 
-
         #endregion"Properties, Custom Control Properties"
 
         #region"Events, Custom Controls Events with custom Args.*********************"
 
         #region"PreviewKeyDown"        
-        public delegate void PreviewKeyDownEventHandler(object sender, PreviewKeyDownEventArgs e);
+        public delegate void PreviewKeyDownEventHandler(object? sender, PreviewKeyDownEventArgs e);
 
         [Category("Controls Events")]
         [Description("PreviewKeyDown event has changed")]
@@ -2205,7 +2213,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
         #endregion"PreviewKeyDown"
 
         #region"KeyUp"        
-        public delegate void KeyUpEventHandler(object sender, KeyEventArgs e);
+        public delegate void KeyUpEventHandler(object? sender, KeyEventArgs e);
 
         [Category("Controls Events")]
         [Description("KeyUp event has changed")]
@@ -2218,7 +2226,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
         #endregion"KeyDown"
 
         #region"KeyPress"        
-        public delegate void KeyPressEventHandler(object sender, KeyPressEventArgs e);
+        public delegate void KeyPressEventHandler(object? sender, KeyPressEventArgs e);
 
         [Category("Controls Events")]
         [Description("KeyPress event has changed")]
@@ -2231,7 +2239,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
         #endregion"KeyPress"
 
         #region"KeyDown"        
-        public delegate void KeyDownEventHandler(object sender, KeyEventArgs e);
+        public delegate void KeyDownEventHandler(object? sender, KeyEventArgs e);
 
         [Category("Controls Events")]
         [Description("KeyDown event has changed")]
@@ -2246,7 +2254,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
         #region"DataGridViewMouseEnter"
         // # 1 ... ***** New Event Declaration. *****
         // Declare the delegates for this event:
-        public delegate void DataGridViewMouseEnterEventHandler(object sender, DataGridViewMouseEnterEventArgs e);
+        public delegate void DataGridViewMouseEnterEventHandler(object? sender, DataGridViewMouseEnterEventArgs e);
 
         // # 3 ... Declare the event in the control class
         // put some information to Properties Manager.
@@ -2265,7 +2273,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
         #region"DataGridViewMouseDown"
         // # 1 ... ***** New Event Declaration. *****
         // Declare the delegates for this event:
-        public delegate void DataGridViewMouseDownEventHandler(object sender, DataGridViewMouseDownEventArgs e);
+        public delegate void DataGridViewMouseDownEventHandler(object? sender, DataGridViewMouseDownEventArgs e);
 
         // # 3 ... Declare the event in the control class
         // put some information to Properties Manager.
@@ -2284,7 +2292,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
         #region"CellMouseEnter"
         // # 1 ... ***** New Event Declaration. *****
         // Declare the delegates for this event:
-        public delegate void CellMouseEnterEventHandler(object sender, DataGridViewCellEventArgs e);
+        public delegate void CellMouseEnterEventHandler(object? sender, DataGridViewCellEventArgs e);
 
         // # 3 ... Declare the event in the control class
         // put some information to Properties Manager.
@@ -2304,7 +2312,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
         #region"CellBegingEdit"
         // # 1 ... ***** New Event Declaration. *****
         // Declare the delegates for this event:
-        public delegate void CellBegingEditEventHandler(object sender, DataGridViewCellCancelEventArgs e);
+        public delegate void CellBegingEditEventHandler(object? sender, DataGridViewCellCancelEventArgs e);
 
         // # 3 ... Declare the event in the control class
         // put some information to Properties Manager.
@@ -2323,7 +2331,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
         #region"CellEndEdit"
         // # 1 ... ***** New Event Declaration. *****
         // Declare the delegates for this event:
-        public delegate void CellEndEditEventHandler(object sender, DataGridViewCellEventArgs e);
+        public delegate void CellEndEditEventHandler(object? sender, DataGridViewCellEventArgs e);
 
         // # 3 ... Declare the event in the control class
         // put some information to Properties Manager.
@@ -2342,7 +2350,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
         #region"CellClick"
         // # 1 ... ***** New Event Declaration. *****
         // Declare the delegates for this event:
-        public delegate void CellClickEventHandler(object sender, CellClick_EventArgs e);
+        public delegate void CellClickEventHandler(object? sender, CellClick_EventArgs e);
 
         // # 3 ... Declare the event in the control class
         // put some information to Properties Manager.
@@ -2361,7 +2369,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
         #region"CellDoubleClick"
         // # 1 ... ***** New Event Declaration. *****
         // Declare the delegates for this event:
-        public delegate void CellDoubleClickEventHandler(object sender, CellDoubleClick_EventArgs e);
+        public delegate void CellDoubleClickEventHandler(object? sender, CellDoubleClick_EventArgs e);
 
         // # 3 ... Declare the event in the control class
         // put some information to Properties Manager.
@@ -2380,7 +2388,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
         #region"ColumnHeaderMouseClick"
         // # 1 ... ***** New Event Declaration. *****
         // Declare the delegates for this event:
-        public delegate void ColumnHeaderMouseClickEventHandler(object sender, DataGridViewCellMouseEventArgs e);
+        public delegate void ColumnHeaderMouseClickEventHandler(object? sender, DataGridViewCellMouseEventArgs e);
 
         // # 3 ... Declare the event in the control class
         // put some information to Properties Manager.
@@ -2400,7 +2408,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
 
         // # 1 ... ***** New Event Declaration. *****
         // Declare the delegates for this event:
-        public delegate void DataGridViewSortEventHandler(object sender, DataGridViewSort_EventArgs e);
+        public delegate void DataGridViewSortEventHandler(object? sender, DataGridViewSort_EventArgs e);
 
         // # 3 ... Declare the event in the control class
         // put some information to Properties Manager.
@@ -2420,7 +2428,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
         #region"CurrentRowActivesEvent"
         // # 1 ... ***** New Event Declaration. *****
         // Declare the delegates for this event:
-        public delegate void CurrentRowActiveEventHandler(object sender, CurrentRowActive_EventArgs e);
+        public delegate void CurrentRowActiveEventHandler(object? sender, CurrentRowActive_EventArgs e);
 
         // # 3 ... Declare the event in the control class
         // put some information to Properties Manager.
@@ -2439,7 +2447,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
         #region"UserDeletingRow"
         // # 1 ... ***** New Event Declaration. *****
         // Declare the delegates for this event:
-        public delegate void UserDeletingRowEventHandler(object sender, DataGridViewRowCancelEventArgs e);
+        public delegate void UserDeletingRowEventHandler(object? sender, DataGridViewRowCancelEventArgs e);
 
         // # 3 ... Declare the event in the control class
         // put some information to Properties Manager.
@@ -2458,7 +2466,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
         #region"UserDeletedRow"
         // # 1 ... ***** New Event Declaration. *****
         // Declare the delegates for this event:
-        public delegate void UserDeletedRowEventHandler(object sender, DataGridViewRowEventArgs e);
+        public delegate void UserDeletedRowEventHandler(object? sender, DataGridViewRowEventArgs e);
 
         // # 3 ... Declare the event in the control class
         // put some information to Properties Manager.
@@ -2501,7 +2509,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
 
         // # 2 ... ***** New Event Declaration. *****
         // Declare the delegates for this event:
-        public delegate void StatusBarMessageEventHandler(object sender, StatusBarMessage_EventArgs e);
+        public delegate void StatusBarMessageEventHandler(object? sender, StatusBarMessage_EventArgs e);
 
         // # 4 ... Declare the protected virtual methods for
         // this events, in this procedure we calling the event itself.
@@ -2515,7 +2523,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
         #region"RowsAdded"
         // # 1 ... ***** New Event Declaration. *****
         // Declare the delegates for this event:
-        public delegate void RowsAddedEventHandler(object sender, DataGridViewRowsAddedEventArgs e);
+        public delegate void RowsAddedEventHandler(object? sender, DataGridViewRowsAddedEventArgs e);
 
         // # 3 ... Declare the event in the control class
         // put some information to Properties Manager.
@@ -2534,7 +2542,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
         #region"RowsRemoved"
         // # 1 ... ***** New Event Declaration. *****
         // Declare the delegates for this event:
-        public delegate void RowsRemovedEventHandler(object sender, DataGridViewRowsRemovedEventArgs e);
+        public delegate void RowsRemovedEventHandler(object? sender, DataGridViewRowsRemovedEventArgs e);
 
         // # 3 ... Declare the event in the control class
         // put some information to Properties Manager.
@@ -2553,7 +2561,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
         #region"RowsMouseEnter"
         // # 1 ... ***** New Event Declaration. *****
         // Declare the delegates for this event:
-        public delegate void RowsMouseEnterEventHandler(object sender, CurrentRowMouseEnterEventArgs e);
+        public delegate void RowsMouseEnterEventHandler(object? sender, CurrentRowMouseEnterEventArgs e);
 
         // # 3 ... Declare the event in the control class
         // put some information to Properties Manager.
@@ -2572,7 +2580,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
         #region"Find_Remplace"
         // # 1 ... ***** New Event Declaration. *****
         // Declare the delegates for this event:
-        public delegate void FindRemplaceEventHandler(object sender, FindRemplaceEventArgs e);
+        public delegate void FindRemplaceEventHandler(object? sender, FindRemplaceEventArgs e);
 
         // # 2 ... Define and provide implementations for EventArgs
         // Declare the constructor and properties of custom Arg.
@@ -2652,7 +2660,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
         #region"Save_Setting"
         // # 1 ... ***** New Event Declaration. *****
         // Declare the delegates for this event:
-        public delegate void SaveSettingEventHandler(object sender, SaveSettingEventArgs e);
+        public delegate void SaveSettingEventHandler(object? sender, SaveSettingEventArgs e);
 
         // # 3 ... Declare the event in the control class
         // put some information to Properties Manager.
@@ -2671,7 +2679,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
         #region"Save_Requested"
         // # 1 ... ***** New Event Declaration. *****
         // Declare the delegates for this event:
-        public delegate void SaveRequestedEventHandler(object sender, Save_Requested_EventArgs e);
+        public delegate void SaveRequestedEventHandler(object? sender, Save_Requested_EventArgs e);
 
         // # 3 ... Declare the event in the control class
         // put some information to Properties Manager.
@@ -2690,7 +2698,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
         #region"Need_SaveData"
         // # 1 ... ***** New Event Declaration. *****
         // Declare the delegates for this event:
-        public delegate void NeedSaveDataEventHandler(object sender, Need_SaveData_EventArgs e);
+        public delegate void NeedSaveDataEventHandler(object? sender, Need_SaveData_EventArgs e);
 
         // # 3 ... Declare the event in the control class
         // put some information to Properties Manager.
@@ -2710,7 +2718,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
         #region"Refresh_Requested"
         // # 1 ... ***** New Event Declaration. *****
         // Declare the delegates for this event:
-        public delegate void RefreshRequestedEventHandler(object sender, Refresh_Requested_EventArgs e);
+        public delegate void RefreshRequestedEventHandler(object? sender, Refresh_Requested_EventArgs e);
 
         // # 3 ... Declare the event in the control class
         // put some information to Properties Manager.
@@ -2729,7 +2737,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
         #region"BindingNavigatorAddNewItemClick"
         // # 1 ... ***** New Event Declaration. *****
         // Declare the delegates for this event:
-        public delegate void BindingNavigatorAddNewItemEventHandler(object sender, EventArgs e);
+        public delegate void BindingNavigatorAddNewItemEventHandler(object? sender, EventArgs e);
 
         // # 3 ... Declare the event in the control class
         // put some information to Properties Manager.
@@ -2748,7 +2756,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
         #region"AddNote"
         // # 1 ... ***** New Event Declaration. *****
         // Declare the delegates for this event:
-        public delegate void AddNoteEventHandler(object sender, EventArgs e);
+        public delegate void AddNoteEventHandler(object? sender, EventArgs e);
 
         // # 3 ... Declare the event in the control class
         // put some information to Properties Manager.
@@ -2767,7 +2775,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
         #region"EditNote"
         // # 1 ... ***** New Event Declaration. *****
         // Declare the delegates for this event:
-        public delegate void EditNoteEventHandler(object sender, EventArgs e);
+        public delegate void EditNoteEventHandler(object? sender, EventArgs e);
 
         // # 3 ... Declare the event in the control class
         // put some information to Properties Manager.
@@ -2786,7 +2794,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
         #region"ContextMenuStrip ItemClicked"
         // # 1 ... ***** New Event Declaration. *****
         // Declare the delegates for this event:
-        public delegate void ContextMenuStripItemClickedEventHandler(object sender, EventArgs e);
+        public delegate void ContextMenuStripItemClickedEventHandler(object? sender, EventArgs e);
 
         // # 3 ... Declare the event in the control class
         // put some information to Properties Manager.
@@ -2796,7 +2804,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
 
         // # 4 ... Declare the protected virtual methods for
         // this events, in this procedure we calling the event itself.
-        void ToolStripMenuItem_Pr_Click(object sender, EventArgs e)
+        void ToolStripMenuItem_Pr_Click(object? sender, EventArgs e)
         {
             ContextMenuStripItemClicked?.Invoke(this, e);
         }
@@ -2806,7 +2814,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
         #region"ContextMenuStrip Opening"
         // # 1 ... ***** New Event Declaration. *****
         // Declare the delegates for this event:
-        public delegate void ContextMenuStripItemOpeningEventHandler(object sender, ContextMenuStrip e);
+        public delegate void ContextMenuStripItemOpeningEventHandler(object? sender, ContextMenuStrip e);
 
         // # 3 ... Declare the event in the control class
         // put some information to Properties Manager.
@@ -2826,7 +2834,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
         #region"PrintCompLabel"
         // # 1 ... ***** New Event Declaration. *****
         // Declare the delegates for this event:
-        public delegate void ContextMenuStripPrintCompLabelEventHandler(object sender, EventArgs e);
+        public delegate void ContextMenuStripPrintCompLabelEventHandler(object? sender, EventArgs e);
 
         // # 3 ... Declare the event in the control class
         // put some information to Properties Manager.
@@ -2836,7 +2844,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
 
         // # 4 ... Declare the protected virtual methods for
         // this events, in this procedure we calling the event itself.
-        void ToolStripMenuItem_PrintCompLabel_Click(object sender, EventArgs e)
+        void ToolStripMenuItem_PrintCompLabel_Click(object? sender, EventArgs e)
         {
             ContextMenuStripPrintCompLabel?.Invoke(this, e);
         }
@@ -2854,50 +2862,73 @@ namespace StockRoom11net.Controls.DataGridViewExtend
         EditMode _employeeEditMode = EditMode.View;
         EnableSetting EmployeeEnableTreeViewSetting = EnableSetting.False;
 
-        Employee _currentEmployeesLogIn;
+        /// <summary>
+        /// We pass the EmployeeService to this control, to be able to process the current employee information
+        /// at initialization time, the control need to know the current employee information to apply the correct
+        /// setting for this employee, and also to be able to update the control setting when the employee log in change.
+        /// </summary>
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public ITableEmployeeService EmployeesService
+        {
+            set
+            {
+                if (value == null)
+                    return;
+
+                _employeesService = value;
+                CurrentEmployeeLogIn = _employeesService.CurrentEmployeeLogIn;
+                _employeesService.CurrentEmployeeLogInChanged += EmployeesService_CurrentEmployeeLogInChanged;
+            }
+        }
+
+        void EmployeesService_CurrentEmployeeLogInChanged(object? sender, EmployeeInformation.EmployeeInformation e)
+        {
+            CurrentEmployeeLogIn = e;
+        }
+
         /// <summary>
         /// Process current employee information.
         /// </summary>
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        /// <summary>
-        /// Process current employee information.
-        /// </summary>
-        public Employee CurrentEmployeesLogIn
+        private EmployeeInformation.EmployeeInformation CurrentEmployeeLogIn
         {
             get
             {
-                return _currentEmployeesLogIn;
+                return _currentEmployeeLogIn;
             }
             set
             {
                 if (value == null)
                     return;
 
-                _currentEmployeesLogIn = value;
+                _currentEmployeeLogIn = value;
 
-                _employeeName = _currentEmployeesLogIn.Name;
-                _employeeLastName = _currentEmployeesLogIn.LastName;
-                _employeeEditMode = _currentEmployeesLogIn.EmployeeEditMode;
-                _employeeAccessLevel = _currentEmployeesLogIn.EmployeeAccessLevel;
-                EmployeeEnableTreeViewSetting = _currentEmployeesLogIn.EmployeeEnableTreeViewSetting;
+                _employeeName = _currentEmployeeLogIn.Name;
+                _employeeLastName = _currentEmployeeLogIn.LastName;
+                _employeeEditMode = _currentEmployeeLogIn.EmployeeEditMode;
+                _employeeAccessLevel = _currentEmployeeLogIn.EmployeeAccessLevel;
+                EmployeeEnableTreeViewSetting = _currentEmployeeLogIn.EmployeeEnableTreeViewSetting;
 
                 CustomEdit = _employeeEditMode;
 
-                _dataGridView.AutoSizeColumnsMode = _currentEmployeesLogIn.AutoSizeColumnsMode;
+                _dataGridView.AutoSizeColumnsMode = _currentEmployeeLogIn.AutoSizeColumnsMode;
 
                 LoadDataGridViewColumnsSetting();
             }
         }
 
+        /// <summary>
+        /// Load the setting for the datagridview columns, this setting is saved per employee, so when the employee log in,
+        /// the control will load the setting for this employee, and apply it to the datagridview based on the datagridview
+        /// name and datasource name, this is because in some cases, the same datagridview manipulates different datasource,
+        /// so we need to save the setting based on the datagridview name and datasource name per employee.
+        /// </summary>
         void LoadDataGridViewColumnsSetting()
         {
-            if (_currentEmployeesLogIn == null)
-                return;
-
-            if (_currentEmployeesLogIn.ContainsDataGridViewColumnsSettingList(userSettingName))
+            if (_currentEmployeeLogIn.ContainsDataGridViewColumnsSettingList(userSettingName))
             {
                 _dataGridView._needSaveSetting = false;
-                List<ColumnSetting> columnsSetting = _currentEmployeesLogIn.ColumnSettingList(userSettingName);
+                List<ColumnSetting> columnsSetting = _currentEmployeeLogIn.ColumnSettingList(userSettingName);
 
                 if (columnsSetting != null)
                     SettingColumns = columnsSetting;
@@ -2930,7 +2961,6 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             }
         }
 
-
         public DataGridViewExtended()
         {
             try
@@ -2938,33 +2968,32 @@ namespace StockRoom11net.Controls.DataGridViewExtend
                 MessageDebugPosition = "InitializeComp..";
                 InitializeComponent();
 
+                /*
                 MessageDebugPosition = "Initialize initialDelay timer..";
                 initialDelay = new System.Windows.Forms.Timer
                 {
-                    Interval = 2500
+                    Interval = 100
                 };
                 initialDelay.Tick += new EventHandler(InitialDelay_Tick);
                 initialDelay.Start();
+                */
 
                 MessageDebugPosition = "ColumnFilterIndicator..";
-                _dataGridView.ColumnFilterIndicator = Resources.Filtering;
-                _dataGridView.ColumnClearFilterIndicator = Resources.FilterClearing;
+                //_dataGridView.ColumnFilterIndicator = Resources.Filtering;
+                //_dataGridView.ColumnClearFilterIndicator = Resources.FilterClearing;
                 _dataGridView.DataSourceChanged += _dataGridView_DataSourceChanged;
 
-                _bindingSource.RaiseListChangedEvents = true;
-                _bindingSource.ListChanged += BindingSourceListChanged;
-                _bindingSource.PositionChanged += BindingSourcePositionChanged;
-                _bindingSource.CurrentChanged += BindingSourceCurrentChanged;
-                _bindingSource.CurrentItemChanged += BindingSourceCurrentItemChanged;
-                _bindingSource.ResetBindings(true);
-
                 MessageDebugPosition = "toolStripMenuItem..";
-                toolStripMenuItemExportToCSV.Click += new EventHandler(toolStripMenuItemExportToCSV_Click);
-                toolStripMenuItemExportToTXT.Click += new EventHandler(toolStripMenuItemExportToTXT_Click);
-                toolStripMenuItemExportToWebPage.Click += new EventHandler(toolStripMenuItemExportToWebPage_Click);
+                toolStripMenuItemExportToCSV.Click += new EventHandler(ToolStripMenuItemExportToCSV_Click);
+                toolStripMenuItemExportToTXT.Click += new EventHandler(ToolStripMenuItemExportToTXT_Click);
+                toolStripMenuItemExportToWebPage.Click += new EventHandler(ToolStripMenuItemExportToWebPage_Click);
 
                 _bindingNavigator.BindingSource = _bindingSource;
                 bindingNavigatorDeleteItem.Tag = false;
+
+                DataGridViewInitialize();
+                CurrentRowStatus = new CurrentStatus(_dataGridView.CurrentRowActived);
+                InitializeDataGridViewEventHandler();
 
                 MessageDebugPosition = "InitializeContextMenu..";
                 InitializeContextMenu();
@@ -2992,10 +3021,14 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             // which would leave SortMode stuck after the timer fires.
             _dataGridView.ClearSelectedColumns();
 
+            // We need to check if the current employee has setting for this new datasource,
+            // Setting are saved _dataGridView.Name + _dataGridView.DataMember. We saved the datasource name
+            // because in some cases, the same dataGridView manipulates different dataSources.
             LoadDataGridViewColumnsSetting();
         }
 
-        void InitialDelay_Tick(object sender, EventArgs e)
+        /*
+        void InitialDelay_Tick(object? sender, EventArgs e)
         {
             initialDelay.Stop();
 
@@ -3006,34 +3039,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
 
             InitializeDataGridViewEventHandler();
         }
-
-
-        void BindingSourceCurrentItemChanged(object sender, EventArgs e)
-        {
-            if (_bindingSource.Position == 0)
-                return;
-        }
-
-        void BindingSourceCurrentChanged(object sender, EventArgs e)
-        {
-            if (_bindingSource.Position == 0)
-                return;
-        }
-
-        void BindingSourcePositionChanged(object sender, EventArgs e)
-        {
-            if (_bindingSource.Position == 0)
-                return;
-        }
-
-        void BindingSourceListChanged(object sender, ListChangedEventArgs e)
-        {
-            if (e.ListChangedType == ListChangedType.ItemAdded)
-                return;
-
-            //_dataGridView.Refresh();
-        }
-
+        */
 
         #region"DataGridView Method"
 
@@ -3041,44 +3047,62 @@ namespace StockRoom11net.Controls.DataGridViewExtend
         /// The idea here is, when selecting rows in the datagridview is changing to faster, all
         /// process associated also will be ejected to fast, it tend to freeze the interface... 
         /// </summary>
-        System.Windows.Forms.Timer delaySelectionChanged = new System.Windows.Forms.Timer();
+        //private readonly System.Windows.Forms.Timer delaySelectionChanged = new System.Windows.Forms.Timer();
 
-        //   DataGridViewCellStyle dataGridViewCellStyleSelectedRow = new DataGridViewCellStyle();
-        //   DataGridViewCellStyle dataGridViewCellStyle = new DataGridViewCellStyle();
+        public DataGridViewCellStyle _dataGridViewCellStyleSelectedRow = new DataGridViewCellStyle();
+        public DataGridViewCellStyle _dataGridViewCellStyle = new DataGridViewCellStyle();
+        public DataGridViewCellStyle _dataGridViewColumnHeaderCellStyle = new DataGridViewCellStyle();
+
+        /// <summary>
+        /// Extra space + font height, to set the row height when we change the font size.
+        /// </summary>
+        public int _rowHeightAdd = 4;
+
+        /// <summary>
+        /// Extra space + font height, to set the row height when we change the font size for selected rows.
+        /// </summary>
+        public int _rowHeightSelectedAdd = 10;
+
         void DataGridViewInitialize()
         {
-            //We need call this handle to initialized.
-            //var X = Handle;
             _dataGridView.AllowUserToAddRows = false;
             _dataGridView.AllowUserToDeleteRows = false;
 
             _dataGridView.ReadOnly = true;
             _dataGridView.TopLeftHeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleRight;
-            //     dataGridViewCellStyle.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 161);
-            //     dataGridViewCellStyleSelectedRow.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point, 161);
+
+            _dataGridViewCellStyle.Font = new Font("Segoe UI", 10F, FontStyle.Regular, GraphicsUnit.Point, 161);
+            _dataGridViewCellStyleSelectedRow.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point, 161);
+            _dataGridViewColumnHeaderCellStyle.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point, 161);
+
+            _dataGridView.DataGridViewCellStyle = _dataGridViewCellStyle;
+            _dataGridView.SelectedRowsDefaultCellStyle = _dataGridViewCellStyleSelectedRow;
+            _dataGridView.DataGridViewColumnHeaderCellStyle = _dataGridViewColumnHeaderCellStyle;
 
             InitializeSaveUserSettingTimer();
 
             // Set the contextMenuStrip.
             _dataGridView.ContextMenuStrip = _contextMenuStrip_DataGridView;
 
-            //	_dataGridView.DataSource = _bindingSource;
-
+            /*
             delaySelectionChanged.Interval = 10;
             delaySelectionChanged.Tick += DelaySelectionChanged_Tick;
+            */
         }
 
-        void DelaySelectionChanged_Tick(object sender, EventArgs e)
+        /*
+        void DelaySelectionChanged_Tick(object? sender, EventArgs e)
         {
             delaySelectionChanged.Stop();
             DataGridViewSelectionChanged();
         }
+        */
 
         void InitializeDataGridViewEventHandler()
         {
             _dataGridView.DataError += _dataGridView_DataError;
             _dataGridView.Sorted += DataGridViewSorted;
-            _dataGridView.SelectionChanged += (o, i) => { delaySelectionChanged.Start(); };
+            _dataGridView.SelectionChanged += (o, i) => { DataGridViewSelectionChanged(); };
             _dataGridView.AutoSizeColumnsModeChanged += DataGridViewAutoSizeColumnsModeChanged;
             _dataGridView.StatusBarMessage += DataGridView_StatusBarMessage;
 
@@ -3091,10 +3115,9 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             _dataGridView.MouseEnter += DataGridViewMouseEnter;
             _dataGridView.MouseDown += DataGridViewMouseDown;
             _dataGridView.MouseUp += DataGridViewMouseUp;
+            _dataGridView.MouseWheel += DataGridViewMouseWheel;
 
             _dataGridView.DragLeave += DataGridView_DragLeave;
-
-
 
             _dataGridView.CellClick += DataGridViewCellClick;
             _dataGridView.CellDoubleClick += DataGridViewCellDoubleClick;
@@ -3102,7 +3125,6 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             _dataGridView.CellBeginEdit += DataGridViewCellBeginEdit;
             _dataGridView.CellEndEdit += DataGridViewCellEndEdit;
             _dataGridView.CellValueChanged += DataGridView_CellValueChanged;
-            _dataGridView.CellsMouseEnter += DataGridView_CellsMouseEnter;
 
             _dataGridView.RowsAdded += DataGridView_RowsAdded;
             _dataGridView.RowsRemoved += DataGridView_RowsRemoved;
@@ -3125,48 +3147,44 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             _dataGridView.Disposed += DataGridView_Disposed;
         }
 
-        void DataGridView_DragLeave(object sender, EventArgs e)
+
+        void DataGridView_DragLeave(object? sender, EventArgs e)
         {
 
         }
 
-        void DataGridView_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
+        void DataGridView_PreviewKeyDown(object? sender, PreviewKeyDownEventArgs e)
         {
             OnPreviewKeyDownEvent(e);
         }
 
-        void DataGridView_KeyUp(object sender, KeyEventArgs e)
+        void DataGridView_KeyUp(object? sender, KeyEventArgs e)
         {
             OnKeyUpEvent(e);
         }
 
-        void DataGridView_KeyPress(object sender, KeyPressEventArgs e)
+        void DataGridView_KeyPress(object? sender, KeyPressEventArgs e)
         {
             OnKeyPressEvent(e);
         }
 
-        void DataGridView_KeyDown(object sender, KeyEventArgs e)
+        void DataGridView_KeyDown(object? sender, KeyEventArgs e)
         {
             OnKeyDownEvent(e);
         }
 
-        void DataGridView_CellsMouseEnter(object sender, DataGridViewCellEventArgs e)
-        {
-            OnCellMouseEnter(e);
-        }
-
-        void DataGridView_Disposed(object sender, EventArgs e)
+        void DataGridView_Disposed(object? sender, EventArgs e)
         {
             SaveUserSettingTimer.Stop();
             SaveUserSettingTimer.Dispose();
         }
 
-        void DataGridView_StatusBarMessage(object sender, StatusBarMessage_EventArgs e)
+        void DataGridView_StatusBarMessage(object? sender, StatusBarMessage_EventArgs e)
         {
             On_StatusBarMessage(e);
         }
 
-        void DataGridView_TopLeftHeaderMouseUp(object sender, EventArgs e)
+        void DataGridView_TopLeftHeaderMouseUp(object? sender, EventArgs e)
         {
             if (_dataGridView.IsColumnResizeInternalType())
                 return;
@@ -3174,7 +3192,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             _dataGridView.MultiSelect = true;
         }
 
-        void DataGridView_TopLeftHeaderMouseDown(object sender, EventArgs e)
+        void DataGridView_TopLeftHeaderMouseDown(object? sender, EventArgs e)
         {
             if (_dataGridView.IsColumnResizeInternalType())
                 return;
@@ -3184,7 +3202,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
         }
 
         int countError = 0;
-        void _dataGridView_DataError(object sender, DataGridViewDataErrorEventArgs e)
+        void _dataGridView_DataError(object? sender, DataGridViewDataErrorEventArgs e)
         {
             if (countError == 0)
             {
@@ -3213,12 +3231,12 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             }
         }
 
-        void DataGridView_RowsMouseEnter(object sender, CurrentRowMouseEnterEventArgs e)
+        void DataGridView_RowsMouseEnter(object? sender, CurrentRowMouseEnterEventArgs e)
         {
             OnRowsMouseEnter(e);
         }
 
-        void DataGridViewMouseEnter(object sender, EventArgs e)
+        void DataGridViewMouseEnter(object? sender, EventArgs e)
         {
             OnDataGridViewMouseEnterEvent(new DataGridViewMouseEnterEventArgs(_dataGridView.CurrentRowActived));
         }
@@ -3228,7 +3246,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
         /// index display does not match column index.
         /// </summary>
         // int _hitTestColumnIndexDisplayIndex = -1;
-        void DataGridViewMouseDown(object sender, MouseEventArgs e)
+        void DataGridViewMouseDown(object? sender, MouseEventArgs e)
         {
             // Note: DataGridViewMouseDown is the first event handler and then is called DataGridViewCellMouseDown event handler,
             // opposite to DataGridViewCellMouseUp/DataGridViewMouseUp event handler.
@@ -3246,14 +3264,54 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             ///DoDragDrop("TestDragDrop", DragDropEffects.Copy);
         }
 
-        void DataGridViewMouseUp(object sender, MouseEventArgs e)
+        void DataGridViewMouseUp(object? sender, MouseEventArgs e)
         {
             // Note: DataGridViewCellMouseUp  is the first event handler and then is called DataGridViewMouseUp event handler,
             // opposite to DataGridViewMouseDown/DataGridViewCellMouseDown event handler.		   
         }
 
+        void DataGridViewMouseWheel(object? sender, MouseEventArgs e)
+        {
+            if (ModifierKeys == Keys.Control)
+            {
+                float currentSize = _dataGridView.DefaultCellStyle.Font?.Size ?? _dataGridView.Font.Size;
+                float newSize = e.Delta > 0 ? currentSize + 0.5f : currentSize - 0.5f;
 
-        void DataGridView_RowsCollectionChanged(object sender, CollectionChangeEventArgs e)
+                // Clamp between min and max size
+                newSize = Math.Clamp(newSize, 6f, 48f);
+
+                Font newFont = new Font(_dataGridViewCellStyle.Font!.FontFamily, newSize, _dataGridViewCellStyle.Font.Style);
+                Font newFontSelected = new Font(_dataGridViewCellStyleSelectedRow.Font!.FontFamily, newSize + 2f, FontStyle.Bold);
+
+                // ✅ Update the internal styles your RowPostPaint uses for row height
+                _dataGridView.DataGridViewCellStyle.Font = newFont;
+                _dataGridView.SelectedRowsDefaultCellStyle.Font = newFontSelected;
+
+                // ✅ Also update DefaultCellStyle so cells render with new font
+                _dataGridView.DefaultCellStyle.Font = newFont;
+
+                // ✅ Manually resize header height because ColumnHeadersHeightSizeMode = DisableResizing
+                // so it won't auto-resize — we must set it explicitly
+                float currentSizeHeader = _dataGridView.ColumnHeadersDefaultCellStyle.Font?.Size ?? _dataGridView.ColumnHeadersDefaultCellStyle.Font.Size;
+                float newSizeHeader = e.Delta > 0 ? currentSizeHeader + 0.5f : currentSizeHeader - 0.5f;
+                // Clamp between min and max size
+                newSizeHeader = Math.Clamp(newSizeHeader, 6f, 48f);
+                Font colHeaderFont = new Font(_dataGridView.ColumnHeadersDefaultCellStyle.Font!.FontFamily, newSizeHeader,
+                                          _dataGridView.ColumnHeadersDefaultCellStyle.Font.Style);
+                _dataGridView.ColumnHeadersHeight = newFont.Height + _rowHeightAdd;
+                _dataGridView.InvalidateColumnHeaders(colHeaderFont);
+
+                // ✅ Force repaint + row height recalculation
+                _dataGridView.Invalidate();
+
+                ((HandledMouseEventArgs)e).Handled = true;
+                return;
+            }
+
+            base.OnMouseWheel(e);
+        }
+
+        void DataGridView_RowsCollectionChanged(object? sender, CollectionChangeEventArgs e)
         {
             switch (e.Action)
             {
@@ -3284,14 +3342,14 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             }
         }
 
-        void DataGridView_RowsAdded(object sender, DataGridViewRowsAddedEventArgs e)
+        void DataGridView_RowsAdded(object? sender, DataGridViewRowsAddedEventArgs e)
         {
             // Note: _dataGridView_RowsCollectionChanged is the first event handler and then
             // is called _dataGridView_RowsAdded event handler.
             On_RowsAdded(e);
         }
 
-        void DataGridView_RowsRemoved(object sender, DataGridViewRowsRemovedEventArgs e)
+        void DataGridView_RowsRemoved(object? sender, DataGridViewRowsRemovedEventArgs e)
         {
             // This event happen when any row or group of rows are removed from the visible area.
             // Happen to by Sort, filtered, delete if the was in the visible area.
@@ -3300,7 +3358,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
                 return;
         }
 
-        void DataGridViewUserDeletingRow(object sender, DataGridViewRowCancelEventArgs e)
+        void DataGridViewUserDeletingRow(object? sender, DataGridViewRowCancelEventArgs e)
         {
             // This event is triggered when the user hit Delete key.
 
@@ -3326,7 +3384,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
                      e.Row));
         }
 
-        void DataGridView_UserDeletedRow(object sender, DataGridViewRowEventArgs e)
+        void DataGridView_UserDeletedRow(object? sender, DataGridViewRowEventArgs e)
         {
             // This event occurred when the user hit Delete key and the delete process was no canceled.
             // The event occurred or sequence is:
@@ -3337,7 +3395,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
 
 
         string _owningColumnHeader = "";
-        void DataGridViewCellBeginEdit(object sender, DataGridViewCellCancelEventArgs e)
+        void DataGridViewCellBeginEdit(object? sender, DataGridViewCellCancelEventArgs e)
         {
             // If grouping is active, return.
             if (_dataGridView.CurrentRowActived.DataBoundItem.GetType() == typeof(GroupRow))
@@ -3370,7 +3428,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
                      _dataGridView.Rows[e.RowIndex]));
         }
 
-        void DataGridViewCellEndEdit(object sender, DataGridViewCellEventArgs e)
+        void DataGridViewCellEndEdit(object? sender, DataGridViewCellEventArgs e)
         {
             //if cell value type is boolean return, mouse over and focus firet this event.
             if (_dataGridView.CurrentCell.ValueType.ToString().Contains("Boolean"))
@@ -3388,7 +3446,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
                      _dataGridView.Rows[e.RowIndex]));
         }
 
-        void DataGridView_CellValueChanged(object sender, DataGridViewCellEventArgs e)
+        void DataGridView_CellValueChanged(object? sender, DataGridViewCellEventArgs e)
         {
             if (_dataGridView.CurrentCell == null)
                 return;
@@ -3410,7 +3468,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
 
         }
 
-        void DataGridViewCellClick(object sender, DataGridViewCellEventArgs e)
+        void DataGridViewCellClick(object? sender, DataGridViewCellEventArgs e)
         {
             // TopLeftHeader.
             if (e.RowIndex == -1 && e.ColumnIndex == -1)
@@ -3430,7 +3488,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             OnCellClickEvent(new CellClick_EventArgs(e, _dataGridView.Rows[e.RowIndex]));
         }
 
-        void DataGridViewCellContentClick(object sender, DataGridViewCellEventArgs e)
+        void DataGridViewCellContentClick(object? sender, DataGridViewCellEventArgs e)
         {
             // Column header event.
             if (e.RowIndex == -1)
@@ -3448,7 +3506,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             OnCellClickEvent(new CellClick_EventArgs(e, _dataGridView.Rows[e.RowIndex]));
         }
 
-        void DataGridViewCellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        void DataGridViewCellDoubleClick(object? sender, DataGridViewCellEventArgs e)
         {
             // Column header event.
             if (e.RowIndex == -1)
@@ -3474,7 +3532,6 @@ namespace StockRoom11net.Controls.DataGridViewExtend
         /// </summary>
         public CurrentStatus CurrentRowStatus;
         DataGridViewRow currentDataGriedViewRow;
-        List<DataGridViewRow> rowsWithDefaultCellStyle = new List<DataGridViewRow>();
         void DataGridViewSelectionChanged()
         {
             try
@@ -3505,48 +3562,49 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             }
         }
 
-        void DataGridViewColumnDefaultCellStyleChanged(object sender, DataGridViewColumnEventArgs e)
+        void DataGridViewColumnDefaultCellStyleChanged(object? sender, DataGridViewColumnEventArgs e)
         {
             SaveUserSetting();
         }
 
-        void DataGridViewAutoSizeColumnsModeChanged(object sender, DataGridViewAutoSizeColumnsModeEventArgs e)
+        void DataGridViewAutoSizeColumnsModeChanged(object? sender, DataGridViewAutoSizeColumnsModeEventArgs e)
         {
             SaveUserSetting();
         }
 
-        void DataGridViewColumnWidthChanged(object sender, DataGridViewColumnEventArgs e)
+        void DataGridViewColumnWidthChanged(object? sender, DataGridViewColumnEventArgs e)
         {
             SaveUserSetting();
         }
 
-        void DataGridViewColumnDisplayIndexChanged(object sender, DataGridViewColumnEventArgs e)
+        void DataGridViewColumnDisplayIndexChanged(object? sender, DataGridViewColumnEventArgs e)
         {
             //Occurs when a column shown in the display is dragged,
             //it does not occur when a column is hide.
             SaveUserSetting();
         }
 
-        void DataGridView_ColumnRemoved(object sender, DataGridViewColumnEventArgs e)
+        void DataGridView_ColumnRemoved(object? sender, DataGridViewColumnEventArgs e)
         {
             //It occurs when a column is removed from the collection,
             //not working when the column is hide.
         }
 
-        void DataGridView_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        void DataGridView_ColumnHeaderMouseClick(object? sender, DataGridViewCellMouseEventArgs e)
         {
             OnColumnHeaderMouseClickEvent(e);
         }
 
-        void Columns_CollectionChanged(object sender, CollectionChangeEventArgs e)
+        void Columns_CollectionChanged(object? sender, CollectionChangeEventArgs e)
         {
             //Occurs when a column is added or removed from the collection,
             //it does not work when the column is hide.
         }
 
-        void DataGridViewSorted(object sender, EventArgs e)
+        void DataGridViewSorted(object? sender, EventArgs e)
         {
             #region"UpDate topleftheadercell SortGlyphDirection"
+
             //View ToolStripMenuItem_SortByPDF_Click for sort process.
             if (_dataGridView.SortedColumn == null)
                 return;
@@ -3576,6 +3634,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
                         break;
                     }
             }
+
             #endregion"UpDate topleftheadercell SortGlyphDirection"
 
             if (DataGridViewSort == null)
@@ -3651,10 +3710,8 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             toolStripMenuItem_Fill_by.Click += ToolStripMenuItem_Fill_by_Click;
             toolStripMenuItem_Replace_by.Click += ToolStripMenuItem_Replace_by_Click;
 
-
             //Use to present the toolStripTextBox_SearchBy...            
             toolStripMenuItem_SearchBy.MouseDown += ToolStripMenuItem_SearchBy_MouseDown;
-
 
             toolStripTextBox_SearchBy.AutoToolTip = false;
 
@@ -3663,7 +3720,6 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             toolStripTextBox_SearchBy.KeyUp += ToolStripTextBox_SearchBy_KeyUp;
             toolStripTextBox_SearchBy.LostFocus += ToolStripTextBox_SearchBy_LostFocus;
             toolStripTextBox_SearchBy.MouseHover += ToolStripTextBox_SearchBy_MouseHover;
-
 
             toolStripMenuItem_UnLocked.Click += ToolStripMenuItem_UnLocked_Click;
 
@@ -3678,7 +3734,6 @@ namespace StockRoom11net.Controls.DataGridViewExtend
 
             InitializeToolTipContextMenu();
         }
-
 
         #region"Timer SaveUserSetting if it's modifying the user interface."
 
@@ -3712,10 +3767,10 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             {
                 Interval = 1000
             };
-            SaveUserSettingTimer.Tick += new EventHandler(SaveUserSettingTick);
+            SaveUserSettingTimer.Tick += async (sender, e) => await SaveUserSettingTickAsync(sender, e);
         }
 
-        void SaveUserSettingTick(object? sender, EventArgs e)
+        async Task SaveUserSettingTickAsync(object? sender, EventArgs e)
         {
             _sec--;
 
@@ -3728,26 +3783,9 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             SaveUserSettingTimer.Stop();
             On_StatusBarMessage(new StatusBarMessage_EventArgs("", "  "));//Clear the StatusBar.
 
-            var userSetting = new UserSetting(
-                                               _dataGridView.AutoSizeColumnsMode,
-                                               CustomEdit
-                                             );
+            var userSetting = new UserSetting(_dataGridView.AutoSizeColumnsMode, CustomEdit);
 
-            if (_currentEmployeesLogIn == null)
-            {
-                On_StatusBarMessage(new StatusBarMessage_EventArgs("There is no registered user..."));
-                return;
-            }
-
-            // User setting will be save if _bindingSource_Employees_ListChanged event is fire.
-            _dataGridView.Columns["RowHeaderColumn"].Width = _dataGridView.RowHeadersWidth;
-
-            //If the event handler is null call employeesLogIn.SaveSetting, 
-            //if the control event is handle, call the handle.
-            if (SaveSetting == null)
-                _currentEmployeesLogIn.SaveUserSetting(userSettingName, userSetting, _dataGridView.Columns, _dataGridView.AutoSizeColumnsMode);
-            else
-                On_SaveSetting(new SaveSettingEventArgs(userSettingName, userSetting, _dataGridView.Columns));
+            await _currentEmployeeLogIn.SaveUserSettingAsync(userSettingName, userSetting);
         }
 
         #endregion"Timer SaveUserSetting if it's modifying the user interface."        
@@ -3791,7 +3829,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
         }
 
         // if toolTip.IsBalloon = true, toolTip_Draw never is called.
-        void ToolTipDrawContextMenu(object sender, DrawToolTipEventArgs e)
+        void ToolTipDrawContextMenu(object? sender, DrawToolTipEventArgs e)
         {
             e.Graphics.FillRectangle(Brushes.AliceBlue, e.Bounds);
             e.Graphics.DrawRectangle(Pens.Chocolate, new Rectangle(0, 0, e.Bounds.Width - 1, e.Bounds.Height - 1));
@@ -3800,7 +3838,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
 
         #endregion"ToolTipContextMenu"
 
-        void ContextMenuStripDataGridViewOpening(object sender, CancelEventArgs e)
+        void ContextMenuStripDataGridViewOpening(object? sender, CancelEventArgs e)
         {
             try
             {
@@ -3921,7 +3959,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
                     {
                         _contextMenuStrip_DataGridView.Items.AddRange(new[]
                                                         {
-                                                            ToolStripMenuItem_changeGraphics,
+                                                            //ToolStripMenuItem_changeGraphics,
                                                             ToolStripMenuItem_columnsMaintenance,
                                                         });
                     }
@@ -4107,7 +4145,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             }
         }
 
-        void ToolStripMenuItem_SortByPDF_Click(object sender, EventArgs e)
+        void ToolStripMenuItem_SortByPDF_Click(object? sender, EventArgs e)
         {
             if (!_dataGridView.Columns.Contains("CountPDF"))
                 return;
@@ -4135,7 +4173,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             }
         }
 
-        void ToolStripMenuItem_SelectToDelete_Click(object sender, EventArgs e)
+        void ToolStripMenuItem_SelectToDelete_Click(object? sender, EventArgs e)
         {
             if (CurrentRowStatus.Unerasable)
                 MarkErasableCurrentRow();
@@ -4143,23 +4181,23 @@ namespace StockRoom11net.Controls.DataGridViewExtend
                 MarkUnerasableCurrentRow();
         }
 
-        void ToolStripMenuItem_RemoveThisNote_Click(object sender, EventArgs e)
+        void ToolStripMenuItem_RemoveThisNote_Click(object? sender, EventArgs e)
         {
             CurrentRowStatus.RemoveNote();
             _dataGridView.InvalidateRow(CurrentRowActive.Index);
         }
 
-        void ToolStripMenuItem_EditThisNote_Click(object sender, EventArgs e)
+        void ToolStripMenuItem_EditThisNote_Click(object? sender, EventArgs e)
         {
             EditNote_Event(e);
         }
 
-        void ToolStripMenuItem_MarkWithNote_Click(object sender, EventArgs e)
+        void ToolStripMenuItem_MarkWithNote_Click(object? sender, EventArgs e)
         {
             AddNote_Event(e);
         }
 
-        void ToolStripMenuItem_UnLocked_Click(object sender, EventArgs e)
+        void ToolStripMenuItem_UnLocked_Click(object? sender, EventArgs e)
         {
             if (CurrentRowStatus.Locked)
                 UnLockCurrentRow();
@@ -4167,7 +4205,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
                 LockCurrentRow();
         }
 
-        void ToolStripTextBox_SearchBy_LostFocus(object sender, EventArgs e)
+        void ToolStripTextBox_SearchBy_LostFocus(object? sender, EventArgs e)
         {
             MouseRightDone = false;
             _toolTipContextMenu.Hide(toolStripTextBox_SearchBy.TextBox);
@@ -4187,7 +4225,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
         }
 
         Point mousePos = new Point(100, 100);
-        void ToolStripTextBox_SearchBy_MouseHover(object sender, EventArgs e)
+        void ToolStripTextBox_SearchBy_MouseHover(object? sender, EventArgs e)
         {
             _toolTipContextMenu.SetToolTip(toolStripTextBox_SearchBy.TextBox, "");
             _toolTipContextMenu.Hide(toolStripTextBox_SearchBy.TextBox);
@@ -4227,21 +4265,18 @@ namespace StockRoom11net.Controls.DataGridViewExtend
 
         }
 
-        void ToolStripTextBox_SearchBy_MouseLeave(object sender, EventArgs e)
-
+        void ToolStripTextBox_SearchBy_MouseLeave(object? sender, EventArgs e)
         {
             toolStripTextBox_SearchBy.MouseLeave -= ToolStripTextBox_SearchBy_MouseLeave;
             //   toolStripTextBox_SearchBy.Text = "";
             //   _contextMenuStrip.Close();
             //   ActiveFilter = "";
 
-
             _toolTipContextMenu.Hide(toolStripTextBox_SearchBy.TextBox);
-
         }
 
         bool hitEnter;
-        void ToolStripTextBox_SearchBy_KeyUp(object sender, KeyEventArgs e)
+        void ToolStripTextBox_SearchBy_KeyUp(object? sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
             {
@@ -4290,7 +4325,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             #endregion"Format filter base column type."           
         }
 
-        void ToolStripTextBox_SearchBy_KeyDown(object sender, KeyEventArgs e)
+        void ToolStripTextBox_SearchBy_KeyDown(object? sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
                 return;
@@ -4341,13 +4376,15 @@ namespace StockRoom11net.Controls.DataGridViewExtend
         /// or column name where the mouse right click hit.
         /// </summary>
         string ColumnNameMouseRightClick = "";
+
         /// <summary>
         /// Column type where the mouse pointer is,
         /// <para></para>
         /// or column type where the mouse right click hit.
         /// </summary>
         string ColumnTypeMouseRightClick = "";
-        void ToolStripTextBox_SearchBy_Click(object sender, EventArgs e)
+
+        void ToolStripTextBox_SearchBy_Click(object? sender, EventArgs e)
         {
             if (MouseRightDone)
                 return;
@@ -4382,7 +4419,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             toolStripTextBox_SearchBy.Focus();
         }
 
-        void ToolStripMenuItem_SearchBy_MouseDown(object sender, MouseEventArgs e)
+        void ToolStripMenuItem_SearchBy_MouseDown(object? sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Right)
                 return;
@@ -4395,10 +4432,10 @@ namespace StockRoom11net.Controls.DataGridViewExtend
         {
             try
             {
-                if (_dataGridView.ActiveFilterCollection.ContainsKey(_dataGridView.HitTestData.ColumnIndex))
+                if (_dataGridView.ActiveFilterCollection.TryGetValue(_dataGridView.HitTestData.ColumnIndex, out FilteredHeaderCell? value))
                 {
                     //If in this column a filter was active, show it's value.
-                    filteredHeader = _dataGridView.ActiveFilterCollection[_dataGridView.HitTestData.ColumnIndex];
+                    filteredHeader = value;
                     toolStripTextBox_SearchBy.Text = filteredHeader.FilterStringBase;
                 }
                 else
@@ -4412,7 +4449,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
 
                     //If this column has not active filter, create a new one....
                     //filteredHeader = new FilteredHeaderCell(_dataGridView, _dataGridView.ColumnClearFilterIndicator, columnRegion);
-                    filteredHeader = new FilteredHeaderCell(_dataGridView, _dataGridView.ColumnClearFilterIndicator);
+                    filteredHeader = new FilteredHeaderCell(_dataGridView, Resources.FilterClearing);
                     filteredHeader.RemovedFilterEvent += FilteredHeader_RemovedFilterEvent;
                     toolStripTextBox_SearchBy.Text = "";
                 }
@@ -4470,7 +4507,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             }
         }
 
-        void FilteredHeader_RemovedFilterEvent(object sender, Custom_Events_Args.RemovedFilter_EventArgs e)
+        void FilteredHeader_RemovedFilterEvent(object? sender, Custom_Events_Args.RemovedFilter_EventArgs e)
         {
             UpDateActiveFilter();
         }
@@ -4532,7 +4569,6 @@ namespace StockRoom11net.Controls.DataGridViewExtend
                 }
             }
         }
-
 
         string FilterInt32Sanitizer(string filterText)
         {
@@ -4647,15 +4683,13 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             return false;
         }
 
-
-
-        void Tool_strip_menu_item_frozenuntil_here_click(object sender, EventArgs e)
+        void Tool_strip_menu_item_frozenuntil_here_click(object? sender, EventArgs e)
 
         {
             _dataGridView.CurrentColumnActive.Frozen = !_dataGridView.CurrentColumnActive.Frozen;
         }
 
-        void Tool_strip_menu_item_hidethis_column_click(object sender, EventArgs e)
+        void Tool_strip_menu_item_hidethis_column_click(object? sender, EventArgs e)
         {
             if (!ToolStripMenuItem_Columns.DropDownItems.Contains(toolStripMenuItem_Show_all_hide))
                 ToolStripMenuItem_Columns.DropDownItems.Add(toolStripMenuItem_Show_all_hide);
@@ -4666,7 +4700,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             SaveUserSetting();
         }
 
-        void Tool_strip_menu_item_hide_all_to_tha_righ_click(object sender, EventArgs e)
+        void Tool_strip_menu_item_hide_all_to_tha_righ_click(object? sender, EventArgs e)
         {
             while (_dataGridView.ColumnCount > _dataGridView.CurrentColumnActive.DisplayIndex)
             {
@@ -4686,10 +4720,8 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             IsMouseDrivenEvent = true;
         }
 
-        void Tool_strip_menu_item_show_all_hide_click(object sender, EventArgs e)
-
+        void Tool_strip_menu_item_show_all_hide_click(object? sender, EventArgs e)
         {
-
             foreach (ColumnSetting columnSetting in SettingColumns)
             {
                 if (!columnSetting.VisibleSystemSetting)
@@ -4700,7 +4732,6 @@ namespace StockRoom11net.Controls.DataGridViewExtend
 
                 _dataGridView.Columns[columnSetting.Name].Visible = true;
             }
-
 
             ToolStripMenuItem_Columns.DropDownItems.Clear();
 
@@ -4716,7 +4747,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        void Tool_strip_menu_item_columns_drop_down_item_clicked(object sender, ToolStripItemClickedEventArgs e)
+        void Tool_strip_menu_item_columns_drop_down_item_clicked(object? sender, ToolStripItemClickedEventArgs e)
         {
             if (e.ClickedItem.Name.Contains("ToolStripMenuItem_Hide_all_to_tha_righ"))
                 return;
@@ -4736,7 +4767,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             ToolStripMenuItem_Columns.DropDownItems.Remove(e.ClickedItem);
         }
 
-        void Tool_strip_menu_item_group_by_this_column_click(object sender, EventArgs e)
+        void Tool_strip_menu_item_group_by_this_column_click(object? sender, EventArgs e)
         {
             if (_dataGridView == null && _dataGridView.Columns.Count <= 0)
                 return;
@@ -4752,22 +4783,22 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             _dataGridView.Columns[_dataGridView.CurrentColumnActive.Name].Visible = true;
         }
 
-        void Tool_strip_menu_item_remove_group_click(object sender, EventArgs e)
+        void Tool_strip_menu_item_remove_group_click(object? sender, EventArgs e)
         {
             _dataGridView.SetGroupOn();
         }
 
-        void Tool_strip_menu_item_collase_all_click(object sender, EventArgs e)
+        void Tool_strip_menu_item_collase_all_click(object? sender, EventArgs e)
         {
             _dataGridView.CollapseAll();
         }
 
-        void Tool_strip_menu_item_expand_all_click(object sender, EventArgs e)
+        void Tool_strip_menu_item_expand_all_click(object? sender, EventArgs e)
         {
             _dataGridView.ExpandAll();
         }
 
-        void Tool_strip_menu_item_filterbythis_cell_click(object sender, EventArgs e)
+        void Tool_strip_menu_item_filterbythis_cell_click(object? sender, EventArgs e)
         {
             if (_dataGridView.CurrentCellMouseHover.Value == null)
             {
@@ -4793,7 +4824,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        void Tool_strip_menu_item_removethis_filter_click(object sender, EventArgs e)
+        void Tool_strip_menu_item_removethis_filter_click(object? sender, EventArgs e)
         {
             List<FilteredHeaderCell> filterToRemove = new List<FilteredHeaderCell>();
 
@@ -4807,7 +4838,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
                 filter.RemoveFilter();
         }
 
-        void Tool_strip_menu_item_find_by_click(object sender, EventArgs e)
+        void Tool_strip_menu_item_find_by_click(object? sender, EventArgs e)
         {
             if (_dataGridView.CurrentCell == null)
                 return;
@@ -4816,13 +4847,13 @@ namespace StockRoom11net.Controls.DataGridViewExtend
                                                      _dataGridView.CurrentColumnActive, _dataGridView.CurrentCellMouseHover, "Find");
 
             findRemplace.Find_Remplace_Execute += Find_remplace_find_remplace_execute;
-                                    
+
             findRemplace.StartPosition = FormStartPosition.CenterScreen;
             findRemplace.TopMost = true;
             findRemplace.ShowDialog();
         }
 
-        void ToolStripMenuItem_Replace_by_Click(object sender, EventArgs e)
+        void ToolStripMenuItem_Replace_by_Click(object? sender, EventArgs e)
         {
             if (_dataGridView.CurrentCell == null)
                 return;
@@ -4831,13 +4862,13 @@ namespace StockRoom11net.Controls.DataGridViewExtend
                                                      _dataGridView.CurrentColumnActive, _dataGridView.CurrentCellMouseHover, "Replace");
 
             findRemplace.Find_Remplace_Execute += Find_remplace_find_remplace_execute;
-                        
+
             findRemplace.StartPosition = FormStartPosition.CenterScreen;
             findRemplace.TopMost = true;
             findRemplace.ShowDialog();
         }
 
-        void ToolStripMenuItem_Fill_by_Click(object sender, EventArgs e)
+        void ToolStripMenuItem_Fill_by_Click(object? sender, EventArgs e)
         {
             if (_dataGridView.CurrentCell == null)
                 return;
@@ -4851,14 +4882,15 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             findRemplace.TopMost = true;
             findRemplace.ShowDialog();
         }
+                
+        private Find_and_Remplace.Find_Remplace_Execute_EventArgs eventArgFill;
 
-        Find_and_Remplace.Find_Remplace_Execute_EventArgs eventArgFill;
         /// <summary>
         /// Find / Replace windows tools genera this events when a customer click Execute.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        void Find_remplace_find_remplace_execute(object sender, Find_and_Remplace.Find_Remplace_Execute_EventArgs e)
+        void Find_remplace_find_remplace_execute(object? sender, Find_and_Remplace.Find_Remplace_Execute_EventArgs e)
         {
             eventArgFill = e;
 
@@ -5078,7 +5110,6 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             columnToHide.Visible = false;
         }
 
-
         DataTable GetTable()
         {
             DataTable table = new DataTable();
@@ -5101,7 +5132,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        void Tool_strip_menu_item_custom_filter_click(object sender, EventArgs e)
+        void Tool_strip_menu_item_custom_filter_click(object? sender, EventArgs e)
         {
             if (_dataGridView.CurrentCell == null)
                 return;
@@ -5124,7 +5155,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        void Filter_execute(object sender, Find_and_Remplace.Find_Remplace_Execute_EventArgs e)
+        void Filter_execute(object? sender, Find_and_Remplace.Find_Remplace_Execute_EventArgs e)
         {
             if (e.IsRow)
             {
@@ -5152,7 +5183,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             Tool_strip_menu_item_un_select_all_rows_click(new object(), new EventArgs());
         }
 
-        void Tool_strip_menu_item_un_select_all_rows_click(object sender, EventArgs e)
+        void Tool_strip_menu_item_un_select_all_rows_click(object? sender, EventArgs e)
         {
             _dataGridView.Refresh();
             _dataGridView.AreSelectedRows = false;
@@ -5160,7 +5191,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             toolStripLabel_Help.Text = Settings.Default.ThisIsAnExternalFilter;
         }
 
-        void ToolStripMenuItem_AutoSizeMode_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        void ToolStripMenuItem_AutoSizeMode_DropDownItemClicked(object? sender, ToolStripItemClickedEventArgs e)
         {
             // Set true, the change was by mouse, need save the setting;
             NeedSaveData = true;
@@ -5206,11 +5237,10 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             IsMouseDrivenEvent = true;
         }
 
-        void ToolStripMenuItem_Setting_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        void ToolStripMenuItem_Setting_DropDownItemClicked(object? sender, ToolStripItemClickedEventArgs e)
         {
             List<string> _keytoDelete = new List<string>(0);
             DialogResult result;
-
 
             switch (e.ClickedItem.Text)
 
@@ -5254,7 +5284,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             }
         }
 
-        void ToolStripMenuItem_Alignment_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        void ToolStripMenuItem_Alignment_DropDownItemClicked(object? sender, ToolStripItemClickedEventArgs e)
         {
             if (_dataGridView.CurrentColumnIndex == -1)
                 return;
@@ -5289,6 +5319,69 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             IsMouseDrivenEvent = true;
         }
 
+        void ToolStripMenuItem_Font_Click(object sender, EventArgs e)
+        {
+            _contextMenuStrip_DataGridView.Close();
+
+            //using var fontDialog = new FontPickerDialog.FontPickerDialog(_dataGridViewCellStyle.Font);
+
+            using var fontDialog = new FontDialog();
+
+            // Optional: pre-select the current font
+            if (_dataGridView.IsMouseOverColumnHeaderCell)
+                fontDialog.Font = _dataGridView.ColumnHeadersDefaultCellStyle.Font;
+            else
+                fontDialog.Font = _dataGridView.DefaultCellStyle.Font;
+                                    
+            // Optional settings:
+            fontDialog.ShowColor = true;    // show color picker too
+            fontDialog.ShowEffects = true;  // strikeout, underline
+            fontDialog.ShowApply = true;    // show Apply button
+            fontDialog.MinSize = 8;
+            fontDialog.MaxSize = 24;
+            fontDialog.FontMustExist = true;
+            fontDialog.ShowApply = true;
+            fontDialog.Apply += (s, e) =>
+            {
+                // fires when user clicks Apply (without closing dialog)
+                ApplyNewFontToDataGridView(fontDialog.Font);
+            };
+
+            if (fontDialog.ShowDialog() == DialogResult.OK)
+            {
+                ApplyNewFontToDataGridView(fontDialog.Font);
+            }
+        }
+
+        void ApplyNewFontToDataGridView(Font newFont)
+        {
+            if(_dataGridView.IsMouseOverColumnHeaderCell)
+            {
+                _dataGridView.ColumnHeadersDefaultCellStyle.Font = newFont;
+                _dataGridView.ColumnHeadersHeight = newFont.Height + _rowHeightAdd;
+                _dataGridView.InvalidateColumnHeaders(newFont);
+                return;
+            }
+
+            _dataGridView.DataGridViewCellStyle.Font = newFont;
+            _dataGridView.SelectedRowsDefaultCellStyle.Font = newFont;
+
+            float currentSize = newFont?.Size ?? newFont.Size;
+            float newSize = currentSize + 2f;
+
+            // Clamp between min and max size
+            newSize = Math.Clamp(newSize, 6f, 48f);
+            Font newFontSelected = new Font(newFont!.FontFamily, newSize, FontStyle.Bold);
+            _dataGridView.SelectedRowsDefaultCellStyle.Font = newFontSelected;
+
+            _dataGridView.Invalidate();
+        }
+
+        void ToolStripMenuItem_Font_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+
+        }
+
         #endregion "End ContextMenuStrip_DataGridView"
 
         #region"Tools Strip"
@@ -5298,7 +5391,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             bindingNavigatorDeleteItem.Enabled = false;
         }
 
-        void ToolStripButtonSaveClick(object sender, EventArgs e)
+        void ToolStripButtonSaveClick(object? sender, EventArgs e)
         {
             NeedSaveData = false;
 
@@ -5310,13 +5403,8 @@ namespace StockRoom11net.Controls.DataGridViewExtend
                 _bindingSource.EndEdit();
             }
 
-            Save_Requested_EventArgs save_Requested_EventArgs = new Save_Requested_EventArgs()
-            {
-                SaveEvent = NotificationEvents.DataBaseUpDated,
-                DataTableName = _dataTable.TableName
-            };
-
-            On_Save_Requested(save_Requested_EventArgs);
+            // TODO:  Call the event to save data, this event will be wired in the form that use this control,
+            // and execute the code to save data in database.
 
             On_LogFileMessage(new Custom_Events_Args.LogFileMessageEventArgs(new List<string>
                     {
@@ -5326,7 +5414,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
                     }));
         }
 
-        void ToolStripButtonRefreshClick(object sender, EventArgs e)
+        void ToolStripButtonRefreshClick(object? sender, EventArgs e)
         {
             On_Refresh_Requested(new Refresh_Requested_EventArgs(_bindingSource.Filter));
 
@@ -5340,7 +5428,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
                     }));
         }
 
-        void ToolStripMenuItemBarGraphicsClick(object sender, EventArgs e)
+        void ToolStripMenuItemBarGraphicsClick(object? sender, EventArgs e)
         {
             if (_dataGridView.CurrentColumnActive.ValueType.FullName == "System.Double")
             {
@@ -5353,7 +5441,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             }
         }
 
-        void ToolStripButtonPrintClick(object sender, EventArgs e)
+        void ToolStripButtonPrintClick(object? sender, EventArgs e)
         {
             DataTable table = new DataTable();
 
@@ -5393,17 +5481,18 @@ namespace StockRoom11net.Controls.DataGridViewExtend
                         Tags.NewLine(Name + " tool_strip_button_print hit by the mouse at " + DateTime.Now)
                     }));
 
-            //  MyStuff11net.ListViewPrint _myListviewPrint = new ListViewPrint(_dataGridView);
-
+            //   using (ListViewPrint _myListviewPrint = new ListViewPrint(_dataGridView))
+            //   {
             //   ListViewPrint _myListviewPrint = new ListViewPrint(table);
 
             //	_myListviewPrint.ShowDialog();
+            //   }
 
             table.Dispose();
             //	_myListviewPrint.Dispose();
         }
 
-        void ToolStripMenuItemExportToExcellClick(object sender, EventArgs e)
+        void ToolStripMenuItemExportToExcellClick(object? sender, EventArgs e)
         {
             try
             {
@@ -5426,7 +5515,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             }
         }
 
-        void toolStripMenuItemExportToCSV_Click(object sender, EventArgs e)
+        void ToolStripMenuItemExportToCSV_Click(object? sender, EventArgs e)
         {
             try
             {
@@ -5448,7 +5537,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             }
         }
 
-        void toolStripMenuItemExportToTXT_Click(object sender, EventArgs e)
+        void ToolStripMenuItemExportToTXT_Click(object? sender, EventArgs e)
         {
             try
             {
@@ -5470,7 +5559,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             }
         }
 
-        void toolStripMenuItemExportToWebPage_Click(object sender, EventArgs e)
+        void ToolStripMenuItemExportToWebPage_Click(object? sender, EventArgs e)
         {
             try
             {
@@ -5491,12 +5580,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             }
         }
 
-        void ToolStripMenuItemCustomizedClick(object sender, EventArgs e)
-        {
-
-        }
-
-        void TestToolStripMenuItemClick(object sender, EventArgs e)
+        void TestToolStripMenuItemClick(object? sender, EventArgs e)
         {
             On_LogFileMessage(new Custom_Events_Args.LogFileMessageEventArgs(new List<string>
                     {
@@ -5516,7 +5600,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             _dataGridView.Columns.Insert(_dataGridView.CurrentColumnIndex, test);
         }
 
-        void BindingNavigatorAddNewItemClick(object sender, EventArgs e)
+        void BindingNavigatorAddNewItemClick(object? sender, EventArgs e)
         {
             // Removed the linked in BindingNavigator that raises the 'Add New Item' action.
 
@@ -5526,12 +5610,12 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             OnBindingNavigatorAddNewItem_Event(e);
         }
 
-        void BindingNavigatorDeleteItemMouseDown(object sender, MouseEventArgs e)
+        void BindingNavigatorDeleteItemMouseDown(object? sender, MouseEventArgs e)
         {
             bindingNavigatorDeleteItem.Tag = true;
         }
 
-        void BindingNavigatorDeleteItemClick(object sender, EventArgs e)
+        void BindingNavigatorDeleteItemClick(object? sender, EventArgs e)
         {
             if (_bindingSource.Position == -1)
                 return;
@@ -5757,7 +5841,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             /// can be selected throughout all instances.
             /// This method is called when a row is selected on any DataGridView
             /// </summary>
-            void OnOverallSelectionChanged(object sender, EventArgs e)
+            void OnOverallSelectionChanged(object? sender, EventArgs e)
             {
                 if (sender != this && SelectedRows.Count != 0)
                 {
@@ -5803,7 +5887,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             #endregion
 
             #region Selection highlighting
-            void DataGridView1PaintSelection(object sender, PaintEventArgs e)
+            void DataGridView1PaintSelection(object? sender, PaintEventArgs e)
             {
                 if (_selectedRow == null || _selectedRow.DataGridView != this)
                     return;
@@ -5818,13 +5902,13 @@ namespace StockRoom11net.Controls.DataGridViewExtend
                                          displayRect.Width, displayRect.Height + SelectionWidth - 1);
             }
 
-            void DataGridView1DefaultcellStyleChanged(object sender, EventArgs e)
+            void DataGridView1DefaultcellStyleChanged(object? sender, EventArgs e)
             {
                 DefaultCellStyle.SelectionBackColor = DefaultCellStyle.BackColor;
                 DefaultCellStyle.SelectionForeColor = DefaultCellStyle.ForeColor;
             }
 
-            void DataGridView1Scroll(object sender, ScrollEventArgs e)
+            void DataGridView1Scroll(object? sender, ScrollEventArgs e)
             {
                 Invalidate();
             }
@@ -5865,20 +5949,20 @@ namespace StockRoom11net.Controls.DataGridViewExtend
                 base.OnDragDrop(args);
             }
 
-            void dataGridView1_DragLeave(object sender, EventArgs e1)
+            void dataGridView1_DragLeave(object? sender, EventArgs e1)
             {
                 RemoveHighlighting();
                 _autoScrollTimer.Enabled = false;
             }
 
-            void dataGridView1_DragEnter(object sender, DragEventArgs e)
+            void dataGridView1_DragEnter(object? sender, DragEventArgs e)
             {
                 e.Effect = e.Data.GetDataPresent(typeof(DataGridViewRow))
                                 ? DragDropEffects.Move
                                 : DragDropEffects.None;
             }
 
-            void dataGridView1_DragOver(object sender, DragEventArgs e)
+            void dataGridView1_DragOver(object? sender, DragEventArgs e)
             {
                 if (e.Effect == DragDropEffects.None)
                     return;
@@ -5896,7 +5980,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
                 }
             }
 
-            void dataGridView1_CellMouseDown(object sender, DataGridViewCellMouseEventArgs e)
+            void dataGridView1_CellMouseDown(object? sender, DataGridViewCellMouseEventArgs e)
             {
                 if (e.Button == MouseButtons.Left && e.RowIndex >= 0)
                 {
@@ -5964,7 +6048,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
 
             #region Drop-and-drop highlighting
             //Draw the actual row-divider
-            void dataGridView1_Paint_RowDivider(object sender, PaintEventArgs e)
+            void dataGridView1_Paint_RowDivider(object? sender, PaintEventArgs e)
             {
                 if (_predictedInsertIndex != null)
                 {
@@ -6050,7 +6134,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
                 }
             }
 
-            void OnAutoscrollTimerTick(object sender, EventArgs e)
+            void OnAutoscrollTimerTick(object? sender, EventArgs e)
             {
                 //Scroll up/down
                 FirstDisplayedScrollingRowIndex += _scrollDirection;
@@ -6552,6 +6636,6 @@ namespace StockRoom11net.Controls.DataGridViewExtend
 
                 return height - topmostYCoordinate;
             }
-        }
+        }        
     }
 }

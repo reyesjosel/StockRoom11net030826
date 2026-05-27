@@ -609,7 +609,7 @@ namespace StockRoom11net
                                                      (int)NotificationEvents.DataBaseUpDated,     // 4 notifycation.NotifycationEvents
                                                      Settings.Default.DepartmentName,                    // 5 notification.String_Filter
                                                      DateTime.Now,                                       // 6 notification.DateCreated
-                                                     CurrentEmployeesLogIn.FullName,                     // 7 notification.Created_by
+                                                     Table_Employee.FullName,                     // 7 notification.Created_by
                                                      "properties",                                       // 8 notification.Properties
                                                      "Status"                                            // 9 notification.Status
                                                     ));
@@ -649,13 +649,13 @@ namespace StockRoom11net
 
         private void DataGridViewExtended_StockRoom_CellDoubleClick_Event(object? sender, CellDoubleClick_EventArgs e)
         {
-
+            /*
             if (CurrentEmployeesLogIn.IsUser)
             {
                 MessageBox.Show(@"The current User, does not have the right to perform this action.",
                                  @"Warning, access denied.", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
-            }
+            }*/
 
           //  if (_currentRowViewActive == null)
           //      return;
@@ -755,7 +755,7 @@ namespace StockRoom11net
                                                      (int)NotificationEvents.RowRemoved,          //notifycation.NotifycationEvents
                                                      Settings.Default.DepartmentName + ";",   //notification.String_Filter
                                                      DateTime.Now,                                       //notification.DateCreated
-                                                     CurrentEmployeesLogIn.FullName,                     //notification.Created_by
+                                                     Table_Employee.FullName,                     //notification.Created_by
                                                      "Properties",                                       //notification.Properties
                                                      "Status"                                            //notification.Status
                                                     ));
@@ -775,7 +775,7 @@ namespace StockRoom11net
                                                      (int)NotificationEvents.RowRemoved,          //notifycation.NotifycationEvents
                                                      Settings.Default.DepartmentName + ";",   //notification.String_Filter
                                                      DateTime.Now,                                       //notification.DateCreated
-                                                     CurrentEmployeesLogIn.FullName,                     //notification.Created_by
+                                                     Table_Employee.FullName,                     //notification.Created_by
                                                      "Properties",                                       //notification.Properties
                                                      "Status"                                            //notification.Status
                                                     ));
@@ -839,7 +839,7 @@ namespace StockRoom11net
                                                      (int)NotificationEvents.DataBaseUpDated,     // 4 notifycation.NotifycationEvents
                                                      Settings.Default.DepartmentName,         // 5 notification.String_Filter
                                                      DateTime.Now,                                       // 6 notification.DateCreated
-                                                     CurrentEmployeesLogIn.FullName,                     // 7 notification.Created_by
+                                                     Table_Employee.FullName,                     // 7 notification.Created_by
                                                      "properties",                                       // 8 notification.Properties
                                                      "Status"                                            // 9 notification.Status
                                                     ));

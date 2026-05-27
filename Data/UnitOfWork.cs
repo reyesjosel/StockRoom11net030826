@@ -14,10 +14,13 @@ public interface IUnitOfWork : IDisposable
 {
     // Repository properties
     IStockRoomRepository StockRooms { get; }
+    ITableStockRoomTreeViewRepository TableStockRoomTreeViews { get; }
+
     ITableTimeLineRepository TableTimeLines { get; }
     ITableTimeLineTreeViewRepository TableTimeLineTreeViews { get; }
 
-    ITableStockRoomTreeViewRepository TableStockRoomTreeViews { get; }
+    ITableEmployeeRepository TableEmployees { get; }
+    ITableEmployeeTreeViewRepository TableEmployeeTreeViews { get; }
 
     // Save changes methods
     Task<int> CompleteAsync();
@@ -38,6 +41,9 @@ public class UnitOfWork : IUnitOfWork
     private ITableTimeLineRepository? _tableTimeLines;
     private ITableTimeLineTreeViewRepository? _tableTimeLineTreeViews;
 
+    private ITableEmployeeRepository? _tableEmployees;
+    private ITableEmployeeTreeViewRepository? _tableEmployeeTreeViews;
+
     private IDbContextTransaction? _currentTransaction;
 
     public UnitOfWork(ProductionInventoryContext context)
@@ -50,6 +56,11 @@ public class UnitOfWork : IUnitOfWork
         get { return _stockRooms ??= new StockRoomRepository(_context); }
     }
 
+    public ITableStockRoomTreeViewRepository TableStockRoomTreeViews
+    {
+        get { return _tableStockRoomTreeViews ??= new TableStockRoomTreeViewRepository(_context); }
+    }
+
     public ITableTimeLineRepository TableTimeLines
     {
         get { return _tableTimeLines ??= new TableTimeLineRepository(_context); }
@@ -59,10 +70,15 @@ public class UnitOfWork : IUnitOfWork
     {
         get { return _tableTimeLineTreeViews ??= new TableTimeLineTreeViewRepository(_context); }
     }
-
-    public ITableStockRoomTreeViewRepository TableStockRoomTreeViews
+    
+    public ITableEmployeeRepository TableEmployees
     {
-        get { return _tableStockRoomTreeViews ??= new TableStockRoomTreeViewRepository(_context); }
+        get { return _tableEmployees ??= new TableEmployeeRepository(_context); }
+    }
+
+    public ITableEmployeeTreeViewRepository TableEmployeeTreeViews
+    {
+        get { return _tableEmployeeTreeViews ??= new TableEmployeeTreeViewRepository(_context); }
     }
 
     public IDbContextTransaction? CurrentTransaction => _currentTransaction;

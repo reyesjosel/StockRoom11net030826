@@ -425,7 +425,6 @@ namespace StockRoom11net.Controls.ZPL2_ZebraPrint
             _dataGridViewLabelsSMT.CurrentColumnActive = null;
             _dataGridViewLabelsSMT.CurrentDataGridViewRowMouseOver = null;
             _dataGridViewLabelsSMT.CurrentDataRowViewMouseOver = null;
-            _dataGridViewLabelsSMT.CurrentEmployeesLogIn = null;
             _dataGridViewLabelsSMT.CurrentRowBackgroundColor = System.Drawing.Color.DeepSkyBlue;
             _dataGridViewLabelsSMT.CurrentRowBorderColor = System.Drawing.Color.DarkBlue;
             _dataGridViewLabelsSMT.CurrentRowMouseOverStatus = null;

@@ -2,6 +2,9 @@
 
 namespace StockRoom11net.Controls.DependencyInjection
 {
+    /// <summary>
+    /// Example of a class that demonstrates the Dependency Injection (DI) pattern.
+    /// </summary>
     internal class DI_pattern
     {
         private readonly IMyService _myService;
@@ -65,8 +68,10 @@ namespace StockRoom11net.Controls.DependencyInjection
                 .AddTransient<IMyService, MyService>()
                 .AddSingleton<IOtherService, OtherService>()
                 .BuildServiceProvider();
+
             var myService = serviceProvider.GetRequiredService<IMyService>();
             myService.Execute(); // Call a method on the resolved service
+
             var otherService = serviceProvider.GetRequiredService<IOtherService>();
             otherService.PerformAction("SampleAction"); // Call a method on another resolved service
         }

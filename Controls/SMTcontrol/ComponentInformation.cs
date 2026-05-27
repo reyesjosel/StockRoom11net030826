@@ -26,7 +26,7 @@ namespace StockRoom11net.Controls.SMTcontrol
             }
         }
 
-        public ComponentInformation(DataRowView componentRow)
+        public ComponentInformation(Table_StockRoom componentRow)
         {
             try
             {
@@ -43,7 +43,7 @@ namespace StockRoom11net.Controls.SMTcontrol
             }
         }
 
-        public ComponentInformation(DataRowView componentRow, CustomPanelDoubleBuffered.CustomPanelDoubleBuffered container)
+        public ComponentInformation(Table_StockRoom componentRow, CustomPanelDoubleBuffered.CustomPanelDoubleBuffered container)
         {
             try
             {
@@ -103,7 +103,7 @@ namespace StockRoom11net.Controls.SMTcontrol
         public int CompForProduction;
         public int OnHandBefore;
 
-        DataRowView ComponentRow;
+        Table_StockRoom ComponentRow;
 
         /// <summary>
         /// Contiene el nombre del component selected, Resistor, Diode.
@@ -113,7 +113,7 @@ namespace StockRoom11net.Controls.SMTcontrol
         BaseComponent currentComp;
         public BaseComponent SeletedComponent;
 
-        public void ProcessNewCompInformation(DataRowView componentRow,
+        public void ProcessNewCompInformation(Table_StockRoom componentRow,
                                               CustomPanelDoubleBuffered.CustomPanelDoubleBuffered container)
         {
             //ComponentRow = componentRow;
@@ -134,9 +134,9 @@ namespace StockRoom11net.Controls.SMTcontrol
             container.Controls.Add(SeletedComponent);
         }
 
-        private void DetermineTableNameUpDateAllFields(DataRowView componentRow)
+        private void DetermineTableNameUpDateAllFields(Table_StockRoom componentRow)
         {
-            switch (componentRow["TableName"]?.ToString())
+            switch (componentRow.TableName)
             {
                 case "Table_Components":
                     {
@@ -194,22 +194,22 @@ namespace StockRoom11net.Controls.SMTcontrol
                     {
                         #region"Table_StockRoom"
 
-                        PartNumber = componentRow["PartNumber"]?.ToString();
+                        PartNumber = componentRow.PartNumber;
 
                         if (PartNumber.Length < 4)
                             return;
 
                         PartNumberTag = PartNumber.Remove(4);
-                        Description = componentRow["Description"]?.ToString();
-                        Manufacturer = componentRow["Manufacturer"]?.ToString();
-                        ModelNumber = componentRow["ModelNumber"]?.ToString();
-                        Supplier = componentRow["Supplier"]?.ToString();
-                        DataSheet_File = componentRow["DataSheet_File"]?.ToString();
-                        Who_uses_this = componentRow["Who_uses_this"]?.ToString();
-                        OnHand = int.TryParse(componentRow["OnHand"]?.ToString(), out int onHand) ? onHand : 0;
-                        OnHold = int.TryParse(componentRow["OnHold"]?.ToString(), out int onHold) ? onHold : 0;
-                        OnHoldBy = componentRow["OnHoldBy"]?.ToString();
-                        OnAvailable = int.TryParse(componentRow["OnAvailable"]?.ToString(), out int onAvailable) ? onAvailable : 0;
+                        Description = componentRow.Description;
+                        Manufacturer = componentRow.Manufacturer;
+                        ModelNumber = componentRow.ModelNumber;
+                        Supplier = componentRow.Supplier;
+                        DataSheet_File = componentRow.DataSheet_File;
+                        Who_uses_this = componentRow.Who_uses_this;
+                        OnHand = componentRow.OnHand;
+                        OnHold = componentRow.OnHold;
+                        OnHoldBy = componentRow.OnHoldBy;
+                        OnAvailable = componentRow.OnAvailable;
 
                         #endregion"Table_StockRoom"
                         break;

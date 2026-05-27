@@ -338,10 +338,96 @@ public partial class TableTimeLineTreeViewService : ITableTimeLineTreeViewServic
     }
 }
 
+/**********************************************/
+Here's a CRUD Cheat Sheet.
+CREATE, READ, UPDATE, DELETE operations using EF Core with Repository and Service layers:
+
+(C)REATE — Add a new record
+
+public async Task CreateEmployeeAsync(Table_Employee employee)
+{
+    // Business rule: Validate employee data (e.g., Name not empty)
+    if (string.IsNullOrEmpty(employee.Name))
+        throw new ArgumentException("Name is required");
+
+    // Data access: Add to repository via UnitOfWork
+    await _unitOfWork.Employees.AddAsync(employee);
+    await _unitOfWork.SaveChangesAsync(); // Commit to database
+}
+
+(R)EAD — Retrieve records
+
+public async Task<List<Table_Employee>> GetAllEmployeesAsync()
+{
+    // Business rule: Maybe filter by department, etc. (not shown)
+    
+    // Data access: Get all employees via UnitOfWork
+    return await _unitOfWork.Employees.GetAllAsync();
+}
+
+(U)PDATE — Modify an existing record
+
+public async Task UpdateEmployeeAsync(Table_Employee employee)
+{
+    // Business rule: Validate employee data (e.g., ID must exist)
+    var existing = await _unitOfWork.Employees.GetByIdAsync(employee.Id);
+    if (existing == null)
+        throw new ArgumentException("Employee not found");
+
+    // Update properties
+    existing.Name = employee.Name;
+    existing.Position = employee.Position;
+    // ... other properties
+
+    // Data access: Update via UnitOfWork
+    await _unitOfWork.Employees.UpdateAsync(existing);
+    await _unitOfWork.SaveChangesAsync(); // Commit to database
+}
+
+(D)ELETE — Remove a record
+
+public async Task DeleteEmployeeAsync(int id)
+{
+    // Business rule: Validate employee data (e.g., ID must exist)
+    var existing = await _unitOfWork.Employees.GetByIdAsync(id);
+    if (existing == null)
+        throw new ArgumentException("Employee not found");
+
+    // Data access: Remove via UnitOfWork
+    await _unitOfWork.Employees.RemoveAsync(existing);
+    await _unitOfWork.SaveChangesAsync(); // Commit to database
+}
+
+💡 SaveChangesAsync() commits all pending changes (Create, Update, Delete) to SQLite in one transaction.
+
+Great catch! When .AsNoTracking() is used, EF Core does NOT track the entity, so modifying its properties
+and calling SaveChangesAsync() will do nothing — the update is silently ignored.
+
+⚠️ The Problem
+// Entity fetched with NO tracking
+var employee = await _dbSet.AsNoTracking()
+                           .FirstOrDefaultAsync(e => e.ID == 1001);
+
+employee.Position = "Technician"; // ❌ EF doesn't know about this change
+await repo.SaveChangesAsync();    // ❌ Nothing gets saved to the DB
+
+✅ Fix Option 3 — Attach + mark only changed properties
+var employee = await _dbSet.AsNoTracking()
+                            .FirstOrDefaultAsync(e => e.ID == 1001);
+if (employee is not null)
+{
+    employee.Position = "Technician";
+
+    _context.Attach(employee);  // Re-attach as Unchanged
+    _context.Entry(employee).Property(e => e.Position).IsModified = true; // ✅ Only updates Position column
+    await _context.SaveChangesAsync();
+}
+💡 Best for performance — only the changed column is sent to SQLite.
 
 
 
 
+/************************************************************/
 
 ```
 
