@@ -5,6 +5,7 @@ namespace StockRoom11net.Data.Repositories;
 
 
 /// <summary>
+/// ✅ REPOSITORY — only data access, no logic
 /// Repository interface for TableTimeLine operations
 /// </summary>
 public interface ITableTimeLineRepository : IRepository<Table_TimeLine>
@@ -27,6 +28,7 @@ public interface ITableTimeLineRepository : IRepository<Table_TimeLine>
 
 
 /// <summary>
+/// ✅ REPOSITORY — only data access, no logic
 /// Repository implementation for TableTimeLine entity
 /// </summary>
 public class TableTimeLineRepository : Repository<Table_TimeLine>, ITableTimeLineRepository

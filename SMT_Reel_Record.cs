@@ -1,6 +1,7 @@
 ﻿using StockRoom11net.Controls;
 using StockRoom11net.Controls.EmployeeInformation;
 using StockRoom11net.Controls.RawInput;
+using StockRoom11net.Data.Entities;
 using StockRoom11net.Properties;
 using System.Data;
 using System.Data.OleDb;
@@ -428,7 +429,7 @@ namespace StockRoom11net
                             groupBox_Employee_ID.BackColor = Color.DimGray;
                             splitContainer_CompReelChange.Panel2Collapsed = false;
                             tabControl_CompReelChange.SelectTab("tabPage_CompReelChangeProcess");
-                            On_SpeechSynthesizerBase(new SpeechSynthesizerBase_EventArgs("Scan the Employee ID card"));
+                            On_SpeechSynthesizerBase(new SpeechSynthesizerBase_EventArgs("Scan the EmployeeInformation ID card"));
                             break;
                         }
                     case "Employee_ID":
@@ -443,7 +444,7 @@ namespace StockRoom11net
                             }
                             else
                             {
-                                On_SpeechSynthesizerBase(new SpeechSynthesizerBase_EventArgs("Sorry, the system is waiting for a Employee ID"));
+                                On_SpeechSynthesizerBase(new SpeechSynthesizerBase_EventArgs("Sorry, the system is waiting for a EmployeeInformation ID"));
                             }
                             break;
                         }
@@ -514,7 +515,7 @@ namespace StockRoom11net
 
         #region"Employee ID fiel"
 
-        Employee _employeeInformation;
+        EmployeeInformation _employeeInformation;
         void EmployeeID_Scaned(string password)
         {
             try
@@ -525,8 +526,8 @@ namespace StockRoom11net
 
                 if (employeeIndex == -1)
                     return;
-
-                _employeeInformation = new Employee((DataRowView)_bindingSource_Employees[employeeIndex]);
+                    //TODO: Handle the scanned employee ID.
+        //        _employeeInformation = new EmployeeInformation((Table_Employee)_bindingSource_Employees[employeeIndex]);
 
                 label_EmployeeID_Value.Text = _employeeInformation.FullName;
                 On_SpeechSynthesizerBase(new SpeechSynthesizerBase_EventArgs("Hi " + _employeeInformation.Name));
@@ -535,7 +536,7 @@ namespace StockRoom11net
             }
             catch (Exception)
             {
-                MessageBox.Show("Employee information erroneous", "Missing Employee Data.", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("EmployeeInformation information erroneous", "Missing EmployeeInformation Data.", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 

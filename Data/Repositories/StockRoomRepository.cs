@@ -4,6 +4,7 @@ using StockRoom11net.Data.Entities;
 namespace StockRoom11net.Data.Repositories;
 
 /// <summary>
+/// ✅ REPOSITORY — only data access, no logic
 /// StockRoom-specific repository with custom queries
 /// Replaces TableAdapter queries with LINQ and async operations
 /// </summary>
@@ -19,6 +20,8 @@ public interface IStockRoomRepository : IRepository<Table_StockRoom>
     Task<IEnumerable<Table_StockRoom>> FilterByStringFilterAsync(string stringFilter);
 }
 
+
+// ✅ REPOSITORY — only data access, no logic
 public class StockRoomRepository : Repository<Table_StockRoom>, IStockRoomRepository
 {
     public StockRoomRepository(ProductionInventoryContext context) : base(context)

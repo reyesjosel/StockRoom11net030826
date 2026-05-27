@@ -31,6 +31,7 @@ public static class DependencyInjection
 
         // Register Services
         services.AddScoped<IStockRoomService, StockRoomService>();
+        services.AddScoped<ITableEmployeeService, TableEmployeeService>();
         services.AddScoped<ITableTimeLineService, TableTimeLineService>();
         services.AddScoped<ITableTimeLineTreeViewService, TableTimeLineTreeViewService>();
         services.AddScoped<ITableStockRoomTreeViewService, TableStockRoomTreeViewService>();

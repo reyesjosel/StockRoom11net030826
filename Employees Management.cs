@@ -1,21 +1,22 @@
 ﻿using System.Data;
 using System.ComponentModel;
 using System.Collections.Specialized;
-
-using MyStuff11net;
 using BrightIdeasSoftware;
-
 using static StockRoom11net.Controls.Custom_Events_Args;
 using StockRoom11net.Controls.EmployeeInformation;
 using StockRoom11net.Controls.DataGridViewExtend;
 using StockRoom11net.Controls.ResourcesCache;
-using Microsoft.IdentityModel.Tokens;
 using StockRoom11net.Controls;
+using StockRoom11net.Data;
+using StockRoom11net.Data.Services;
+using StockRoom11net.Data.Entities;
 
 namespace StockRoom11net
 {
     public partial class Employees_Management : BaseTemple
     {
+        // Injected EF Core services
+        private ITableEmployeeService _employeesService;
 
         #region"Properties"
 
@@ -75,36 +76,32 @@ namespace StockRoom11net
         private BindingSource _bindingSource_EmployeesTreeView = new BindingSource();
         private DataTable _dataTableSetting = new DataTable("Setting");
 
-        private Employee EmployeesSelected;
+        private EmployeeInformation EmployeesSelected;
         private DepartmentInformation DepartmentSelected;
 
         public string PdfFile = "";
 
-        private StringCollection PositionList = [];
-        private StringCollection DepartmentList = [];
+        private StringCollection PositionList = new StringCollection();
 
         public Employees_Management()
         {
             InitializeComponent();
         }
 
-        public Employees_Management(BindingSource employees, BindingSource employeesTreeview, List<string> departList)
+        public Employees_Management(ITableEmployeeService employeesService)
         {
             InitializeComponent();
+
+            _employeesService = employeesService ?? throw new ArgumentNullException(nameof(employeesService));
 
             AutoScaleMode = AutoScaleMode.Dpi;
             DockAreas = WinFormsUI.Docking.DockAreas.Document | WinFormsUI.Docking.DockAreas.Float;
 
-            if (employees == null)
-            {
-                MessageBox.Show("The input employees bindingSource is Null", "Error on initialization", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-
-            DepartList = departList;
-            _bindingSource_Employees = employees;
-            _bindingSource_EmployeesTreeView = employeesTreeview;
-            BindingSourceTreeViewBase = _bindingSource_EmployeesTreeView;
+            
+            //DepartList = departList;
+            //_bindingSource_Employees = employees;
+            //_bindingSource_EmployeesTreeView = employeesTreeview;
+            //BindingSourceTreeViewBase = _bindingSource_EmployeesTreeView;
 
             foreach (object row in _bindingSource_Employees)
             {
@@ -113,12 +110,7 @@ namespace StockRoom11net
                 var position = Row["Position"].ToString().Trim();
                 if (!(PositionList.Contains(position)))
                     if (!(string.IsNullOrEmpty(position)) || !(string.IsNullOrWhiteSpace(position)))
-                        PositionList.Add(position);
-
-                var department = Row["Department"].ToString().Trim();
-                if (!(DepartmentList.Contains(department)))
-                    if (!(string.IsNullOrEmpty(department)) || !(string.IsNullOrWhiteSpace(department)))
-                        DepartmentList.Add(department);
+                        PositionList.Add(position);                               
             }
 
             Load += Employees_Management_Load;
@@ -556,7 +548,7 @@ namespace StockRoom11net
         {
             // _currentColumnActive = CurrentDataColumnActive(e.ColumnIndex);
 
-            if (CurrentEmployeesLogIn.IsUser)
+            if ( _employeesService.CurrentEmployeeLogIn.IsUser)
             {
                 MessageBox.Show(@"The current User, does not have the right to perform this action.",
                                  @"Warning, access denied.", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -588,23 +580,19 @@ namespace StockRoom11net
                 if (e.CurrentRowActive == null || e.CurrentRowActive.Index == -1)
                     return;
                 MessageDebugPosition = "e.CurrentRowActive.Index";
-                DataRowView currentRow = (DataRowView)_bindingSource_Employees[e.CurrentRowActive.Index];
+                Table_Employee employeeSelected = (Table_Employee)_bindingSource_Employees[e.CurrentRowActive.Index];
 
-                if (currentRow["Department"].ToString().Contains("Department"))
+                if (employeeSelected.Department.Contains("Department"))
                 {
-                    DepartmentSelected = new DepartmentInformation(currentRow);
-                    DepartmentSelected.Save_Requested -= EmployeesDepartmentSelected_SaveRequested;
-                    DepartmentSelected.Save_Requested += EmployeesDepartmentSelected_SaveRequested;
+                    DepartmentSelected = new DepartmentInformation(employeeSelected);
 
                     InitializeUI_Department(DepartmentSelected);
                 }
                 else
                 {
-                    EmployeesSelected = new Employee(currentRow);
-                    EmployeesSelected.Save_Requested -= EmployeesDepartmentSelected_SaveRequested;
-                    EmployeesSelected.Save_Requested += EmployeesDepartmentSelected_SaveRequested;
+        //            EmployeesSelected = new EmployeeInformation(employeeSelected);
 
-                    InitializeUI_Employee(EmployeesSelected);
+                   // InitializeUI_Employee(EmployeesSelected);
                 }
             }
             catch (Exception error)
@@ -616,20 +604,6 @@ namespace StockRoom11net
                                     @"StockRoom Inventory has generated an error.",
                                     MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
-            }
-        }
-
-        private void EmployeesDepartmentSelected_SaveRequested(object sender, Save_Requested_EventArgs e)
-        {
-            try
-            {
-                On_Save_Requested(new Save_Requested_EventArgs(Utilities.NotificationEvents.DataBaseUpDated));
-                NeedSaveData = false;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(@"Error al tratar de salvar la DataBase" + ex.Message, @"Error on DataBase. Employees Management.",
-                                MessageBoxButtons.RetryCancel, MessageBoxIcon.Error);
             }
         }
 
@@ -653,7 +627,7 @@ namespace StockRoom11net
 
             comboBox_Department.SelectedValueChanged += AnySetting_TextChanged;
             comboBox_Department.TextChanged += AnySetting_TextChanged;
-            comboBox_Department.DataSource = DepartmentList;
+            comboBox_Department.DataSource = _employeesService.DepartmentsList;
 
             comboBox_AccessLevel.SelectedValueChanged += AnySetting_TextChanged;
             comboBox_AccessLevel.TextChanged += AnySetting_TextChanged;
@@ -676,14 +650,14 @@ namespace StockRoom11net
                 new CurrentRowActive_EventArgs(_dataGridViewExtended_Employee.CurrentRowActive));
         }
 
-        private void InitializeUI_Employee(Employee employeesSelected)
+        private void InitializeUI_Employee(EmployeeInformation employeesSelected)
         {
-            if (DepartmentList.Contains("Department"))
-                DepartmentList.Remove("Department");
+            if (_employeesService.DepartmentsList.Contains("Department"))
+                _employeesService.DepartmentsList.Remove("Department");
 
             UpdateUI_Employee(employeesSelected);
 
-            GeneratedDataGridViedProfile(EmployeesSelected);
+         //   GeneratedDataGridViedProfile(EmployeesSelected);
 
             NeedSaveData = false;
             button_AddNewEmployee.Enabled = true;
@@ -691,7 +665,7 @@ namespace StockRoom11net
             button_SaveEmployee.Text = "Save";
         }
 
-        private void UpdateUI_Employee(Employee employeesSelected)
+        private void UpdateUI_Employee(EmployeeInformation employeesSelected)
         {
             textBox_Employee_Name.Text = employeesSelected.Name;
             textBox_Employee_LastName.Text = employeesSelected.LastName;
@@ -712,8 +686,7 @@ namespace StockRoom11net
         {
             button_SaveEmployee.Text = "Save";
             button_SaveEmployee.Enabled = false;
-
-            EmployeesSelected.Last6Digit = Utilities.CastAsInt(textBox_Last6Digit.Text);
+/*            EmployeesSelected.Last6Digit = Utilities.CastAsInt(textBox_Last6Digit.Text);
             EmployeesSelected.Name = textBox_Employee_Name.Text;
             EmployeesSelected.LastName = textBox_Employee_LastName.Text;
             EmployeesSelected.Address = textBox_Address.Text;
@@ -722,7 +695,7 @@ namespace StockRoom11net
             EmployeesSelected.Size = textBox_Size.Text;
             EmployeesSelected.Position = comboBox_Position.Text;
             EmployeesSelected.Department = comboBox_Department.Text;
-
+*/
             EmployeesSelected.EmployeeAccessLevel = (Utilities.AccessLevel)comboBox_AccessLevel.SelectedItem;
             EmployeesSelected.EmployeeEditMode = (Utilities.EditMode)comboBox_EditMode.SelectedItem;
             EmployeesSelected.EmployeeEnableTreeViewSetting = (Utilities.EnableSetting)comboBox_EnableSetting.SelectedItem;
@@ -767,7 +740,7 @@ namespace StockRoom11net
         private void Button_AddEmployee_Click(object sender, EventArgs e)
         {
             button_AddNewEmployee.Enabled = false;
-            button_SaveEmployee.Text = "Save Employee";
+            button_SaveEmployee.Text = "Save EmployeeInformation";
             button_SaveEmployee.Enabled = true;
 
             try
@@ -920,27 +893,21 @@ namespace StockRoom11net
 
         private void InitializeUI_Department(DepartmentInformation departmentInformation)
         {
-            DepartmentList.Clear();
-            DepartmentList.Add("Department");
+            _employeesService.DepartmentsList.Clear();
+            _employeesService.DepartmentsList.Add("Department");
 
-            textBox_DepartmentName.Text = departmentInformation.DeptName;
-            textBox_DepartmentComents.Text = departmentInformation.DeptComments;
-            textBox_DepartmentID.Text = departmentInformation.DeptID + "";
-            textBox_DepartmentTelephone.Text = departmentInformation.DeptTelephone;
+            textBox_DepartmentName.Text = departmentInformation.DepartmentName;
+            textBox_DepartmentComents.Text = departmentInformation.DepartmentComments;
+            textBox_DepartmentID.Text = departmentInformation.ID + "";
+            textBox_DepartmentTelephone.Text = departmentInformation.DepartmentTelephone;
         }
 
         private void UpDateDepartmentSelected()
         {
-            DepartmentSelected.DeptID = Utilities.CastAsInt(textBox_DepartmentID.Text);
-            DepartmentSelected.DeptName = textBox_DepartmentName.Text;
-            //    DepartmentSelected.LastName = textBox_Employee_LastName.Text;
-            DepartmentSelected.DeptComments = textBox_DepartmentComents.Text;
-            DepartmentSelected.DeptTelephone = textBox_DepartmentTelephone.Text;
-            //    DepartmentSelected.HireDate = dateTimePicker_Hire_Date.Value;
-            //    DepartmentSelected.Size = textBox_Size.Text;
-            //    DepartmentSelected.Position = comboBox_Position.Text;
-            //    DepartmentSelected.Department; // ReadOnly
-
+            DepartmentSelected.ID = Utilities.CastAsInt(textBox_DepartmentID.Text);
+            DepartmentSelected.DepartmentName = textBox_DepartmentName.Text;
+            DepartmentSelected.DepartmentComments = textBox_DepartmentComents.Text;
+            DepartmentSelected.DepartmentTelephone = textBox_DepartmentTelephone.Text;
             DepartmentSelected.DeptAccessLevel = (Utilities.AccessLevel)comboBox_AccessLevel.SelectedItem;
             DepartmentSelected.DeptEditMode = (Utilities.EditMode)comboBox_EditMode.SelectedItem;
 
@@ -949,8 +916,8 @@ namespace StockRoom11net
                 DataGridViewSetting dataGridViewSetting = (DataGridViewSetting)dataControl;
 
                 DepartmentSelected.DataGridViewSettingDict.Clear();
-                DepartmentSelected.DataGridViewSettingDict.Add(dataGridViewSetting.SettingName.Key,
-                                                               dataGridViewSetting.SettingName.Value);
+           //     DepartmentSelected.DataGridViewSettingDict.Add(dataGridViewSetting.SettingName.Key,
+           //                                                    dataGridViewSetting.SettingName.Value);
             }
 
             DepartmentSelected.SaveSetting();
@@ -1059,8 +1026,8 @@ namespace StockRoom11net
             button_DeleteProfile.Enabled = false;
         }
 
-        private void GeneratedDataGridViedProfile(Employee activeEmployee)
-        {
+        private void GeneratedDataGridViedProfile(Table_Employee activeEmployee)
+        {/*
             panel_dataGridViewProfile.Controls.Clear();
 
             foreach (KeyValuePair<string, List<ColumnSetting>> SettingName in activeEmployee.DataGridViewSettingDict)
@@ -1070,7 +1037,7 @@ namespace StockRoom11net
                 dataGridViewSetting.Dock = DockStyle.Top;
                 dataGridViewSetting.Click += new EventHandler(DataGridViewSetting_Click);
                 panel_dataGridViewProfile.Controls.Add(dataGridViewSetting);
-            }
+            }*/
         }
 
         private void Panel_SettingControls_Click(object sender, EventArgs e)
@@ -1095,8 +1062,8 @@ namespace StockRoom11net
             {
                 DataGridViewSetting dataGridViewSetting = (DataGridViewSetting)dataControl;
 
-                EmployeesSelected.DataGridViewSettingDict.Add(dataGridViewSetting.SettingName.Key,
-                                                                                    dataGridViewSetting.SettingName.Value);
+            //    EmployeesSelected.DataGridViewSettingDict.Add(dataGridViewSetting.SettingName.Key,
+            //                                                                        dataGridViewSetting.SettingName.Value);
             }
 
             EmployeesSelected.SaveSetting();
@@ -1104,7 +1071,7 @@ namespace StockRoom11net
 
         private void Button_Profile_Cancel_Click(object sender, EventArgs e)
         {
-            GeneratedDataGridViedProfile(EmployeesSelected);
+         //   GeneratedDataGridViedProfile(EmployeesSelected);
         }
 
         private void Button_Profile_Delete_Click(object sender, EventArgs e)

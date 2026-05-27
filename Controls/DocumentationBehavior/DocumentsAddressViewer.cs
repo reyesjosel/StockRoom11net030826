@@ -1,23 +1,22 @@
 ﻿using StockRoom11net.Controls.EmployeeInformation;
+using StockRoom11net.Data.Services;
 
 namespace StockRoom11net.Controls.DocumentationBehavior
 {
     public partial class DocumentsAddressViewer : Form
     {
-        DepartmentInformation DepartmentLogIn;
-        List<DepartmentInformation> DepartmentList;
+        private ITableEmployeeService _employeesService;
 
         public DocumentsAddressViewer()
         {
             InitializeComponent();
         }
 
-        public DocumentsAddressViewer(DepartmentInformation department, List<DepartmentInformation> departmentList, bool allowedEditing)
+        public DocumentsAddressViewer(ITableEmployeeService employeesService, bool allowedEditing)
         {
             InitializeComponent();
 
-            DepartmentLogIn = department;
-            DepartmentList = departmentList;
+            _employeesService = employeesService;
 
             InitializeDocumentsAddressGroup(allowedEditing);
         }
@@ -30,7 +29,7 @@ namespace StockRoom11net.Controls.DocumentationBehavior
                 Text = "DocumentsAddressViewer View mode.";
 
             Controls.Remove(documentsAddressGroup);
-            var documentsAddressGroupNew = new DocumentsAddressGroup(DepartmentLogIn, DepartmentList, allowedEditing);
+            var documentsAddressGroupNew = new DocumentsAddressGroup(_employeesService, allowedEditing);
             Controls.Add(documentsAddressGroupNew);
             documentsAddressGroupNew.Dock = DockStyle.Fill;
 

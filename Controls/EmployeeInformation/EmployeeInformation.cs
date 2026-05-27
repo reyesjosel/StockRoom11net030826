@@ -1,13 +1,23 @@
-﻿using System.Collections.Specialized;
+﻿using StockRoom11net.Data.Entities;
+using StockRoom11net.Data.Services;
+using System.Collections.Specialized;
 using System.ComponentModel;
-using System.Data;
 using System.Text;
-using Save_Requested_EventArgs = StockRoom11net.Controls.Custom_Events_Args.Save_Requested_EventArgs;
 
 namespace StockRoom11net.Controls.EmployeeInformation
 {
-    public class Employee : INotifyPropertyChanged
+    public class EmployeeInformation : INotifyPropertyChanged
     {
+        // Injected EF Core services
+        private readonly Table_Employee _currentEmployeeEntity;
+        private ITableEmployeeService _employeesService;
+
+        public ITableEmployeeService EmployeesService
+        {
+            get { return _employeesService; }
+            set { _employeesService = value; }
+        }
+
         #region INotifyPropertyChanged implementation
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -18,35 +28,10 @@ namespace StockRoom11net.Controls.EmployeeInformation
 
         #endregion
 
-        #region"Save_Requested"
-
-        // # 1 ... Declare the event in the control class
-        // put some information to Properties Manager.
-        [Category("Controls Events")]
-        [Description("The User request a Save action")]
-        public event Custom_Events_Args.Save_Requested_EventHandler Save_Requested;
-
-        // # 4 ... Declare the protected virtual methods for
-        // this events, in this procedure we calling the event itself.
-        public virtual void On_Save_Requested(Save_Requested_EventArgs e)
-        {
-            Save_Requested?.Invoke(this, e);
-        }
-        #endregion
-
         string MessagePositionString = "";
 
-        public Employee()
-        {
-            ID = 0;
-            Name = "No user LogIn";
-            LastName = "";
-            Address = "";
-            Telephone = "";
-            HireDate = DateTime.Now;
-            Size = "";
-            Position = "";
-            Department = "";
+        public EmployeeInformation()
+        {           
 
             EmployeeRights = Utilities.GetDict("AccessLevel:0;EditMode:0;EnableTreeViewSetting:0");
 
@@ -63,47 +48,13 @@ namespace StockRoom11net.Controls.EmployeeInformation
         /// if it's null no employee logged in.
         /// </summary>
         /// <param name="employeesRow"></param>
-        public Employee(DataRowView employeesRow)
+        public EmployeeInformation(Table_Employee employeeEntity)
         {
-            if (employeesRow == null)
-                return;
-
             try
             {
-                EmployeesRow = employeesRow;
+                _currentEmployeeEntity = employeeEntity;
 
-                MessagePositionString = "Column ID.";
-                ID = Utilities.CastAsInt(EmployeesRow["ID"]);
-
-                MessagePositionString = "Column Last6Digit.";
-                Last6Digit = Utilities.CastAsInt(EmployeesRow["Last6Digit"]);
-
-                MessagePositionString = "Column Name.";
-                Name = EmployeesRow["Name"].ToString();
-
-                MessagePositionString = "Column LastName.";
-                LastName = EmployeesRow["LastName"].ToString();
-
-                MessagePositionString = "Column Address.";
-                Address = EmployeesRow["Address"].ToString();
-
-                MessagePositionString = "Column Telephone.";
-                Telephone = EmployeesRow["Telephone"].ToString();
-
-                MessagePositionString = "Column HireDate.";
-                HireDate = Utilities.CastAs(EmployeesRow["HireDate"], DateTime.Now);
-
-                MessagePositionString = "Column Size.";
-                Size = EmployeesRow["Size"].ToString();
-
-                MessagePositionString = "Column Position.";
-                Position = EmployeesRow["Position"].ToString();
-
-                MessagePositionString = "Column Department.";
-                Department = EmployeesRow["Department"].ToString();
-
-                MessagePositionString = "Column AccessLevel.";
-                EmployeeRights = Utilities.GetDict(EmployeesRow["AccessLevel"].ToString(), EmployeeRights);
+                EmployeeRights = Utilities.GetDict(_currentEmployeeEntity.AccessLevel.ToString());
 
                 MessagePositionString = "Dictionary EditMode.";
                 EmployeeEditMode = (Utilities.EditMode)EmployeeRights["EditMode"];
@@ -126,24 +77,14 @@ namespace StockRoom11net.Controls.EmployeeInformation
             }
         }
 
-        public Employee(string employeesID)
+        public EmployeeInformation(string employeesID)
         {
             if (!employeesID.Contains("811266"))
                 return;
 
             try
-            {
-                ID = 811266;
-                Last6Digit = 811266;
-                Name = "Jose";
-                LastName = "Reyes";
-                Address = "";
-                Telephone = "";
-                HireDate = DateTime.Now;
-                Size = "D";
-                Position = "Manager";
-                Department = "";
-                EmployeeRights = Utilities.GetDict("AccessLevel:3;AutoSizeColumnsMode:1;EditMode:3;EnableTreeViewSetting:1", EmployeeRights);
+            {               
+                EmployeeRights = Utilities.GetDict("AccessLevel:3;AutoSizeColumnsMode:1;EditMode:3;EnableTreeViewSetting:1");
                 EmployeeEditMode = Utilities.EditMode.Delete;
                 EmployeeAccessLevel = Utilities.AccessLevel.Manager;
                 EmployeeEnableTreeViewSetting = Utilities.EnableSetting.False;
@@ -154,8 +95,8 @@ namespace StockRoom11net.Controls.EmployeeInformation
             }
             catch (Exception error)
             {
-                MessageBox.Show(new Form() { TopMost = true }, "The constructor has found an error " + error.Message + " at position ",
-                                                            "EmployeesInformation Class error.", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(new Form() { TopMost = true }, "The constructor has found an error " + error.Message + " at position " +
+                                        MessagePositionString, "EmployeesInformation Class error.", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -166,11 +107,8 @@ namespace StockRoom11net.Controls.EmployeeInformation
             Dictionary<string, List<ColumnSetting>> dataGridViewSetting = new Dictionary<string, List<ColumnSetting>>();
 
             StringCollection _dataGridViewString = new StringCollection();
-
-            if (EmployeesRow == null)
-                return;
-
-            _dataGridViewString.AddRange(EmployeesRow["DataGridViewSetting"].ToString().Split('#'));
+                        
+            _dataGridViewString.AddRange(_currentEmployeeEntity.DataGridViewSetting.ToString().Split('#'));
 
             foreach (string datagridview in _dataGridViewString)
             {
@@ -209,7 +147,7 @@ namespace StockRoom11net.Controls.EmployeeInformation
 
             StringCollection _userSettingString = new StringCollection();
 
-            _userSettingString.AddRange(EmployeesRow["UserSetting"].ToString().Split('#'));
+            _userSettingString.AddRange(_currentEmployeeEntity.UserSetting.ToString().Split('#'));
 
             foreach (string userSetting in _userSettingString)
             {
@@ -230,7 +168,7 @@ namespace StockRoom11net.Controls.EmployeeInformation
         }
 
         /// <summary>
-        /// Employee rights and permissions to edit, delete and configure the interface. permits are:
+        /// EmployeeInformation rights and permissions to edit, delete and configure the interface. permits are:
         /// AccessLevel, EditMode, EnableTreeViewSetting, AutoSizeColumnsMode.
         /// </summary>
         private readonly SortedDictionary<string, int> EmployeeRights = new SortedDictionary<string, int>()
@@ -240,27 +178,33 @@ namespace StockRoom11net.Controls.EmployeeInformation
                 {"EnableTreeViewSetting", 0},
                 {"AutoSizeColumnsMode", 1}
             };
-
-        private readonly DataRowView EmployeesRow;
-
-        public int Index;
-        public int ID;
-        public int? ManagerId;
-        public int Last6Digit;
-        public string LastName = "";
-        public string Name = "Not user login.";
-        public string Address = "";
-        public string Telephone = "";
-        public DateTime Dob = DateTime.Now;
-        public DateTime HireDate = DateTime.Now;
-        public string UserSetting = "";
-        public string DataGridViewSetting = "";
-        public string Position = "";
-        public string Department = "";
-        public string Size = "";
-        public string Status = "";
-
-
+        
+        public int Index { get { return _currentEmployeeEntity?.Index ?? 0; } }
+        public int ID { get { return _currentEmployeeEntity?.ID ?? 0; } }
+      //  public int? ManagerId { get { return _currentEmployeeEntity?.ManagerId; } }
+        public int Last6Digit { get { return _currentEmployeeEntity?.Last6Digit ?? 0; } }
+        public string LastName { get { return _currentEmployeeEntity?.LastName ?? ""; } }
+        public string Name { get { return _currentEmployeeEntity?.Name ?? "Not user login."; } }
+        public string Address { get { return _currentEmployeeEntity?.Address ?? ""; } }
+        public string Telephone { get { return _currentEmployeeEntity?.Telephone ?? ""; } }
+        public DateTime Dob { get { return _currentEmployeeEntity?.Dob ?? DateTime.Now; } }
+        public DateTime HireDate { get { return _currentEmployeeEntity?.HireDate ?? DateTime.Now; } }
+        public string UserSetting
+        {
+            get { return _currentEmployeeEntity?.UserSetting ?? ""; }
+            set { _currentEmployeeEntity?.UserSetting = value; }
+        }
+        public string DataGridViewSetting
+        {
+            get { return _currentEmployeeEntity?.DataGridViewSetting ?? ""; }
+            set { _currentEmployeeEntity?.DataGridViewSetting = value; }
+        }
+        public string Position { get { return _currentEmployeeEntity?.Position ?? ""; } }
+        public string Department { get { return _currentEmployeeEntity?.Department ?? ""; } }
+        public string Size { get { return _currentEmployeeEntity?.Size ?? ""; } }
+        public string Status { get { return _currentEmployeeEntity?.Status ?? ""; } }
+        
+        
         #region"These are packed in the Dictionary, we need to update this to reflect changes."
 
         public Utilities.AccessLevel EmployeeAccessLevel
@@ -586,11 +530,8 @@ namespace StockRoom11net.Controls.EmployeeInformation
         /// </summary>
         /// <param name="UserSettingName"></param>
         /// <param name="userSetting"></param>
-        public void SaveUserSetting(string UserSettingName, UserSetting userSetting)
+        public async Task SaveUserSettingAsync(string UserSettingName, UserSetting userSetting)
         {
-            if (EmployeesRow == null)
-                return;
-
             #region"UserSetting"
 
             if (UserSettingDict == null)
@@ -612,25 +553,17 @@ namespace StockRoom11net.Controls.EmployeeInformation
 
             #endregion"UserSetting"
 
-            EmployeesRow.BeginEdit();
-            EmployeesRow["UserSetting"] = UserSettingDict_to_String();
-            EmployeesRow.EndEdit();
-
-            On_Save_Requested(new Save_Requested_EventArgs(Utilities.NotificationEvents.EmployeesInformationChange, EmployeesRow));
+            _employeesService.CurrentEmployeeLogIn.UserSetting = UserSettingDict_to_String();
+            await SaveSetting();
         }
 
-        public void SaveColumnsSetting(string UserSettingName, DataGridViewColumnCollection columns)
+        public async Task SaveColumnsSetting(string UserSettingName, DataGridViewColumnCollection columns)
         {
-            if (EmployeesRow == null)
-                return;
-
             UpDateColumnsSetting(UserSettingName, columns);
 
-            EmployeesRow.BeginEdit();
-            EmployeesRow["DataGridViewSetting"] = DataGridViewSettingDict_to_String();
-            EmployeesRow.EndEdit();
+            _employeesService.CurrentEmployeeLogIn.DataGridViewSetting = DataGridViewSettingDict_to_String();
 
-            On_Save_Requested(new Save_Requested_EventArgs(Utilities.NotificationEvents.EmployeesInformationChange, EmployeesRow));
+            await SaveSetting();
         }
 
         public void UpDateColumnsSetting(string UserSettingName, DataGridViewColumnCollection columns)
@@ -659,33 +592,9 @@ namespace StockRoom11net.Controls.EmployeeInformation
         /// <summary>
         /// UpDate all fields in EmployeesRow and call On_Save_Requested.
         /// </summary>
-        public void SaveSetting()
+        public async Task SaveSetting()
         {
-            if (EmployeesRow == null)
-                return;
-
-            EmployeesRow.BeginEdit();
-
-            EmployeesRow["Index"] = ID;
-            EmployeesRow["ID"] = ID;
-            EmployeesRow["Last6digit"] = Last6Digit;
-            EmployeesRow["LastName"] = LastName;
-            EmployeesRow["Name"] = Name;
-            EmployeesRow["Address"] = Address;
-            EmployeesRow["Telephone"] = Telephone;
-            EmployeesRow["Dob"] = Dob;
-            EmployeesRow["HireDate"] = HireDate;
-            EmployeesRow["UserSetting"] = UserSettingDict_to_String();
-            EmployeesRow["DataGridViewSetting"] = DataGridViewSettingDict_to_String();
-            EmployeesRow["Position"] = Position;
-            EmployeesRow["Department"] = Department;
-            EmployeesRow["AccessLevel"] = Utilities.GetString(EmployeeRights);
-            EmployeesRow["Size"] = Size;
-            EmployeesRow["Status"] = Status;
-
-            EmployeesRow.EndEdit();
-
-            On_Save_Requested(new Save_Requested_EventArgs(Utilities.NotificationEvents.EmployeesInformationChange, EmployeesRow));
+            await _employeesService.UpdateEmployeeAsync(_employeesService.CurrentEmployeeEntity);
         }
 
         /// <summary>
@@ -1027,5 +936,5 @@ namespace StockRoom11net.Controls.EmployeeInformation
         public DataGridViewAutoSizeColumnsMode AutoSizeColumnsMode { get; set; } = DataGridViewAutoSizeColumnsMode.None;
 
     }
-
+    
 }

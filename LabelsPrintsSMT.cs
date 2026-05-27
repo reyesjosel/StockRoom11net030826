@@ -7,11 +7,14 @@ using System.Text;
 using static StockRoom11net.Controls.Custom_Events_Args;
 using System.ComponentModel;
 using StockRoom11net.Controls;
+using StockRoom11net.Data.Services;
 
 namespace StockRoom11net
 {
     public partial class LabelsPrintsSMT : BaseTemple
     {
+        private ITableEmployeeService _employeesService;
+
         #region"Properties"
 
         StringBuilder builderCommands;
@@ -47,11 +50,12 @@ namespace StockRoom11net
 
         #endregion"Public Properties"
 
-        public LabelsPrintsSMT(BindingSource bindingSourceLabelsSMT, CurrentDeptUserBroadcast_EventArgs currentDeptUser)
+        public LabelsPrintsSMT(BindingSource bindingSourceLabelsSMT, ITableEmployeeService employeeService)
         {
             InitializeComponent();
 
             BindingSourceTreeViewBase = bindingSourceLabelsSMT;
+            _employeesService = employeeService;
 
             BarcodeDatatoPrint = "BarCodeData";
             DescriptiontoPrint = "";
@@ -147,7 +151,7 @@ namespace StockRoom11net
             }
             else
             {
-                EmployeesSelected = new Employee(currentRow);
+                EmployeesSelected = new EmployeeInformation(currentRow);
                 EmployeesSelected.Save_Requested -= EmployeesDepartmentSelected_SaveRequested;
                 EmployeesSelected.Save_Requested += EmployeesDepartmentSelected_SaveRequested;
 
@@ -172,7 +176,7 @@ namespace StockRoom11net
             addedRow.Row.SetField("QuantityToPrint", Counter);
             addedRow.Row.SetField("Darkness", numericUpDown_DarknessValue.Value);
             addedRow.Row.SetField("DateCreated", DateTime.Now);
-            addedRow.Row.SetField("BackUpField1", CurrentEmployeesLogIn.Name);
+            addedRow.Row.SetField("BackUpField1", _employeesService.CurrentEmployeeLogIn.Name);
             addedRow.Row.EndEdit();
         }
 

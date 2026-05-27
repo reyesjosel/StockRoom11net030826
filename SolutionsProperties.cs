@@ -4,6 +4,7 @@ using StockRoom11net.Controls.EmployeeInformation;
 using StockRoom11net.Controls.FileSystemExt;
 using StockRoom11net.Controls.RawInput;
 using StockRoom11net.Controls.ResourcesCache;
+using StockRoom11net.Data.Services;
 using StockRoom11net.Properties;
 using System.Collections.Specialized;
 using System.ComponentModel;
@@ -23,14 +24,15 @@ namespace StockRoom11net
 {
     public partial class SolutionsProperties : DockContent
     {
+        // Injected EF Core services
+        private ITableEmployeeService _employeesService;
+
         ScanDocumentsAddressGroup scanDocumentsAddressGroup_Default = new ScanDocumentsAddressGroup();
 
-        bool IsInstallationMode;
+        public bool IsInstallationMode;
 
         FileAttributes _fileAttributes = new FileAttributes();
-
-        public List<string> DepartList = new List<string>();
-        public List<DepartmentInformation> ListDepartments = new List<DepartmentInformation>();
+                
         // public CustomTabControl tabControlExtendBase = new CustomTabControl();
         public CurrentStatus CurrentStatusReference = new CurrentStatus();
 
@@ -279,43 +281,16 @@ namespace StockRoom11net
         #endregion"Custom Controls Events with custom Arg.*********************"      
 
         #region"CurrentUserBroadcast"
-        /// <summary>
-        /// Department active in this machine.
-        /// </summary>
-        DepartmentInformation _currentDepartmentLogIn;
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public DepartmentInformation CurrentDepartmentLogIn
-        {
-            get
-            {
-                return _currentDepartmentLogIn;
-            }
-            set
-            {
-                if (value == null)
-                    return;
-
-                _currentDepartmentLogIn = value;
-
-                _currentDepartmentLogIn.Save_Requested -= CurrentDepartmentLogIn_Save_Requested;
-                _currentDepartmentLogIn.Save_Requested += CurrentDepartmentLogIn_Save_Requested;
-            }
-        }
-
-        void CurrentDepartmentLogIn_Save_Requested(object sender, Save_Requested_EventArgs e)
-        {
-            On_Save_Requested(e);
-        }
-
+        
         public Action ProcessCurrentEmployeesLogIn;
-        Employee _currentEmployeesLogIn;
+        EmployeeInformation _currentEmployeesLogIn;
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public Employee CurrentEmployeesLogIn
+        public EmployeeInformation CurrentEmployeesLogIn
         {
             get
             {
                 if (_currentEmployeesLogIn == null)
-                    _currentEmployeesLogIn = new Employee();
+                    _currentEmployeesLogIn = new EmployeeInformation();
 
                 return _currentEmployeesLogIn;
             }
@@ -326,40 +301,14 @@ namespace StockRoom11net
                 ProcessCurrentEmployeesLogIn?.Invoke();
             }
         }
-
-        public void CurrentUserBroadcast_EventHandler(object sender, CurrentDeptUserBroadcast_EventArgs e)
-        {
-            if (e == null)
-                return;
-
-            CurrentEmployeesLogIn = e.Employee;
-            CurrentDepartmentLogIn = e.Deptment;
-        }
-
+               
         #endregion"CurrentUserBroadcast"
-
-        #region"BomAssemblyUpdate"
-        public void TreeViewUpdate_EventHandler(object sender, TreeViewUpdateEventArgs e)
-        {
-            //  _bindingSource_table_StockroomTreeView.DataSource = DuplicateDataSource(_bindingSource_Original_StockroomTreeView);
-
-            //  treeViewBase.DataBinding.DataSource = null;
-            //  treeViewBase.DataBinding.DataSource = _bindingSource_table_StockroomTreeView;
-
-            //  treeViewBase.FullRepaint();
-
-            //  treeView.DataBinding.
-        }
-
-        #endregion"BomAssemblyUpdate"        
 
 
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public string MessagePositionString { get; set; }
+        public string MessageDebugPositionString { get; set; }
 
         public ResourcesCache _cache = new ResourcesCache();
-
-        public virtual void ProcessInput(CellDoubleClick_EventArgs cellDoubleClickEventArgs, Utilities.ProcessMode value) { }
 
         public void ThreadSafeInvoke(Action action)
         {
@@ -378,25 +327,14 @@ namespace StockRoom11net
         {
             InitializeComponent();
         }
-
-        public SolutionsProperties(string options)
+                
+        public SolutionsProperties(ITableEmployeeService employeesService)
         {
             InitializeComponent();
 
-            CurrentDepartmentLogIn = new DepartmentInformation();
+            _employeesService = employeesService ?? throw new ArgumentNullException(nameof(employeesService));
 
-            if (options.Contains("Installation Mode"))
-                IsInstallationMode = true;
-        }
-
-        public SolutionsProperties(DepartmentInformation currentDepartment, List<DepartmentInformation> listDepartments)
-        {
-            InitializeComponent();
-
-            CurrentDepartmentLogIn = currentDepartment;
-            ListDepartments = listDepartments;
-
-            Text = "Solutions properties for " + CurrentDepartmentLogIn.DeptName + " department.";
+            Text = "Solutions properties for " + _employeesService.CurrentDepartmentLogIn.DepartmentName + " department.";
         }
 
 
@@ -531,12 +469,12 @@ namespace StockRoom11net
         {
             try
             {
-                MessagePositionString = "InitializeProperties()";
+                MessageDebugPositionString = "InitializeProperties()";
 
                 checkBox_EnableSendReceiveNotifycations.Checked = Settings.Default.NotifycationsEnableSendReceive;
                 checkBox_SendMyOwnNotifications.Checked = Settings.Default.NotificationsSendMyOwn;
 
-                MessagePositionString = @"checkBox_ShowEmailsNotifications";
+                MessageDebugPositionString = @"checkBox_ShowEmailsNotifications";
                 checkBox_ShowEmailsNotifications.Checked = Settings.Default.NotificationsShowEmails;
                 checkBox_ShowDataBaseUpdateNotifications.Checked = Settings.Default.NotificationsShowDataBaseUpDate;
                 checkBox_ShowMyOwnNotifications.Checked = Settings.Default.NotificationsShowMyOwn;
@@ -544,7 +482,7 @@ namespace StockRoom11net
                 trackBar_Interval.Value = Settings.Default.IntervalTrackBar_Value;
                 TimeUnitName = Settings.Default.IntervalTimeUnitName;
 
-                MessagePositionString = @"checkBoxSaveEachTimeTheInformationIsChanged";
+                MessageDebugPositionString = @"checkBoxSaveEachTimeTheInformationIsChanged";
                 checkBoxSaveEachTimeTheInformationIsChanged.Checked = Settings.Default.SaveEachTimeTheInformationIsChanged;
                 checkBoxSaveTheInformationByTime.Checked = Settings.Default.SaveTheInformationByTime;
                 checkBoxSaveTheInformationWhenTheUserSaves.Checked = Settings.Default.SaveTheInformationWhenTheUserSave;
@@ -557,7 +495,7 @@ namespace StockRoom11net
                 using (var form = new Form { TopMost = true })
                 {
                     MessageBox.Show(form, @"Message related to this error is " + error.Message +
-                                          @", Break code at position " + MessagePositionString,
+                                          @", Break code at position " + MessageDebugPositionString,
                                           @"SolutionsProperties, it's fail in InitializeProperties()",
                                           MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
@@ -615,7 +553,7 @@ namespace StockRoom11net
             //The checkboxes checked states have been set so set Loading to false to allow the CreateShortcut sub to be called now
             Loading = false;
 
-            comboBox_ApplicationDepartmentName.DataSource = ListDepartments;
+            comboBox_ApplicationDepartmentName.DataSource = _employeesService.DepartmentsInformationList;
             comboBox_ApplicationDepartmentName.DisplayMember = "DeptName";
             comboBox_ApplicationDepartmentName.ValueMember = "DeptName";
             comboBox_ApplicationDepartmentName.SelectedValueChanged += ComboBox_ApplicationDepartmentName_SelectedValueChanged;
@@ -625,9 +563,10 @@ namespace StockRoom11net
             textBoxApplicationHTMLtemples.Text = Settings.Default.ApplicationDefaultHtmlPages;
         }
 
+        DepartmentInformation DepartmentSelected;
         void ComboBox_ApplicationDepartmentName_SelectedValueChanged(object sender, EventArgs e)
         {
-            CurrentDepartmentLogIn = (DepartmentInformation)comboBox_ApplicationDepartmentName.SelectedItem;
+            DepartmentSelected = (DepartmentInformation)comboBox_ApplicationDepartmentName.SelectedItem;
 
             Settings.Default.InstallationFirstDate = DateTime.Now;
 
@@ -2094,6 +2033,7 @@ namespace StockRoom11net
 
         string DeviceInformation(string stringIn)
         {
+            return "Not device information available.";
             StringBuilder StringBuilder1 = new StringBuilder(string.Empty);
             ManagementClass ManagementClass1 = new ManagementClass(stringIn);
             //Create a ManagementObjectCollection to loop through
@@ -2453,7 +2393,7 @@ namespace StockRoom11net
         void InitializeDocumentsAddressGroup()
         {
             grouper_DefinedAddressDocumentation.Controls.Remove(documentsAddressGroup_SearchForPDFfileWithin);
-            var documentsAddressGroupNew = new DocumentsAddressGroup(CurrentDepartmentLogIn, ListDepartments, true);
+            var documentsAddressGroupNew = new DocumentsAddressGroup(_employeesService, true);
             grouper_DefinedAddressDocumentation.Controls.Add(documentsAddressGroupNew);
             documentsAddressGroupNew.Dock = DockStyle.Fill;
 
@@ -2464,7 +2404,7 @@ namespace StockRoom11net
         {
             InitializeDocumentsAddressGroup();
 
-            MessagePositionString = @"DocumentationBehavior switch";
+            MessageDebugPositionString = @"DocumentationBehavior switch";
             switch ((Utilities.DocumentationBehavior)Settings.Default.DocumentationBehavior)
             {
                 case Utilities.DocumentationBehavior.SpecifiedDocument:
@@ -2529,7 +2469,7 @@ namespace StockRoom11net
         void InitializeConvertFilesFrontThisLocationTab()
         {
             grouper_ConvertFilesFrontThisLocation.Controls.Remove(scanDocumentsAddressGroup_Default);
-            var scanDocumentsAddressGroupNew = new ScanDocumentsAddressGroup(CurrentDepartmentLogIn, ListDepartments);
+            var scanDocumentsAddressGroupNew = new ScanDocumentsAddressGroup(_employeesService.CurrentDepartmentLogIn, _employeesService.DepartmentsInformationList);
             grouper_ConvertFilesFrontThisLocation.Controls.Add(scanDocumentsAddressGroupNew);
             scanDocumentsAddressGroupNew.Dock = DockStyle.Fill;
 

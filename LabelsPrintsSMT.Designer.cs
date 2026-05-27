@@ -603,7 +603,6 @@ namespace StockRoom11net
             _dataGridViewLabelsSMT.CurrentColumnActive = null;
             _dataGridViewLabelsSMT.CurrentDataGridViewRowMouseOver = null;
             _dataGridViewLabelsSMT.CurrentDataRowViewMouseOver = null;
-            _dataGridViewLabelsSMT.CurrentEmployeesLogIn = null;
             _dataGridViewLabelsSMT.CurrentRowBackgroundColor = Color.DeepSkyBlue;
             _dataGridViewLabelsSMT.CurrentRowBorderColor = Color.DarkBlue;
             _dataGridViewLabelsSMT.CurrentRowMouseOverStatus = null;

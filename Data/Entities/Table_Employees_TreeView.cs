@@ -21,11 +21,11 @@ public partial class Table_Employees_TreeView
 
     public string? Range { get; set; }
 
-    public int? Parent_ID { get; set; }
+    public int Parent_ID { get; set; }
 
     public string? ProjectName { get; set; }
 
-    public string? Text_Name { get; set; }
+    public string Text_Name { get; set; }
 
     public string? Node_PDF { get; set; }
 

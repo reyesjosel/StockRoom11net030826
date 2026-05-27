@@ -421,7 +421,7 @@
         End = new DateTime(2026, 2, 10),
         Min = new DateTime(2020, 12,01, 12, 00, 00),
         Max = DateTime.Today + TimeSpan.FromDays(200),
-       // Height = "125px",
+        // Height = "125px",
         MaxHeight = "50%",
         MinHeight = "10%",
         ShowCurrentTime = true,
@@ -510,11 +510,15 @@
     }
 
 
-        
-    private string Message { get; set; }
+    /// <summary>
+    /// The message received from the AppService.
+    /// Updated at HandleMessage() .
+    /// </summary>
+    private string Message { get; set; } = string.Empty;
 
     /// <summary>
     /// OnInitialize we add event handlers to the AppService.MessageReceived event.
+    /// </summary>
     protected override void OnInitialized()
     {
         AppService.MessageReceived += HandleMessage;
@@ -523,7 +527,8 @@
 
     /// <summary>
     /// This method is called whenever the AppService.MessageReceived event is raised.
-    /// Hire we handle the message and call the UpDateData method to update the data.
+    /// Here we handle the message and call the UpDateData method to update the data.
+    /// </summary>
     private void HandleMessage(string message)
     {
         UpDateData(message);
@@ -534,6 +539,7 @@
     /// <summary>
     /// this method is called by the AppService event handlers whenever the data is updated.
     /// OnInitialized we add event handlers to the AppService.MessageReceived event.
+    /// </summary>
     public async void UpDateData(string message)
     {
        // await timelinecomp.UpDateData(message);

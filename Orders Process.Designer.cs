@@ -47,7 +47,6 @@ namespace StockRoom11net
             this.dataGridViewExtended_GPS.CurrentColumnActive = null;
             this.dataGridViewExtended_GPS.CurrentDataGridViewRowMouseOver = null;
             this.dataGridViewExtended_GPS.CurrentDataRowViewMouseOver = null;
-            this.dataGridViewExtended_GPS.CurrentEmployeesLogIn = null;
             this.dataGridViewExtended_GPS.CurrentRowBackgroundColor = System.Drawing.Color.DeepSkyBlue;
             this.dataGridViewExtended_GPS.CurrentRowBorderColor = System.Drawing.Color.DarkBlue;
             this.dataGridViewExtended_GPS.CurrentRowMouseOverStatus = null;

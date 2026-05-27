@@ -5,6 +5,7 @@ namespace StockRoom11net.Data.Repositories;
 
 
 /// <summary>
+/// ✅ REPOSITORY — only data access, no logic
 /// Repository interface for TableTimeLineTreeView operations
 /// </summary>
 public interface ITableTimeLineTreeViewRepository : IRepository<Table_TimeLine_TreeView>
@@ -32,6 +33,7 @@ public interface ITableTimeLineTreeViewRepository : IRepository<Table_TimeLine_T
 
 
 /// <summary>
+/// ✅ REPOSITORY — only data access, no logic
 /// Repository implementation for TableTimeLineTreeView entity
 /// </summary>
 public class TableTimeLineTreeViewRepository : Repository<Table_TimeLine_TreeView>, ITableTimeLineTreeViewRepository

@@ -6,6 +6,8 @@ using System.Text;
 using StockRoom11net.Controls.ThumbViewer;
 using Tags = StockRoom11net.Controls.HTML_Tags;
 using Timer = System.Windows.Forms.Timer;
+using StockRoom11net.Data.Entities;
+using StockRoom11net.Data.Services;
 
 namespace StockRoom11net.Controls
 {
@@ -1002,7 +1004,7 @@ namespace StockRoom11net.Controls
                 SaveEvent = saveEvent;
             }
 
-            public Save_Requested_EventArgs(Utilities.NotificationEvents saveEvent, DataRowView changeRow)
+            public Save_Requested_EventArgs(Utilities.NotificationEvents saveEvent, Table_StockRoom changeRow)
             {
                 SaveEvent = saveEvent;
                 if (changeRow == null)
@@ -1041,7 +1043,7 @@ namespace StockRoom11net.Controls
                         }
                     case Utilities.NotificationEvents.EmployeesInformationChange:
                         {
-                            EmployeesInformation = new Employee(changeRow);
+                            EmployeesInformation = new Table_Employee();
                             break;
                         }
                     case Utilities.NotificationEvents.ComponentInformationChange:
@@ -1051,7 +1053,7 @@ namespace StockRoom11net.Controls
                         }
                     case Utilities.NotificationEvents.DepartmentInformationChange:
                         {
-                            DepartmentInformation = new DepartmentInformation(changeRow);
+                          //  DepartmentInformation = new DepartmentInformation(changeRow);
                             break;
                         }
                 }
@@ -1067,7 +1069,7 @@ namespace StockRoom11net.Controls
 
             public ComponentInformation ComponentInformation;
             public DepartmentInformation DepartmentInformation;
-            public Employee EmployeesInformation;
+            public Table_Employee EmployeesInformation;
             public string DataTableName;
             public Utilities.NotificationEvents NotificationEvent;
             public string Message;
@@ -1591,7 +1593,7 @@ namespace StockRoom11net.Controls
         public class CurrentDeptUserBroadcast_EventArgs : EventArgs
         {
             // Constructor accepts two integer: the old value and the new value.
-            public CurrentDeptUserBroadcast_EventArgs(DepartmentInformation dept, Employee employee)
+            public CurrentDeptUserBroadcast_EventArgs(DepartmentInformation dept, Table_Employee employee)
             {
                 Deptment = dept;
                 Employee = employee;
@@ -1599,7 +1601,7 @@ namespace StockRoom11net.Controls
 
             public DepartmentInformation Deptment;
 
-            public Employee Employee;
+            public Table_Employee Employee;
         }
 
         // # 4 ... Declare the protected virtual methods for

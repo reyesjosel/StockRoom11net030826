@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,11 +11,12 @@ public partial class Table_Employee
     [Key]
     public int Index { get; set; }
 
+    [Required]
     [Column(TypeName = "INT")]
-    public int? ID { get; set; }
+    public int ID { get; set; }
 
     [Column(TypeName = "INT")]
-    public int? Last6Digit { get; set; }
+    public int Last6Digit { get; set; }
 
     public string? LastName { get; set; }
 
@@ -31,7 +30,7 @@ public partial class Table_Employee
     public DateTime? Dob { get; set; }
 
     [Column(TypeName = "datetime")]
-    public DateOnly? HireDate { get; set; }
+    public DateTime? HireDate { get; set; }
 
     public string? UserSetting { get; set; }
 
@@ -39,6 +38,13 @@ public partial class Table_Employee
 
     public string? Position { get; set; }
 
+    /// <summary>
+    /// Department or division the employee belongs to, e.g., "Sales", "IT", "HR".
+    /// if this string contains "Department", it indicates the item is a department.
+    /// Remenber to update the logic in the application to check for "Department" in this field
+    /// when determining if an item is a department or an employee. We trated department as a special type of employee,
+    /// so we can use the same table to store both employees and departments.
+    /// </summary>
     public string? Department { get; set; }
 
     public string? AccessLevel { get; set; }

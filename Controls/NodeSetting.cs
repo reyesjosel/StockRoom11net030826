@@ -7,12 +7,16 @@ using HeightChange_EventArgs = StockRoom11net.Controls.Custom_Events_Args.Height
 using Save_Requested_EventArgs = StockRoom11net.Controls.Custom_Events_Args.Save_Requested_EventArgs;
 using StatusBarMessage_EventArgs = StockRoom11net.Controls.Custom_Events_Args.StatusBarMessage_EventArgs;
 using StringFilterControl_EventArgs = StockRoom11net.Controls.Custom_Events_Args.StringFilterControl_EventArgs;
+using StockRoom11net.Data.Entities;
+using StockRoom11net.Data.Services;
 
 
 namespace StockRoom11net.Controls
 {
     public partial class NodeSetting : UserControl
     {
+        private ITableEmployeeService _employeesService;
+
         int CounterEvents = 0;
 
         bool _debugMode = false;
@@ -175,10 +179,7 @@ namespace StockRoom11net.Controls
                 if (value == null)
                     return;
 
-                _currentDepartmentLogIn = value;
-
-                _currentDepartmentLogIn.Save_Requested -= CurrentDepartmentLogIn_Save_Requested;
-                _currentDepartmentLogIn.Save_Requested += CurrentDepartmentLogIn_Save_Requested;
+                _currentDepartmentLogIn = value;      
             }
         }
 
@@ -188,13 +189,13 @@ namespace StockRoom11net.Controls
         }
 
         public Action? ProcessCurrentEmployeesLogIn;
-        Employee? _currentEmployeesLogIn = new Employee();
+        Table_Employee? _currentEmployeesLogIn = new Table_Employee();
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public Employee CurrentEmployeesLogIn
+        public Table_Employee CurrentEmployeesLogIn
         {
             get
             {
-                _currentEmployeesLogIn ??= new Employee();
+                _currentEmployeesLogIn ??= new Table_Employee();
 
                 return _currentEmployeesLogIn;
             }
@@ -517,7 +518,7 @@ namespace StockRoom11net.Controls
             NodeSettingInitialize();
         }
 
-        public NodeSetting(BindingSource treeView_datasource, Employee currentEmployeesLogIn)
+        public NodeSetting(BindingSource treeView_datasource, Table_Employee currentEmployeesLogIn)
         {
             InitializeComponent();
 
@@ -534,7 +535,7 @@ namespace StockRoom11net.Controls
         }
 
         public NodeSetting(BindingSource treeView_datasource, DataColumnCollection columnCollection,
-                                Employee currentEmployeesLogIn)
+                                Table_Employee currentEmployeesLogIn)
         {
             InitializeComponent();
 
@@ -558,7 +559,7 @@ namespace StockRoom11net.Controls
         /// <param name="currentEmployeesLogIn"></param>
         /// <param name="flexibleTreeView"></param>
         public NodeSetting(BindingSource treeView_datasource, DataColumnCollection columnCollection,
-                                Employee currentEmployeesLogIn, List<string> departList, DepartmentInformation currentDepartment)
+                                ITableEmployeeService employeesService)
         {
             try
             {
@@ -568,11 +569,7 @@ namespace StockRoom11net.Controls
 
                 ColumnsCollection = columnCollection;
 
-                CurrentDepartmentLogIn = currentDepartment;
-
-                CurrentEmployeesLogIn = currentEmployeesLogIn;
-
-                DepartList = departList;
+                _employeesService = employeesService;
 
                 NodeSettingInitialize();
             }
@@ -1223,7 +1220,7 @@ namespace StockRoom11net.Controls
             if (buttonFilter.Text == "Show Filter")
             {
                 buttonFilter.Text = "Hide Filter";
-                TreeViewBindingSource.Filter = " AvalaibleDepartments LIKE '*" + CurrentDepartmentLogIn.DeptName + "*'";
+                TreeViewBindingSource.Filter = " AvalaibleDepartments LIKE '*" + _employeesService.CurrentDepartmentLogIn.DepartmentName + "*'";
                 label_FilterStatus.Text = "Department filter applied.";
                 label_FilterString.Text = TreeViewBindingSource.Filter;
             }

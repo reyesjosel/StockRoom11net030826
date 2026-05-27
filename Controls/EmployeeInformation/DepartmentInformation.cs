@@ -1,63 +1,18 @@
 ﻿using StockRoom11net.Controls.DocumentationBehavior;
+using StockRoom11net.Data.Entities;
 using StockRoom11net.Properties;
 using System.Collections.Specialized;
-using System.ComponentModel;
-using System.Data;
 using System.Text;
-using Save_Requested_EventArgs = StockRoom11net.Controls.Custom_Events_Args.Save_Requested_EventArgs;
 
 namespace StockRoom11net.Controls.EmployeeInformation
 {
     public class DepartmentInformation
     {
         string MessagePositionString = "";
-        public string SpliterCharacter
-        {
-            get
-            {
-                return "&";
-            }
-            private set { }
-        }
 
-        #region INotifyPropertyChanged implementation
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        private void OnPropertyChanged(string propertyName)
-        {
-            var handler = PropertyChanged;
-            if (handler != null)
-            {
-                handler(this, new PropertyChangedEventArgs(propertyName));
-            }
-        }
-
-        #endregion
-
-        #region"Save_Requested"
-
-        // # 1 ... Declare the event in the control class
-        // put some information to Properties Manager.
-        [Category("Controls Events")]
-        [Description("The User request a Save action")]
-        public event Custom_Events_Args.Save_Requested_EventHandler Save_Requested;
-
-        // # 4 ... Declare the protected virtual methods for
-        // this events, in this procedure we calling the event itself.
-        public virtual void On_Save_Requested(Save_Requested_EventArgs e)
-        {
-            // If an event has no subscriber registerd, it will
-            // evaluate to Null. The test checks that the value
-            // is not null, ensuring that there are subscribers
-            // before calling the event itself.
-
-            if (Save_Requested != null)
-            {
-                // Notify Subscribers
-                Save_Requested(this, e);
-            }
-        }
-        #endregion
+        private static readonly string SpliterCharacter = "&";
+        
+        private static readonly string[] separator = { ";" };
 
         public DepartmentInformation()
         {
@@ -66,12 +21,11 @@ namespace StockRoom11net.Controls.EmployeeInformation
                 MessagePositionString = "ID=0";
                 ID = 0;
                 DeptID = 123456;
-                DeptName = "No set to any department yet";
+                DepartmentName = "No set to any department yet";
 
-                DeptComments = "";
-                DeptTelephone = "";
+                DepartmentComments = "";
+                DepartmentTelephone = "";
                 HireDate = DateTime.Now;
-                Size = "";
                 Position = "";
                 Department = "Department";
 
@@ -103,51 +57,52 @@ namespace StockRoom11net.Controls.EmployeeInformation
 
         /// <summary>
         /// Initialize a new DeptInformation with this DataRowView,
-        /// if it's null no department is defined.
+        /// if it's null a default department is defined.
         /// </summary>
         /// <param name="departmentRow"></param>
-        public DepartmentInformation(DataRowView departmentRow)
+        public DepartmentInformation(Table_Employee departmentRow)
         {
             if (departmentRow == null)
-            {
                 new DepartmentInformation();
-                return;
-            }
-
-            try
+            
+            else
             {
-                DepartmentRow = departmentRow;
-
-                MessagePositionString = "Column ID.";
-                ID = Utilities.CastAsInt(DepartmentRow["ID"]);
-                DeptID = Utilities.CastAsInt(DepartmentRow["Last6Digit"]);
-                DeptName = DepartmentRow["Name"].ToString();
-                DeptComments = DepartmentRow["LastName"].ToString();
-                DepartmentDocumentsProcess(DepartmentRow["Address"].ToString());
-                DeptTelephone = DepartmentRow["Telephone"].ToString();
-                HireDate = Utilities.CastAs(DepartmentRow["HireDate"], DateTime.Now);
-                Size = DepartmentRow["Size"].ToString();
-                Position = DepartmentRow["Position"].ToString();
-                Department = DepartmentRow["Department"].ToString();
-
-                DeptRights = Utilities.GetDict(DepartmentRow["AccessLevel"].ToString(), DeptRights);
-                DeptEditMode = (Utilities.EditMode)DeptRights["EditMode"];
-                DeptAccessLevel = (Utilities.AccessLevel)DeptRights["AccessLevel"];
-                AutoSizeColumnsMode = (DataGridViewAutoSizeColumnsMode)DeptRights["AutoSizeColumnsMode"];
-
-                MessagePositionString = "Initialize employees.";
-                InitializeDepartment();
-            }
-            catch (Exception error)
-            {
-                using (var form = new Form { TopMost = true })
+                try
                 {
-                    MessageBox.Show(form, @"The constructor has found an error " + error.Message +
-                                          @" at position " + MessagePositionString,
-                                          @"EmployeesInformation Class error.",
-                                          MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    DepartmentRow = departmentRow;
+
+                    MessagePositionString = "Column ID.";
+                    ID = DepartmentRow.ID;
+                    DeptID = DepartmentRow.Last6Digit;
+                    DepartmentName = DepartmentRow.Name ?? "No set to any department yet";
+                    DepartmentComments = DepartmentRow.LastName ?? "Not a comments here.";
+                    DepartmentDocumentsProcess(DepartmentRow.Address);
+                    DepartmentTelephone = DepartmentRow.Telephone ?? "No telephone available";
+                    HireDate = DepartmentRow.HireDate ?? DateTime.Now;
+                    Position = DepartmentRow.Position ?? "No position available";
+                    Department = DepartmentRow.Department ?? "No department available";
+
+                    string deptAccessLevelString = DepartmentRow.AccessLevel ?? "AccessLevel:0;EditMode:0;EnableTreeViewSetting:0";
+
+                    DeptRights = Utilities.GetDict(deptAccessLevelString);
+                    DeptEditMode = (Utilities.EditMode)DeptRights["EditMode"];
+                    DeptAccessLevel = (Utilities.AccessLevel)DeptRights["AccessLevel"];
+                    AutoSizeColumnsMode = (DataGridViewAutoSizeColumnsMode)DeptRights["AutoSizeColumnsMode"];                    
+                }
+                catch (Exception error)
+                {
+                    using (var form = new Form { TopMost = true })
+                    {
+                        MessageBox.Show(form, @"The constructor has found an error " + error.Message +
+                                              @" at position " + MessagePositionString,
+                                              @"EmployeesInformation Class error.",
+                                              MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
                 }
             }
+
+            MessagePositionString = "Initialize employees.";
+            InitializeDepartment();
         }
 
         readonly bool toTest = true;
@@ -162,7 +117,10 @@ namespace StockRoom11net.Controls.EmployeeInformation
             if (DepartmentRow == null)
                 return;
 
-            _dataGridViewString.AddRange(DepartmentRow[@"DataGridViewSetting"].ToString().Split('#'));
+            if(string.IsNullOrEmpty(DepartmentRow.DataGridViewSetting) || string.IsNullOrWhiteSpace(DepartmentRow.DataGridViewSetting))
+                return;
+
+            _dataGridViewString.AddRange(DepartmentRow.DataGridViewSetting.ToString().Split('#'));
 
             foreach (string datagridview in _dataGridViewString)
             {
@@ -205,7 +163,10 @@ namespace StockRoom11net.Controls.EmployeeInformation
 
                 var _userSettingString = new StringCollection();
 
-                _userSettingString.AddRange(DepartmentRow["UserSetting"].ToString().Split('#'));
+                if(string.IsNullOrEmpty(DepartmentRow.UserSetting) || string.IsNullOrWhiteSpace(DepartmentRow.UserSetting))
+                    return;
+
+                _userSettingString.AddRange(DepartmentRow.UserSetting.ToString().Split('#'));
 
                 foreach (string deptSetting in _userSettingString)
                 {
@@ -227,7 +188,7 @@ namespace StockRoom11net.Controls.EmployeeInformation
         }
 
         /// <summary>
-        /// Employee rights and permissions to edit, delete and configure the interface. permits are:
+        /// EmployeeInformation rights and permissions to edit, delete and configure the interface. permits are:
         /// AccessLevel, EditMode, EnableTreeViewSetting, AutoSizeColumnsMode.
         /// </summary>
         SortedDictionary<string, int> DeptRights = new SortedDictionary<string, int>
@@ -238,7 +199,7 @@ namespace StockRoom11net.Controls.EmployeeInformation
                 {@"AutoSizeColumnsMode", 1}
             };
 
-        private DataRowView DepartmentRow;
+        private readonly Table_Employee DepartmentRow;
 
         public int Index;
         /// <summary>
@@ -251,32 +212,28 @@ namespace StockRoom11net.Controls.EmployeeInformation
         /// <summary>
         /// Department name.
         /// </summary>
-        public string DeptName { get; set; }// = "No set to any department yet";
+        public string DepartmentName { get; set; }// = "No set to any department yet";
 
         /// <summary>
         /// Any comment about it depart. We use column "LastName" to store the information into the database.
         /// </summary>
-        public string DeptComments = "";
+        public string DepartmentComments = "";
 
         /// <summary>
         /// Department telephone if exist one.
         /// </summary>
-        public string DeptTelephone = "";
+        public string DepartmentTelephone = "";
         public DateTime Dob = DateTime.Now;
         public DateTime HireDate = DateTime.Now;
-        public string DeptSetting = "";
+        public string DepartmentSetting = "";
         public string DataGridViewSetting = "";
         public string Position = "";
         public string Department { get; set; }
         public string AccessLevel = "";
-        public string Size = "";
         public string Status = "";
         public string Properties { get; set; }
 
         public SortedDictionary<string, bool> AvailableMenus { get; set; }
-
-
-
 
         #region"These are packed in the Dictionary, we need to update this to reflect changes."
 
@@ -320,17 +277,7 @@ namespace StockRoom11net.Controls.EmployeeInformation
         }
 
         #endregion"These are packed in the Dictionary, we need to update this to reflect changes."
-
-        public string FullName
-        {
-            get
-            {
-                return DeptName;
-            }
-
-            private set { }
-        }
-
+                
         public bool IsViewMode
         {
             get
@@ -383,8 +330,6 @@ namespace StockRoom11net.Controls.EmployeeInformation
             private set { }
         }
 
-
-
         /// <summary>
         /// If Department field contain Department, return true.
         /// We process department as an employee.
@@ -408,7 +353,10 @@ namespace StockRoom11net.Controls.EmployeeInformation
         /// <param name="departmentDocumentSet"></param>
         void DepartmentDocumentsProcess(string departmentDocumentSet)
         {
-            var DepartmentDocumentSet = departmentDocumentSet.Split(new string[] { ";" }, StringSplitOptions.RemoveEmptyEntries).ToList();
+            if (departmentDocumentSet == null)
+                return;
+
+            var DepartmentDocumentSet = departmentDocumentSet.Split(separator, StringSplitOptions.RemoveEmptyEntries).ToList();
 
             foreach (string documentsAddressSet in DepartmentDocumentSet)
             {
@@ -698,6 +646,7 @@ namespace StockRoom11net.Controls.EmployeeInformation
 
         public void SaveSetting()
         {
+            /*
             DepartmentRow.BeginEdit();
 
             DepartmentRow["Index"] = ID;
@@ -720,6 +669,7 @@ namespace StockRoom11net.Controls.EmployeeInformation
             DepartmentRow.EndEdit();
 
             On_Save_Requested(new Save_Requested_EventArgs(Utilities.NotificationEvents.DepartmentInformationChange, DepartmentRow));
+        */
         }
 
         #region"ColumnSetting for this specific DataGridView"
@@ -769,6 +719,8 @@ namespace StockRoom11net.Controls.EmployeeInformation
             }
         }
 
+        
+
         string DataGridViewSettingDict_to_String()
         {
             var builder = new StringBuilder();
@@ -801,8 +753,6 @@ namespace StockRoom11net.Controls.EmployeeInformation
 
             return result;
         }
-
-
 
         #endregion"ColumnSetting for this specific DataGridView"
 
@@ -847,7 +797,6 @@ namespace StockRoom11net.Controls.EmployeeInformation
 
             return result;
         }
-
 
         public Utilities.EditMode CustomEdit { get; set; }
         public Utilities.AccessLevel AccessLevel { get; set; }

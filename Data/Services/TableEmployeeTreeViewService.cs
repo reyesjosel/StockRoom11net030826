@@ -7,23 +7,23 @@ namespace StockRoom11net.Data.Services;
 /// <summary>
 /// ✅ SERVICE — business logic: : search by name, validate, process,
 /// Data access delegated to repository via UnitOfWork.
-/// Service interface for Table_TimeLine_TreeView business logic
+/// Service interface for Table_Employee_TreeView business logic
 /// </summary>
-public partial interface ITableTimeLineTreeViewService
+public partial interface ITableEmployeeTreeViewService
 {
     // Basic operations
-    Task<BindingList<Table_TimeLine_TreeView>> LoadTimelinesTreeViewAsync();
-    Task<Table_TimeLine_TreeView?> GetByIdAsync(int id, CancellationToken cancellationToken = default);
-    Task<IEnumerable<Table_TimeLine_TreeView>> GetAllAsync(CancellationToken cancellationToken = default);
-    Task<Table_TimeLine_TreeView> CreateAsync(Table_TimeLine_TreeView entity, CancellationToken cancellationToken = default);
-    Task<Table_TimeLine_TreeView> UpdateAsync(Table_TimeLine_TreeView entity, CancellationToken cancellationToken = default);
+    Task<BindingList<Table_Employees_TreeView>> LoadEmployeesTreeViewAsync();
+    Task<Table_Employees_TreeView?> GetByIdAsync(int id, CancellationToken cancellationToken = default);
+    Task<IEnumerable<Table_Employees_TreeView>> GetAllAsync(CancellationToken cancellationToken = default);
+    Task<Table_Employees_TreeView> CreateAsync(Table_Employees_TreeView entity, CancellationToken cancellationToken = default);
+    Task<Table_Employees_TreeView> UpdateAsync(Table_Employees_TreeView entity, CancellationToken cancellationToken = default);
     Task<bool> DeleteAsync(int id, CancellationToken cancellationToken = default);
 
     // Tree operations
-    Task<IEnumerable<Table_TimeLine_TreeView>> GetRootNodesAsync(CancellationToken cancellationToken = default);
-    Task<IEnumerable<Table_TimeLine_TreeView>> GetChildrenAsync(int parentId, CancellationToken cancellationToken = default);
-    Task<IEnumerable<Table_TimeLine_TreeView>> GetFullTreeAsync(CancellationToken cancellationToken = default);
-    Task<IEnumerable<Table_TimeLine_TreeView>> GetSubTreeAsync(int rootId, CancellationToken cancellationToken = default);
+    Task<IEnumerable<Table_Employees_TreeView>> GetRootNodesAsync(CancellationToken cancellationToken = default);
+    Task<IEnumerable<Table_Employees_TreeView>> GetChildrenAsync(int parentId, CancellationToken cancellationToken = default);
+    Task<IEnumerable<Table_Employees_TreeView>> GetFullTreeAsync(CancellationToken cancellationToken = default);
+    Task<IEnumerable<Table_Employees_TreeView>> GetSubTreeAsync(int rootId, CancellationToken cancellationToken = default);
         
     // Business logic
     Task<int> GetTotalItemCountAsync(int nodeId, CancellationToken cancellationToken = default);
@@ -34,39 +34,39 @@ public partial interface ITableTimeLineTreeViewService
 /// <summary>
 /// ✅ SERVICE — business logic: : search by name, validate, process,
 /// Data access delegated to repository via UnitOfWork.
-/// Service implementation for Table_TimeLine_TreeView business logic
+/// Service implementation for Table_Employees_TreeView business logic
 /// </summary>
-public partial class TableTimeLineTreeViewService : ITableTimeLineTreeViewService
+public partial class TableEmployeeTreeViewService : ITableEmployeeTreeViewService
 {
     private readonly IUnitOfWork _unitOfWork;
 
-    public TableTimeLineTreeViewService(IUnitOfWork unitOfWork)
+    public TableEmployeeTreeViewService(IUnitOfWork unitOfWork)
     {
         _unitOfWork = unitOfWork;
     }
 
     #region Basic Operations
     
-    public async Task<BindingList<Table_TimeLine_TreeView>> LoadTimelinesTreeViewAsync()
+    public async Task<BindingList<Table_Employees_TreeView>> LoadEmployeesTreeViewAsync()
     {
-        var items = await _unitOfWork.TableTimeLineTreeViews.GetAllAsync();
-        return new BindingList<Table_TimeLine_TreeView>(items.ToList());
+        var items = await _unitOfWork.TableEmployeeTreeViews.GetAllAsync();
+        return new BindingList<Table_Employees_TreeView>(items.ToList());
     }
 
-    public async Task<Table_TimeLine_TreeView?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
+    public async Task<Table_Employees_TreeView?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
     {
         if (id <= 0)
             throw new ArgumentException("Id must be greater than zero.", nameof(id));
 
-        return await _unitOfWork.TableTimeLineTreeViews.GetByIDAsync(id, cancellationToken);
+        return await _unitOfWork.TableEmployeeTreeViews.GetByIDAsync(id, cancellationToken);
     }
 
-    public async Task<IEnumerable<Table_TimeLine_TreeView>> GetAllAsync(CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<Table_Employees_TreeView>> GetAllAsync(CancellationToken cancellationToken = default)
     {
-        return await _unitOfWork.TableTimeLineTreeViews.GetAllAsync(cancellationToken);
+        return await _unitOfWork.TableEmployeeTreeViews.GetAllAsync(cancellationToken);
     }
 
-    public async Task<Table_TimeLine_TreeView> CreateAsync(Table_TimeLine_TreeView entity, CancellationToken cancellationToken = default)
+    public async Task<Table_Employees_TreeView> CreateAsync(Table_Employees_TreeView entity, CancellationToken cancellationToken = default)
     {
         if (entity == null)
             throw new ArgumentNullException(nameof(entity));
@@ -74,20 +74,20 @@ public partial class TableTimeLineTreeViewService : ITableTimeLineTreeViewServic
         // Validate parent relationship if specified
         if (entity.Parent_ID > 0)
         {
-            var parent = await _unitOfWork.TableTimeLineTreeViews.GetByIDAsync(entity.Parent_ID, cancellationToken);
+            var parent = await _unitOfWork.TableEmployeeTreeViews.GetByIDAsync(entity.Parent_ID, cancellationToken);
             if (parent == null)
                 throw new InvalidOperationException($"Parent node with Id {entity.Parent_ID} not found.");
         }
 
-        return await _unitOfWork.TableTimeLineTreeViews.AddAsync(entity, cancellationToken);
+        return await _unitOfWork.TableEmployeeTreeViews.AddAsync(entity, cancellationToken);
     }
 
-    public async Task<Table_TimeLine_TreeView> UpdateAsync(Table_TimeLine_TreeView entity, CancellationToken cancellationToken = default)
+    public async Task<Table_Employees_TreeView> UpdateAsync(Table_Employees_TreeView entity, CancellationToken cancellationToken = default)
     {
         if (entity == null)
             throw new ArgumentNullException(nameof(entity));
 
-        var existing = await _unitOfWork.TableTimeLineTreeViews.GetByIDAsync(entity.ID, cancellationToken);
+        var existing = await _unitOfWork.TableEmployeeTreeViews.GetByIDAsync(entity.ID, cancellationToken);
         if (existing == null)
             throw new InvalidOperationException($"Entity with Id {entity.ID} not found.");
 
@@ -98,12 +98,12 @@ public partial class TableTimeLineTreeViewService : ITableTimeLineTreeViewServic
             if (entity.ID == entity.Parent_ID)
                 throw new InvalidOperationException("A node cannot be its own parent.");
 
-            var parent = await _unitOfWork.TableTimeLineTreeViews.GetByIDAsync(entity.Parent_ID, cancellationToken);
+            var parent = await _unitOfWork.TableEmployeeTreeViews.GetByIDAsync(entity.Parent_ID, cancellationToken);
             if (parent == null)
                 throw new InvalidOperationException($"Parent node with Id {entity.Parent_ID} not found.");
         }
 
-        await _unitOfWork.TableTimeLineTreeViews.UpdateAsync(entity, cancellationToken);
+        await _unitOfWork.TableEmployeeTreeViews.UpdateAsync(entity, cancellationToken);
         return entity;
     }
 
@@ -112,16 +112,16 @@ public partial class TableTimeLineTreeViewService : ITableTimeLineTreeViewServic
         if (id <= 0)
             throw new ArgumentException("Id must be greater than zero.", nameof(id));
 
-        var entity = await _unitOfWork.TableTimeLineTreeViews.GetByIDAsync(id, cancellationToken);
+        var entity = await _unitOfWork.TableEmployeeTreeViews.GetByIDAsync(id, cancellationToken);
         if (entity == null)
             return false;
 
         // Check if node has children
-        var children = await _unitOfWork.TableTimeLineTreeViews.GetChildrenAsync(id, cancellationToken);
+        var children = await _unitOfWork.TableEmployeeTreeViews.GetChildrenAsync(id, cancellationToken);
         if (children.Any())
             throw new InvalidOperationException("Cannot delete a node that has children. Delete children first.");
 
-        await _unitOfWork.TableTimeLineTreeViews.DeleteAsync(id, cancellationToken);
+        await _unitOfWork.TableEmployeeTreeViews.DeleteAsync(id, cancellationToken);
         return true;
     }
 
@@ -129,30 +129,30 @@ public partial class TableTimeLineTreeViewService : ITableTimeLineTreeViewServic
 
     #region Tree Operations
 
-    public async Task<IEnumerable<Table_TimeLine_TreeView>> GetRootNodesAsync(CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<Table_Employees_TreeView>> GetRootNodesAsync(CancellationToken cancellationToken = default)
     {
-        return await _unitOfWork.TableTimeLineTreeViews.GetRootNodesAsync(cancellationToken);
+        return await _unitOfWork.TableEmployeeTreeViews.GetRootNodesAsync(cancellationToken);
     }
 
-    public async Task<IEnumerable<Table_TimeLine_TreeView>> GetChildrenAsync(int parentId, CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<Table_Employees_TreeView>> GetChildrenAsync(int parentId, CancellationToken cancellationToken = default)
     {
         if (parentId <= 0)
             throw new ArgumentException("ParentId must be greater than zero.", nameof(parentId));
 
-        return await _unitOfWork.TableTimeLineTreeViews.GetChildrenAsync(parentId, cancellationToken);
+        return await _unitOfWork.TableEmployeeTreeViews.GetChildrenAsync(parentId, cancellationToken);
     }
 
-    public async Task<IEnumerable<Table_TimeLine_TreeView>> GetFullTreeAsync(CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<Table_Employees_TreeView>> GetFullTreeAsync(CancellationToken cancellationToken = default)
     {
-        return await _unitOfWork.TableTimeLineTreeViews.GetTreeHierarchyAsync(null, cancellationToken);
+        return await _unitOfWork.TableEmployeeTreeViews.GetTreeHierarchyAsync(null, cancellationToken);
     }
 
-    public async Task<IEnumerable<Table_TimeLine_TreeView>> GetSubTreeAsync(int rootId, CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<Table_Employees_TreeView>> GetSubTreeAsync(int rootId, CancellationToken cancellationToken = default)
     {
         if (rootId <= 0)
             throw new ArgumentException("RootId must be greater than zero.", nameof(rootId));
 
-        return await _unitOfWork.TableTimeLineTreeViews.GetTreeHierarchyAsync(rootId, cancellationToken);
+        return await _unitOfWork.TableEmployeeTreeViews.GetTreeHierarchyAsync(rootId, cancellationToken);
     }
 
     #endregion

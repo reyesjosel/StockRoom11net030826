@@ -5,6 +5,8 @@ using System.ComponentModel;
 namespace StockRoom11net.Data.Services;
 
 /// <summary>
+/// ✅ SERVICE — business logic: : search by name, validate, process,
+/// Data access delegated to repository via UnitOfWork.
 /// Service interface for Table_StockRoom_TreeView business logic
 /// </summary>
 public partial interface ITableStockRoomTreeViewService
@@ -40,6 +42,8 @@ public partial interface ITableStockRoomTreeViewService
 }
 
 /// <summary>
+/// ✅ SERVICE — business logic: : search by name, validate, process,
+/// Data access delegated to repository via UnitOfWork.
 /// Service implementation for Table_StockRoom_TreeView business logic
 /// </summary>
 public partial class TableStockRoomTreeViewService : ITableStockRoomTreeViewService

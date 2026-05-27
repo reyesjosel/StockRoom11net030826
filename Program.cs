@@ -22,18 +22,22 @@ namespace StockRoom11net
                     services.AddDataServices(); // Add EF Core repositories and services
 
                     // Legacy Services (can be removed gradually)
-                    services.AddSingleton<IMyService, MyService>();
                     services.AddSingleton<AppService, AppService>();
 
                     // Forms
                     services.AddTransient<Solutions_TempleClass>();
                     services.AddTransient<TimeLineEditor>();
                     services.AddTransient<StockRoom_Inventory>();
+                    services.AddTransient<SolutionsProperties> ();
                 })
                 .Build();
 
             ApplicationConfiguration.Initialize();
-                        
+
+            Application.SetHighDpiMode(HighDpiMode.PerMonitorV2);
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
+
             //Application.Run(new Solutions_TempleClass());
             // Start WinForms using DI
             Application.Run(_appHost.Services.GetRequiredService<Solutions_TempleClass>());

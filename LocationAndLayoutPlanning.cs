@@ -5,6 +5,9 @@ using StockRoom11net.Controls.EmployeeInformation;
 using StockRoom11net.Controls.OpenFileDialogExt;
 using StockRoom11net.Controls.RawInput;
 using StockRoom11net.Controls.ShellBasics;
+using StockRoom11net.Data;
+using StockRoom11net.Data.Entities;
+using StockRoom11net.Data.Services;
 using StockRoom11net.Properties;
 using System.ComponentModel;
 using System.Data;
@@ -24,6 +27,12 @@ namespace StockRoom11net
 {
     public partial class LocationAndLayoutPlanning : BaseTemple
     {
+        // Injected EF Core services
+        private readonly IUnitOfWork _unitOfWork;
+        private ITableEmployeeService _employeesService;
+      //  private readonly IStockRoomService _stockRoomService;
+      //  private readonly ITableStockRoomTreeViewService _tableStockRoomTreeViewService;
+
         #region"On_ScannedData"
 
         public void OnBarcodeScanned(object sender, RawInputEventArg e)
@@ -36,7 +45,7 @@ namespace StockRoom11net
 
             #region"Set Location field"
 
-            if (CurrentEmployeesLogIn.IsManager && dataGridViewExtended.IsColumnVisible("BarCodeData"))
+            if (_employeesService.CurrentEmployeeLogIn.IsManager && dataGridViewExtended.IsColumnVisible("BarCodeData"))
             {
                 if (_currentColumnActive.ColumnName.Contains("BarCodeData"))
                 {
@@ -173,15 +182,13 @@ namespace StockRoom11net
             InitializeComponent();
         }
 
-        public LocationAndLayoutPlanning(BindingSource bindingsourceLocations, BindingSource bindingsourceLocationsTreeView,
-                                        Employee currentEmployeesLogIn, List<string> departList)
+        public LocationAndLayoutPlanning(ITableEmployeeService employeesService)
         {
             InitializeComponent();
 
-            DepartList = departList;
-            CurrentEmployeesLogIn = currentEmployeesLogIn;
-            dataGridViewExtended.CurrentEmployeesLogIn = currentEmployeesLogIn;
-
+            _employeesService = employeesService ?? throw new ArgumentNullException(nameof(employeesService));
+         //   dataGridViewExtended.CurrentEmployeesLogIn = currentEmployeesLogIn;
+         /*
             _bindingSourceLocations = bindingsourceLocations;
             _bindingSourceLocationsTreeView = bindingsourceLocationsTreeView;
 
@@ -193,7 +200,7 @@ namespace StockRoom11net
 
             if (typeDataSource.BaseType == typeof(DataTable))
                 table = bindingsourceLocations.DataSource as DataTable;
-
+            */
             MessageDebugPosition = "columnsCollection";
             ColumnsCollection = table.Columns;
         }
@@ -293,17 +300,17 @@ namespace StockRoom11net
         {
             contextMenuStripPicturesBox.Items.Clear();
 
-            if (CurrentEmployeesLogIn.IsUser || CurrentEmployeesLogIn.IsEditor)
-            {
-                MessageBox.Show(@"Attention, the current user has not access level to do this operation.", @"Warning, Access Level violation.",
-                                                                                                       MessageBoxButtons.OK, MessageBoxIcon.Stop);
-                return;
-            }
+        //    if (CurrentEmployeesLogIn.IsUser || CurrentEmployeesLogIn.IsEditor)
+        //    {
+        //        MessageBox.Show(@"Attention, the current user has not access level to do this operation.", @"Warning, Access Level violation.",
+         //                                                                                              MessageBoxButtons.OK, MessageBoxIcon.Stop);
+         //       return;
+         //   }
 
             #region"IsManager or Administrator"
 
-            if (CurrentEmployeesLogIn.IsAdministrator || CurrentEmployeesLogIn.IsManager)
-            {
+       //     if (CurrentEmployeesLogIn.IsAdministrator || CurrentEmployeesLogIn.IsManager)
+       //     {
                 if (FilePathPicturesBoxImage != null)
                     if (FilePathPicturesBoxImage.Contains("No_Pictures_Found.jpg"))
                     {
@@ -320,14 +327,14 @@ namespace StockRoom11net
                                                                       });
 
                     }
-            }
+         //   }
 
             #endregion"IsManager or Administrator"
 
-            if (CurrentEmployeesLogIn.EmployeeEnableTreeViewSetting == Utilities.EnableSetting.True)
-            {
+         //   if (CurrentEmployeesLogIn.EmployeeEnableTreeViewSetting == Utilities.EnableSetting.True)
+         //   {
 
-            }
+         //   }
         }
 
         private void PicturesBoxImageLoadProgressChanged(object sender, ProgressChangedEventArgs e)
@@ -342,12 +349,13 @@ namespace StockRoom11net
 
         private void PicturesBoxImageDoubleClick(object sender, EventArgs e)
         {
+            /*
             if (CurrentEmployeesLogIn.IsUser)
             {
                 MessageBox.Show(@"The current User, does not have the right to perform this action.",
                                  @"Warning, access denied.", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
-            }
+            }*/
 
             if (_currentRowViewActive == null)
                 return;
@@ -469,7 +477,7 @@ namespace StockRoom11net
 
             NeedSaveData = true;
             _currentRowViewActive["LastAccessTime"] = DateTime.Now;
-            _currentRowViewActive["ModifiedBy"] = CurrentEmployeesLogIn.FullName;
+            _currentRowViewActive["ModifiedBy"] = Table_Employee.FullName;
 
             On_NotificationsToSends(new Notification(
                                                      "Row information has been changed.",               //notification.Text
@@ -479,7 +487,7 @@ namespace StockRoom11net
                                                      (int)Utilities.NotificationEvents.RowInformationChange,//notifycation.NotifycationEvents
                                                      Settings.Default.DepartmentName,        //notification.String_Filter
                                                      DateTime.Now,                                       //notification.DateCreated
-                                                     CurrentEmployeesLogIn.FullName,                     //notification.Created_by
+                                                     Table_Employee.FullName,                     //notification.Created_by
                                                      partNumber,                                         //notification.Properties
                                                      "Status"                                            //notification.Status
                                                     ));
@@ -519,7 +527,7 @@ namespace StockRoom11net
                                                      (int)Utilities.NotificationEvents.Warning,             //notifycation.NotifycationEvents
                                                      Settings.Default.DepartmentName,         //notification.DepartmentName
                                                      DateTime.Now,                                       //notification.DateCreated
-                                                     CurrentEmployeesLogIn.FullName,                     //notification.Created_by
+                                                     Table_Employee.FullName,                     //notification.Created_by
                                                      "Properties",                                       //notification.Properties
                                                      "Status"                                            //notification.Status
                                                     ));
@@ -548,7 +556,7 @@ namespace StockRoom11net
 
         private void DataGridViewExtended_StockRoom_CellDoubleClick_Event(object sender, CellDoubleClick_EventArgs e)
         {
-
+            /*
             if (CurrentEmployeesLogIn.IsUser)
             {
                 MessageBox.Show(@"The current User, does not have the right to perform this action.",
@@ -560,6 +568,8 @@ namespace StockRoom11net
                 return;
 
             On_CellDoubleClick_Event(e);
+
+            */
         }
 
         private void DataGridViewExtendedInventoryCurrentRowActive(object sender, CurrentRowActive_EventArgs e)
@@ -660,7 +670,7 @@ namespace StockRoom11net
                                                      (int)Utilities.NotificationEvents.RowRemoved,          //notifycation.NotifycationEvents
                                                      Settings.Default.DepartmentName + ";",   //notification.String_Filter
                                                      DateTime.Now,                                       //notification.DateCreated
-                                                     CurrentEmployeesLogIn.FullName,                     //notification.Created_by
+                                                     Table_Employee.FullName,                     //notification.Created_by
                                                      "Properties",                                       //notification.Properties
                                                      "Status"                                            //notification.Status
                                                     ));
@@ -680,7 +690,7 @@ namespace StockRoom11net
                                                      (int)Utilities.NotificationEvents.RowRemoved,          //notifycation.NotifycationEvents
                                                      Settings.Default.DepartmentName + ";",   //notification.String_Filter
                                                      DateTime.Now,                                       //notification.DateCreated
-                                                     CurrentEmployeesLogIn.FullName,                     //notification.Created_by
+                                                     Table_Employee.FullName,                     //notification.Created_by
                                                      "Properties",                                       //notification.Properties
                                                      "Status"                                            //notification.Status
                                                     ));
@@ -797,7 +807,7 @@ namespace StockRoom11net
                                                      (int)Utilities.NotificationEvents.DataBaseUpDated,     // 4 notifycation.NotifycationEvents
                                                      Settings.Default.DepartmentName,         // 5 notification.String_Filter
                                                      DateTime.Now,                                       // 6 notification.DateCreated
-                                                     CurrentEmployeesLogIn.FullName,                     // 7 notification.Created_by
+                                                     Table_Employee.FullName,                     // 7 notification.Created_by
                                                      "properties",                                       // 8 notification.Properties
                                                      "Status"                                            // 9 notification.Status
                                                     ));
