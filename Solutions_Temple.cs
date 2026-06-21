@@ -511,7 +511,7 @@ namespace StockRoom11net
             //        Utilities.StatusBarMessage += OnStatusBarMessage;
             //        Utilities.LogFileMessage += LogFileMessage;
 
-            // To initialized statusBar item to the right. Alignment property.
+            // To initialized statusBar itemEFtableTreeView to the right. Alignment property.
             //statusBarPanelHelp.Alignment = ToolStripItemAlignment.Right;
             //toolStripStatusLabel_Spacer3.Alignment = ToolStripItemAlignment.Right;
             toolStripStatusLabel_MousePosition.Alignment = ToolStripItemAlignment.Right;
@@ -1195,7 +1195,7 @@ namespace StockRoom11net
         #region"toolStripMenuItem_ScanPathPdfDoc_Click"
 
         /// <summary>
-        /// For each item in stockroom table will scan the given path and
+        /// For each itemEFtableTreeView in stockroom table will scan the given path and
         /// update status information column with the names of documents found.
         /// </summary>
         void toolStripMenuItem_ScanPathPdfDoc_Click(object sender, EventArgs e)
@@ -1572,7 +1572,7 @@ namespace StockRoom11net
                 
                 last6DigitInt = int.TryParse(last6Digit, out last6DigitInt) ? last6DigitInt : 0;
 
-                //var userLogIn = await _unitOfWork.TableEmployees.FirstOrDefaultAsync(e => e.Last6Digit == last6DigitInt);
+                //var userLogIn = await _unitOfWork.TableEmployeeRepository.FirstOrDefaultAsync(e => e.Last6Digit == last6DigitInt);
 
                 bool employeeInitialized = await _employeesService.InitializeEmployeeAsync(last6DigitInt);
 
@@ -3615,6 +3615,8 @@ namespace StockRoom11net
 
         void CheckStatusTable(object obj)
         {
+            return;
+
             statusProcessTime.Start();
 
             var messageLocation = "";
@@ -4230,26 +4232,26 @@ namespace StockRoom11net
             //_bindingSource_ProjectsTreeView.SuspendBinding();
 
             /*
-                        Parallel.ForEach(LastScan, item =>
+                        Parallel.ForEach(LastScan, itemEFtableTreeView =>
                         {
                             // Creo new DataRowView front la tabla.
                             DataRowView projectRow = (DataRowView)_bindingSource_ProjectsTreeView.AddNew();
 
-                            projectRow["Index"] = item.ID;
-                            projectRow["ID"] = item.ID;
+                            projectRow["Index"] = itemEFtableTreeView.ID;
+                            projectRow["ID"] = itemEFtableTreeView.ID;
 
-                            if (item.Parent_ID == null)
+                            if (itemEFtableTreeView.Parent_ID == null)
                                 projectRow["Parent_ID"] = DBNull.Value;
                             else
-                                projectRow["Parent_ID"] = item.Parent_ID;
+                                projectRow["Parent_ID"] = itemEFtableTreeView.Parent_ID;
 
-                            projectRow["ProjectName"] = item.ProjectName;
-                            projectRow["Text_Name"] = item.Text_Name;
-                            projectRow["ItemOpen"] = item.ExistThumbs;
+                            projectRow["ProjectName"] = itemEFtableTreeView.ProjectName;
+                            projectRow["Text_Name"] = itemEFtableTreeView.Text_Name;
+                            projectRow["ItemOpen"] = itemEFtableTreeView.ExistThumbs;
 
-                            projectRow["Image"] = item.Image;
-                            projectRow["Description_Short"] = item.Description_Short;
-                            projectRow["Description_Expand"] = item.Description_Expand;
+                            projectRow["Image"] = itemEFtableTreeView.Image;
+                            projectRow["Description_Short"] = itemEFtableTreeView.Description_Short;
+                            projectRow["Description_Expand"] = itemEFtableTreeView.Description_Expand;
 
                             projectRow["ItemCount"] = 0;
 
@@ -4258,35 +4260,35 @@ namespace StockRoom11net
                         });
 
 
-            foreach (FileDirectoryModel item in LastScan)
+            foreach (FileDirectoryModel itemEFtableTreeView in LastScan)
             {
                 // Creo new DataRowView front la tabla.
                 DataRowView projectRow = (DataRowView)_bindingSource_ProjectsTreeView.AddNew();
 
-                projectRow["Index"] = item.ID;
-                projectRow["ID"] = item.ID;
+                projectRow["Index"] = itemEFtableTreeView.ID;
+                projectRow["ID"] = itemEFtableTreeView.ID;
 
-                if (item.Parent_ID == null)
+                if (itemEFtableTreeView.Parent_ID == null)
                     projectRow["Parent_ID"] = DBNull.Value;
                 else
-                    projectRow["Parent_ID"] = item.Parent_ID;
+                    projectRow["Parent_ID"] = itemEFtableTreeView.Parent_ID;
 
-                projectRow["ProjectName"] = item.ProjectName;
-                projectRow["Text_Name"] = item.Text_Name;
-                projectRow["ItemOpen"] = item.ExistThumbs;
+                projectRow["ProjectName"] = itemEFtableTreeView.ProjectName;
+                projectRow["Text_Name"] = itemEFtableTreeView.Text_Name;
+                projectRow["ItemOpen"] = itemEFtableTreeView.ExistThumbs;
 
-                projectRow["Image"] = item.Image;
-                projectRow["Description_Short"] = item.Description_Short;
-                projectRow["Description_Expand"] = item.Description_Expand;
+                projectRow["Image"] = itemEFtableTreeView.Image;
+                projectRow["Description_Short"] = itemEFtableTreeView.Description_Short;
+                projectRow["Description_Expand"] = itemEFtableTreeView.Description_Expand;
 
                 projectRow["ItemCount"] = 0;
 
                 projectRow.EndEdit();
 
-                if (item.ExistThumbs)
+                if (itemEFtableTreeView.ExistThumbs)
                     countThumbs++;
 
-                StatusBarHelp("Rows " + item.ID + " " + countThumbs);
+                StatusBarHelp("Rows " + itemEFtableTreeView.ID + " " + countThumbs);
             }
 
             _bindingSource_ProjectsTreeView.EndEdit();

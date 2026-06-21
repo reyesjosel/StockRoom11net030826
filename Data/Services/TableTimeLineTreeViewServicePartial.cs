@@ -62,7 +62,7 @@ public partial class TableTimeLineTreeViewService : ITableTimeLineTreeViewServic
         if (string.IsNullOrEmpty(nodeName))
             return null;
 
-        return await _unitOfWork.TableTimeLineTreeViews
+        return await _unitOfWork.TableTimeLineTreeViewRepository
             .FirstOrDefaultAsync(node => node.Text_Name == nodeName);
     }
 
@@ -73,7 +73,7 @@ public partial class TableTimeLineTreeViewService : ITableTimeLineTreeViewServic
             return -1;
 
         IEnumerable<Table_TimeLine_TreeView> allNodes =
-            await _unitOfWork.TableTimeLineTreeViews.GetAllAsync(cancellationToken);
+            await _unitOfWork.TableTimeLineTreeViewRepository.GetAllAsync(cancellationToken);
 
         return allNodes.ToList().FindIndex(node => node.Text_Name == nodeName);
     }
@@ -84,7 +84,7 @@ public partial class TableTimeLineTreeViewService : ITableTimeLineTreeViewServic
         if (string.IsNullOrEmpty(code))
             return Enumerable.Empty<Table_TimeLine_TreeView>();
 
-        return await _unitOfWork.TableTimeLineTreeViews
+        return await _unitOfWork.TableTimeLineTreeViewRepository
             .GetAllAsync(cancellationToken)
             .ContinueWith(t => t.Result.Where(node => node.Code == code), cancellationToken);
     }
@@ -95,7 +95,7 @@ public partial class TableTimeLineTreeViewService : ITableTimeLineTreeViewServic
         if (string.IsNullOrEmpty(status))
             return Enumerable.Empty<Table_TimeLine_TreeView>();
 
-        return await _unitOfWork.TableTimeLineTreeViews
+        return await _unitOfWork.TableTimeLineTreeViewRepository
             .GetAllAsync(cancellationToken)
             .ContinueWith(t => t.Result.Where(node => node.Status == status), cancellationToken);
     }
@@ -106,7 +106,7 @@ public partial class TableTimeLineTreeViewService : ITableTimeLineTreeViewServic
         if (string.IsNullOrEmpty(searchTerm))
             return Enumerable.Empty<Table_TimeLine_TreeView>();
 
-        return await _unitOfWork.TableTimeLineTreeViews
+        return await _unitOfWork.TableTimeLineTreeViewRepository
             .GetAllAsync(cancellationToken)
             .ContinueWith(t => t.Result.Where(node => 
                 (node.Text_Name != null && node.Text_Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)) ||

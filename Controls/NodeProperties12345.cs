@@ -188,14 +188,14 @@ namespace StockRoom11net.Controls
                 Description_Expand = item.Description_Expand ?? "";
                 Image = item.Image ?? "";
                 StringFilter = item.String_Filter ?? "";
-                ItemCount = item.ItemCount;
+                ItemCount = item.ItemCount ?? 0;
                 DateCreated = item.DateCreatedAsDateTime;
                 Created_by = item.Created_by ?? "Undefined User";
                 AvalaibleDepartments = item.AvailableDepartments ?? "AvailableDepart:ToAll,StockRoom;";
                 Properties = item.Properties ?? "Undefined User";
                 Message_String = item.Message_String ?? "Undefined MessageString";
                 Status = item.Status ?? "Undefined MessageString";
-               // ExistThumbs = item.ExistThumbs;
+               // ExistThumbs = itemEFtableTreeView.ExistThumbs;
                                 
             }
             catch (Exception error)
@@ -658,6 +658,13 @@ namespace StockRoom11net.Controls
                     return _listDepart;
 
                 var _strings = AvalaibleDepartments.Split(new char[] { ':', ';' }, StringSplitOptions.RemoveEmptyEntries);
+
+                if (_strings.Length == 1)
+                {
+                    _listDepart.Add("No set to any department yet");
+                    return _listDepart;
+                }
+
                 //"AvailableDepart:ToAll,StockRoom;Selected:false;Unerasable:true;Color:-36865;Note:Null;HeaderInf:Null;DisplayStatus:false,false,0"
                 //      0            2             4                6            8        10             12
                 if (_strings[0].Contains("AvailableDepart") && _strings.Length >= 2)
@@ -801,5 +808,7 @@ namespace StockRoom11net.Controls
                 DataTableName = _nodeRowView.Row.Table.TableName
             });
         }
+
+        
     }
 }

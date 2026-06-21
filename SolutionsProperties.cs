@@ -554,8 +554,8 @@ namespace StockRoom11net
             Loading = false;
 
             comboBox_ApplicationDepartmentName.DataSource = _employeesService.DepartmentsInformationList;
-            comboBox_ApplicationDepartmentName.DisplayMember = "DeptName";
-            comboBox_ApplicationDepartmentName.ValueMember = "DeptName";
+            comboBox_ApplicationDepartmentName.DisplayMember = "DepartmentName";
+            comboBox_ApplicationDepartmentName.ValueMember = "DepartmentName";
             comboBox_ApplicationDepartmentName.SelectedValueChanged += ComboBox_ApplicationDepartmentName_SelectedValueChanged;
             comboBox_ApplicationDepartmentName.SelectedValue = Settings.Default.DepartmentName;
 
@@ -1110,7 +1110,7 @@ namespace StockRoom11net
             DragHelper.ImageList_DragEnter(treeViewApplicationsSetting.Handle, e.X - treeViewApplicationsSetting.Left,
                 e.Y - treeViewApplicationsSetting.Top);
 
-            // Enable timer for scrolling dragged item
+            // Enable timer for scrolling dragged itemEFtableTreeView
             TreeViewSettingScrollingTimer.Enabled = true;
         }
 
@@ -1118,7 +1118,7 @@ namespace StockRoom11net
         {
             DragHelper.ImageList_DragLeave(treeViewApplicationsSetting.Handle);
 
-            // Disable timer for scrolling dragged item
+            // Disable timer for scrolling dragged itemEFtableTreeView
             TreeViewSettingScrollingTimer.Enabled = false;
         }
 
@@ -2197,9 +2197,9 @@ namespace StockRoom11net
             //var collection = (pattern => d.EnumerateFiles("*." + pattern, SearchOption.TopDirectoryOnly).Where(fileInfo => Path.GetExtension(fileInfo.FullName) == "." + pattern));
 
 
-            //foreach (var item in collection)
+            //foreach (var itemEFtableTreeView in collection)
             //{
-            //    Console.WriteLine(item);
+            //    Console.WriteLine(itemEFtableTreeView);
             //}
         }
 

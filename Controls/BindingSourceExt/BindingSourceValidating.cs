@@ -3,7 +3,12 @@ using System.ComponentModel;
 
 namespace StockRoom11net.Controls.BindingSourceExt
 {
-    public class BindingSourceValidating<T> : BindingSource where T : class
+    public interface IBindingSourceValidating
+    {
+        string TableName { get; set; }
+    }
+
+    public class BindingSourceValidating<T> : BindingSource, IBindingSourceValidating where T : class
     {
         public event EventHandler<ValidationEventArgs>? ValidationFailed;
 
@@ -17,7 +22,9 @@ namespace StockRoom11net.Controls.BindingSourceExt
         /// </summary>
         public string TypeFullName => typeof(T).FullName ?? typeof(T).Name;
 
-        // Add custom properties
+        /// <summary>
+        /// Gets the name of the "table" or entity type that this BindingSource is associated with.
+        /// </summary>
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public string TableName { get; set; }
 
@@ -31,7 +38,7 @@ namespace StockRoom11net.Controls.BindingSourceExt
         /// <returns>The name of the generic type T</returns>
         public string GetTableName()
         {
-            return TypeName;
+            return TableName;
         }
 
 
@@ -51,10 +58,14 @@ namespace StockRoom11net.Controls.BindingSourceExt
 
                 IsDirty = true;
 
-                var item = this[e.NewIndex] as T;
-                if (item != null && !ValidateItem(item))
+                // For ItemDeleted, the item is already removed — accessing e.NewIndex would throw.
+                if (e.ListChangedType != ListChangedType.ItemDeleted)
                 {
-                    ValidationFailed?.Invoke(this, new ValidationEventArgs(item, e.NewIndex));
+                    var item = this[e.NewIndex] as T;
+                    if (item != null && !ValidateItem(item))
+                    {
+                        ValidationFailed?.Invoke(this, new ValidationEventArgs(item, e.NewIndex));
+                    }
                 }
             }
         }
@@ -90,12 +101,12 @@ namespace StockRoom11net.Controls.BindingSourceExt
             IsDirty = false;
         }
 
-        public T? GetCurrentItem<T>() where T : class
+        public T? GetCurrentItem()
         {
             return Current as T;
         }
 
-        public List<T> GetAllItems<T>() where T : class
+        public List<T> GetAllItems()
         {
             return this.Cast<T>().ToList();
         }

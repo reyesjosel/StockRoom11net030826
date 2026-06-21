@@ -1252,8 +1252,8 @@ namespace StockRoom11net
 
             customTabControl_Received.Visible = true;
 
-            //  StockRoomSetting.SplitterX = splitContainerVertical.SplitterDistance;
-            //  StockRoomSetting.SplitterY = splitContainerHorizontal.SplitterDistance;
+            //  StockRoomSetting.SplitterVertical = splitContainerVertical.SplitterDistance;
+            //  StockRoomSetting.SplitterHorizontal = splitContainerHorizontal.SplitterDistance;
 
             //  SaveUserSetting();
         }

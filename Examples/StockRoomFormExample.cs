@@ -67,10 +67,10 @@ public partial class StockRoomFormExample : Form
             statusLabel.Text = "Loading data...";
 
             // Load data asynchronously
-            _bindingList = await _stockRoomService.LoadStockRoomsAsync();
+     //       _bindingList = await _stockRoomService.LoadStockRoomsAsync();
 
             // Bind to DataGridView (supports automatic updates via INotifyPropertyChanged)
-            dataGridView.DataSource = _bindingList;
+     //       dataGridView.DataSource = _bindingList;
 
             statusLabel.Text = $"Loaded {_bindingList.Count} items";
         }
@@ -108,12 +108,12 @@ public partial class StockRoomFormExample : Form
             if (string.IsNullOrWhiteSpace(searchTerm))
             {
                 // Load all
-                _bindingList = await _stockRoomService.LoadStockRoomsAsync();
+   //             _bindingList = await _stockRoomService.LoadStockRoomsAsync();
             }
             else
             {
                 // Search with service
-                _bindingList = await _stockRoomService.SearchStockRoomsAsync(searchTerm);
+   //             _bindingList = await _stockRoomService.SearchStockRoomsAsync(searchTerm);
             }
 
             dataGridView.DataSource = _bindingList;
@@ -161,7 +161,7 @@ public partial class StockRoomFormExample : Form
             }
 
             // Save to database
-            await _stockRoomService.CreateStockRoomAsync(newItem);
+    //        await _stockRoomService.CreateStockRoomAsync(newItem);
 
             // Add to binding list (automatic UI update)
             _bindingList.Add(newItem);
@@ -197,7 +197,7 @@ public partial class StockRoomFormExample : Form
             {
                 // Entity already has changes from UI binding
                 // Just save it
-                await _stockRoomService.UpdateStockRoomAsync(selectedItem);
+          //      await _stockRoomService.UpdateStockRoomAsync(selectedItem);
 
                 MessageBox.Show("Record updated successfully!");
             }
@@ -260,7 +260,7 @@ public partial class StockRoomFormExample : Form
         var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
 
         // Find items: quantity < 50, price > $10, in locations starting with 'A'
-        var results = await unitOfWork.StockRooms.FindAsync(s =>
+        var results = await unitOfWork.TableStockRoomRepository.FindAsync(s =>
             s.OnHand < 50 &&
             s.SalePrice > 10m &&
             s.Location != null &&
@@ -287,7 +287,7 @@ public partial class StockRoomFormExample : Form
             foreach (var item in itemsToUpdate)
             {
                 item.LastAccessTime = DateTime.Now;
-                unitOfWork.StockRooms.Update(item);
+                await unitOfWork.TableStockRoomRepository.UpdateSaveAsync(item);
             }
 
             // Single database call for all updates
@@ -336,9 +336,9 @@ public partial class StockRoomFormExample : Form
     {
         try
         {
-            var lowStock = await _stockRoomService.GetLowInventoryItemsAsync(10);
-            dataGridView.DataSource = lowStock;
-            statusLabel.Text = $"Found {lowStock.Count} low inventory items";
+    //        var lowStock = await _stockRoomService.GetLowInventoryItemsAsync(10);
+    //        dataGridView.DataSource = lowStock;
+    //        statusLabel.Text = $"Found {lowStock.Count} low inventory items";
         }
         catch (Exception ex)
         {

@@ -38,7 +38,7 @@ namespace StockRoom11net.Controls.DocumentationBehavior
                     radioButton_Public.Checked = true;
                 }
 
-                Text = "DocumentsAddressEditor    " + "ID value for this item is " + DocumentAddressItem.ID + ".";
+                Text = "DocumentsAddressEditor    " + "ID value for this itemEFtableTreeView is " + DocumentAddressItem.ID + ".";
 
                 textBox_DescriptionReference.Text = DocumentAddressItem.DocumentsAddressNameDescription;
                 textBox_DirectoryPathFolder.Text = DocumentAddressItem.DocumentsAddressValueDirectory;

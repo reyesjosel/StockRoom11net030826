@@ -10,9 +10,9 @@ namespace StockRoom11net.Controls.VisTimeLine
     public class TimeLineMarginOptions
     {
         /// <summary>
-        /// Gets or sets the item value.
+        /// Gets or sets the itemEFtableTreeView value.
         /// </summary>
-        [JsonPropertyName("item")]
+        [JsonPropertyName("itemEFtableTreeView")]
         public int? Item { get; set; }
 
         /// <summary>

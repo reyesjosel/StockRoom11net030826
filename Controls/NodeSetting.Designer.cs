@@ -51,6 +51,8 @@ namespace StockRoom11net.Controls
             panel7 = new Panel();
             panel8 = new Panel();
             pictureBox_Image = new PictureBox();
+            contextMenuStripNodeSetting = new ContextMenuStrip(components);
+            toolStripMenuItem_RemoveImage = new ToolStripMenuItem();
             label_Node_Image = new Label();
             textBox_Node_Name = new TextBox();
             textBox_Node_PDF_Information = new TextBox();
@@ -85,6 +87,7 @@ namespace StockRoom11net.Controls
             panel7.SuspendLayout();
             panel8.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox_Image).BeginInit();
+            contextMenuStripNodeSetting.SuspendLayout();
             tabPage_CustomNodeResponse.SuspendLayout();
             grouperSetDepartmentFilter.SuspendLayout();
             panelSetDepartmentFilter.SuspendLayout();
@@ -150,7 +153,7 @@ namespace StockRoom11net.Controls
             tabPage_Properties.Location = new Point(4, 4);
             tabPage_Properties.Margin = new Padding(4, 5, 4, 5);
             tabPage_Properties.Name = "tabPage_Properties";
-            tabPage_Properties.Size = new Size(725, 525);
+            tabPage_Properties.Size = new Size(725, 530);
             tabPage_Properties.TabIndex = 0;
             tabPage_Properties.Text = "Properties";
             tabPage_Properties.UseVisualStyleBackColor = true;
@@ -169,7 +172,7 @@ namespace StockRoom11net.Controls
             panel3.Margin = new Padding(4, 5, 4, 5);
             panel3.Name = "panel3";
             panel3.Padding = new Padding(8);
-            panel3.Size = new Size(725, 525);
+            panel3.Size = new Size(725, 530);
             panel3.TabIndex = 18;
             // 
             // queryBuilder
@@ -262,7 +265,6 @@ namespace StockRoom11net.Controls
             textBox_Description.Name = "textBox_Description";
             textBox_Description.Size = new Size(253, 67);
             textBox_Description.TabIndex = 11;
-            textBox_Description.TextChanged += textBox_Description_TextChanged;
             // 
             // label_Description
             // 
@@ -299,7 +301,6 @@ namespace StockRoom11net.Controls
             textBox_Title.Name = "textBox_Title";
             textBox_Title.Size = new Size(253, 29);
             textBox_Title.TabIndex = 11;
-            textBox_Title.TextChanged += textBox_Title_TextChanged;
             // 
             // label1
             // 
@@ -344,6 +345,7 @@ namespace StockRoom11net.Controls
             // pictureBox_Image
             // 
             pictureBox_Image.BorderStyle = BorderStyle.Fixed3D;
+            pictureBox_Image.ContextMenuStrip = contextMenuStripNodeSetting;
             pictureBox_Image.Dock = DockStyle.Top;
             pictureBox_Image.Location = new Point(0, 22);
             pictureBox_Image.Margin = new Padding(4, 5, 4, 5);
@@ -352,7 +354,28 @@ namespace StockRoom11net.Controls
             pictureBox_Image.SizeMode = PictureBoxSizeMode.CenterImage;
             pictureBox_Image.TabIndex = 3;
             pictureBox_Image.TabStop = false;
-            pictureBox_Image.DoubleClick += pictureBox_Image_DoubleClick;
+            // 
+            // contextMenuStripNodeSetting
+            // 
+            contextMenuStripNodeSetting.BackColor = Color.LightGoldenrodYellow;
+            contextMenuStripNodeSetting.ImageScalingSize = new Size(20, 20);
+            contextMenuStripNodeSetting.ImeMode = ImeMode.On;
+            contextMenuStripNodeSetting.Items.AddRange(new ToolStripItem[] { toolStripMenuItem_RemoveImage });
+            contextMenuStripNodeSetting.LayoutStyle = ToolStripLayoutStyle.HorizontalStackWithOverflow;
+            contextMenuStripNodeSetting.Name = "PreviewDataGridViewContextMenuStrip";
+            contextMenuStripNodeSetting.RenderMode = ToolStripRenderMode.Professional;
+            contextMenuStripNodeSetting.ShowImageMargin = false;
+            contextMenuStripNodeSetting.Size = new Size(160, 52);
+            contextMenuStripNodeSetting.Text = "Node Setting";
+            contextMenuStripNodeSetting.Opening += ContextMenuStripNodeSetting_Opening;
+            // 
+            // toolStripMenuItem_RemoveImage
+            // 
+            toolStripMenuItem_RemoveImage.Name = "toolStripMenuItem_RemoveImage";
+            toolStripMenuItem_RemoveImage.Size = new Size(159, 26);
+            toolStripMenuItem_RemoveImage.Text = "Remove Image";
+            toolStripMenuItem_RemoveImage.ToolTipText = "This is a global setting, select to make this menu available to all departments.";
+            toolStripMenuItem_RemoveImage.Click += ToolStripMenuItem_RemoveImage_Click;
             // 
             // label_Node_Image
             // 
@@ -374,7 +397,6 @@ namespace StockRoom11net.Controls
             textBox_Node_Name.Name = "textBox_Node_Name";
             textBox_Node_Name.Size = new Size(262, 29);
             textBox_Node_Name.TabIndex = 10;
-            textBox_Node_Name.TextChanged += TextBoxNodeNameTextChanged;
             // 
             // textBox_Node_PDF_Information
             // 
@@ -385,8 +407,6 @@ namespace StockRoom11net.Controls
             textBox_Node_PDF_Information.Size = new Size(263, 29);
             textBox_Node_PDF_Information.TabIndex = 12;
             textBox_Node_PDF_Information.Text = "Node PDF Information file name.pdf";
-            textBox_Node_PDF_Information.TextChanged += TextBoxNodePdfInformationTextChanged;
-            textBox_Node_PDF_Information.DoubleClick += TextBoxNodePdfInformationDoubleClick;
             // 
             // label_Node_PDF_Information
             // 
@@ -430,7 +450,6 @@ namespace StockRoom11net.Controls
             textBox_Node_Picture.Size = new Size(262, 29);
             textBox_Node_Picture.TabIndex = 15;
             textBox_Node_Picture.Text = "Double click to select a picture.";
-            textBox_Node_Picture.TextChanged += TextBoxNodePictureTextChanged;
             // 
             // tabPage_CustomNodeResponse
             // 
@@ -441,7 +460,7 @@ namespace StockRoom11net.Controls
             tabPage_CustomNodeResponse.Margin = new Padding(4, 5, 4, 5);
             tabPage_CustomNodeResponse.Name = "tabPage_CustomNodeResponse";
             tabPage_CustomNodeResponse.Padding = new Padding(4, 5, 4, 5);
-            tabPage_CustomNodeResponse.Size = new Size(725, 525);
+            tabPage_CustomNodeResponse.Size = new Size(192, 65);
             tabPage_CustomNodeResponse.TabIndex = 1;
             tabPage_CustomNodeResponse.Text = "Custom Node Response";
             tabPage_CustomNodeResponse.UseVisualStyleBackColor = true;
@@ -473,7 +492,7 @@ namespace StockRoom11net.Controls
             grouperSetDepartmentFilter.ShadowColor = Color.DarkGray;
             grouperSetDepartmentFilter.ShadowControl = false;
             grouperSetDepartmentFilter.ShadowThickness = 3;
-            grouperSetDepartmentFilter.Size = new Size(717, 208);
+            grouperSetDepartmentFilter.Size = new Size(600, 208);
             grouperSetDepartmentFilter.TabIndex = 16;
             // 
             // label_FilterString
@@ -520,7 +539,7 @@ namespace StockRoom11net.Controls
             panelSetDepartmentFilter.Margin = new Padding(4, 5, 4, 5);
             panelSetDepartmentFilter.Name = "panelSetDepartmentFilter";
             panelSetDepartmentFilter.Padding = new Padding(8);
-            panelSetDepartmentFilter.Size = new Size(687, 84);
+            panelSetDepartmentFilter.Size = new Size(570, 84);
             panelSetDepartmentFilter.TabIndex = 25;
             // 
             // labelSetDepartmentFilter
@@ -531,7 +550,7 @@ namespace StockRoom11net.Controls
             labelSetDepartmentFilter.Location = new Point(8, 8);
             labelSetDepartmentFilter.Margin = new Padding(4, 0, 4, 4);
             labelSetDepartmentFilter.Name = "labelSetDepartmentFilter";
-            labelSetDepartmentFilter.Size = new Size(669, 66);
+            labelSetDepartmentFilter.Size = new Size(552, 66);
             labelSetDepartmentFilter.TabIndex = 18;
             labelSetDepartmentFilter.Text = resources.GetString("labelSetDepartmentFilter.Text");
             // 
@@ -559,7 +578,7 @@ namespace StockRoom11net.Controls
             grouper_SettingAvailableMenuInTheseDepartments.ShadowColor = Color.DarkGray;
             grouper_SettingAvailableMenuInTheseDepartments.ShadowControl = false;
             grouper_SettingAvailableMenuInTheseDepartments.ShadowThickness = 3;
-            grouper_SettingAvailableMenuInTheseDepartments.Size = new Size(717, 302);
+            grouper_SettingAvailableMenuInTheseDepartments.Size = new Size(600, 302);
             grouper_SettingAvailableMenuInTheseDepartments.TabIndex = 15;
             // 
             // flowLayoutPanel_AvailableDepartments
@@ -574,7 +593,7 @@ namespace StockRoom11net.Controls
             flowLayoutPanel_AvailableDepartments.Location = new Point(15, 93);
             flowLayoutPanel_AvailableDepartments.Margin = new Padding(4, 5, 4, 5);
             flowLayoutPanel_AvailableDepartments.Name = "flowLayoutPanel_AvailableDepartments";
-            flowLayoutPanel_AvailableDepartments.Size = new Size(687, 193);
+            flowLayoutPanel_AvailableDepartments.Size = new Size(570, 193);
             flowLayoutPanel_AvailableDepartments.TabIndex = 16;
             // 
             // checkBox1
@@ -642,7 +661,7 @@ namespace StockRoom11net.Controls
             panel_SeletaDepartmentWherethisMenuWillbeAvailable.Margin = new Padding(4, 5, 4, 5);
             panel_SeletaDepartmentWherethisMenuWillbeAvailable.Name = "panel_SeletaDepartmentWherethisMenuWillbeAvailable";
             panel_SeletaDepartmentWherethisMenuWillbeAvailable.Padding = new Padding(8, 8, 8, 2);
-            panel_SeletaDepartmentWherethisMenuWillbeAvailable.Size = new Size(687, 45);
+            panel_SeletaDepartmentWherethisMenuWillbeAvailable.Size = new Size(570, 45);
             panel_SeletaDepartmentWherethisMenuWillbeAvailable.TabIndex = 25;
             // 
             // label_SeletDepartment
@@ -686,6 +705,7 @@ namespace StockRoom11net.Controls
             panel8.ResumeLayout(false);
             panel8.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox_Image).EndInit();
+            contextMenuStripNodeSetting.ResumeLayout(false);
             tabPage_CustomNodeResponse.ResumeLayout(false);
             grouperSetDepartmentFilter.ResumeLayout(false);
             grouperSetDepartmentFilter.PerformLayout();
@@ -742,5 +762,8 @@ namespace StockRoom11net.Controls
         private Button buttonFilter;
         private Label label_FilterStatus;
         private Label label_FilterString;
+        private ContextMenuStrip contextMenuStripNodeSetting;
+        private ToolStripMenuItem toolStripMenuItem1;
+        private ToolStripMenuItem toolStripMenuItem_RemoveImage;
     }
 }

@@ -219,9 +219,26 @@ public partial class ProductionInventoryContext : DbContext
         modelBuilder.Entity<Table_StockRoom_TreeView>(entity =>
         {
             entity.Property(e => e.Index).ValueGeneratedNever();
-            entity.Property(e => e.Image).HasDefaultValueSql("'No_Picture_Found'");
             entity.Property(e => e.ItemOpen).HasDefaultValueSql("false");
             entity.Property(e => e.Parent_ID).HasDefaultValue(0);
+
+            // NULL → "" converters: IsRequired(false) tells EF Core to call IsDBNull
+            // before GetString, so the null-coalescing converter is actually reached.
+            entity.Property(e => e.Code)               .IsRequired(false).HasConversion(v => v, v => v ?? "");
+            entity.Property(e => e.Range)              .IsRequired(false).HasConversion(v => v, v => v ?? "");
+            entity.Property(e => e.Text_Name)          .IsRequired(false).HasConversion(v => v, v => v ?? "");
+            entity.Property(e => e.Node_PDF)           .IsRequired(false).HasConversion(v => v, v => v ?? "");
+            entity.Property(e => e.Node_Picture)       .IsRequired(false).HasConversion(v => v, v => v ?? "");
+            entity.Property(e => e.Description_Short)  .IsRequired(false).HasConversion(v => v, v => v ?? "");
+            entity.Property(e => e.Description_Expand) .IsRequired(false).HasConversion(v => v, v => v ?? "");
+            entity.Property(e => e.Image)              .IsRequired(false).HasDefaultValueSql("'No_Picture_Found'").HasConversion(v => v, v => v ?? "");
+            entity.Property(e => e.String_Filter)      .IsRequired(false).HasConversion(v => v, v => v ?? "");
+            entity.Property(e => e.DateCreated)        .IsRequired(false).HasConversion(v => v, v => v ?? "");
+            entity.Property(e => e.Created_by)         .IsRequired(false).HasConversion(v => v, v => v ?? "");
+            entity.Property(e => e.AvailableDepartments).IsRequired(false).HasConversion(v => v, v => v ?? "");
+            entity.Property(e => e.Properties)         .IsRequired(false).HasConversion(v => v, v => v ?? "");
+            entity.Property(e => e.Message_String)     .IsRequired(false).HasConversion(v => v, v => v ?? "");
+            entity.Property(e => e.Status)             .IsRequired(false).HasConversion(v => v, v => v ?? "");
         });
 
         modelBuilder.Entity<Table_TimeLine>(entity =>

@@ -24,21 +24,21 @@ namespace StockRoom11net.Controls.MouseKeyboardActivityMonitor.WinApi
         /// <remarks>
         /// The possible values are:
         /// <list type="bullet">
-        /// <item>
+        /// <itemEFtableTreeView>
         /// <description>0 - No Information</description>
-        /// </item>
-        /// <item>
+        /// </itemEFtableTreeView>
+        /// <itemEFtableTreeView>
         /// <description>1 - X-Button1 Click</description>
-        /// </item>
-        /// <item>
+        /// </itemEFtableTreeView>
+        /// <itemEFtableTreeView>
         /// <description>2 - X-Button2 Click</description>
-        /// </item>
-        /// <item>
+        /// </itemEFtableTreeView>
+        /// <itemEFtableTreeView>
         /// <description>120 - Mouse Scroll Away from User</description>
-        /// </item>
-        /// <item>
+        /// </itemEFtableTreeView>
+        /// <itemEFtableTreeView>
         /// <description>-120 - Mouse Scroll Toward User</description>
-        /// </item>
+        /// </itemEFtableTreeView>
         /// </list>
         /// </remarks>
         [FieldOffset(0x0A)]
@@ -73,21 +73,21 @@ namespace StockRoom11net.Controls.MouseKeyboardActivityMonitor.WinApi
         /// <remarks>
         /// The possible values are:
         /// <list type="bullet">
-        /// <item>
+        /// <itemEFtableTreeView>
         /// <description>0 - No Information</description>
-        /// </item>
-        /// <item>
+        /// </itemEFtableTreeView>
+        /// <itemEFtableTreeView>
         /// <description>1 - X-Button1 Click</description>
-        /// </item>
-        /// <item>
+        /// </itemEFtableTreeView>
+        /// <itemEFtableTreeView>
         /// <description>2 - X-Button2 Click</description>
-        /// </item>
-        /// <item>
+        /// </itemEFtableTreeView>
+        /// <itemEFtableTreeView>
         /// <description>120 - Mouse Scroll Away from User</description>
-        /// </item>
-        /// <item>
+        /// </itemEFtableTreeView>
+        /// <itemEFtableTreeView>
         /// <description>-120 - Mouse Scroll Toward User</description>
-        /// </item>
+        /// </itemEFtableTreeView>
         /// </list>
         /// </remarks>
 #if IS_X64

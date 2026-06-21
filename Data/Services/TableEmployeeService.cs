@@ -28,7 +28,7 @@ public partial class TableEmployeeService : ITableEmployeeService
           
     public async Task<BindingList<Table_Employee>> LoadEmployeeAsync()
     {
-        var items = await _unitOfWork.TableEmployees.GetAllAsync();
+        var items = await _unitOfWork.TableEmployeeRepository.GetAllAsync();
         return new BindingList<Table_Employee>(items.ToList());
     }
 
@@ -37,7 +37,7 @@ public partial class TableEmployeeService : ITableEmployeeService
         if (string.IsNullOrWhiteSpace(searchTerm))
             return await LoadEmployeeAsync();
 
-        var items = await _unitOfWork.TableEmployees.FindAsync(t => 
+        var items = await _unitOfWork.TableEmployeeRepository.FindAsync(t => 
         (t.Last6Digit != null && t.Last6Digit.ToString().Contains(searchTerm)) ||
              (t.LastName != null && t.LastName.Contains(searchTerm)) ||
              (t.Name != null && t.Name.Contains(searchTerm)));
@@ -50,7 +50,7 @@ public partial class TableEmployeeService : ITableEmployeeService
         if (string.IsNullOrWhiteSpace(filter))
             return await LoadEmployeeAsync();
 
-        var items = await _unitOfWork.TableEmployees.FindAsync(t => 
+        var items = await _unitOfWork.TableEmployeeRepository.FindAsync(t => 
                 (t.Last6Digit != null && t.Last6Digit.ToString().Contains(filter)) ||
                 (t.LastName != null && t.LastName.Contains(filter)) ||
                 (t.Name != null && t.Name.Contains(filter)));
@@ -60,7 +60,7 @@ public partial class TableEmployeeService : ITableEmployeeService
 
     public async Task<Table_Employee?> GetEmployeeByIdAsync(int id)
     {
-        return await _unitOfWork.TableEmployees.GetByIdAsync(id);
+        return await _unitOfWork.TableEmployeeRepository.GetByIdAsync(id);
     }
 
     public async Task<Table_Employee> CreateEmployeeAsync(Table_Employee employee)
@@ -72,23 +72,22 @@ public partial class TableEmployeeService : ITableEmployeeService
         if (string.IsNullOrEmpty(employee.Status))
             employee.Status = "Active";
 
-        var created = await _unitOfWork.TableEmployees.AddAsync(employee);
+        var created = await _unitOfWork.TableEmployeeRepository.AddAsync(employee);
         await _unitOfWork.SaveChangesAsync();
         return created;
     }
 
     public async Task UpdateEmployeeAsync(Table_Employee employee)
     {
-        _unitOfWork.TableEmployees.Update(employee);
-        await _unitOfWork.SaveChangesAsync();
+        await _unitOfWork.TableEmployeeRepository.UpdateSaveAsync(employee);
     }
 
     public async Task DeleteEmployeeAsync(int id)
     {
-        var employee = await _unitOfWork.TableEmployees.GetByIdAsync(id);
+        var employee = await _unitOfWork.TableEmployeeRepository.GetByIdAsync(id);
         if (employee != null)
         {
-            _unitOfWork.TableEmployees.Remove(employee);
+            _unitOfWork.TableEmployeeRepository.Remove(employee);
             await _unitOfWork.SaveChangesAsync();
         }
     }

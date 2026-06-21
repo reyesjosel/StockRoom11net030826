@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components.WebView.WindowsForms;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -10,6 +12,7 @@ using StockRoom11net.Controls.BindingSourceExt;
 using StockRoom11net.Controls.ComponentInformations;
 using StockRoom11net.Controls.DataGridViewExtend;
 using StockRoom11net.Controls.DirectoryFileOperations;
+using StockRoom11net.Controls.EmployeeInformation;
 using StockRoom11net.Controls.RawInput;
 using StockRoom11net.Controls.ShellBasics;
 using StockRoom11net.Controls.SMTcontrol;
@@ -18,10 +21,12 @@ using StockRoom11net.Data;
 using StockRoom11net.Data.Entities;
 using StockRoom11net.Data.Services;
 using StockRoom11net.Properties;
+using System.Collections;
 using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
 using static StockRoom11net.Controls.Custom_Events_Args;
+using static StockRoom11net.Controls.Utilities;
 using CurrentRowMouseEnterEventArgs = StockRoom11net.Controls.Custom_Events_Args.RowsMouseEnterEventArgs;
 
 namespace StockRoom11net
@@ -31,8 +36,7 @@ namespace StockRoom11net
         #region "Properties"
 
         // Injected EF Core services
-        private readonly IUnitOfWork _unitOfWork;
-        private ITableEmployeeService _employeesService;
+        private readonly IUnitOfWork _unitOfWork;        
         private readonly IStockRoomService _stockRoomService;
         private readonly ITableStockRoomTreeViewService _tableStockRoomTreeViewService;
         
@@ -71,8 +75,8 @@ namespace StockRoom11net
                 {
                     dataTreeViewToAdd_Cancel_Delete.SettingMode = false;
 
-                    if (dataGridViewExtended.DataSource == _bindingSource_table_StockroomTreeView)
-                        dataGridViewExtended.DataSource = _bindingSource_StockRoom;
+                    if (dataGridViewExtended.DataSource == _bindingSourceStockRoomTreeViewVal)
+                        dataGridViewExtended.DataSource = _bindingSourceStockRoomVal;
                 }
             }
         }
@@ -187,6 +191,90 @@ namespace StockRoom11net
 
         #endregion
 
+        #region"CurrentUserBroadcast"
+
+        private ITableEmployeeService _employeesService;
+        EmployeeInformation _currentEmployeeLogIn;
+
+        /// <summary>
+        /// The user setting name, we save userSettingName = DataTreeViewName + "_" + TableName;
+        /// It is update at public object DataSource{ set }
+        /// We saved the datasource name because in some cases,
+        /// the same dataTreeView manipulates different dataSources.
+        /// </summary>                  //DGVExt_StockRoom_Table_StockRoom -> from the setting itselft
+        private string userSettingName = "DGVExt_StockRoom_Table_StockRoom";
+
+        // Properties and fields used in LogIn employees.
+        string _employeeName = "Not user login.";
+        string _employeeLastName = "";
+        AccessLevel _employeeAccessLevel = AccessLevel.User;
+        EditMode _employeeEditMode = EditMode.View;
+        EnableSetting EmployeeEnableTreeViewSetting = EnableSetting.False;
+
+        /// <summary>
+        /// We pass the EmployeeService to this control, to be able to process the current employee information
+        /// at initialization time, the control need to know the current employee information to apply the correct
+        /// setting for this employee, and also to be able to update the control setting when the employee log in change.
+        /// </summary>
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public ITableEmployeeService EmployeesService
+        {
+            set
+            {
+                if (value == null)
+                    return;
+
+                _employeesService = value;
+                CurrentEmployeeLogIn = _employeesService.CurrentEmployeeLogIn;
+                _employeesService.CurrentEmployeeLogInChanged += EmployeesService_CurrentEmployeeLogInChanged;
+            }
+        }
+
+        void EmployeesService_CurrentEmployeeLogInChanged(object? sender, EmployeeInformation e)
+        {
+            CurrentEmployeeLogIn = e;
+        }
+
+        /// <summary>
+        /// Process current employee information.
+        /// </summary>
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        private EmployeeInformation CurrentEmployeeLogIn
+        {
+            get
+            {
+                return _currentEmployeeLogIn;
+            }
+            set
+            {
+                if (value == null)
+                    return;
+
+                _currentEmployeeLogIn = value;
+
+                _employeeName = _currentEmployeeLogIn.Name;
+                _employeeLastName = _currentEmployeeLogIn.LastName;
+                _employeeEditMode = _currentEmployeeLogIn.EmployeeEditMode;
+                _employeeAccessLevel = _currentEmployeeLogIn.EmployeeAccessLevel;
+                EmployeeEnableTreeViewSetting = _currentEmployeeLogIn.EmployeeEnableTreeViewSetting;
+
+                UserSetting userSetting = _currentEmployeeLogIn.UserSettingEntity(userSettingName);
+
+                internalResizeEvent = true;
+                splitContainerVertical.SplitterDistance = userSetting.SplitterVertical;
+                splitContainerHorizontal.SplitterDistance = userSetting.SplitterHorizontal;
+            }
+        }
+
+        #endregion"CurrentUserBroadcast"
+
+        /// <summary>
+        /// This flag is used to avoid the execution of SplitterMoved event during the initialization of the form, because
+        /// at initialization we set the SplitterDistance according to the user setting, and we do not want to save the user
+        /// setting at this moment, because it is not a user action, it is just the application of the user setting.
+        /// </summary>
+        bool internalResizeEvent = false;
+
         readonly DataTable _dataTableStockRoom;
         readonly DataTable _dataTableTreeListView;
 
@@ -210,18 +298,16 @@ namespace StockRoom11net
             DockAreas = WinFormsUI.Docking.DockAreas.Document | WinFormsUI.Docking.DockAreas.Float;
 
             _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
-            _employeesService = employeesService ?? throw new ArgumentNullException(nameof(employeesService));
-            _employeesService.CurrentEmployeeLogInChanged += (s, e) =>
-            {                
-                dataTreeViewToAdd_Cancel_Delete.CurrentDepartmentLogIn = _employeesService.CurrentDepartmentLogIn.DepartmentName;
-            };
+            EmployeesService = employeesService ?? throw new ArgumentNullException(nameof(employeesService));
+       //   _employeesService.CurrentEmployeeLogInChanged += (s, e) =>  { };
             _stockRoomService = stockRoomService ?? throw new ArgumentNullException(nameof(stockRoomService));
             _tableStockRoomTreeViewService = tableStockRoomTreeViewService ?? throw new ArgumentNullException(nameof(tableStockRoomTreeViewService));
             
             Name = "StockRoom_Inventory";
-
+            dataGridViewExtended.Name = "DGVExt_StockRoom";
             // We need pass employeeService, at initialization we call currentEmployeeLogIn
             dataGridViewExtended.EmployeesService = _employeesService;
+            dataTreeViewToAdd_Cancel_Delete.EmployeesService = _employeesService;
 
             // ✅ Pass unitOfWork to the EXISTING designer instance, don't replace it
             dataTreeViewToAdd_Cancel_Delete.SetUnitOfWork(_unitOfWork);
@@ -275,8 +361,7 @@ namespace StockRoom11net
         }
 
         /// <summary>
-        /// If we were not using EF Core, we would load data from a file or other source here.
-        /// But since we are using EF Core, we will load data in the LoadDataEF() method.
+        /// Since we are using EF Core, we will load data in the LoadDataEF() method.
         /// </summary>
         async void LoadDataEF()
         {
@@ -287,7 +372,7 @@ namespace StockRoom11net
         /// <summary>
         /// Load TimeLine data using EF Core service
         /// </summary>
-        private async Task LoadTimeLineDataAsync()
+        async Task LoadTimeLineDataAsync()
         {
             try
             {
@@ -313,45 +398,6 @@ namespace StockRoom11net
 
                 MessageDebugPosition = "Loading TreeView data";
                 _stockRoomTreeViewBindingList = await _tableStockRoomTreeViewService.LoadStockRoomsTreeViewAsync();
-
-                // ✅ Remove nodes with duplicate or zero IDs before binding
-                var validNodes = _stockRoomTreeViewBindingList
-                    .Where(n => n.ID > 0)
-                    .GroupBy(n => n.ID)
-                    .Select(g => g.First())  // keep first in case of duplicates
-                    .ToList();
-
-                var duplicates = _stockRoomTreeViewBindingList
-                    .GroupBy(n => n.ID)
-                    .Where(g => g.Count() > 1 || g.Key == 0)
-                    .Select(g => g.Key)
-                    .ToList();
-
-                if (duplicates.Count != 0)
-                    Debug.WriteLine($"⚠️ Duplicate/zero IDs found: {string.Join(", ", duplicates)}");
-
-                if (HasCircularReference(validNodes))
-                {
-                    MessageBox.Show($"Error loading data: Circular reference detected in node ID: {nodeID}.",
-                    "Data Load Error",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
-                }
-
-                MessageDebugPosition = "Diagnose data before assigning to OLV";
-                var items = _stockRoomTreeViewBindingList.ToList().Cast<Table_Base_TreeView>().ToList();
-                var roots = items.Where(n => n.Parent_ID == 0).ToList();
-                var dupIDs = items.GroupBy(n => n.ID).Where(g => g.Count() > 1).Select(g => g.Key).ToList();
-                var orphans = items.Where(n => n.Parent_ID != 0 && !items.Any(p => p.ID == n.Parent_ID)).ToList();
-
-                Debug.WriteLine($"Total: {items.Count} | Roots (Parent_ID==0): {roots.Count} | DupIDs: {string.Join(",", dupIDs)} | Orphans: {orphans.Count}");
-
-                if (roots.Count == 0 || dupIDs.Any())
-                {
-                    MessageBox.Show($"Tree data invalid!\nRoots: {roots.Count}\nDuplicate IDs: {string.Join(",", dupIDs)}\nOrphans: {orphans.Count}",
-                        "DataSource Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return; // ← prevents the freeze
-                }
 
                 MessageDebugPosition = "Create BindingSource for TreeView";
                 _bindingSourceStockRoomTreeViewVal = new BindingSourceValidating<Table_Base_TreeView>
@@ -388,7 +434,7 @@ namespace StockRoom11net
             foreach (var node in nodes)
             {
                 var visited = new HashSet<int>();
-                int current = node.Parent_ID  ;
+                int current = node.Parent_ID ?? 0;
 
                 while (current != 0)
                 {
@@ -398,36 +444,12 @@ namespace StockRoom11net
                         nodeID = node.ID.ToString();
                         return true; // ← circular!
                     }
-                    current = parent.Parent_ID;
+                    current = parent.Parent_ID ?? 0;
                 }
             }
             return false;
         }
-
-        bool _isNotInitiating = false;
-        void BindingSource_Table_StockroomTreeView_ListChanged(object? sender, ListChangedEventArgs e)
-        {
-            /// We assign the bindingsource only when it contains some element, only once.
-            if (BindingSourceTreeViewBase.Count > 0 & _isNotInitiating == false)
-            {
-                _isNotInitiating = true;
-
-                var action = new Action(() =>
-                {
-                    dataTreeViewToAdd_Cancel_Delete.BindingSourceTreeView = 
-                    new BindingSourceValidating<Table_Base_TreeView> { DataSource = BindingSourceTreeViewBase };
-                });
-
-                ThreadSafeInvoke(action);
-            }
-
-            if(_isNotInitiating)
-            {
-                if (BindingSourceTreeViewBase.Count > 0)
-                    dataTreeViewToAdd_Cancel_Delete.EnsureVisibledNode(0);
-            }
-        }
-        
+               
         #region "StockRoomInventory Load, Shown, FormClosing"
 
         void StockRoomInventoryLoad(object? sender, EventArgs e)
@@ -435,10 +457,17 @@ namespace StockRoom11net
             MessageDebugPosition = "Starting Try/Catch procedure.";
             try
             {
-                LoadDataEF();
+                MessageDebugPosition = "InitializeProperties()";
+                InitializeProperties();
+
+                MessageDebugPosition = "InitializeDataTreeView()";
+                InitializeDataTreeView();
 
                 MessageDebugPosition = "Initialize_DataGridView()";
                 Initialize_DataGridView();
+
+                MessageDebugPosition = "InitializeSaveUserSettingTimer()";
+                InitializeSaveUserSettingTimer(); // Initialize before wiring SplitterMoved in InitTabControlExtend.
 
                 MessageDebugPosition = "InitTabControlExtend()";
                 InitTabControlExtend();
@@ -452,19 +481,14 @@ namespace StockRoom11net
                 MessageDebugPosition = "InitializeTabPage_UpDateModifCompValue()";
                 InitializeTabPage_UpDateModifCompValue();
 
-                MessageDebugPosition = "InitEasyProgressBar()";
-                //   InitEasyProgressBar();
-
-                MessageDebugPosition = "InitEasyProgressBar_GraphicChart()";
-                //   InitEasyProgressBar_GraphicChart();
-
-                MessageDebugPosition = "Initialize_ToolTip";
-                //   InitializeToolTip();
-
                 MessageDebugPosition = "Initialize_NodeSetting";
-                InitializeNodeSettingTabPage();
-
+                //InitializeNodeSettingTabPage();
+                
                 MessageDebugPosition = "Initialize_OK";
+                // If we are here, the initialization is OK, we can load data aster the form is shown,
+                // to avoid freeze of the form during loading and loose of events related to data processing,
+                // like filtering with the treeView.               
+                LoadDataEF();
             }
             catch (Exception error)
             {
@@ -482,23 +506,8 @@ namespace StockRoom11net
         {
             try
             {
-                dataTreeViewToAdd_Cancel_Delete.CurrentDepartmentLogIn = _employeesService.CurrentDepartmentLogIn.DepartmentName;
-                MessageDebugPosition = "ListChangedType.Reset";
-
-                // ✅ Use Reset instead of ItemMoved — Reset does not require a valid index
-                // and correctly signals "re-evaluate the whole list" for initialization.
-                BindingSource_Table_StockroomTreeView_ListChanged(sender, new ListChangedEventArgs(ListChangedType.Reset, -1));
-
                 MessageDebugPosition = "InitializeTab_AddNewItem";
                 InitializeTab_AddNewItem();
-
-                MessageDebugPosition = "_initialDelay";
-                _initialDelay = new System.Windows.Forms.Timer
-                {
-                    Interval = 1000
-                };
-                _initialDelay.Tick += InitialDelay_Tick;
-                _initialDelay.Start();
                 
                 splitContainerHorizontal.SplitterDistance = (int)(Height * 0.65);                
             }
@@ -512,33 +521,7 @@ namespace StockRoom11net
                 }
             }
         }
-
-        int count_InitialDelayTick;
-        void InitialDelay_Tick(object? sender, EventArgs e)
-        {
-            _initialDelay.Stop();
-            count_InitialDelayTick++;
-
-            try
-            {
-                //Call those only one time.
-                if (count_InitialDelayTick == 1)
-                {
-                    //InitializeProcessUserHasLogIn();
-                    if(_isNotInitiating == false)
-                        BindingSource_Table_StockroomTreeView_ListChanged(sender, new ListChangedEventArgs(ListChangedType.Reset, -1));
-                }
-
-                FaultColumnPartNumber = !dataGridViewExtended._dataGridView.Columns.Contains("PartNumber");
-                
-             //   SortColumnPartNumber();
-             //   AddColumnSortDoc_PDF_Doc_Docx();               
-             //   ProcessBOMrows();
-            }
-            catch (Exception)
-            { }
-        }
-
+               
         void InitializeProperties()
         {
             try
@@ -566,6 +549,20 @@ namespace StockRoom11net
         
         #region"DataTreeListView"
 
+        void InitializeDataTreeView()
+        {
+            dataTreeViewToAdd_Cancel_Delete.Load += DataTreeViewToAdd_Cancel_Delete_Load;
+            dataTreeViewToAdd_Cancel_Delete.Save_Requested += DataTreeViewToAdd_Cancel_Delete_Save_Requested;
+            dataTreeViewToAdd_Cancel_Delete.Switch_DataTable += DataTreeViewToAdd_Cancel_Delete_Switch_DataTable;            
+            dataTreeViewToAdd_Cancel_Delete.SelectedIndexChanged += DataTreeViewToAdd_Cancel_Delete_SelectedIndexChangedAsync;
+            dataTreeViewToAdd_Cancel_Delete.StatusBarMessage += DataTreeViewToAdd_Cancel_Delete_StatusBarMessage;
+        }
+
+        void DataTreeViewToAdd_Cancel_Delete_StatusBarMessage(object? sender, StatusBarMessage_EventArgs e)
+        {
+            StatusBarMessage(e);
+        }
+
         void DataTreeViewToAdd_Cancel_Delete_Load(object? sender, EventArgs e)
         {
             
@@ -575,22 +572,20 @@ namespace StockRoom11net
         {
             try
             {
+                if (e.CurrentNode == null)
+                    return;
+
                 if (dataGridViewExtended.DataSource == _bindingSourceStockRoomVal)
                 {
-                    //string filter = e.SelectedNodeProperties.StringFilter;
-                    //var filtered = await _stockRoomService.FilterByStringFilterAsync(filter);
-                    //_bindingSourceStockRoomVal.DataSource = filtered;
-                    //_bindingSourceStockRoomVal.ResetBindings(false);
-
                     // ✅ Filter now works because DataSource is a DataView
-                    dataGridViewExtended.CustomFilter = e.SelectedNodeProperties.StringFilter;
+                    dataGridViewExtended.CustomFilter = e.CurrentNode.String_Filter;
                 }
 
                 #region"tabPage_DataTreeViewSetting"
 
                 if (_nodeSettingIsDone & TabControl_Inventory.SelectedTab.Name == "tabPage_TreeViewSetting")
                 {
-                    _nodeSetting.FocusedNodeProperties = e.SelectedNodeProperties;
+                    _nodeSetting.CurrentNode = e.CurrentNode;
                 }
 
                 #endregion"tabPage_DataTreeViewSetting"
@@ -632,9 +627,7 @@ namespace StockRoom11net
         {
             InitializeDataGridViewBase(dataGridViewExtended);
 
-            dataGridViewExtended.SuspendLayout();
-
-            dataGridViewExtended.Name = "StockRoom Inventory";
+            dataGridViewExtended.SuspendLayout();            
 
             dataGridViewExtended.CellBegingEditEvent    += DataGridViewExtendedInventoryCellBeggingEditEvent;
             dataGridViewExtended.CellEndEditEvent       += DataGridViewExtendedInventoryCellEndEditEvent;
@@ -645,8 +638,10 @@ namespace StockRoom11net
 
             dataGridViewExtended.RowsRemoved            += DataGridViewExtendedInventoryRowsRemoved;
             dataGridViewExtended.RowsMouseEnter         += DataGridViewExtended_RowsMouseEnter;
+            dataGridViewExtended.UserDeletingRow        += DataGridViewExtended_UserDeletingRow;
             dataGridViewExtended.UserDeletedRow         += DataGridViewExtendedInventoryUserDeletedRow;
             dataGridViewExtended.CurrentRowActivesEvent += DataGridViewExtendedInventoryCurrentRowActive;
+            dataGridViewExtended.SaveRequested          += DataGridViewExtended_SaveRequested;
 
             dataGridViewExtended.FindRemplace           += DataGridViewExtended_Inventory_Find_Replace;
 
@@ -666,7 +661,172 @@ namespace StockRoom11net
             
             dataGridViewExtended.ResumeLayout();
         }
-        
+
+        async void DataGridViewExtended_UserDeletingRow(object? sender, DataGridViewRowCancelEventArgs e)
+        {
+            DataGridViewRow? ert = e.Row;
+            if(ert == null)
+                return;
+
+            if (dataGridViewExtended.DataSource == _bindingSourceStockRoomTreeViewVal)
+            {
+                Table_StockRoom_TreeView? item = (Table_StockRoom_TreeView)ert.DataBoundItem;
+                if(item == null)
+                    return;
+
+                MessageDebugPosition = $"Attempting to get childrens of '{item.Text_Name}'";
+                IEnumerable<Table_StockRoom_TreeView> children = await _unitOfWork.TableStockRoomTreeViewRepository.GetChildrenAsync(item.ID);
+
+                if (children.Any())
+                {
+                    DialogResult dialogResult =
+                    MessageBox.Show("Do you want to delete all the children as well?", "Cannot Delete Node with " + children.Count() + " Childrens ",
+                                    MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+
+                    if (dialogResult == DialogResult.No || dialogResult == DialogResult.Cancel)
+                        return;
+
+                    MessageDebugPosition = $"Deleting {children.Count()} children of '{item.Text_Name}'";
+                    if (dialogResult == DialogResult.Yes)
+                    {
+                        _bindingSourceStockRoomTreeViewVal.SuspendBinding();
+
+                        foreach (Table_StockRoom_TreeView itemEF in children)
+                        {
+                            // ✅ Use DeleteAsync — it fetches the tracked entity by PK (Index)
+                            // then removes it. Avoids attaching detached entities with Index = 0.
+                            await _unitOfWork.TableStockRoomTreeViewRepository.DeleteAsync(itemEF.Index);
+
+                            RemoveFromBindingSourceByIndex(itemEF.Index);
+                        }
+
+                        _bindingSourceStockRoomTreeViewVal.ResumeBinding();
+                    }
+                }
+
+                await _unitOfWork.TableStockRoomTreeViewRepository.DeleteAsync(item.Index, CancellationToken.None);
+                RemoveFromBindingSourceByIndex(item.Index);
+            }
+
+            if (dataGridViewExtended.DataSource == _bindingSourceStockRoomVal)
+            {
+                Table_StockRoom? rowEntity = (Table_StockRoom)ert.DataBoundItem;
+                if(rowEntity == null)
+                    return;
+
+                await _unitOfWork.TableStockRoomRepository.DeleteAsync(rowEntity.PartNumber, CancellationToken.None);
+                _bindingSourceStockRoomVal.RemoveCurrent();
+            }
+        }
+
+        /// <summary>
+        /// Removes an itemEFtableTreeView from the BindingSource by matching its ID property.
+        /// 
+        /// BindingSource.Remove()    → fails: uses reference equality, AsNoTracking = different instances
+        /// BindingSource.RemoveAt(i) → fails: sorted-view index ≠ underlying-list index
+        /// BindingSource.DataSource as BindingList → fails: DataSource may be BindingSourceValidating<T>
+        ///
+        /// ✅ BindingSource.List always returns the actual managed IList regardless of nesting or sorting.
+        ///    Index operations on it are always valid.
+        /// </summary>
+        void RemoveFromBindingSourceByIndex(int index)
+        {
+            try
+            {
+                // ✅ .List resolves any nested BindingSource and returns the real underlying IList.
+                // Iterating and removing from it directly is safe regardless of sort/filter state.
+                IList list = _bindingSourceStockRoomTreeViewVal.List;
+                MessageDebugPosition = $"Removing itemEFtableTreeView with index {index} from BindingSource list with {list.Count} items";
+                for (int i = list.Count - 1; i >= 0; i--)
+                {
+                    if (list[i] is Table_Base_TreeView node && node.Index == index)
+                    {
+                        MessageDebugPosition = $"Found itemEFtableTreeView with index {index} at list index {i}, removing it from BindingSource";
+                        list.RemoveAt(i);
+                        return;
+                    }
+                }
+
+                // Item not found — already removed or index mismatch
+                MessageDebugPosition = $"RemoveFromBindingSourceByIndex: index {index} not found in list.";
+            }
+            catch (Exception error)
+            {
+                MessageDebugPosition = $"Error removing itemEFtableTreeView from BindingSource: {error.Message}";
+            }
+        }
+
+        async void DataGridViewExtended_SaveRequested(object? sender, Save_Requested_EventArgs e)
+        {
+            if (dataGridViewExtended.DataSource == _bindingSourceStockRoomTreeViewVal)
+            {
+                if (e.DirtyDataGridViewIndexes.Count == 0)
+                {
+                    dataGridViewExtended.SavedRequestedDone();
+                    return;
+                }
+
+                // Force-commit any cell still in edit mode before reading values.
+                _bindingSourceStockRoomTreeViewVal.EndEdit();
+
+                // Collect only the rows that were actually changed.
+                var dirtyItems = _bindingSourceStockRoomTreeViewVal
+                    .GetAllItems()                                    // List<Table_Base_TreeView>
+                    .OfType<Table_StockRoom_TreeView>()
+                    .Where(item => e.DirtyDataGridViewIndexes.Contains(item.Index))
+                    .ToList();
+
+                try
+                {
+                    foreach (var item in dirtyItems)
+                        await _unitOfWork.TableStockRoomTreeViewRepository.UpdateAsync(item, CancellationToken.None);
+
+                    dataGridViewExtended.SavedRequestedDone();
+                    _bindingSourceStockRoomTreeViewVal.ResetDirtyFlag();
+                }
+                catch (Exception ex)
+                {
+                    MessageDebugPosition = $"SaveRequested (TreeView) error: {ex.Message}";
+                    // dataGridViewExtended.DirtyDataGridViewIndexes intentionally NOT cleared — retry is still possible.
+                    throw;
+                }
+            }
+
+            if (dataGridViewExtended.DataSource == _bindingSourceStockRoomVal)
+            {
+                if (e.DirtyDataGridViewIndexes.Count == 0)
+                {
+                    dataGridViewExtended.SavedRequestedDone();
+                    return;
+                }
+
+                // Force-commit any cell still in edit mode before reading values.
+                _bindingSourceStockRoomVal.EndEdit();
+
+                // Collect only the rows that were actually changed.
+                var dirtyItems = _bindingSourceStockRoomVal
+                    .GetAllItems()                                    // List<Table_Base_TreeView>
+                    .OfType<Table_StockRoom>()
+                    .Where(item => e.DirtyDataGridViewPartNumbers.Contains(item.PartNumber))
+                    .ToList();
+
+                try
+                {
+                    foreach (var item in dirtyItems)
+                        await _unitOfWork.TableStockRoomRepository.UpdateAsync(item, CancellationToken.None);
+
+                    dataGridViewExtended.SavedRequestedDone();
+                    _bindingSourceStockRoomVal.ResetDirtyFlag();
+                }
+                catch (Exception ex)
+                {
+                    MessageDebugPosition = $"SaveRequested (StockRoom) error: {ex.Message}";
+                    // dataGridViewExtended.DirtyDataGridViewPartNumbers intentionally NOT cleared — retry is still possible.
+                    throw;
+                }
+            }
+        }
+
         public System.Collections.IList Rows;
         public IDictionary<object, BindingSourceGroups.GroupRow> GroupsDict;
                
@@ -800,7 +960,7 @@ namespace StockRoom11net
             #endregion"OnHand column, update OnHold and Onavailable"
         }
 
-        void DataGridViewExtendedInventoryCellBeggingEditEvent(object? sender, DataGridViewCellCancelEventArgs e)
+        async void DataGridViewExtendedInventoryCellBeggingEditEvent(object? sender, DataGridViewCellCancelEventArgs e)
         {
             try
             {
@@ -809,6 +969,16 @@ namespace StockRoom11net
                 {
                     MessageBox.Show(@"The current User, does not have the right to perform this action.",
                                      @"Warning, access denied.", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    e.Cancel = true;
+                    return;
+                }
+
+                bool isKeyField = await _unitOfWork.IsKeyColumn(dataGridViewExtended.CurrentCell, typeof(Table_StockRoom_TreeView));
+                if (isKeyField)
+                {
+                    MessageBox.Show("Sorry, this column is a key field, cannot be edited.",
+                                    "Key field. Call a system manager to access this column",
+                                                MessageBoxButtons.OK, MessageBoxIcon.Error);
                     e.Cancel = true;
                     return;
                 }
@@ -839,7 +1009,7 @@ namespace StockRoom11net
                 }
             }
         }
-
+        
         void DataGridViewExtendedInventoryLogFileMessage(object? sender, LogFileMessageEventArgs e)
         {
             On_LogFileMessage(e);
@@ -1191,18 +1361,22 @@ namespace StockRoom11net
 
         #region"TabControlExtende"
 
-        Plexiglass ShowResizeRectangle;
+        Plexiglass ShowPlexiglassRectangle;
         void InitTabControlExtend()
         {
             splitContainerHorizontal.SplitterWidth = 3;
             splitContainerVertical.SplitterWidth = 3;
+            splitContainerHorizontal.MouseDown += SplitContainerHorizontal_MouseDown;
+            splitContainerVertical.MouseDown += SplitContainerVertical_MouseDown;
+            splitContainerHorizontal.SplitterMoved += SplitContainerHorizontal_SplitterMoved;
+            splitContainerVertical.SplitterMoved += SplitContainerVertical_SplitterMoved;
 
             TabControl_Inventory.Alignment = TabAlignment.Bottom;
 
             // TabControl_Inventory.HideTab("tabPage_TreeViewSetting");
 
             TabControl_Inventory.MouseDownResizeGripEvent += TabControl_Inventory_MouseDownResizeGripEvent;
-            TabControl_Inventory.MouseUpResizeGripEvent += TabControl_Inventory_MouseUpResizeGripEvent;
+            TabControl_Inventory.MouseUpResizeGripEvent += TabControl_Inventory_MouseUpResizeGripEventAsync;
             TabControl_Inventory.ResizeGripEvent += TabControl_Inventory_ResizeGripEvent;
             TabControl_Inventory.SelectedIndexChanged += TabControl_Inventory_SelectedIndexChanged;
 
@@ -1214,6 +1388,32 @@ namespace StockRoom11net
             /// Default tabPage_xx selected. Hide panel2 of splitContainer_DataTreeView
             /// where is the dataTreeViewToAdd_Cancel_Delete control.
           //  splitContainer_DataTreeView.Panel2Collapsed = true;
+        }
+
+        void SplitContainerVertical_MouseDown(object? sender, MouseEventArgs e)
+        {
+            internalResizeEvent = false;
+        }
+
+        void SplitContainerHorizontal_MouseDown(object? sender, MouseEventArgs e)
+        {
+            internalResizeEvent = false;
+        }
+
+        void SplitContainerVertical_SplitterMoved(object? sender, SplitterEventArgs e)
+        {
+            if(internalResizeEvent)
+                return;
+
+            SaveUserSetting();
+        }
+
+        void SplitContainerHorizontal_SplitterMoved(object? sender, SplitterEventArgs e)
+        {
+            if (internalResizeEvent)
+                return;
+
+            SaveUserSetting();
         }
 
         void TabControl_Inventory_SelectedIndexChanged(object? sender, EventArgs e)
@@ -1232,28 +1432,32 @@ namespace StockRoom11net
 
         }
 
-        void TabControl_Inventory_MouseUpResizeGripEvent(object? sender, MouseEventArgs e)
+        void TabControl_Inventory_MouseUpResizeGripEventAsync(object? sender, MouseEventArgs e)
         {
-            ShowResizeRectangle.Close();
+            ShowPlexiglassRectangle.Close();
 
-            splitContainerVertical.SplitterDistance = ShowResizeRectangle.Location.X;
-            splitContainerHorizontal.SplitterDistance = ShowResizeRectangle.Height;
+            splitContainerVertical.SplitterDistance   = ShowPlexiglassRectangle.Location.X;
+            splitContainerHorizontal.SplitterDistance = ShowPlexiglassRectangle.Height;
 
             TabControl_Inventory.Visible = true;
-
-            //  StockRoomSetting.SplitterX = splitContainerVertical.SplitterDistance;
-            //  StockRoomSetting.SplitterY = splitContainerHorizontal.SplitterDistance;
-
-            //  SaveUserSetting();
+            
+            SaveUserSetting();
         }
 
         void TabControl_Inventory_MouseDownResizeGripEvent(object? sender, MouseEventArgs e)
         {
+            internalResizeEvent = false;
+
+            // Show a Plexiglass rectangle to simulate the resizing of the splitContainer, this is for better
+            // user experience, because the real resizing of the splitContainer is too slow and we set
+            // the SplitterDistance only when the mouse up event is triggered, so the user can see the
+            // resizing process with the Plexiglass rectangle, and when the mouse up event is triggered,
+            // the real resizing of the splitContainer is done and the Plexiglass rectangle is closed.
             Point location = splitContainerVertical.SplitterRectangle.Location;
             Size sizeCon = splitContainerVertical.Panel2.ClientSize;
             var rectangleImage = (Bitmap)ScreenImage.GetScreenshot(Handle, location, sizeCon);
 
-            ShowResizeRectangle = new Plexiglass(this)
+            ShowPlexiglassRectangle = new Plexiglass(this)
             {
                 ClientSize = sizeCon,
                 RectImage = rectangleImage,
@@ -1265,8 +1469,8 @@ namespace StockRoom11net
 
         void TabControl_Inventory_ResizeGripEvent(object? sender, Custom_Events_Args.ResizeGrip_EventArgs e)
         {
-            ShowResizeRectangle.Location = new Point(ShowResizeRectangle.Location.X + e.X, ShowResizeRectangle.Location.Y);
-            ShowResizeRectangle.ClientSize = new Size(ShowResizeRectangle.ClientSize.Width - e.X, ShowResizeRectangle.ClientSize.Height + e.Y);
+            ShowPlexiglassRectangle.Location = new Point(ShowPlexiglassRectangle.Location.X + e.X, ShowPlexiglassRectangle.Location.Y);
+            ShowPlexiglassRectangle.ClientSize = new Size(ShowPlexiglassRectangle.ClientSize.Width - e.X, ShowPlexiglassRectangle.ClientSize.Height + e.Y);
         }
 
         #endregion"TabControlExtende"
@@ -1483,22 +1687,26 @@ namespace StockRoom11net
 
             DeleteOriginalFile = Settings.Default.DeleteOriginalFile;
 
-            _nodeSetting = new NodeSetting(BindingSourceTreeViewBase, ColumnsCollection, _employeesService);
 
+            _nodeSetting = new NodeSetting(_bindingSourceStockRoomTreeViewVal, ColumnsCollection, _employeesService)
+            {
+                DebugMode = false,
+                AutoScroll = true,
+                Dock = DockStyle.Fill,
+                AutoScrollMinSize = new Size(730, 475),
+                Location = new Point(0, 0),
+                Name = "nodeSetting",
+                NeedSaveData = false,
+                Size = new Size(731, 501),
+                TabIndex = 0
+            };
+
+            _nodeSetting.CurrentNode = new Table_Base_TreeView();
             _nodeSetting.SaveRequested += NodeSetting_Save_Requested;
             _nodeSetting.StatusBarMessage += NodeSetting_StatusBarMessage;
             _nodeSetting.NodeImageChange += NodeSetting_NodeImageChange;
-            _nodeSetting.AutoScroll = true;
-            _nodeSetting.AutoScrollMinSize = new Size(730, 475);
-            _nodeSetting.Dock = DockStyle.Fill;
-       //     _nodeSetting.FocusedNodeProperties = new NodeProperties();
-            _nodeSetting.Location = new Point(0, 0);
-            _nodeSetting.Name = "nodeSetting";
-            _nodeSetting.NeedSaveData = false;
-            _nodeSetting.Size = new Size(731, 501);
-            _nodeSetting.TabIndex = 0;
 
-            CurrentDeptUserBroadcast_Requested += _nodeSetting.CurrentUserBroadcast_EventHandler;
+           // CurrentDeptUserBroadcast_Requested += _nodeSetting.CurrentUserBroadcast_EventHandler;
 
             tabPage_TreeViewSetting.Controls.Add(_nodeSetting);
         }
@@ -1513,962 +1721,15 @@ namespace StockRoom11net
             On_StatusBarMessage(e);
         }
 
-        void NodeSetting_Save_Requested(object? sender, Save_Requested_EventArgs e)
+        async void NodeSetting_Save_Requested(object? sender, Save_Requested_EventArgs e)
         {
-            On_Save_Requested(e);
+            if (_bindingSourceStockRoomTreeViewVal.TableName.Contains("Table_StockRoom_TreeView"))
+            {
+                await _unitOfWork.TableStockRoomTreeViewRepository.UpdateAsync((Table_StockRoom_TreeView)e.Item, CancellationToken.None);
+            }
         }
 
         #endregion"Tab_NodeSetting"
-
-        #region"Tab_GraphicChart"
-
-        //  EasyProgressBar.EasyProgressBar easyProgressBar_GraphicChart;
-        bool isProgressStarted_GraphicChart;
-        Thread progressThread_GraphicChart;
-        int Prod_Projected = 1000;
-
-        void Chart_up_date()
-        {
-            #region "Set Chart Area position, Set the plotting area position."
-
-            /*
-
-            chart_Components.ChartAreas["Default"].Area3DStyle.Enable3D = false;
-
-            // Set Chart Area position,es el area donde se ponen los label y el grafico
-            chart_Components.ChartAreas["Default"].Position.Auto = false;
-            chart_Components.ChartAreas["Default"].Position.X = 0;
-            chart_Components.ChartAreas["Default"].Position.Y = 3;
-            chart_Components.ChartAreas["Default"].Position.Width = 95;
-            chart_Components.ChartAreas["Default"].Position.Height = 95;
-
-            // Set the plotting area position. Coordinates of a plotting 
-            // area are relative to a chart area position.
-            chart_Components.ChartAreas["Default"].InnerPlotPosition.Auto = false;
-            chart_Components.ChartAreas["Default"].InnerPlotPosition.X = 10;
-            chart_Components.ChartAreas["Default"].InnerPlotPosition.Y = 5;
-            chart_Components.ChartAreas["Default"].InnerPlotPosition.Width = 90;
-            chart_Components.ChartAreas["Default"].InnerPlotPosition.Height = 80;
-
-            */
-
-            #endregion
-
-
-            /*
-            #region "Scale Breaks"
-
-            // Enable scale breaks
-            chart_Components.ChartAreas["Default"].AxisY.ScaleBreakStyle.Enabled = true;
-
-            // Set the scale break type
-          //  chart_Components.ChartAreas["Default"].AxisY.ScaleBreakStyle.BreakLineStyle = BreakLineStyle.Ragged;
-
-            // Set the spacing gap between the lines of the scale break (as a percentage of y-axis)
-            chart_Components.ChartAreas["Default"].AxisY.ScaleBreakStyle.Spacing = 2;
-
-            // Set the line width of the scale break
-            chart_Components.ChartAreas["Default"].AxisY.ScaleBreakStyle.LineWidth = 2;
-
-            // Set the color of the scale break
-            chart_Components.ChartAreas["Default"].AxisY.ScaleBreakStyle.LineColor = Color.MediumTurquoise;
-
-            // Show scale break if more than 25% of the chart is empty space
-            chart_Components.ChartAreas["Default"].AxisY.ScaleBreakStyle.CollapsibleSpaceThreshold = 10;
-
-            // If all data points are significantly far from zero, 
-            // the Chart will calculate the scale minimum value
-          //  chart_Components.ChartAreas["Default"].AxisY.ScaleBreakStyle.StartFromZero = StartFromZero.Auto;
-
-            #endregion "Scale Breaks End"
-
-            #region "AxisX labels"
-
-            // Disable axis labels auto fitting of text
-            chart_Components.ChartAreas["Default"].AxisX.IsLabelAutoFit = false;
-
-            // Set axis labels font
-            chart_Components.ChartAreas["Default"].AxisX.LabelStyle.Font = new Font("Arial", 7, FontStyle.Bold);
-
-            // Set axis labels angle
-            chart_Components.ChartAreas["Default"].AxisX.LabelStyle.Angle = 30;
-
-            // Disable offset labels style
-            chart_Components.ChartAreas["Default"].AxisX.LabelStyle.IsStaggered = false;
-
-            // Enable X axis labels
-            chart_Components.ChartAreas["Default"].AxisX.LabelStyle.Enabled = true;
-
-            // Enable AntiAliasing for either Text and Graphics or just Graphics
-        //    chart_Components.AntiAliasing = AntiAliasingStyles.All; // AntiAliasingStyles.Graphics and AntiAliasing.Text
-
-            // Set interval of X axis to zero, which represents an "Auto" value.
-            chart_Components.ChartAreas["Default"].AxisX.Interval = 1;
-
-            // Use variable count algorithm to generate labels.
-         //   chart_Components.ChartAreas["Default"].AxisX.IntervalAutoMode = IntervalAutoMode.VariableCount;
-
-            chart_Components.ChartAreas["Default"].AxisX.MajorTickMark.Interval = 1;
-
-            chart_Components.ChartAreas["Default"].AxisX.IsMarginVisible = false;
-
-            #endregion
-
-            #region"Add the second legend"
-
-         //   chart_Components.Legends.Add(new Legend("Second"));
-
-            // Associate the last three series to the new legend
-            chart_Components.Series["Comp_On_Hand"].Legend = "Second";
-            chart_Components.Series["Comp_for_Prod"].Legend = "Second";
-
-            #endregion"Add the second legend"
-
-            #region"Create cursor object"
-
-      //      System.Windows.Forms.DataVisualization.Charting.Cursor cursor = null;
-
-            // Set cursor object
-      //      cursor = chart_Components.ChartAreas["Default"].CursorY;
-
-            // Set cursor properties 
-     //       cursor.LineWidth = 1;
-      //      cursor.LineDashStyle = ChartDashStyle.Solid;
-      //      cursor.LineColor = Color.Red;
-      //      cursor.SelectionColor = Color.Yellow;
-
-            // Set cursor selection color of X axis cursor
-            chart_Components.ChartAreas["Default"].CursorX.SelectionColor = Color.Yellow;
-
-            chart_Components.ChartAreas["Default"].CursorX.IsUserEnabled = true;
-            chart_Components.ChartAreas["Default"].CursorY.IsUserEnabled = true;
-
-
-            #endregion"Create cursor object"
-
-            */
-
-            /*
-
-            #region"Set Titles in Chart"
-            chart_Components.Titles.Add("");
-
-            // Set chart title
-            chart_Components.Titles[0].Text = "Graphics Chart.";
-
-            // Set chart title font
-            chart_Components.Titles[0].Font = new Font("Times New Roman", 12, FontStyle.Bold);
-
-            // Set chart title color
-            chart_Components.Titles[0].ForeColor = Color.Black;
-
-            // Set border title color
-            chart_Components.Titles[0].BorderColor = Color.Transparent;
-
-            // Set background title color
-            chart_Components.Titles[0].BackColor = Color.Transparent;
-
-            // Set Title Alignment
-            chart_Components.Titles[0].Alignment = System.Drawing.ContentAlignment.MiddleCenter;
-
-            // Set Title ToolTip
-            chart_Components.Titles[0].ToolTip = "Estimated Quantity = " + Prod_Projected;
-
-            #endregion"Set Titles in Chart"
-
-            */
-
-            //   chart_Components.CursorPositionChanging += Chart_Components_CursorPositionChanging;
-
-        }
-
-        void Chart_Components_CursorPositionChanging(object? sender)
-        {
-            /*
-            if (double.IsNaN(e.NewPosition))
-                return;
-
-            if ((int)e.NewPosition >= chart_Components.Series["Comp_On_Hand"].Points.Count)
-                return;
-
-            if (e.Axis.AxisName == AxisName.X)
-            {
-                string _label = chart_Components.Series["Comp_On_Hand"].Points[(int)e.NewPosition].AxisLabel;
-
-                if (_label == "")
-                    return;
-
-                //     int index = _bindingSource_tableStockRoom.Find("PartNumber", _label);
-
-                //     if (index == -1)
-                //         return;
-
-                //     DataRowView row = (DataRowView)_bindingSource_tableStockRoom[index];
-
-                dataGridViewExtended.FirstDisplayedRow = "PartNumber/" + _label;
-
-            }
-            */
-        }
-
-        #region"InitEasyProgressBar_Updating Graphic Chart"
-        /*
-            void InitEasyProgressBar_GraphicChart()
-            {
-                easyProgressBar_GraphicChart = new EasyProgressBar.EasyProgressBar
-                {
-                    AlphaMaker = floatWindowAlphaMaker1,
-                    BackColor = System.Drawing.SystemColors.Window
-                };
-                easyProgressBar_GraphicChart.BackgroundGradient.ColorStart = System.Drawing.Color.White;
-                easyProgressBar_GraphicChart.BackgroundGradient.IsBlendedForBackground = true;
-                easyProgressBar_GraphicChart.BorderColor = System.Drawing.Color.Gray;
-                easyProgressBar_GraphicChart.DigitBoxGradient.BorderColor = System.Drawing.Color.Silver;
-                easyProgressBar_GraphicChart.DigitBoxGradient.ColorEnd = System.Drawing.Color.AntiqueWhite;
-                easyProgressBar_GraphicChart.DigitBoxGradient.ColorStart = System.Drawing.Color.White;
-                easyProgressBar_GraphicChart.DigitBoxGradient.IsBlendedForBackground = true;
-                easyProgressBar_GraphicChart.DisplayFormat = "";
-                easyProgressBar_GraphicChart.Font = new Font("Verdana", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
-                easyProgressBar_GraphicChart.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-                easyProgressBar_GraphicChart.IsDigitDrawEnabled = false;
-                easyProgressBar_GraphicChart.Location = new Point(((ClientSize.Width / 2) - 300), ((ClientSize.Height / 2) + 30));
-                easyProgressBar_GraphicChart.Name = "easyProgressBar_GraphicChart";
-                easyProgressBar_GraphicChart.ProgressColorizer.Alpha = ((byte)(113));
-                easyProgressBar_GraphicChart.ProgressColorizer.Blue = ((byte)(140));
-                easyProgressBar_GraphicChart.ProgressColorizer.Green = ((byte)(200));
-                easyProgressBar_GraphicChart.ProgressColorizer.Red = ((byte)(230));
-                easyProgressBar_GraphicChart.ProgressGradient.ColorEnd = System.Drawing.Color.Wheat;
-                easyProgressBar_GraphicChart.ProgressGradient.ColorStart = System.Drawing.Color.WhiteSmoke;
-                easyProgressBar_GraphicChart.ProgressGradient.IsBlendedForProgress = true;
-                easyProgressBar_GraphicChart.Size = new Size(600, 65);
-                easyProgressBar_GraphicChart.TabIndex = 0;
-                easyProgressBar_GraphicChart.Text = "40% ";
-                easyProgressBar_GraphicChart.Value = 40;
-                easyProgressBar_GraphicChart.DockUndockProgressBar = false;
-                easyProgressBar_GraphicChart.Visible = false;
-                easyProgressBar_GraphicChart.EasyProgressBarClosing += EasyProgressBar_GraphicChart_EasyProgressBarClosing;
-                easyProgressBar_GraphicChart.MouseEnter += EasyProgressBar_GraphicChart_MouseEnter;
-                easyProgressBar_GraphicChart.MouseLeave += EasyProgressBar_GraphicChart_MouseLeave;
-
-                chart_Components.Series["Comp_for_Prod"].Points.Clear();
-                chart_Components.Series["Comp_On_Hand"].Points.Clear();
-                chart_Components.Annotations.Clear();
-
-                chart_Components.Series["Comp_On_Hand"].LabelAngle = 30;
-            }
-
-            // Starts or stops the current progressThread.
-            void Start_EasyProgressBar_GraphicChart()
-            {
-                //  if (chart_Components.Visible == false)
-                //      return;
-
-                if (_bindingSource_StockRoom.Count == 0)
-                    return;
-
-                if (!isProgressStarted_GraphicChart)
-                {
-                    easyProgressBar_GraphicChart.TextMessage = "Updating Graphic Chart.";
-                    easyProgressBar_GraphicChart.Visible = true;
-                    easyProgressBar_GraphicChart.Focus();
-                    easyProgressBar_GraphicChart.Value = easyProgressBar_GraphicChart.Minimum;
-                    easyProgressBar_GraphicChart.Maximum = _bindingSource_StockRoom.Count;
-
-                    easyProgressBar_GraphicChart.ValueChanged += (thrower, ea) =>
-                    {
-                        if (easyProgressBar_GraphicChart.Value == easyProgressBar_GraphicChart.Maximum)
-                            isProgressStarted_GraphicChart = false;
-                    };
-
-                    progressThread_GraphicChart = new Thread(new ParameterizedThreadStart(ProgressChannel_GraphicChart))
-                    {
-                        Name = "ProgressBar thread",
-                        IsBackground = true
-                    };
-
-                    //      ParameterizedThreadClass pThread = new ParameterizedThreadClass(dataSet_SMT_Project.Tables["Table_Components"]);
-                    ParameterizedThreadClassGraphic pThread = new ParameterizedThreadClassGraphic(_bindingSource_StockRoom);
-                    progressThread_GraphicChart.Start(pThread);
-
-                    // Set new value.
-                    isProgressStarted_GraphicChart = true;
-
-                    // Write log message.
-                    //      status.Text = String.Format("Channel Started !!!, The {0} is started at {1:F}", progressThread.Name, DateTime.Now);
-
-                    // Update button text.
-                    //      button1.Text = "Stop";
-                }
-                else
-                {
-                    if (progressThread_GraphicChart.IsAlive)
-                    {
-                        easyProgressBar_GraphicChart.Visible = false;
-                        _textMessage = "";
-
-                        // Tell the progressThread to abort itself immediately, raises a ThreadAbortException in the progressThread after calling the Thread.Join() method.
-                        progressThread_GraphicChart.Abort();
-
-                        // Wait for the progressThread to finish.
-                        progressThread_GraphicChart.Join();
-
-
-
-                        // Update button text.
-                        //     button1.Text = "Resume Progress";
-                    }
-                    isProgressStarted_GraphicChart = false;
-                }
-            }
-
-            void EasyProgressBar_GraphicChart_MouseEnter(object sender, EventArgs e)
-            {
-                if (easyProgressBar_GraphicChart.AlphaMaker != null
-                    && !easyProgressBar_GraphicChart.DockUndockProgressBar)
-                {
-                    easyProgressBar_GraphicChart.AlphaMaker.IFloatWindowControl = easyProgressBar_GraphicChart;
-                    easyProgressBar_GraphicChart.AlphaMaker.SeekToOpacity(255);
-                }
-
-            }
-
-            void EasyProgressBar_GraphicChart_MouseLeave(object sender, EventArgs e)
-            {
-                if (easyProgressBar_GraphicChart.AlphaMaker != null
-                    && !easyProgressBar_GraphicChart.DockUndockProgressBar)
-                {
-                    if (!easyProgressBar_GraphicChart.ClientRectangle.Contains(easyProgressBar_GraphicChart.PointToClient(System.Windows.Forms.Cursor.Position)))
-                    {
-                        easyProgressBar_GraphicChart.AlphaMaker.IFloatWindowControl = easyProgressBar_GraphicChart;
-                        easyProgressBar_GraphicChart.AlphaMaker.SeekToOpacity(180);
-                    }
-                    else
-                    {
-                        easyProgressBar_GraphicChart.AlphaMaker.IFloatWindowControl = easyProgressBar_GraphicChart;
-                        easyProgressBar_GraphicChart.AlphaMaker.UpdateOpacity(255, true);
-                    }
-                }
-            }
-
-            void EasyProgressBar_GraphicChart_EasyProgressBarClosing(object sender, out bool cancel)
-            {
-                if (MessageBox.Show("Do you want to close the control window?", Application.ProductName,
-                                    MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) == DialogResult.No)
-                    cancel = true;
-                else
-                    cancel = false;
-            }
-
-            void ProgressChannel_GraphicChart(object instance)
-            {
-                if (instance is ParameterizedThreadClassGraphic pThread)
-                {
-                    try
-                    {
-                        Invoke(new EventHandler(delegate (object o, EventArgs e)
-                     {
-                         chart_Components.Series["Comp_for_Prod"].Points.Clear();
-                         chart_Components.Series["Comp_On_Hand"].Points.Clear();
-                         chart_Components.Annotations.Clear();
-
-                         CurrentStatus currentStatus;
-
-                         int _onAvailable = 0;
-                         int _minQty = 0;
-
-                         if (_rootNodeActive.Contains("Stock Room"))
-                         {
-                             #region"Stock Room"
-
-                             for (int i = 0; i <= (pThread.RowCount - 1); i++)
-                             {
-                                 DataRowView rowsItems = (DataRowView)pThread.BindingComp[i];
-                                 currentStatus = new CurrentStatus(rowsItems);
-
-                                 try
-                                 {
-                                     _onAvailable = (int)rowsItems["OnAvailable"];
-
-                                     _minQty = (int)rowsItems["MinQty"];
-                                 }
-                                 catch (Exception)
-                                 {
-                                     currentStatus.Selected = true;
-                                     _onAvailable = 2;
-                                     _minQty = 1;
-                                     MessageBox.Show("Error in database information, Null, empty or wrong value has been found.", "Wrong value.",
-                                                                                                        MessageBoxButtons.OK, MessageBoxIcon.Error);
-                                 }
-
-                                 SortedDictionary<string, int> dict = MyCode.GetDict(rowsItems["Who_uses_this"].ToString());
-
-                                 if (_onAvailable <= _minQty)
-                                     currentStatus.Selected = true;
-
-                                 chart_Components.Series["Comp_On_Hand"].Points.Add(new DataPoint(i, _onAvailable));
-                                 chart_Components.Series["Comp_for_Prod"].Points.Add(new DataPoint(i, _minQty));
-
-                                 chart_Components.Series["Comp_On_Hand"].Points[i].AxisLabel = rowsItems["PartNumber"].ToString();
-
-                                 UpdateProgressBar_GraphicChart(i);
-                             }
-
-                             #endregion"Stock Room"
-                         }
-                         else
-                         {
-                             #region"By Products...."
-
-                             string Active_Filter = pThread.BindingComp.Filter;
-
-                             if (Active_Filter == null)
-                                 return;
-
-                             int _starIndex = Active_Filter.IndexOf('\'') + 1;
-                             int _lengt = Active_Filter.LastIndexOf('\'') - _starIndex;
-
-                             if (_lengt != -1)
-                             {
-                                 Active_Filter = Active_Filter.Substring(_starIndex, _lengt);
-                             }
-
-                             Active_Filter = Active_Filter.Replace("*", "");
-
-                             for (int i = 0; i <= (pThread.RowCount - 1); i++)
-                             {
-                                 DataRowView rowsItems = (DataRowView)pThread.BindingComp[i];
-                                 currentStatus = new CurrentStatus(rowsItems);
-
-                                 //Set to false, no selected. If Qty to product change.
-                                 currentStatus.UnSelect();
-
-                                 string Who_uses_this = rowsItems["Who_uses_this"].ToString();
-                                 if (string.IsNullOrEmpty(Who_uses_this))
-                                 {
-                                     UpdateProgressBar_GraphicChart(pThread.RowCount);
-                                     break;
-                                 }
-
-                                 int OnAvailable = (int)rowsItems["OnAvailable"];
-                                 int Comp_for_prod = 0;
-                                 int pointValue = 0;
-                                 int value = 0;
-
-                                 SortedDictionary<string, int> dictWhoUsesThis = MyCode.GetDict(Who_uses_this);
-                                 foreach (KeyValuePair<string, int> inf in dictWhoUsesThis)
-                                 {
-                                     if (!inf.Key.Contains(Active_Filter))
-                                         continue;
-
-                                     value += inf.Value;
-                                 }
-
-                                 Comp_for_prod = value * Prod_Projected;
-                                 pointValue = Comp_for_prod + 1000;
-
-                                 if (OnAvailable <= pointValue)
-                                     pointValue = OnAvailable;
-
-                                 int QtyNeeded = 0;
-                                 if (OnAvailable <= Comp_for_prod)
-                                 {
-                                     currentStatus.Select();
-                                     QtyNeeded = Comp_for_prod - OnAvailable;
-                                 }
-
-                                 chart_Components.Series["Comp_for_Prod"].Points.Add(new DataPoint(i, Comp_for_prod));
-                                 chart_Components.Series["Comp_On_Hand"].Points.Add(new DataPoint(i, pointValue));
-
-                                 chart_Components.Series["Comp_On_Hand"].Points[i].AxisLabel = rowsItems["PartNumber"].ToString();
-
-                                 dataGridViewExtended.SetValueAt = "PartNumber/" + rowsItems["PartNumber"].ToString() + "/" + Comp_for_prod + "/" + QtyNeeded;
-
-                                 rowsItems.EndEdit();
-                                 UpdateProgressBar_GraphicChart(i);
-                             }
-
-                             #endregion"By Products...."
-                         }
-
-                         pThread.BindingComp.EndEdit();
-                         UpdateProgressBar_GraphicChart(pThread.RowCount);
-                     }));
-                    }
-                    catch (ThreadAbortException error)
-                    {
-                        // Write log message.
-                        UpdateStatusBar_GraphicChart(string.Format("Channel Aborted !!!, The {0} is destroyed and stopped at {1:F}", Thread.CurrentThread.Name, DateTime.Now));
-
-                        MessageBox.Show(new Form() { TopMost = true }, "Message related to this error is " + error.Message,
-                                   "StockRoom Inventory progress channel has generated an error.", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    }
-                }
-            }
-
-            void UpdateStatusBar_GraphicChart(string statusText)
-            {
-                _ = statusText;
-            }
-
-            void UpdateProgressBar_GraphicChart(int currentValue)
-            {
-                if (currentValue == (easyProgressBar_GraphicChart.Maximum - 1))
-                {
-                    Invoke(new EventHandler(EasyProgressBar_GraphicChart_Hide));
-                    return;
-                }
-
-                if (easyProgressBar_GraphicChart.InvokeRequired)
-                    easyProgressBar_GraphicChart.Invoke(new SetProgressValue(UpdateProgressBar_GraphicChart), new object[] { currentValue });
-                else
-                {
-                    easyProgressBar_GraphicChart.Value = currentValue;
-                }
-            }
-
-            void EasyProgressBar_GraphicChart_Hide(object sender, EventArgs e)
-            {
-                isProgressStarted_GraphicChart = false;
-                easyProgressBar_GraphicChart.Hide();
-                _textMessage = "";
-
-                dataGridViewExtended.Refresh();
-
-                //  UpdateGraphicsChart();
-            }
-
-            #region"Class ParameterizedThreadClass"
-
-            class ParameterizedThreadClassGraphic
-            {
-                readonly DataTable _tableComp;
-                readonly BindingSource _bindingsource;
-                readonly int minimum;
-                readonly int maximum;
-                readonly int progressValue;
-
-                public ParameterizedThreadClassGraphic(DataTable tableComp)
-                {
-                    _tableComp = tableComp;
-                }
-
-                public ParameterizedThreadClassGraphic(BindingSource bindingsource)
-                {
-                    _bindingsource = bindingsource;
-                }           
-
-                public ParameterizedThreadClassGraphic(int minimum1, int maximum1, int progressValue1)
-                {
-                    minimum = minimum1;
-                    maximum = maximum1;
-                    progressValue = progressValue1;
-                }
-
-                public int Minimum
-                {
-                    get { return minimum; }
-                }
-
-                public int Maximum
-                {
-                    get { return maximum; }
-                }
-
-                public int ProgressValue
-                {
-                    get { return progressValue; }
-                }
-
-                public DataTable TableComp
-                {
-                    get { return _tableComp; }
-                }
-
-                public BindingSource BindingComp
-                {
-                    get { return _bindingsource; }
-                }
-
-                public int RowCount
-                {
-                    get
-                    {
-                        if (_tableComp != null)
-                            return _tableComp.Rows.Count;
-
-                        return _bindingsource.Count;
-                    }
-                }
-            }
-
-            #endregion"Class ParameterizedThreadClass"
-
-            #endregion"InitEasyProgressBar_Updating Graphic Chart"
-
-            #endregion"Tab_GraphicChart"
-
-            #region"InitEasyProgressBar"
-
-            EasyProgressBar.EasyProgressBar _easyProgressBar1;
-            bool _isProgressStarted;
-            Thread _progressThread;
-
-            void InitEasyProgressBar()
-            {
-                _easyProgressBar1 = new EasyProgressBar.EasyProgressBar
-                {
-                    AlphaMaker = floatWindowAlphaMaker1
-                };
-                _easyProgressBar1.BackColor = System.Drawing.SystemColors.Window;
-                _easyProgressBar1.BackgroundGradient.ColorStart = System.Drawing.Color.White;
-                _easyProgressBar1.BackgroundGradient.IsBlendedForBackground = true;
-                _easyProgressBar1.BorderColor = System.Drawing.Color.Gray;
-                _easyProgressBar1.DigitBoxGradient.BorderColor = System.Drawing.Color.Silver;
-                _easyProgressBar1.DigitBoxGradient.ColorEnd = System.Drawing.Color.AntiqueWhite;
-                _easyProgressBar1.DigitBoxGradient.ColorStart = System.Drawing.Color.White;
-                _easyProgressBar1.DigitBoxGradient.IsBlendedForBackground = true;
-                _easyProgressBar1.DisplayFormat = "";
-                _easyProgressBar1.Font = new Font("Verdana", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
-                _easyProgressBar1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-                _easyProgressBar1.IsDigitDrawEnabled = false;
-                _easyProgressBar1.Location = new Point(((ClientSize.Width / 2) - 300), ((ClientSize.Height / 2) + 30));
-                _easyProgressBar1.Name = "easyProgressBar1";
-                _easyProgressBar1.ProgressColorizer.Alpha = ((byte)(113));
-                _easyProgressBar1.ProgressColorizer.Blue = ((byte)(140));
-                _easyProgressBar1.ProgressColorizer.Green = ((byte)(200));
-                _easyProgressBar1.ProgressColorizer.Red = ((byte)(230));
-                _easyProgressBar1.ProgressGradient.ColorEnd = System.Drawing.Color.Wheat;
-                _easyProgressBar1.ProgressGradient.ColorStart = System.Drawing.Color.WhiteSmoke;
-                _easyProgressBar1.ProgressGradient.IsBlendedForProgress = true;
-                _easyProgressBar1.Size = new Size(600, 65);
-                _easyProgressBar1.TabIndex = 0;
-                _easyProgressBar1.Text = "40% ";
-                _easyProgressBar1.Value = 40;
-                _easyProgressBar1.DockUndockProgressBar = false;
-                _easyProgressBar1.Visible = false;
-                _easyProgressBar1.EasyProgressBarClosed += new EventHandler(EasyProgressBar1_EasyProgressBarClosed);
-                _easyProgressBar1.EasyProgressBarClosing += new EasyProgressBar.EasyProgressBar.EasyProgressBarClosingEventHandler(EasyProgressBar1_EasyProgressBarClosing);
-                _easyProgressBar1.MouseEnter += new EventHandler(EasyProgressBar1MouseEnter);
-                _easyProgressBar1.MouseLeave += new EventHandler(EasyProgressBar1MouseLeave);
-                _easyProgressBar1.LostFocus += new EventHandler(EasyProgressBar1LostFocus);
-
-
-            }
-
-            void EasyProgressBar1LostFocus(object sender, EventArgs e)
-            {
-                _easyProgressBar1.Focus();
-            }
-
-            // Starts or stops the current progressThread.
-            void Start_EasyProgressBar(object sender, EventArgs e)
-            {
-                if (!_isProgressStarted)
-                {
-                    _easyProgressBar1.TextMessage = _textMessage;
-                    _easyProgressBar1.Visible = true;
-                    _easyProgressBar1.Focus();
-                    _easyProgressBar1.Value = _easyProgressBar1.Minimum;
-
-                    _easyProgressBar1.ValueChanged += (thrower, ea) =>
-                    {
-                        if (_easyProgressBar1.Value == _easyProgressBar1.Maximum)
-                        {
-                            _isProgressStarted = false;
-
-                            //                 status.Text = "Progress execution is completed";
-                            //                 button1.Text = "Start New Progress";
-                        }
-                    };
-
-                    _progressThread = new Thread(ProgressChannel)
-                    {
-                        Name = "ProgressBar thread",
-                        IsBackground = true
-                    };
-
-                    var pThread = new ParameterizedThreadClass(_easyProgressBar1.Minimum, _easyProgressBar1.Maximum, _easyProgressBar1.Value);
-                    _progressThread.Start(pThread);
-
-                    // Set new value.
-                    _isProgressStarted = true;
-
-                    // Write log message.
-                    //      status.Text = String.Format("Channel Started !!!, The {0} is started at {1:F}", progressThread.Name, DateTime.Now);
-
-                    // Update button text.
-                    //      button1.Text = "Stop";
-                }
-                else
-                {
-                    if (_progressThread.IsAlive)
-                    {
-                        _easyProgressBar1.Visible = false;
-                        _textMessage = "";
-
-                        // Tell the progressThread to abort itself immediately, raises a ThreadAbortException in the progressThread after calling the Thread.Join() method.
-                        _progressThread.Abort();
-
-                        // Wait for the progressThread to finish.
-                        _progressThread.Join();
-
-                        _isProgressStarted = false;
-
-                        // Update button text.
-                        //     button1.Text = "Resume Progress";
-                    }
-                }
-            }
-
-            void EasyProgressBar1MouseEnter(object sender, EventArgs e)
-            {
-                if (_easyProgressBar1.AlphaMaker != null
-                    && !_easyProgressBar1.DockUndockProgressBar)
-                {
-                    _easyProgressBar1.AlphaMaker.IFloatWindowControl = _easyProgressBar1;
-                    _easyProgressBar1.AlphaMaker.SeekToOpacity(255);
-                }
-
-            }
-
-            void EasyProgressBar1MouseLeave(object sender, EventArgs e)
-            {
-                if (_easyProgressBar1.AlphaMaker != null
-                    && !_easyProgressBar1.DockUndockProgressBar)
-                {
-                    if (!_easyProgressBar1.ClientRectangle.Contains(_easyProgressBar1.PointToClient(System.Windows.Forms.Cursor.Position)))
-                    {
-                        _easyProgressBar1.AlphaMaker.IFloatWindowControl = _easyProgressBar1;
-                        _easyProgressBar1.AlphaMaker.SeekToOpacity(180);
-                    }
-                    else
-                    {
-                        _easyProgressBar1.AlphaMaker.IFloatWindowControl = _easyProgressBar1;
-                        _easyProgressBar1.AlphaMaker.UpdateOpacity(255, true);
-                    }
-                }
-            }
-
-            void EasyProgressBar1_EasyProgressBarClosing(object sender, out bool cancel)
-            {
-                if (MessageBox.Show(@"Do you want to close the control window?", Application.ProductName,
-                    MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) == DialogResult.No)
-                    cancel = true;
-                else
-                    cancel = false;
-            }
-
-            void EasyProgressBar1_EasyProgressBarClosed(object sender, EventArgs e)
-            {
-                //  ToolStripItem item = menuStrip1.Items["OPEN"];
-                //  if (item == null)
-                //  {
-                //      item = new ToolStripButton("OPEN: EasyProgressBar");
-                //      item.Name = "OPEN";
-                //      item.Padding = new System.Windows.Forms.Padding(4, 2, 4, 2);
-                //      item.ForeColor = Color.Maroon;
-
-                //     item.Click += (thrower, ea) =>
-                //     {
-                //          easyProgressBar1.DockUndockProgressBar = true;
-                //          item.Enabled = false;
-                //      };
-
-                //      menuStrip1.Items.Add(item);
-                //  }
-                //  else
-                //      item.Enabled = true;
-            }
-
-            void ProgressChannel(object instance)
-            {
-                if (instance is ParameterizedThreadClass)
-                {
-                    var pThread = instance as ParameterizedThreadClass;
-
-                    try
-                    {
-                        var startingValue = pThread.ProgressValue == pThread.Maximum ? pThread.Minimum : pThread.ProgressValue;
-                        for (var i = startingValue + 1; i <= pThread.Maximum; i++)
-                        {
-                            UpdateProgressBar(i);
-                            Thread.Sleep(100);
-                        }
-                    }
-                    catch (ThreadAbortException)
-                    {
-                        // Write log message.
-                        UpdateStatusBar(string.Format("Channel Aborted !!!, The {0} is destroyed and stopped at {1:F}", Thread.CurrentThread.Name, DateTime.Now));
-                    }
-                }
-            }
-
-            void UpdateStatusBar(string statusText)
-            {
-                _= statusText;
-            }
-
-            void UpdateProgressBar(int currentValue)
-            {
-                if (currentValue == 100)
-                    Invoke(new EventHandler(EasyProgressBar_Hide));
-
-                if (_easyProgressBar1.InvokeRequired)
-                    _easyProgressBar1.Invoke(new SetProgressValue(UpdateProgressBar), new object[] { currentValue });
-                else
-                {
-                    _easyProgressBar1.Value = currentValue;
-
-                }
-            }
-
-            void EasyProgressBar_Hide(object sender, EventArgs e)
-            {
-                _easyProgressBar1.Hide();
-                _textMessage = "";
-            }
-        */
-        #region "ParameterizedThreadClass"
-
-        class ParameterizedThreadClass(int minimum1, int maximum1, int progressValue1)
-        {
-            #region Instance Members
-
-            readonly int minimum = minimum1;
-            readonly int maximum = maximum1;
-            readonly int progressValue = progressValue1;
-
-            #endregion
-            #region Constructor
-
-            #endregion
-
-            #region Property
-
-            public int Minimum
-            {
-                get { return minimum; }
-            }
-
-            public int Maximum
-            {
-                get { return maximum; }
-            }
-
-            public int ProgressValue
-            {
-                get { return progressValue; }
-            }
-
-            #endregion
-        }
-
-        #endregion "ParameterizedThreadClass"
-
-
-        #endregion"InitEasyProgressBar"
-
-        /*
-
-       #region"Initialize ToolTip"
-
-       readonly ToolTip toolTip = new ToolTip();
-       void InitializeToolTip()
-       {
-           toolTip.IsBalloon = true;
-           toolTip.AutomaticDelay = 0;
-           toolTip.OwnerDraw = true;
-           toolTip.ShowAlways = true;
-           toolTip.UseAnimation = false;
-           toolTip.UseFading = false;
-           toolTip.Draw += ToolTipDraw;
-       }
-
-       // if toolTip.IsBalloon = true, toolTip_Draw never is called.
-       void ToolTipDraw(object sender, System.Windows.Forms.DrawToolTipEventArgs e)
-       {
-           e.Graphics.FillRectangle(Brushes.AliceBlue, e.Bounds);
-           e.Graphics.DrawRectangle(Pens.Chocolate, new Rectangle(0, 0, e.Bounds.Width - 1, e.Bounds.Height - 1));
-           e.Graphics.DrawString(toolTip.ToolTipTitle + e.ToolTipText, e.Font, Brushes.Red, e.Bounds);
-       }
-
-       #endregion"Initialize ToolTip"
-
-       #region"ProcessCurrentEmployeesHasLogIn & CurrentEmployeesLogIn SaveUserSetting"
-
-       UserSetting StockRoomSetting;
-       void InitializeProcessUserHasLogIn()
-       {
-           StockRoomSetting = new UserSetting(splitContainerVertical.SplitterDistance, splitContainerHorizontal.SplitterDistance);
-           ProcessCurrentEmployeesLogIn = new Action(ProcessUserSetting);
-           InitializeSaveUserSettingTimer();
-       }
-
-       void ProcessUserSetting()
-       {
-           if (CurrentEmployeesLogIn.ContainsUserSetting("StockRoomSetting"))
-           {
-               StockRoomSetting = CurrentEmployeesLogIn.UserSettingList("StockRoomSetting");
-
-               splitContainerVertical.SplitterDistance = StockRoomSetting.SplitterX;
-               splitContainerHorizontal.SplitterDistance = StockRoomSetting.SplitterY;
-           }
-           else
-           {
-               StockRoomSetting = new UserSetting(splitContainerVertical.SplitterDistance, splitContainerHorizontal.SplitterDistance);
-               CurrentEmployeesLogIn.SaveUserSetting("StockRoomSetting", StockRoomSetting);
-           }
-       }
-
-       int _sec = 10;
-       /// <summary>
-       /// An interval of 10 seconds to save user setting if this is modifying the user interface.
-       /// </summary>
-       System.Windows.Forms.Timer SaveUserSettingTimer;
-
-       /// <summary>
-       /// Initialize the SaveUserSettingTimer to 10 seconds to save
-       /// user setting if this is modifying the user interface.
-       /// </summary>
-       void InitializeSaveUserSettingTimer()
-       {
-           SaveUserSettingTimer = new System.Windows.Forms.Timer
-           {
-               Interval = 1000
-           };
-           SaveUserSettingTimer.Tick += new EventHandler(SaveUserSettingTick);
-       }
-
-       void SaveUserSetting()
-       {
-           SaveUserSettingTimer.Start();
-           NeedSaveData = false;
-           _sec = 10;
-
-           On_StatusBarMessage(new StatusBarMessage_EventArgs("", "  10 sec less to save dataGridViewSetting."));
-       }
-
-       void SaveUserSettingTick(object sender, EventArgs e)
-       {
-           _sec--;
-
-           if (_sec > 0)
-           {
-               On_StatusBarMessage(new StatusBarMessage_EventArgs("", "  " + _sec + " sec less to save dataGridViewSetting."));
-               return;
-           }
-
-           SaveUserSettingTimer.Stop();
-
-           if (CurrentEmployeesLogIn != null)
-               CurrentEmployeesLogIn.SaveUserSetting(nameof(StockRoomSetting), StockRoomSetting);
-           else
-               On_SaveSetting(new SaveSettingEventArgs(nameof(StockRoomSetting), StockRoomSetting));
-
-           On_StatusBarMessage(new StatusBarMessage_EventArgs("", ""));
-       }
-   */
-        #endregion"ProcessCurrentEmployeesHasLogIn & CurrentEmployeesLogIn SaveUserSetting"        
 
         #region"Tab_UpDateModifCompValue"
 
@@ -2508,6 +1769,61 @@ namespace StockRoom11net
 
         #endregion"Tab_ThumbsViewer_Pictures"
 
+        #region"Timer SaveUserSetting if it's modifying the user interface."
+
+        /// <summary>
+        /// Initialize the SaveUserSettingTimer to 10 seconds to save
+        /// user setting if this is modifying the user interface.
+        /// </summary>
+        void InitializeSaveUserSettingTimer()
+        {
+            SaveUserSettingTimer = new System.Windows.Forms.Timer
+            {
+                Interval = 1000
+            };
+            SaveUserSettingTimer.Tick += async (sender, e) => await SaveUserSettingTickAsync(sender, e);
+        }
+
+        int _sec = 10;
+        /// <summary>
+        /// An interval of 10 seconds to save user setting if this is modifying the user interface.
+        /// </summary>
+        System.Windows.Forms.Timer SaveUserSettingTimer;
+
+        /// <summary>
+        /// Start the SaveUserSettingTimer to save user setting if this is modifying the user interface,
+        /// wait for others changes, if there is no more modification, save user setting after 10 seconds.
+        /// </summary>
+        void SaveUserSetting()
+        {
+            // Guard: timer not yet initialized during early layout events.
+            if (SaveUserSettingTimer == null)
+                return;
+
+            SaveUserSettingTimer.Start();
+            _sec = 10;
+
+            On_StatusBarMessage(new StatusBarMessage_EventArgs("", "  10 sec less to save StockRoom setting."));
+        }
+
+        async Task SaveUserSettingTickAsync(object? sender, EventArgs e)
+        {
+            _sec--;
+
+            if (_sec > 0)
+            {
+                On_StatusBarMessage(new StatusBarMessage_EventArgs("", "  " + _sec + " sec less to save StockRoom setting."));
+                return;
+            }
+
+            SaveUserSettingTimer.Stop();
+            On_StatusBarMessage(new StatusBarMessage_EventArgs("", "  "));//Clear the StatusBar.
+
+            await _currentEmployeeLogIn.UpDateSave_Splitter_UserSetting(userSettingName, splitContainerVertical.SplitterDistance,
+                                                                        splitContainerHorizontal.SplitterDistance);
+        }
+
+        #endregion"Timer SaveUserSetting if it's modifying the user interface."   
 
         async void TimeLineToolStripMenuItem_Click(object? sender, EventArgs e)
         {

@@ -1,6 +1,6 @@
 ﻿namespace StockRoom11net.Controls
 {
-    partial class DataTreeViewToAdd_Cancel_Delete
+    partial class DataTreeViewToAddCancelDelete
     {
         /// <summary> 
         /// Required designer variable.
@@ -66,6 +66,8 @@
             toolStripMenuItem_FullRowSelect = new ToolStripMenuItem();
             toolStripMenuItem_TimeLine = new ToolStripMenuItem();
             toolStripMenuItem_SwitchDataTable = new ToolStripMenuItem();
+            toolStripMenuItem_RemoveAllNodes = new ToolStripMenuItem();
+            toolStripMenuItem_DeleteAllNodes = new ToolStripMenuItem();
             tableLayoutPanel_DataTreeViewSetting.SuspendLayout();
             panel_toDelete.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)olvDataTree_ToDelete).BeginInit();
@@ -160,23 +162,23 @@
             contextMenuStrip_ToDelete.BackColor = Color.LightGoldenrodYellow;
             contextMenuStrip_ToDelete.ImageScalingSize = new Size(20, 20);
             contextMenuStrip_ToDelete.ImeMode = ImeMode.On;
-            contextMenuStrip_ToDelete.Items.AddRange(new ToolStripItem[] { toolStripMenuItem_DeletedThisNode, toolStripSeparator2 });
+            contextMenuStrip_ToDelete.Items.AddRange(new ToolStripItem[] { toolStripMenuItem_DeletedThisNode, toolStripSeparator2, toolStripMenuItem_RemoveAllNodes });
             contextMenuStrip_ToDelete.LayoutStyle = ToolStripLayoutStyle.HorizontalStackWithOverflow;
             contextMenuStrip_ToDelete.Name = "PreviewDataGridViewContextMenuStrip";
             contextMenuStrip_ToDelete.RenderMode = ToolStripRenderMode.Professional;
             contextMenuStrip_ToDelete.ShowImageMargin = false;
-            contextMenuStrip_ToDelete.Size = new Size(177, 36);
+            contextMenuStrip_ToDelete.Size = new Size(184, 84);
             // 
             // toolStripMenuItem_DeletedThisNode
             // 
             toolStripMenuItem_DeletedThisNode.Name = "toolStripMenuItem_DeletedThisNode";
-            toolStripMenuItem_DeletedThisNode.Size = new Size(176, 26);
-            toolStripMenuItem_DeletedThisNode.Text = "Deleted this node";
+            toolStripMenuItem_DeletedThisNode.Size = new Size(183, 26);
+            toolStripMenuItem_DeletedThisNode.Text = "Delete this node";
             // 
             // toolStripSeparator2
             // 
             toolStripSeparator2.Name = "toolStripSeparator2";
-            toolStripSeparator2.Size = new Size(173, 6);
+            toolStripSeparator2.Size = new Size(180, 6);
             // 
             // label_toDelete
             // 
@@ -509,13 +511,28 @@
             toolStripMenuItem_SwitchDataTable.Text = "Switch DataTable";
             toolStripMenuItem_SwitchDataTable.Click += SwitchDataTableToolStripMenuItem_Click;
             // 
-            // DataTreeViewToAdd_Cancel_Delete
+            // toolStripMenuItem_RemoveAllNodes
+            // 
+            toolStripMenuItem_RemoveAllNodes.DropDownItems.AddRange(new ToolStripItem[] { toolStripMenuItem_DeleteAllNodes });
+            toolStripMenuItem_RemoveAllNodes.Name = "toolStripMenuItem_RemoveAllNodes";
+            toolStripMenuItem_RemoveAllNodes.Size = new Size(183, 26);
+            toolStripMenuItem_RemoveAllNodes.Text = "Remove All Nodes";
+            // 
+            // toolStripMenuItem_DeleteAllNodes
+            // 
+            toolStripMenuItem_DeleteAllNodes.BackColor = Color.LightGoldenrodYellow;
+            toolStripMenuItem_DeleteAllNodes.Font = new Font("Segoe UI", 14F, FontStyle.Bold);
+            toolStripMenuItem_DeleteAllNodes.Name = "toolStripMenuItem_DeleteAllNodes";
+            toolStripMenuItem_DeleteAllNodes.Size = new Size(228, 30);
+            toolStripMenuItem_DeleteAllNodes.Text = "Delete All Nodes";
+            // 
+            // DataTreeViewToAddCancelDelete
             // 
             AutoScaleDimensions = new SizeF(8F, 16F);
             AutoScaleMode = AutoScaleMode.Font;
             Controls.Add(splitContainer_DataTreeView);
             Margin = new Padding(3, 2, 3, 2);
-            Name = "DataTreeViewToAdd_Cancel_Delete";
+            Name = "DataTreeViewToAddCancelDelete";
             Size = new Size(760, 413);
             Load += DataTreeViewToAdd_Cancel_Delete_Load;
             tableLayoutPanel_DataTreeViewSetting.ResumeLayout(false);
@@ -575,5 +592,7 @@
         private ContextMenuStrip contextMenuStrip_ToDelete;
         private ToolStripMenuItem toolStripMenuItem_DeletedThisNode;
         private ToolStripSeparator toolStripSeparator2;
+        private ToolStripMenuItem toolStripMenuItem_RemoveAllNodes;
+        private ToolStripMenuItem toolStripMenuItem_DeleteAllNodes;
     }
 }

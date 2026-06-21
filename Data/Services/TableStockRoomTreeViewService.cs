@@ -48,7 +48,7 @@ public partial class TableStockRoomTreeViewService : ITableStockRoomTreeViewServ
     
     public async Task<BindingList<Table_StockRoom_TreeView>> LoadStockRoomsTreeViewAsync()
     {
-        var items = await _unitOfWork.TableStockRoomTreeViews.GetAllAsync();
+        var items = await _unitOfWork.TableStockRoomTreeViewRepository.GetAllAsync();
         return new BindingList<Table_StockRoom_TreeView>(items.ToList());
     }
 
@@ -57,12 +57,12 @@ public partial class TableStockRoomTreeViewService : ITableStockRoomTreeViewServ
         if (id <= 0)
             throw new ArgumentException("Id must be greater than zero.", nameof(id));
 
-        return await _unitOfWork.TableStockRoomTreeViews.GetByIDAsync(id, cancellationToken);
+        return await _unitOfWork.TableStockRoomTreeViewRepository.GetByIDAsync(id, cancellationToken);
     }
 
     public async Task<IEnumerable<Table_StockRoom_TreeView>> GetAllAsync(CancellationToken cancellationToken = default)
     {
-        return await _unitOfWork.TableStockRoomTreeViews.GetAllAsync(cancellationToken);
+        return await _unitOfWork.TableStockRoomTreeViewRepository.GetAllAsync(cancellationToken);
     }
 
     public async Task<Table_StockRoom_TreeView> CreateAsync(Table_StockRoom_TreeView entity, CancellationToken cancellationToken = default)
@@ -73,12 +73,12 @@ public partial class TableStockRoomTreeViewService : ITableStockRoomTreeViewServ
         // Validate parent relationship if specified
         if (entity.Parent_ID > 0)
         {
-            var parent = await _unitOfWork.TableStockRoomTreeViews.GetByIDAsync(entity.Parent_ID, cancellationToken);
+            var parent = await _unitOfWork.TableStockRoomTreeViewRepository.GetByIDAsync(entity.Parent_ID ?? 0, cancellationToken);
             if (parent == null)
                 throw new InvalidOperationException($"Parent node with Id {entity.Parent_ID} not found.");
         }
 
-        return await _unitOfWork.TableStockRoomTreeViews.AddAsync(entity, cancellationToken);
+        return await _unitOfWork.TableStockRoomTreeViewRepository.AddAsync(entity, cancellationToken);
     }
 
     public async Task<Table_StockRoom_TreeView> UpdateAsync(Table_StockRoom_TreeView entity, CancellationToken cancellationToken = default)
@@ -86,7 +86,7 @@ public partial class TableStockRoomTreeViewService : ITableStockRoomTreeViewServ
         if (entity == null)
             throw new ArgumentNullException(nameof(entity));
 
-        var existing = await _unitOfWork.TableStockRoomTreeViews.GetByIDAsync(entity.ID, cancellationToken);
+        var existing = await _unitOfWork.TableStockRoomTreeViewRepository.GetByIDAsync(entity.ID, cancellationToken);
         if (existing == null)
             throw new InvalidOperationException($"Entity with Id {entity.ID} not found.");
 
@@ -97,12 +97,12 @@ public partial class TableStockRoomTreeViewService : ITableStockRoomTreeViewServ
             if (entity.ID == entity.Parent_ID)
                 throw new InvalidOperationException("A node cannot be its own parent.");
 
-            var parent = await _unitOfWork.TableStockRoomTreeViews.GetByIDAsync(entity.Parent_ID, cancellationToken);
+            var parent = await _unitOfWork.TableStockRoomTreeViewRepository.GetByIDAsync(entity.Parent_ID ?? 0, cancellationToken);
             if (parent == null)
                 throw new InvalidOperationException($"Parent node with Id {entity.Parent_ID} not found.");
         }
 
-        await _unitOfWork.TableStockRoomTreeViews.UpdateAsync(entity, cancellationToken);
+        await _unitOfWork.TableStockRoomTreeViewRepository.UpdateAsync(entity, cancellationToken);
         return entity;
     }
 
@@ -111,16 +111,16 @@ public partial class TableStockRoomTreeViewService : ITableStockRoomTreeViewServ
         if (id <= 0)
             throw new ArgumentException("Id must be greater than zero.", nameof(id));
 
-        var entity = await _unitOfWork.TableStockRoomTreeViews.GetByIDAsync(id, cancellationToken);
+        var entity = await _unitOfWork.TableStockRoomTreeViewRepository.GetByIDAsync(id, cancellationToken);
         if (entity == null)
             return false;
 
         // Check if node has children
-        var children = await _unitOfWork.TableStockRoomTreeViews.GetChildrenAsync(id, cancellationToken);
+        var children = await _unitOfWork.TableStockRoomTreeViewRepository.GetChildrenAsync(id, cancellationToken);
         if (children.Any())
             throw new InvalidOperationException("Cannot delete a node that has children. Delete children first.");
 
-        await _unitOfWork.TableStockRoomTreeViews.DeleteAsync(id, cancellationToken);
+        await _unitOfWork.TableStockRoomTreeViewRepository.DeleteAsync(id, cancellationToken);
         return true;
     }
 
@@ -130,7 +130,7 @@ public partial class TableStockRoomTreeViewService : ITableStockRoomTreeViewServ
 
     public async Task<IEnumerable<Table_StockRoom_TreeView>> GetRootNodesAsync(CancellationToken cancellationToken = default)
     {
-        return await _unitOfWork.TableStockRoomTreeViews.GetRootNodesAsync(cancellationToken);
+        return await _unitOfWork.TableStockRoomTreeViewRepository.GetRootNodesAsync(cancellationToken);
     }
 
     public async Task<IEnumerable<Table_StockRoom_TreeView>> GetChildrenAsync(int parentId, CancellationToken cancellationToken = default)
@@ -138,12 +138,12 @@ public partial class TableStockRoomTreeViewService : ITableStockRoomTreeViewServ
         if (parentId <= 0)
             throw new ArgumentException("ParentId must be greater than zero.", nameof(parentId));
 
-        return await _unitOfWork.TableStockRoomTreeViews.GetChildrenAsync(parentId, cancellationToken);
+        return await _unitOfWork.TableStockRoomTreeViewRepository.GetChildrenAsync(parentId, cancellationToken);
     }
 
     public async Task<IEnumerable<Table_StockRoom_TreeView>> GetFullTreeAsync(CancellationToken cancellationToken = default)
     {
-        return await _unitOfWork.TableStockRoomTreeViews.GetTreeHierarchyAsync(null, cancellationToken);
+        return await _unitOfWork.TableStockRoomTreeViewRepository.GetTreeHierarchyAsync(null, cancellationToken);
     }
 
     public async Task<IEnumerable<Table_StockRoom_TreeView>> GetSubTreeAsync(int rootId, CancellationToken cancellationToken = default)
@@ -151,7 +151,7 @@ public partial class TableStockRoomTreeViewService : ITableStockRoomTreeViewServ
         if (rootId <= 0)
             throw new ArgumentException("RootId must be greater than zero.", nameof(rootId));
 
-        return await _unitOfWork.TableStockRoomTreeViews.GetTreeHierarchyAsync(rootId, cancellationToken);
+        return await _unitOfWork.TableStockRoomTreeViewRepository.GetTreeHierarchyAsync(rootId, cancellationToken);
     }
 
     #endregion
@@ -160,19 +160,19 @@ public partial class TableStockRoomTreeViewService : ITableStockRoomTreeViewServ
 
     public async Task<int> GetTotalItemCountAsync(int nodeId, CancellationToken cancellationToken = default)
     {
-        var node = await _unitOfWork.TableStockRoomTreeViews.GetByIDAsync(nodeId, cancellationToken);
+        var node = await _unitOfWork.TableStockRoomTreeViewRepository.GetByIDAsync(nodeId, cancellationToken);
         if (node == null)
             return 0;
 
-        var children = await _unitOfWork.TableStockRoomTreeViews.GetChildrenAsync(nodeId, cancellationToken);
-        var childCount = children.Sum(c => c.ItemCount);
+        var children = await _unitOfWork.TableStockRoomTreeViewRepository.GetChildrenAsync(nodeId, cancellationToken);
+        var childCount = children.Sum(c => c.ItemCount ?? 0);
 
-        return node.ItemCount + childCount;
+        return (node.ItemCount ?? 0) + childCount;
     }
 
     public async Task<bool> HasChildrenAsync(int nodeId, CancellationToken cancellationToken = default)
     {
-        var children = await _unitOfWork.TableStockRoomTreeViews.GetChildrenAsync(nodeId, cancellationToken);
+        var children = await _unitOfWork.TableStockRoomTreeViewRepository.GetChildrenAsync(nodeId, cancellationToken);
         return children.Any();
     }
 
@@ -181,8 +181,8 @@ public partial class TableStockRoomTreeViewService : ITableStockRoomTreeViewServ
         if (childId == parentId)
             return false; // A node cannot be its own parent
 
-        var child = await _unitOfWork.TableStockRoomTreeViews.GetByIDAsync(childId, cancellationToken);
-        var parent = await _unitOfWork.TableStockRoomTreeViews.GetByIDAsync(parentId, cancellationToken);
+        var child = await _unitOfWork.TableStockRoomTreeViewRepository.GetByIDAsync(childId, cancellationToken);
+        var parent = await _unitOfWork.TableStockRoomTreeViewRepository.GetByIDAsync(parentId, cancellationToken);
 
         if (child == null || parent == null)
             return false;
@@ -194,7 +194,7 @@ public partial class TableStockRoomTreeViewService : ITableStockRoomTreeViewServ
             if (currentNode.Parent_ID == childId)
                 return false; // Circular reference detected
 
-            currentNode = await _unitOfWork.TableStockRoomTreeViews.GetByIDAsync(currentNode.Parent_ID, cancellationToken);
+            currentNode = await _unitOfWork.TableStockRoomTreeViewRepository.GetByIDAsync(currentNode.Parent_ID ?? 0, cancellationToken);
         }
 
         return true;

@@ -14,6 +14,17 @@ public interface ITableEmployeeTreeViewRepository : IRepository<Table_Employees_
     Task<Table_Employees_TreeView?> GetByIDAsync(int id, CancellationToken cancellationToken = default);
     Task<IEnumerable<Table_Employees_TreeView>> GetAllAsync(CancellationToken cancellationToken = default);
     Task<Table_Employees_TreeView> AddAsync(Table_Employees_TreeView entity, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Update the existing entity in the table Table_Employees_TreeView, save the changes to the database.
+    /// It first checks if the entity exists in the database by its primary key (Index). If it doesn't exist, it throws a KeyNotFoundException.
+    /// No need call SaveChangesAsync() after this method, it will be called in the service layer after all operations are done.
+    /// </summary>
+    /// <param name="entity"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentNullException"></exception>
+    /// <exception cref="KeyNotFoundException"></exception>
     Task UpdateAsync(Table_Employees_TreeView entity, CancellationToken cancellationToken = default);
     Task DeleteAsync(int id, CancellationToken cancellationToken = default);
 
@@ -74,19 +85,27 @@ public class TableEmployeeTreeViewRepository : Repository<Table_Employees_TreeVi
         await _context.SaveChangesAsync(cancellationToken);
         return entity;
     }
-
+        
     public async Task UpdateAsync(Table_Employees_TreeView entity, CancellationToken cancellationToken = default)
     {
         if (entity == null)
             throw new ArgumentNullException(nameof(entity));
 
-        _context.Table_Employees_TreeViews.Update(entity);
+        // Find the existing tracked entity by PK first to avoid a
+        // DbUpdateConcurrencyException when the entity is untracked (AsNoTracking).
+        var existing = await _context.Table_Employees_TreeViews.FindAsync(new object[] { entity.Index }, cancellationToken);
+
+        if (existing == null)
+            throw new KeyNotFoundException($"Row with Index={entity.Index} not found. It may have been deleted.");
+
+        // Copy new values onto the tracked entity and save.
+        _context.Entry(existing).CurrentValues.SetValues(entity);
         await _context.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task DeleteAsync(int id, CancellationToken cancellationToken = default)
+    public async Task DeleteAsync(int index, CancellationToken cancellationToken = default)
     {
-        var entity = await _context.Table_Employees_TreeViews.FindAsync(new object[] { id }, cancellationToken);
+        var entity = await _context.Table_Employees_TreeViews.FindAsync(new object[] { index }, cancellationToken);
         if (entity != null)
         {
             _context.Table_Employees_TreeViews.Remove(entity);

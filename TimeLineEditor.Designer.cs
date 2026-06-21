@@ -33,14 +33,14 @@ namespace StockRoom11net
         {
             components = new System.ComponentModel.Container();
             splitContainer_Vertical = new SplitContainer();
-            dataTreeViewToAdd_Cancel_Delete = new DataTreeViewToAdd_Cancel_Delete();
+            dataTreeViewToAdd_Cancel_Delete = new DataTreeViewToAddCancelDelete();
             customTabControl_TimeLine = new CustomTabControl();
             tabPage_TimeLine = new TabPage();
             blazorWebView_TimeLine = new Microsoft.AspNetCore.Components.WebView.WindowsForms.BlazorWebView();
             tabPage_DataTreeViewSetting = new TabPage();
             tabPage1 = new TabPage();
             splitContainer_Horizontal = new SplitContainer();
-            dataGridViewExtended_TimeLineEditor = new StockRoom11net.Controls.DataGridViewExtend.DataGridViewExtended();
+            dataGridViewExtended = new DataGridViewExtended();
             ((System.ComponentModel.ISupportInitialize)BindingSourceTreeViewBase).BeginInit();
             ((System.ComponentModel.ISupportInitialize)splitContainer_Vertical).BeginInit();
             splitContainer_Vertical.Panel1.SuspendLayout();
@@ -79,10 +79,10 @@ namespace StockRoom11net
             dataTreeViewToAdd_Cancel_Delete.Name = "dataTreeViewToAdd_Cancel_Delete";
             dataTreeViewToAdd_Cancel_Delete.Size = new Size(478, 507);
             dataTreeViewToAdd_Cancel_Delete.TabIndex = 0;
-            dataTreeViewToAdd_Cancel_Delete.Save_Requested          += DataTreeViewToAdd_Cancel_Delete_Save_Requested;
-            dataTreeViewToAdd_Cancel_Delete.SelectedIndexChanged    += DataTreeViewToAdd_Cancel_Delete_SelectedIndexChanged;
-            dataTreeViewToAdd_Cancel_Delete.ToolStripMenuItemClick  += DataTreeViewToAdd_Cancel_Delete_ToolStripMenuItemClick;
-            dataTreeViewToAdd_Cancel_Delete.Load                    += DataTreeViewToAdd_Cancel_Delete_Load;
+            dataTreeViewToAdd_Cancel_Delete.Save_Requested += DataTreeViewToAdd_Cancel_Delete_Save_Requested;
+            dataTreeViewToAdd_Cancel_Delete.SelectedIndexChanged += DataTreeViewToAdd_Cancel_Delete_SelectedIndexChanged;
+            dataTreeViewToAdd_Cancel_Delete.ToolStripMenuItemClick += DataTreeViewToAdd_Cancel_Delete_ToolStripMenuItemClick;
+            dataTreeViewToAdd_Cancel_Delete.Load += DataTreeViewToAdd_Cancel_Delete_Load;
             // 
             // customTabControl_TimeLine
             // 
@@ -164,30 +164,30 @@ namespace StockRoom11net
             // 
             // splitContainer_Horizontal.Panel2
             // 
-            splitContainer_Horizontal.Panel2.Controls.Add(dataGridViewExtended_TimeLineEditor);
+            splitContainer_Horizontal.Panel2.Controls.Add(dataGridViewExtended);
             splitContainer_Horizontal.Size = new Size(1567, 799);
             splitContainer_Horizontal.SplitterDistance = 511;
             splitContainer_Horizontal.TabIndex = 2;
             // 
-            // dataGridViewExtended_TimeLineEditor
+            // dataGridViewExtended
             // 
-            dataGridViewExtended_TimeLineEditor.BindingCompleted = false;
-            dataGridViewExtended_TimeLineEditor.CurrentRowBackgroundColor = Color.Blue;
-            dataGridViewExtended_TimeLineEditor.CurrentRowBorderColor = Color.DarkBlue;
-            dataGridViewExtended_TimeLineEditor.CustomEdit = Utilities.EditMode.View;
-            dataGridViewExtended_TimeLineEditor.DividerColor = Color.Red;
-            dataGridViewExtended_TimeLineEditor.DividerHeight = 0;
-            dataGridViewExtended_TimeLineEditor.Dock = DockStyle.Fill;
-            dataGridViewExtended_TimeLineEditor.FirstDisplayedRow = null;
-            dataGridViewExtended_TimeLineEditor.Location = new Point(0, 0);
-            dataGridViewExtended_TimeLineEditor.Margin = new Padding(4, 5, 4, 5);
-            dataGridViewExtended_TimeLineEditor.Name = "dataGridViewExtended_TimeLineEditor";
-            dataGridViewExtended_TimeLineEditor.NeedSaveData = false;
-            dataGridViewExtended_TimeLineEditor.SelectionBorderWidth = 3;
-            dataGridViewExtended_TimeLineEditor.SelectionColor = Color.Blue;
-            dataGridViewExtended_TimeLineEditor.SetValueAt = null;
-            dataGridViewExtended_TimeLineEditor.Size = new Size(1563, 280);
-            dataGridViewExtended_TimeLineEditor.TabIndex = 0;
+            dataGridViewExtended.BindingCompleted = false;
+            dataGridViewExtended.CurrentRowBackgroundColor = Color.Blue;
+            dataGridViewExtended.CurrentRowBorderColor = Color.DarkBlue;
+            dataGridViewExtended.CustomEdit = Utilities.EditMode.View;
+            dataGridViewExtended.DividerColor = Color.Red;
+            dataGridViewExtended.DividerHeight = 0;
+            dataGridViewExtended.Dock = DockStyle.Fill;
+            dataGridViewExtended.FirstDisplayedRow = null;
+            dataGridViewExtended.Location = new Point(0, 0);
+            dataGridViewExtended.Margin = new Padding(4, 5, 4, 5);
+            dataGridViewExtended.Name = "dataGridViewExtended";
+            dataGridViewExtended.NeedSaveData = false;
+            dataGridViewExtended.SelectionBorderWidth = 3;
+            dataGridViewExtended.SelectionColor = Color.Blue;
+            dataGridViewExtended.SetValueAt = null;
+            dataGridViewExtended.Size = new Size(1563, 280);
+            dataGridViewExtended.TabIndex = 0;
             // 
             // TimeLineEditor
             // 
@@ -216,13 +216,13 @@ namespace StockRoom11net
 
         #endregion
         private System.Windows.Forms.SplitContainer splitContainer_Vertical;
-        private DataGridViewExtended dataGridViewExtended_TimeLineEditor;
+        private DataGridViewExtended dataGridViewExtended;
         private System.Windows.Forms.SplitContainer splitContainer_Horizontal;
         private Microsoft.AspNetCore.Components.WebView.WindowsForms.BlazorWebView blazorWebView_TimeLine;
         private CustomTabControl customTabControl_TimeLine;
         private TabPage tabPage_TimeLine;
         private TabPage tabPage_DataTreeViewSetting;
         private TabPage tabPage1;
-        private DataTreeViewToAdd_Cancel_Delete dataTreeViewToAdd_Cancel_Delete;
+        private DataTreeViewToAddCancelDelete dataTreeViewToAdd_Cancel_Delete;
     }
 }

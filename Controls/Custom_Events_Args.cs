@@ -743,7 +743,7 @@ namespace StockRoom11net.Controls
 
             }
 
-            public NodeProperties SelectedNodeProperties { get; set; }
+            public Table_Base_TreeView CurrentNode { get; set; }
 
         }
 
@@ -999,6 +999,11 @@ namespace StockRoom11net.Controls
         {
             public Save_Requested_EventArgs() { }
 
+            public Save_Requested_EventArgs(Table_Base_TreeView item)
+            {
+                Item = item;
+            }
+
             public Save_Requested_EventArgs(Utilities.NotificationEvents saveEvent)
             {
                 SaveEvent = saveEvent;
@@ -1073,6 +1078,9 @@ namespace StockRoom11net.Controls
             public string DataTableName;
             public Utilities.NotificationEvents NotificationEvent;
             public string Message;
+            public Table_Base_TreeView Item;
+            public HashSet<int> DirtyDataGridViewIndexes;
+            public HashSet<string> DirtyDataGridViewPartNumbers;
 
         }
 
@@ -1972,7 +1980,7 @@ namespace StockRoom11net.Controls
 
 
             /// <summary>
-            /// Retun true if one item in the collection is open.
+            /// Retun true if one itemEFtableTreeView in the collection is open.
             /// </summary>
             public bool AreItemsOpen
             {

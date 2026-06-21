@@ -5,7 +5,7 @@ namespace StockRoom11net.Controls.VisTimeLine
     public class TimeLineItem
     {
         /// <summary>
-        /// An id for the item. Using an id is not required but highly recommended.
+        /// An id for the itemEFtableTreeView. Using an id is not required but highly recommended.
         /// </summary>
         /// <remarks>
         /// An id is needed when dynamically adding, updating, and removing items in a DataSet.
@@ -14,26 +14,26 @@ namespace StockRoom11net.Controls.VisTimeLine
         public int Id { get; set; } = 0;
 
         /// <summary>
-        /// The contents of the item. This can be plain text or html code.
+        /// The contents of the itemEFtableTreeView. This can be plain text or html code.
         /// </summary>
         [JsonPropertyName("content")]
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public string? Content { get; set; } = null;
 
         /// <summary>
-        /// The start date of the item, for example new Date(2010,9,23) 
+        /// The start date of the itemEFtableTreeView, for example new Date(2010,9,23) 
         /// The start date is required.
         /// </summary>
         [JsonPropertyName("start")]
         public DateTime Start { get; set; }
 
         /// <summary>
-        /// The end date of the item.
+        /// The end date of the itemEFtableTreeView.
         /// </summary>
         /// <remarks>
         /// The end date is optional, and can be left null.
-        /// If end date is provided, the item is displayed as a range.
-        /// If not, the item is displayed as a box.
+        /// If end date is provided, the itemEFtableTreeView is displayed as a range.
+        /// If not, the itemEFtableTreeView is displayed as a box.
         /// </remarks>
         [JsonPropertyName("end")]
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
@@ -62,8 +62,8 @@ namespace StockRoom11net.Controls.VisTimeLine
         /// A className can be used to give items an individual css style.
         /// </summary>
         /// <remarks>
-        /// For example, when an item has className 'red', one can define a css style like:
-        /// .vis-item.red { color: white; background-color: red; border-color: darkred; }
+        /// For example, when an itemEFtableTreeView has className 'red', one can define a css style like:
+        /// .vis-itemEFtableTreeView.red { color: white; background-color: red; border-color: darkred; }
         /// </remarks>
         [JsonPropertyName("className")]
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
@@ -73,7 +73,7 @@ namespace StockRoom11net.Controls.VisTimeLine
         /// Gets or sets the alignment of the content within the element.
         /// </summary>
         /// <remarks>
-        /// If set this overrides the global align configuration option for this item.
+        /// If set this overrides the global align configuration option for this itemEFtableTreeView.
         /// </remarks>
         [JsonPropertyName("align")]
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
@@ -90,7 +90,7 @@ namespace StockRoom11net.Controls.VisTimeLine
         public bool? Selectable { get; set; } = null;
 
         /// <summary>
-        /// A css text string to apply custom styling for an individual item
+        /// A css text string to apply custom styling for an individual itemEFtableTreeView
         /// for example "color: red; background-color: pink;".
         /// </summary>
         [JsonPropertyName("style")]
@@ -98,7 +98,7 @@ namespace StockRoom11net.Controls.VisTimeLine
         public string? Style { get; set; } = null;
 
         /// <summary>
-        /// Add a title for the item, displayed when holding the mouse on the item.
+        /// Add a title for the itemEFtableTreeView, displayed when holding the mouse on the itemEFtableTreeView.
         /// The title can be an HTML element or a string containing plain text or HTML.
         /// </summary>
         [JsonPropertyName("title")]
@@ -106,7 +106,7 @@ namespace StockRoom11net.Controls.VisTimeLine
         public string? Title { get; set; } = null;
 
         /// <summary>
-        /// The type of the item. Can be 'box' (default), 'point', 'range', or 'background'.
+        /// The type of the itemEFtableTreeView. Can be 'box' (default), 'point', 'range', or 'background'.
         /// </summary>
         /// <remarks>
         /// Types 'box' and 'point' need a start date, the types 'range' and 'background'

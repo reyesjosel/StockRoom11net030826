@@ -64,14 +64,14 @@ namespace StockRoom11net.Controls.VisTimeLine
         public string? MinHeight { get; set; } = "default";
 
         /// <summary>
-        /// Gets or sets a value indicating whether the item can be selected by the user.
+        /// Gets or sets a value indicating whether the itemEFtableTreeView can be selected by the user.
         /// </summary>
         [JsonPropertyName("selectable")]
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public bool? Selectable { get; set; } = null;
 
         /// <summary>
-        /// Gets or sets a value indicating whether the item can be moved.
+        /// Gets or sets a value indicating whether the itemEFtableTreeView can be moved.
         /// </summary>
         [JsonPropertyName("moveable")]
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
