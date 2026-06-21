@@ -8,13 +8,13 @@ namespace StockRoom11net.Controls.ShellBasics
     public interface IFolderFilter
     {
         // Allows a client to specify which individual items should be enumerated.
-        // Note: The host calls this method for each item in the folder. Return S_OK, to have the item enumerated.
-        // Return S_FALSE to prevent the item from being enumerated.
+        // Note: The host calls this method for each itemEFtableTreeView in the folder. Return S_OK, to have the itemEFtableTreeView enumerated.
+        // Return S_FALSE to prevent the itemEFtableTreeView from being enumerated.
         [PreserveSig]
         Int32 ShouldShow(
             [MarshalAs(UnmanagedType.Interface)] Object psf,                // A pointer to the folder's IShellFolder interface.
             IntPtr pidlFolder,      // The folder's PIDL.
-            IntPtr pidlItem);       // The item's PIDL.
+            IntPtr pidlItem);       // The itemEFtableTreeView's PIDL.
 
         // Allows a client to specify which classes of objects in a Shell folder should be enumerated.
         [PreserveSig]

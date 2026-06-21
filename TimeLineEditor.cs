@@ -3,12 +3,17 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using StockRoom11net.BlazorWebAssembly.Components.Pages;
 using StockRoom11net.BlazorWebAssembly.Data;
+using StockRoom11net.Controls;
+using StockRoom11net.Controls.BindingSourceExt;
+using StockRoom11net.Controls.DataGridViewExtend;
+using StockRoom11net.Controls.EmployeeInformation;
 using StockRoom11net.Data;
 using StockRoom11net.Data.Entities;
 using StockRoom11net.Data.Services;
-using StockRoom11net.Controls;
+using StockRoom11net.Properties;
 using System.ComponentModel;
 using System.Data;
+using static StockRoom11net.Controls.Custom_Events_Args;
 using static StockRoom11net.Controls.Utilities;
 using CellClick_EventArgs = StockRoom11net.Controls.Custom_Events_Args.CellClick_EventArgs;
 using CellDoubleClick_EventArgs = StockRoom11net.Controls.Custom_Events_Args.CellDoubleClick_EventArgs;
@@ -18,10 +23,6 @@ using DataGridViewSort_EventArgs = StockRoom11net.Controls.Custom_Events_Args.Da
 using Refresh_Requested_EventArgs = StockRoom11net.Controls.Custom_Events_Args.Refresh_Requested_EventArgs;
 using Save_Requested_EventArgs = StockRoom11net.Controls.Custom_Events_Args.Save_Requested_EventArgs;
 using StatusBarMessage_EventArgs = StockRoom11net.Controls.Custom_Events_Args.StatusBarMessage_EventArgs;
-using static StockRoom11net.Controls.Custom_Events_Args;
-using StockRoom11net.Controls.DataGridViewExtend;
-using StockRoom11net.Controls.BindingSourceExt;
-using StockRoom11net.Properties;
 
 namespace StockRoom11net
 {
@@ -41,9 +42,7 @@ namespace StockRoom11net
         // Declare as extended type
         public BindingSourceValidating<Table_TimeLine> _bindingSourceTimeLineVal;
         public BindingSourceValidating<Table_Base_TreeView> _bindingSourceTimeLineTreeViewVal;
-
-        BindingSource _bindingSourceTimeLine;
-        BindingSource _bindingSourceTimeLineTreeView;
+               
 
         DataColumnCollection _stockroomColumns;
 
@@ -51,6 +50,91 @@ namespace StockRoom11net
         readonly AppService _appService = new();
 
         #endregion
+
+        #region"CurrentUserBroadcast"
+
+        private ITableEmployeeService _employeesService;
+        EmployeeInformation _currentEmployeeLogIn;
+
+        /// <summary>
+        /// The user setting name, we save userSettingName = DataTreeViewName + "_" + TableName;
+        /// It is update at public object DataSource{ set }
+        /// We saved the datasource name because in some cases,
+        /// the same dataTreeView manipulates different dataSources.
+        /// </summary>                  //DGVExt_StockRoom_Table_StockRoom -> from the setting itselft
+        private string userSettingName = "DGVExt_StockRoom_Table_StockRoom";
+
+        // Properties and fields used in LogIn employees.
+        string _employeeName = "Not user login.";
+        string _employeeLastName = "";
+        AccessLevel _employeeAccessLevel = AccessLevel.User;
+        EditMode _employeeEditMode = EditMode.View;
+        EnableSetting EmployeeEnableTreeViewSetting = EnableSetting.False;
+
+        /// <summary>
+        /// We pass the EmployeeService to this control, to be able to process the current employee information
+        /// at initialization time, the control need to know the current employee information to apply the correct
+        /// setting for this employee, and also to be able to update the control setting when the employee log in change.
+        /// </summary>
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public ITableEmployeeService EmployeesService
+        {
+            set
+            {
+                if (value == null)
+                    return;
+
+                _employeesService = value;
+                CurrentEmployeeLogIn = _employeesService.CurrentEmployeeLogIn;
+                _employeesService.CurrentEmployeeLogInChanged += EmployeesService_CurrentEmployeeLogInChanged;
+            }
+        }
+
+        void EmployeesService_CurrentEmployeeLogInChanged(object? sender, EmployeeInformation e)
+        {
+            CurrentEmployeeLogIn = e;
+        }
+
+        /// <summary>
+        /// Process current employee information.
+        /// </summary>
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        private EmployeeInformation CurrentEmployeeLogIn
+        {
+            get
+            {
+                return _currentEmployeeLogIn;
+            }
+            set
+            {
+                if (value == null)
+                    return;
+
+                _currentEmployeeLogIn = value;
+
+                _employeeName = _currentEmployeeLogIn.Name;
+                _employeeLastName = _currentEmployeeLogIn.LastName;
+                _employeeEditMode = _currentEmployeeLogIn.EmployeeEditMode;
+                _employeeAccessLevel = _currentEmployeeLogIn.EmployeeAccessLevel;
+                EmployeeEnableTreeViewSetting = _currentEmployeeLogIn.EmployeeEnableTreeViewSetting;
+
+                UserSetting userSetting = _currentEmployeeLogIn.UserSettingEntity(userSettingName);
+
+                internalResizeEvent = true;
+             //   splitContainerVertical.SplitterDistance = userSetting.SplitterVertical;
+             //   splitContainerHorizontal.SplitterDistance = userSetting.SplitterHorizontal;
+            }
+        }
+
+        #endregion"CurrentUserBroadcast"
+
+        /// <summary>
+        /// This flag is used to avoid the execution of SplitterMoved event during the initialization of the form, because
+        /// at initialization we set the SplitterDistance according to the user setting, and we do not want to save the user
+        /// setting at this moment, because it is not a user action, it is just the application of the user setting.
+        /// </summary>
+        bool internalResizeEvent = false;
+
 
         // Parameterless constructor for designer
         [Obsolete("Use constructor with dependency injection")]
@@ -60,7 +144,8 @@ namespace StockRoom11net
         }
 
         // ✅ Constructor with DI
-        public TimeLineEditor(ITableTimeLineService timeLineService,
+        public TimeLineEditor(ITableEmployeeService employeesService,
+                              ITableTimeLineService timeLineService,
                               ITableTimeLineTreeViewService timeLineTreeViewService,
                               IUnitOfWork unitOfWork)
         {
@@ -69,15 +154,18 @@ namespace StockRoom11net
             _timeLineService = timeLineService ?? throw new ArgumentNullException(nameof(timeLineService));
             _timeLineTreeViewService = timeLineTreeViewService ?? throw new ArgumentNullException(nameof(timeLineTreeViewService));
             _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
-            
+            EmployeesService = employeesService ?? throw new ArgumentNullException(nameof(employeesService));
+
             Name = "TimeLineEditor";
+            dataGridViewExtended.Name = "DGVExt_TimeLine";
+            // We need pass employeeService, at initialization we call currentEmployeeLogIn
+            dataGridViewExtended.EmployeesService = _employeesService;
+            dataTreeViewToAdd_Cancel_Delete.EmployeesService = _employeesService;
 
             // ✅ Pass unitOfWork to the EXISTING designer instance, don't replace it
             dataTreeViewToAdd_Cancel_Delete.SetUnitOfWork(_unitOfWork);
 
             InitializeBlazorWebView();
-
-            LoadDataEF();
         }
 
         private void InitializeBlazorWebView()
@@ -146,7 +234,12 @@ namespace StockRoom11net
                                 
                 InitTabControlExtend();
                 InitDataTreeViewTo();
-                Initialize_DataGridView();                                
+                Initialize_DataGridView();
+
+                // If we are here, the initialization is OK, we can load data aster the form is shown,
+                // to avoid freeze of the form during loading and loose of events related to data processing,
+                // like filtering with the treeView.               
+                LoadDataEF();
             }
             catch (Exception error)
             {
@@ -184,7 +277,7 @@ namespace StockRoom11net
                 var dataView = new DataView(dataTable);
 
                 // Create BindingSource
-                _bindingSourceTimeLine = new BindingSourceValidating<Table_TimeLine>
+                _bindingSourceTimeLineVal = new BindingSourceValidating<Table_TimeLine>
                 {
                     DataSource = dataView,
                     TableName = "Table_TimeLine",
@@ -192,7 +285,7 @@ namespace StockRoom11net
                 };
 
                 // Bind to DataGridView
-                dataGridViewExtended_TimeLineEditor.DataSource = _bindingSourceTimeLine;
+                dataGridViewExtended.DataSource = _bindingSourceTimeLineVal;
 
 
                 _timeLineTreeViewBindingList = await _timeLineTreeViewService.LoadTimelinesTreeViewAsync();
@@ -213,10 +306,8 @@ namespace StockRoom11net
                     Position = 0
                 };
                 dataTreeViewToAdd_Cancel_Delete.BindingSourceTreeView = _bindingSourceTimeLineTreeViewVal;
-                //dataTreeViewToAdd_Cancel_Delete.SetDataSource(_timeLineTreeViewBindingList);
 
-                StatusBarMessage(new StatusBarMessage_EventArgs(
-                    $"Loaded {_timeLineBindingList.Count} TimeLine records"));
+                StatusBarMessage(new StatusBarMessage_EventArgs($"Loaded {_timeLineBindingList.Count} TimeLine records"));
             }
             catch (Exception ex)
             {
@@ -239,7 +330,7 @@ namespace StockRoom11net
             foreach (var node in nodes)
             {
                 var visited = new HashSet<int>();
-                int current = node.Parent_ID  ;
+                int current = node.Parent_ID ?? 0;
 
                 while (current != 0)
                 {
@@ -249,7 +340,7 @@ namespace StockRoom11net
                         nodeID = node.ID.ToString();
                         return true; // ← circular!
                     }
-                    current = parent.Parent_ID;
+                    current = parent.Parent_ID ?? 0;
                 }
             }
             return false;
@@ -283,7 +374,7 @@ namespace StockRoom11net
         {
             try
             {
-                if (timeLine.ID == 0) // New item
+                if (timeLine.ID == 0) // New itemEFtableTreeView
                 {
                     await _timeLineService.CreateTimeLineAsync(timeLine);
                 }
@@ -304,14 +395,14 @@ namespace StockRoom11net
         }
 
         /// <summary>
-        /// Delete TimeLine item
+        /// Delete TimeLine itemEFtableTreeView
         /// </summary>
         private async Task DeleteTimeLineAsync(int id)
         {
             try
             {
                 var result = MessageBox.Show(
-                    "Are you sure you want to delete this TimeLine item?",
+                    "Are you sure you want to delete this TimeLine itemEFtableTreeView?",
                     "Confirm Delete",
                     MessageBoxButtons.YesNo,
                     MessageBoxIcon.Question);
@@ -325,7 +416,7 @@ namespace StockRoom11net
                     if (itemToRemove != null)
                     {
                         _timeLineBindingList.Remove(itemToRemove);
-                        _bindingSourceTimeLine.ResetBindings(false);
+                        _bindingSourceTimeLineVal.ResetBindings(false);
                     }
 
                     StatusBarMessage(new StatusBarMessage_EventArgs("TimeLine deleted successfully"));
@@ -375,8 +466,8 @@ namespace StockRoom11net
 
             customTabControl_TimeLine.Visible = true;
 
-            //  StockRoomSetting.SplitterX = splitContainerVertical.SplitterDistance;
-            //  StockRoomSetting.SplitterY = splitContainerHorizontal.SplitterDistance;
+            //  StockRoomSetting.SplitterVertical = splitContainerVertical.SplitterDistance;
+            //  StockRoomSetting.SplitterHorizontal = splitContainerHorizontal.SplitterDistance;
 
             //  SaveUserSetting();
         }
@@ -408,8 +499,8 @@ namespace StockRoom11net
 
                 ThreadSafeInvoke(action);
 
-                if(dataGridViewExtended_TimeLineEditor.DataSource == _bindingSourceTimeLineTreeView)
-                    dataGridViewExtended_TimeLineEditor.DataSource = _bindingSourceTimeLine;
+                if(dataGridViewExtended.DataSource == _bindingSourceTimeLineTreeViewVal)
+                    dataGridViewExtended.DataSource = _bindingSourceTimeLineVal;
 
                 return;
             }
@@ -425,10 +516,10 @@ namespace StockRoom11net
 
                 ThreadSafeInvoke(action);
 
-              //  dataTreeViewToAdd_Cancel_Delete.OlvDataTree_SelectedIndexChanged(sender, e);
+              //  dataTreeViewToAdd_Cancel_Delete.OlvDataTreeMaster_SelectedIndexChanged(sender, e);
 
               //  dataGridViewExtendedBase.CustomEdit = EditMode.Delete;
-             //   dataGridViewExtended_TimeLineEditor.DataSource = _bindingSourceTimeLineTreeView;
+             //   dataGridViewExtended_TimeLineEditor.DataSource = _bindingSourceTimeLineTreeViewVal;
                 return;
             }
         }
@@ -446,8 +537,7 @@ namespace StockRoom11net
 
             _nodeSettingIsDone = true;
 
-            //_nodeSetting = new NodeSetting(_bindingSourceTimeLineTreeView, CurrentEmployeesLogIn);
-            _nodeSetting = new NodeSetting
+            _nodeSetting = new NodeSetting(_bindingSourceTimeLineTreeViewVal, ColumnsCollection, _employeesService)
             {
                 DebugMode = false,
                 AutoScroll = true,
@@ -459,12 +549,12 @@ namespace StockRoom11net
                 Size = new Size(731, 501),
                 TabIndex = 0
             };
-             _nodeSetting.FocusedNodeProperties = new NodeProperties();
+
+             _nodeSetting.CurrentNode = new Table_Base_TreeView();
             _nodeSetting.SaveRequested += NodeSetting_Save_Requested;
             _nodeSetting.StatusBarMessage += NodeSetting_StatusBarMessage;
-            _nodeSetting.NodeImageChange += NodeSetting_NodeImageChange;            
+            _nodeSetting.NodeImageChange += NodeSetting_NodeImageChange;
             
-
             tabPage_DataTreeViewSetting.Controls.Add(_nodeSetting);
         }
 
@@ -478,15 +568,12 @@ namespace StockRoom11net
             On_StatusBarMessage(e);
         }
 
-        void NodeSetting_Save_Requested(object? sender, Save_Requested_EventArgs e)
+        async void NodeSetting_Save_Requested(object? sender, Save_Requested_EventArgs e)
         {
-            Save_Requested_EventArgs save_Requested_EventArgs = new Save_Requested_EventArgs()
+            if (_bindingSourceTimeLineTreeViewVal.TableName.Contains("Table_TimeLine_TreeView"))
             {
-                SaveEvent = NotificationEvents.DataBaseUpDated,
-                DataTableName = "Table_TimeLine_TreeView"
-            };
-
-            On_Save_Requested(save_Requested_EventArgs);
+                await _unitOfWork.TableTimeLineTreeViewRepository.UpdateAsync((Table_TimeLine_TreeView)e.Item, CancellationToken.None);
+            }
         }
 
         #endregion"NodeSettingTabPage"       
@@ -496,45 +583,72 @@ namespace StockRoom11net
         Table_TimeLine_TreeView _currentRowViewActive;
         private void Initialize_DataGridView()
         {
-            InitializeDataGridViewBase(dataGridViewExtended_TimeLineEditor);
+            InitializeDataGridViewBase(dataGridViewExtended);
 
-            dataGridViewExtended_TimeLineEditor.SuspendLayout();
+            dataGridViewExtended.SuspendLayout();
+            
+            dataGridViewExtended.CellBegingEditEvent += DataGridViewExtendedInventoryCellBeggingEditEvent;
+            dataGridViewExtended.CellEndEditEvent += DataGridViewExtendedInventoryCellEndEditEvent;
+            dataGridViewExtended.CellClickEvent += DataGridViewExtended_StockRoom_CellClick_Event;
+            dataGridViewExtended.CellDoubleClickEvent += DataGridViewExtended_StockRoom_CellDoubleClick_Event;
+            dataGridViewExtended.CurrentRowActivesEvent += DataGridViewExtendedInventoryCurrentRowActive;
+            dataGridViewExtended.FindRemplace += DataGridViewExtended_Inventory_Find_Replace;
+            dataGridViewExtended.SaveRequested += DataGridViewExtendedInventorySaveRequested;
+            dataGridViewExtended.RefreshRequested += DataGridViewExtendedInventoryRefreshRequested;
+            dataGridViewExtended.UserDeletingRow += DataGridViewExtended_UserDeletingRow;
+            dataGridViewExtended.UserDeletedRow += DataGridViewExtendedInventoryUserDeletedRow;
+            dataGridViewExtended.RowsRemoved += DataGridViewExtendedInventoryRowsRemoved;
+            dataGridViewExtended.DataGridViewMouseEnterEvent += DataGridViewExtendedInventoryMouseEnterEvent;
+            dataGridViewExtended.DataGridViewSort += DataGridViewExtendedInventoryDataGridViewSort;
+            dataGridViewExtended.BindingNavigatorAddNewItemEvent += DataGridViewExtended_Inventory_AddNewItemEvent;
 
-            dataGridViewExtended_TimeLineEditor.Name = Name;
+            dataGridViewExtended.StatusBarMessage += DataGridViewExtendedInventoryStatusBarMessage;
+            dataGridViewExtended.LogFileMessage += DataGridViewExtendedInventoryLogFileMessage;
 
-            dataGridViewExtended_TimeLineEditor.CellBegingEditEvent += DataGridViewExtendedInventoryCellBeggingEditEvent;
-            dataGridViewExtended_TimeLineEditor.CellEndEditEvent += DataGridViewExtendedInventoryCellEndEditEvent;
-            dataGridViewExtended_TimeLineEditor.CellClickEvent += DataGridViewExtended_StockRoom_CellClick_Event;
-            dataGridViewExtended_TimeLineEditor.CellDoubleClickEvent += DataGridViewExtended_StockRoom_CellDoubleClick_Event;
-            dataGridViewExtended_TimeLineEditor.CurrentRowActivesEvent += DataGridViewExtendedInventoryCurrentRowActive;
-            dataGridViewExtended_TimeLineEditor.FindRemplace += DataGridViewExtended_Inventory_Find_Replace;
-            dataGridViewExtended_TimeLineEditor.SaveRequested += DataGridViewExtendedInventorySaveRequested;
-            dataGridViewExtended_TimeLineEditor.RefreshRequested += DataGridViewExtendedInventoryRefreshRequested;
-            dataGridViewExtended_TimeLineEditor.UserDeletedRow += DataGridViewExtendedInventoryUserDeletedRow;
-            dataGridViewExtended_TimeLineEditor.RowsRemoved += DataGridViewExtendedInventoryRowsRemoved;
-            dataGridViewExtended_TimeLineEditor.DataGridViewMouseEnterEvent += DataGridViewExtendedInventoryMouseEnterEvent;
-            dataGridViewExtended_TimeLineEditor.DataGridViewSort += DataGridViewExtendedInventoryDataGridViewSort;
-            dataGridViewExtended_TimeLineEditor.BindingNavigatorAddNewItemEvent += DataGridViewExtended_Inventory_AddNewItemEvent;
+            dataGridViewExtended.DataSource = _bindingSourceTimeLineVal;
 
-            dataGridViewExtended_TimeLineEditor.StatusBarMessage += DataGridViewExtendedInventoryStatusBarMessage;
-            dataGridViewExtended_TimeLineEditor.LogFileMessage += DataGridViewExtendedInventoryLogFileMessage;
+            dataGridViewExtended._dataGridView.ReadOnly = false;
+            dataGridViewExtended.CustomEdit = Utilities.EditMode.Delete;
 
-            dataGridViewExtended_TimeLineEditor.DataSource = _bindingSourceTimeLine;
+            dataGridViewExtended.ResumeLayout();
+        }
 
-            dataGridViewExtended_TimeLineEditor._dataGridView.ReadOnly = false;
-            dataGridViewExtended_TimeLineEditor.CustomEdit = Utilities.EditMode.Delete;
+        async void DataGridViewExtended_UserDeletingRow(object? sender, DataGridViewRowCancelEventArgs e)
+        {
+            DataGridViewRow? ert = e.Row;
+            if (ert == null)
+                return;
 
-            dataGridViewExtended_TimeLineEditor.ResumeLayout();
+            if (dataGridViewExtended.DataSource == _bindingSourceTimeLineVal)
+            {
+
+                Table_TimeLine? rowEntity = (Table_TimeLine)ert.DataBoundItem;
+                if (rowEntity == null)
+                    return;
+
+                await _unitOfWork.TableTimeLineRepository.DeleteAsync(rowEntity.ID, CancellationToken.None);
+                _bindingSourceTimeLineVal.RemoveCurrent();
+            }
+
+            if (dataGridViewExtended.DataSource == _bindingSourceTimeLineTreeViewVal)
+            {
+                Table_TimeLine_TreeView? rowEntity = (Table_TimeLine_TreeView)ert.DataBoundItem;
+                if (rowEntity == null)
+                    return;
+
+                await _unitOfWork.TableTimeLineTreeViewRepository.DeleteAsync(rowEntity.Index, CancellationToken.None);
+                _bindingSourceTimeLineTreeViewVal.RemoveCurrent();
+            }
         }
 
         /// <summary>
-        /// Add new TimeLine item
+        /// Add new TimeLine itemEFtableTreeView
         /// </summary>
         private async void DataGridViewExtended_Inventory_AddNewItemEvent(object? sender, EventArgs e)
         {
             try
             {
-                _bindingSourceTimeLine.SuspendBinding();
+                _bindingSourceTimeLineVal.SuspendBinding();
 
                 // ✅ Create new scaffolded entity
                 var newTimeLine = new Table_TimeLine
@@ -563,28 +677,28 @@ namespace StockRoom11net
                 // Add to binding list
                 _timeLineBindingList.Add(savedTimeLine);
 
-                _bindingSourceTimeLine.ResumeBinding();
-                _bindingSourceTimeLine.ResetBindings(false);
+                _bindingSourceTimeLineVal.ResumeBinding();
+                _bindingSourceTimeLineVal.ResetBindings(false);
 
-                // ✅ Navigate to new item
-                int newItemIndex = _bindingSourceTimeLine.IndexOf(savedTimeLine);
-                _bindingSourceTimeLine.Position = newItemIndex;
+                // ✅ Navigate to new itemEFtableTreeView
+                int newItemIndex = _bindingSourceTimeLineVal.IndexOf(savedTimeLine);
+                _bindingSourceTimeLineVal.Position = newItemIndex;
 
                 // Focus the DataGridView
-                if (dataGridViewExtended_TimeLineEditor._dataGridView.Rows.Count > 0)
+                if (dataGridViewExtended._dataGridView.Rows.Count > 0)
                 {
-                    var row = dataGridViewExtended_TimeLineEditor._dataGridView.Rows[newItemIndex];
+                    var row = dataGridViewExtended._dataGridView.Rows[newItemIndex];
                     row.Selected = true;
-                    dataGridViewExtended_TimeLineEditor._dataGridView.CurrentCell = row.Cells[0];
+                    dataGridViewExtended._dataGridView.CurrentCell = row.Cells[0];
                 }
 
                 StatusBarMessage(new StatusBarMessage_EventArgs(
-                    $"New TimeLine item created: {savedTimeLine.ItemText}"));
+                    $"New TimeLine itemEFtableTreeView created: {savedTimeLine.ItemText}"));
             }
             catch (Exception ex)
             {
-                _bindingSourceTimeLine.ResumeBinding();
-                MessageBox.Show($"Error adding new item: {ex.Message}",
+                _bindingSourceTimeLineVal.ResumeBinding();
+                MessageBox.Show($"Error adding new itemEFtableTreeView: {ex.Message}",
                     "Add Error",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
@@ -595,11 +709,7 @@ namespace StockRoom11net
         {
             try
             {
-                _unitOfWork.TableTimeLineTreeViews.Update(_currentRowViewActive);
-
-                await _unitOfWork.SaveChangesAsync();
-
-                _bindingSourceTimeLineTreeView.ResetBindings(false);
+                await _unitOfWork.TableTimeLineTreeViewRepository.UpdateAsync(_currentRowViewActive);
                 
                 On_NotificationsToSends(new Notification(
                                                      "DataBase has been updated.",                       // 0 notification.Text
@@ -783,7 +893,7 @@ namespace StockRoom11net
 
         private void DataGridViewExtendedInventoryMouseEnterEvent(object? sender, DataGridViewMouseEnterEventArgs e)
         {
-            dataGridViewExtended_TimeLineEditor._dataGridView.Focus();
+            dataGridViewExtended._dataGridView.Focus();
 
             if (e.CurrentRowActive == null)
                 return;
@@ -818,11 +928,10 @@ namespace StockRoom11net
 
             if (_nodeSettingIsDone & customTabControl_TimeLine.SelectedTab.Name == "tabPage_DataTreeViewSetting")
             {
-                _nodeSetting.FocusedNodeProperties = e.SelectedNodeProperties;
+                _nodeSetting.CurrentNode = e.CurrentNode;
             }
 
             #endregion"tabPage_DataTreeViewSetting"
-
         }
 
         void DataTreeViewToAdd_Cancel_Delete_Save_Requested(object sender, Save_Requested_EventArgs e)
@@ -898,10 +1007,10 @@ namespace StockRoom11net
 
         private void DataTreeViewToAdd_Cancel_Delete_Switch_DataTable(object sender, Switch_DataTable_EventArgs e)
         {
-            if (dataGridViewExtended_TimeLineEditor.DataSource == _bindingSourceTimeLine)
-                dataGridViewExtended_TimeLineEditor.DataSource = _bindingSourceTimeLineTreeViewVal;
+            if (dataGridViewExtended.DataSource == _bindingSourceTimeLineVal)
+                dataGridViewExtended.DataSource = _bindingSourceTimeLineTreeViewVal;
             else
-                dataGridViewExtended_TimeLineEditor.DataSource = _bindingSourceTimeLine;
+                dataGridViewExtended.DataSource = _bindingSourceTimeLineVal;
 
             // SettingMode = true;
         }

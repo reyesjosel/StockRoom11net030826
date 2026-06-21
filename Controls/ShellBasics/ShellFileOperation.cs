@@ -51,15 +51,15 @@ namespace StockRoom11net.Controls.ShellBasics
         [Flags]
         public enum ShellChangeNotificationEvents : uint
         {
-            SHCNE_RENAMEITEM = 0x00000001,	// The name of a nonfolder item has changed. SHCNF_IDLIST or 
+            SHCNE_RENAMEITEM = 0x00000001,	// The name of a nonfolder itemEFtableTreeView has changed. SHCNF_IDLIST or 
             // SHCNF_PATH must be specified in uFlags. dwItem1 contains the 
-            // previous PIDL or name of the item. dwItem2 contains the new PIDL
-            // or name of the item. 
-            SHCNE_CREATE = 0x00000002,	// A nonfolder item has been created. SHCNF_IDLIST or SHCNF_PATH 
-            // must be specified in uFlags. dwItem1 contains the item that was 
+            // previous PIDL or name of the itemEFtableTreeView. dwItem2 contains the new PIDL
+            // or name of the itemEFtableTreeView. 
+            SHCNE_CREATE = 0x00000002,	// A nonfolder itemEFtableTreeView has been created. SHCNF_IDLIST or SHCNF_PATH 
+            // must be specified in uFlags. dwItem1 contains the itemEFtableTreeView that was 
             // created. dwItem2 is not used and should be NULL. 
-            SHCNE_DELETE = 0x00000004,	// A nonfolder item has been deleted. SHCNF_IDLIST or SHCNF_PATH
-            // must be specified in uFlags. dwItem1 contains the item that was 
+            SHCNE_DELETE = 0x00000004,	// A nonfolder itemEFtableTreeView has been deleted. SHCNF_IDLIST or SHCNF_PATH
+            // must be specified in uFlags. dwItem1 contains the itemEFtableTreeView that was 
             // deleted. dwItem2 is not used and should be NULL. 
             SHCNE_MKDIR = 0x00000008,	// A folder has been created. SHCNF_IDLIST or SHCNF_PATH must be 
             // specified in uFlags. dwItem1 contains the folder that was 
@@ -89,9 +89,9 @@ namespace StockRoom11net.Controls.ShellBasics
             // network. SHCNF_IDLIST or SHCNF_PATH must be specified in uFlags. 
             // dwItem1 contains the folder that is no longer being shared. 
             // dwItem2 is not used and should be NULL. 
-            SHCNE_ATTRIBUTES = 0x00000800,	// The attributes of an item or folder have changed. SHCNF_IDLIST
+            SHCNE_ATTRIBUTES = 0x00000800,	// The attributes of an itemEFtableTreeView or folder have changed. SHCNF_IDLIST
             // or SHCNF_PATH must be specified in uFlags. dwItem1 contains the
-            // item or folder that has changed. dwItem2 is not used and should
+            // itemEFtableTreeView or folder that has changed. dwItem2 is not used and should
             // be NULL. 
             SHCNE_UPDATEDIR = 0x00001000,	// The contents of an existing folder have changed, but the folder
             // still exists and has not been renamed. SHCNF_IDLIST or SHCNF_PATH
@@ -99,10 +99,10 @@ namespace StockRoom11net.Controls.ShellBasics
             // has changed. dwItem2 is not used and should be NULL. If a folder
             // has been created, deleted, or renamed, use SHCNE_MKDIR, 
             // SHCNE_RMDIR, or SHCNE_RENAMEFOLDER, respectively, instead. 
-            SHCNE_UPDATEITEM = 0x00002000,	// An existing nonfolder item has changed, but the item still exists
+            SHCNE_UPDATEITEM = 0x00002000,	// An existing nonfolder itemEFtableTreeView has changed, but the itemEFtableTreeView still exists
             // and has not been renamed. SHCNF_IDLIST or SHCNF_PATH must be 
-            // specified in uFlags. dwItem1 contains the item that has changed.
-            // dwItem2 is not used and should be NULL. If a nonfolder item has 
+            // specified in uFlags. dwItem1 contains the itemEFtableTreeView that has changed.
+            // dwItem2 is not used and should be NULL. If a nonfolder itemEFtableTreeView has 
             // been created, deleted, or renamed, use SHCNE_CREATE, 
             // SHCNE_DELETE, or SHCNE_RENAMEITEM, respectively, instead. 
             SHCNE_SERVERDISCONNECT = 0x00004000,	// The computer has disconnected from a server. SHCNF_IDLIST or 
@@ -118,7 +118,7 @@ namespace StockRoom11net.Controls.ShellBasics
             // dwItem2 is not used and should be NULL. 
             SHCNE_RENAMEFOLDER = 0x00020000,	// The name of a folder has changed. SHCNF_IDLIST or SHCNF_PATH must
             // be specified in uFlags. dwItem1 contains the previous pointer to
-            // an item identifier list (PIDL) or name of the folder. dwItem2 
+            // an itemEFtableTreeView identifier list (PIDL) or name of the folder. dwItem2 
             // contains the new PIDL or name of the folder. 
             SHCNE_FREESPACE = 0x00040000,	// The amount of free space on a drive has changed. SHCNF_IDLIST or
             // SHCNF_PATH must be specified in uFlags. dwItem1 contains the root
@@ -139,7 +139,7 @@ namespace StockRoom11net.Controls.ShellBasics
         public enum ShellChangeNotificationFlags
         {
             SHCNF_IDLIST = 0x0000,	// dwItem1 and dwItem2 are the addresses of ITEMIDLIST structures that
-            // represent the item(s) affected by the change. Each ITEMIDLIST must be 
+            // represent the itemEFtableTreeView(s) affected by the change. Each ITEMIDLIST must be 
             // relative to the desktop folder. 
             SHCNF_PATHA = 0x0001,	// dwItem1 and dwItem2 are the addresses of null-terminated strings of 
             // maximum length MAX_PATH that contain the full path names of the items 

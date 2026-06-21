@@ -10,14 +10,28 @@ namespace StockRoom11net.Data.Repositories;
 /// </summary>
 public interface IStockRoomRepository : IRepository<Table_StockRoom>
 {
+    // Basic CRUD operations
     Task<IEnumerable<Table_StockRoom>> GetByPartNumberAsync(string partNumber);
     Task<IEnumerable<Table_StockRoom>> GetByLocationAsync(string location);
     Task<IEnumerable<Table_StockRoom>> SearchByDescriptionAsync(string searchTerm);
     Task<IEnumerable<Table_StockRoom>> GetLowInventoryAsync(int threshold);
     Task<int> GetTotalQuantityAsync();
     Task<decimal> GetTotalValueAsync();
-
     Task<IEnumerable<Table_StockRoom>> FilterByStringFilterAsync(string stringFilter);
+    Task UpdateAsync(Table_StockRoom entity, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Delete the entity with the specified index from the table Table_StockRoom, save the changes to the database.
+    /// It first checks if the entity exists in the database by its primary key (Index). If it doesn't exist, it does nothing.
+    /// No need call SaveChangesAsync() after this method, it will be called in the service layer after all operations are done.
+    /// </summary>
+    /// <param name="index"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    Task DeleteAsync(string partNumber, CancellationToken cancellationToken = default);
+
+    // Batch operations
+    Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }
 
 
@@ -27,6 +41,8 @@ public class StockRoomRepository : Repository<Table_StockRoom>, IStockRoomReposi
     public StockRoomRepository(ProductionInventoryContext context) : base(context)
     {
     }
+
+    #region Basic CRUD Operations
 
     public async Task<IEnumerable<Table_StockRoom>> GetByPartNumberAsync(string partNumber)
     {
@@ -59,6 +75,23 @@ public class StockRoomRepository : Repository<Table_StockRoom>, IStockRoomReposi
             .OrderBy(s => s.OnHand)
             .ThenBy(s => s.PartNumber)
             .ToListAsync();
+    }
+
+    public async Task UpdateAsync(Table_StockRoom entity, CancellationToken cancellationToken = default)
+    {
+        if (entity == null)
+            throw new ArgumentNullException(nameof(entity));
+
+        // Find the existing tracked entity by PK first to avoid a
+        // DbUpdateConcurrencyException when the entity is untracked (AsNoTracking).
+        var existing = await _context.Table_StockRooms.FindAsync(new object[] { entity.PartNumber }, cancellationToken);
+
+        if (existing == null)
+            throw new KeyNotFoundException($"Row with PartNumber={entity.PartNumber} not found. It may have been deleted.");
+
+        // Copy new values onto the tracked entity and save.
+        _context.Entry(existing).CurrentValues.SetValues(entity);
+        await _context.SaveChangesAsync(cancellationToken);
     }
 
     public async Task<int> GetTotalQuantityAsync()
@@ -112,4 +145,25 @@ public class StockRoomRepository : Repository<Table_StockRoom>, IStockRoomReposi
 
         return await query.OrderBy(s => s.PartNumber).ToListAsync();
     }
+
+    public async Task DeleteAsync(string partNumber, CancellationToken cancellationToken = default)
+    {
+        var entity = await _context.Table_StockRooms.FindAsync(new object[] { partNumber }, cancellationToken);
+        if (entity != null)
+        {
+            _context.Table_StockRooms.Remove(entity);
+            await _context.SaveChangesAsync(cancellationToken);
+        }
+    }
+
+    #endregion
+
+    #region Batch Operations
+
+    public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    {
+        return await _context.SaveChangesAsync(cancellationToken);
+    }
+
+    #endregion
 }

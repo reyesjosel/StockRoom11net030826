@@ -8,7 +8,7 @@ namespace StockRoom11net.Controls
 {
     /// <summary>
     /// This class is used to determine the status of each row in a DataGridView rows collection,
-    /// also to alter the status of a selected item.
+    /// also to alter the status of a selected itemEFtableTreeView.
     /// </summary>
     public class CurrentStatus
     {
@@ -46,6 +46,7 @@ namespace StockRoom11net.Controls
 
             SetProperties(StatusDefaultValue);
         }
+
         public CurrentStatus(DataRowView row)
         {
             try
@@ -103,7 +104,6 @@ namespace StockRoom11net.Controls
             }
         }
         
-
         public CurrentStatus(Table_StockRoom stockRoomInventory)
         {
             SetProperties(StatusDefaultValue);
@@ -128,6 +128,7 @@ namespace StockRoom11net.Controls
             #endregion"PartNumberColumn"
 
             #region"PropertyColumn"
+
             if (_rowDataRow.Table.Columns.Contains("Properties"))
             {
                 ColPropertiesIndex = _rowDataRow.Table.Columns["Properties"].Ordinal;
@@ -187,6 +188,7 @@ namespace StockRoom11net.Controls
             #endregion"PropertyColumn"
 
             #region"StatusColumn"
+
             if (_rowDataRow.Table.Columns.Contains("Status"))
             {
                 ColStatusIndex = _rowDataRow.Table.Columns["Status"].Ordinal;
@@ -211,9 +213,11 @@ namespace StockRoom11net.Controls
                 ColPartNumberIndex = -1;
                 SetProperties(StatusDefaultValue);
             }
+
             #endregion"StatusColumn"
 
             #region"CountPDFColumn"
+
             if (_rowDataRow.Table.Columns.Contains("CountPDF"))
             {
                 ColCountPDFIndex = _rowDataRow.Table.Columns["CountPDF"].Ordinal;
@@ -221,8 +225,11 @@ namespace StockRoom11net.Controls
             }
             else
                 HeaderInformationObj.CountPDF = 0;
+
             #endregion"CountPDFColumn"
+
             #region"CountDocColumn"
+
             if (_rowDataRow.Table.Columns.Contains("CountDoc"))
             {
                 ColCountDocIndex = _rowDataRow.Table.Columns["CountDoc"].Ordinal;
@@ -230,8 +237,11 @@ namespace StockRoom11net.Controls
             }
             else
                 HeaderInformationObj.CountDoc = 0;
+
             #endregion"CountDocColumn"
+
             #region"CountTxTColumn"
+
             if (_rowDataRow.Table.Columns.Contains("CountTxT"))
             {
                 var ColCountTxTIndex = _rowDataRow.Table.Columns["CountTxT"].Ordinal;
@@ -239,8 +249,11 @@ namespace StockRoom11net.Controls
             }
             else
                 HeaderInformationObj.CountTxT = 0;
+
             #endregion"CountTxTColumn"
+
             #region"CountDocxColumn"
+
             if (_rowDataRow.Table.Columns.Contains("CountDocx"))
             {
                 ColCountDocxIndex = _rowDataRow.Table.Columns["CountDocx"].Ordinal;
@@ -248,6 +261,7 @@ namespace StockRoom11net.Controls
             }
             else
                 HeaderInformationObj.CountDocx = 0;
+
             #endregion"CountDocxColumn"
         }
 
@@ -265,13 +279,12 @@ namespace StockRoom11net.Controls
 
         DataRowView _currentDataRowView;
         DataGridViewRow _currentDataGridViewRow;
-        ColorConverter oConverter = new ColorConverter();
+        private static ColorConverter oConverter = new ColorConverter();
 
         public string PartNumber { get; set; }
         public bool Locked { get; set; }
         public bool Unerasable { get; set; }
         public bool Selected { get; set; }
-
         public int BOMItemsCount
         {
             get
@@ -338,7 +351,7 @@ namespace StockRoom11net.Controls
 
         public Color ErrorSelectedColor;
 
-        Color selectedColor;
+        Color selectedColor = Color.DeepSkyBlue;
         /// <summary>
         /// By default return Color.FromArgb(Convert.ToInt32(-36865)) if
         /// SelectedNoteColor == Color.Black, if not return SelectedNoteColor;
@@ -896,7 +909,7 @@ namespace StockRoom11net.Controls
                 // Divide all pairs (remove empty strings)                
                 string[] bOMItems = bOMInf.Split(new[] { BOMInformation_SplitChar }, StringSplitOptions.RemoveEmptyEntries);
 
-                // Walk through each item
+                // Walk through each itemEFtableTreeView
                 foreach (var bOMItem in bOMItems)
                 {
                     if (bOMItem == "")
@@ -1033,7 +1046,7 @@ namespace StockRoom11net.Controls
                 var stateItems = new[] { stateValue };
                 stateItems = stateValue.Split(new[] { Stateformation_SplitChar }, StringSplitOptions.RemoveEmptyEntries);
 
-                // Walk through each item
+                // Walk through each itemEFtableTreeView
                 foreach (var stateItem in stateItems)
                 {
                     if (stateItem == "")

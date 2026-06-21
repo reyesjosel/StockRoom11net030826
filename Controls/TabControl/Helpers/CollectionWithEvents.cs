@@ -9,7 +9,7 @@ namespace StockRoom11net.Controls.TabControl.Helpers
     public delegate void CollectionClear();
 
     /// <summary>
-    /// Represents the method that will handle the event that has item data.
+    /// Represents the method that will handle the event that has itemEFtableTreeView data.
     /// </summary>
     public delegate void CollectionChange(int index, object value);
 
@@ -34,25 +34,25 @@ namespace StockRoom11net.Controls.TabControl.Helpers
         public event CollectionClear Cleared;
 
         /// <summary>
-        /// Occurs just before an item is added to the collection.
+        /// Occurs just before an itemEFtableTreeView is added to the collection.
         /// </summary>
         [Browsable(false)]
         public event CollectionChange Inserting;
 
         /// <summary>
-        /// Occurs just after an item has been added to the collection.
+        /// Occurs just after an itemEFtableTreeView has been added to the collection.
         /// </summary>
         [Browsable(false)]
         public event CollectionChange Inserted;
 
         /// <summary>
-        /// Occurs just before an item is removed from the collection.
+        /// Occurs just before an itemEFtableTreeView is removed from the collection.
         /// </summary>
         [Browsable(false)]
         public event CollectionChange Removing;
 
         /// <summary>
-        /// Occurs just after an item has been removed from the collection.
+        /// Occurs just after an itemEFtableTreeView has been removed from the collection.
         /// </summary>
         [Browsable(false)]
         public event CollectionChange Removed;

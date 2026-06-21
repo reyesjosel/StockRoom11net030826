@@ -7,7 +7,7 @@ namespace StockRoom11net.Controls.ShellBasics
     [Guid("000214E6-0000-0000-C000-000000000046")]
     public interface IShellFolder
     {
-        // Translates a file object's or folder's display name into an item identifier list.
+        // Translates a file object's or folder's display name into an itemEFtableTreeView identifier list.
         // Return value: error code, if any
         [PreserveSig]
         Int32 ParseDisplayName(
@@ -18,12 +18,12 @@ namespace StockRoom11net.Controls.ShellBasics
             string pszDisplayName,      // Null-terminated UNICODE string with the display name.
             ref UInt32 pchEaten,        // Pointer to a ULONG value that receives the number of characters of the 
                                         // display name that was parsed.
-            out IntPtr ppidl,           // Pointer to an ITEMIDLIST pointer that receives the item identifier list for 
+            out IntPtr ppidl,           // Pointer to an ITEMIDLIST pointer that receives the itemEFtableTreeView identifier list for 
                                         // the object.
             ref UInt32 pdwAttributes);  // Optional parameter that can be used to query for file attributes.
                                         // this can be values from the SFGAO enum
 
-        // Allows a client to determine the contents of a folder by creating an item identifier enumeration object 
+        // Allows a client to determine the contents of a folder by creating an itemEFtableTreeView identifier enumeration object 
         // and returning its IEnumIDList interface.
         // Return value: error code, if any
         [PreserveSig]
@@ -57,11 +57,11 @@ namespace StockRoom11net.Controls.ShellBasics
             Guid riid,                  // Interface identifier (IID) of the requested storage interface.
             out IntPtr ppv);            // Address that receives the interface pointer specified by riid.
 
-        // Determines the relative order of two file objects or folders, given their item identifier lists.
+        // Determines the relative order of two file objects or folders, given their itemEFtableTreeView identifier lists.
         // Return value: If this method is successful, the CODE field of the HRESULT contains one of the following 
         // values (the code can be retrived using the helper function GetHResultCode):
-        // Negative A negative return value indicates that the first item should precede the second (pidl1 < pidl2). 
-        // Positive A positive return value indicates that the first item should follow the second (pidl1 > pidl2). 
+        // Negative A negative return value indicates that the first itemEFtableTreeView should precede the second (pidl1 < pidl2). 
+        // Positive A positive return value indicates that the first itemEFtableTreeView should follow the second (pidl1 > pidl2). 
         // Zero A return value of zero indicates that the two items are the same (pidl1 = pidl2). 
         [PreserveSig]
         Int32 CompareIDs(
@@ -69,8 +69,8 @@ namespace StockRoom11net.Controls.ShellBasics
                                         // sixteen bits of lParam define the sorting rule. The upper sixteen bits of 
                                         // lParam are used for flags that modify the sorting rule. values can be from 
                                         // the SHCIDS enum
-            IntPtr pidl1,               // Pointer to the first item's ITEMIDLIST structure.
-            IntPtr pidl2);              // Pointer to the second item's ITEMIDLIST structure.
+            IntPtr pidl1,               // Pointer to the first itemEFtableTreeView's ITEMIDLIST structure.
+            IntPtr pidl2);              // Pointer to the second itemEFtableTreeView's ITEMIDLIST structure.
 
         // Requests an object that can be used to obtain information from or interact with a folder object.
         // Return value: error code, if any
@@ -117,7 +117,7 @@ namespace StockRoom11net.Controls.ShellBasics
                                         // possible values, see the SHGNO enum. 
             out ShellApi.STRRET pName);         // Address of a STRRET structure in which to return the display name.
 
-        // Sets the display name of a file object or subfolder, changing the item identifier in the process.
+        // Sets the display name of a file object or subfolder, changing the itemEFtableTreeView identifier in the process.
         // Return value: error code, if any
         [PreserveSig]
         Int32 SetNameOf(

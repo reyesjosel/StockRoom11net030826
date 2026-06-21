@@ -473,9 +473,9 @@ namespace StockRoom11net.Controls.MouseKeyboardActivityMonitor.Controls
         /// <remarks>
         /// Key events occur in the following order: 
         /// <list type="number">
-        /// <item>KeyDown</item>
-        /// <item>KeyPress</item>
-        /// <item>KeyUp</item>
+        /// <itemEFtableTreeView>KeyDown</itemEFtableTreeView>
+        /// <itemEFtableTreeView>KeyPress</itemEFtableTreeView>
+        /// <itemEFtableTreeView>KeyUp</itemEFtableTreeView>
         /// </list>
         ///The KeyPress event is not raised by noncharacter keys; however, the noncharacter keys do raise the KeyDown and KeyUp events. 
         ///Use the KeyChar property to sample keystrokes at run time and to consume or modify a subset of common keystrokes. 

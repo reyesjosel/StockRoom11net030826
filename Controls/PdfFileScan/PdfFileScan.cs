@@ -73,7 +73,7 @@ namespace StockRoom11net.Controls.PdfFileScan
         }
 
         /// <summary>
-        /// For each item in stockroom table will scan the given path and
+        /// For each itemEFtableTreeView in stockroom table will scan the given path and
         /// update status information column with the names of documents found.
         /// </summary>
         /// <param name="pathRootFolder"></param>

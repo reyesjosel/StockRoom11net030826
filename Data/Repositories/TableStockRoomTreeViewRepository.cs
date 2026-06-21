@@ -13,8 +13,34 @@ public interface ITableStockRoomTreeViewRepository : IRepository<Table_StockRoom
     Task<Table_StockRoom_TreeView?> GetByIDAsync(int id, CancellationToken cancellationToken = default);
     Task<IEnumerable<Table_StockRoom_TreeView>> GetAllAsync(CancellationToken cancellationToken = default);
     Task<Table_StockRoom_TreeView> AddAsync(Table_StockRoom_TreeView entity, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Update the existing entity in the table Table_StockRoom_TreeView, save the changes to the database.
+    /// It first checks if the entity exists in the database by its primary key (Index). If it doesn't exist, it throws a KeyNotFoundException.
+    /// No need call SaveChangesAsync() after this method, it will be called in the service layer after all operations are done.
+    /// </summary>
+    /// <param name="entity"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentNullException"></exception>
+    /// <exception cref="KeyNotFoundException"></exception>
     Task UpdateAsync(Table_StockRoom_TreeView entity, CancellationToken cancellationToken = default);
-    Task DeleteAsync(int id, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Delete the entity with the specified index from the table Table_StockRoom_TreeView, save the changes to the database.
+    /// It first checks if the entity exists in the database by its primary key (Index). If it doesn't exist, it does nothing.
+    /// No need call SaveChangesAsync() after this method, it will be called in the service layer after all operations are done.
+    /// </summary>
+    /// <param name="index"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    Task DeleteAsync(int index, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Deletes all entities with the specified index values in a single SQL statement.
+    /// No need to call SaveChangesAsync() — ExecuteDeleteAsync commits immediately.
+    /// </summary>
+    Task DeleteRangeAsync(IEnumerable<int> indexes, CancellationToken cancellationToken = default);
 
     // Tree-specific operations
     Task<IEnumerable<Table_StockRoom_TreeView>> GetRootNodesAsync(CancellationToken cancellationToken = default);
@@ -73,24 +99,45 @@ public class TableStockRoomTreeViewRepository : Repository<Table_StockRoom_TreeV
         await _context.SaveChangesAsync(cancellationToken);
         return entity;
     }
-
+        
     public async Task UpdateAsync(Table_StockRoom_TreeView entity, CancellationToken cancellationToken = default)
     {
         if (entity == null)
             throw new ArgumentNullException(nameof(entity));
 
-        _context.Table_StockRoom_TreeViews.Update(entity);
+        // Find the existing tracked entity by PK first to avoid a
+        // DbUpdateConcurrencyException when the entity is untracked (AsNoTracking).
+        var existing = await _context.Table_StockRoom_TreeViews.FindAsync(new object[] { entity.Index }, cancellationToken);
+
+        if (existing == null)
+            throw new KeyNotFoundException($"Row with Index={entity.Index} not found. It may have been deleted.");
+
+        // Copy new values onto the tracked entity and save.
+        _context.Entry(existing).CurrentValues.SetValues(entity);
         await _context.SaveChangesAsync(cancellationToken);
     }
-
-    public async Task DeleteAsync(int id, CancellationToken cancellationToken = default)
+        
+    public async Task DeleteAsync(int index, CancellationToken cancellationToken = default)
     {
-        var entity = await _context.Table_StockRoom_TreeViews.FindAsync(new object[] { id }, cancellationToken);
+        var entity = await _context.Table_StockRoom_TreeViews.FindAsync(new object[] { index }, cancellationToken);
         if (entity != null)
         {
             _context.Table_StockRoom_TreeViews.Remove(entity);
             await _context.SaveChangesAsync(cancellationToken);
         }
+    }
+
+    public async Task DeleteRangeAsync(IEnumerable<int> indexes, CancellationToken cancellationToken = default)
+    {
+        var indexList = indexes.ToList();
+        if (indexList.Count == 0)
+            return;
+
+        // ✅ Single SQL: DELETE FROM Table_StockRoom_TreeView WHERE Index IN (...)
+        // No FindAsync, no per-row SaveChangesAsync — one round-trip for all rows.
+        await _context.Table_StockRoom_TreeViews
+            .Where(x => indexList.Contains(x.Index))
+            .ExecuteDeleteAsync(cancellationToken);
     }
 
     #endregion
@@ -108,7 +155,7 @@ public class TableStockRoomTreeViewRepository : Repository<Table_StockRoom_TreeV
 
     public async Task<IEnumerable<Table_StockRoom_TreeView>> GetChildrenAsync(int parentId, CancellationToken cancellationToken = default)
     {
-        return await _context.Table_StockRoom_TreeViews .AsNoTracking()
+        return await _context.Table_StockRoom_TreeViews
             .AsNoTracking()
             .Where(x => x.Parent_ID == parentId)
             .OrderBy(x => x.Index)
@@ -117,21 +164,43 @@ public class TableStockRoomTreeViewRepository : Repository<Table_StockRoom_TreeV
 
     public async Task<IEnumerable<Table_StockRoom_TreeView>> GetTreeHierarchyAsync(int? rootId = null, CancellationToken cancellationToken = default)
     {
-        if (rootId.HasValue)
-        {
-            // Get specific subtree
-            return await _context.Table_StockRoom_TreeViews
-                .AsNoTracking()
-                .Where(x => x.ID == rootId.Value || x.Parent_ID == rootId.Value)
-                .OrderBy(x => x.Index)
-                .ToListAsync(cancellationToken);
-        }
-
-        // Get entire tree
-        return await _context.Table_StockRoom_TreeViews
+        // Load the full table once — avoids N+1 recursive DB calls.
+        var all = await _context.Table_StockRoom_TreeViews
             .AsNoTracking()
             .OrderBy(x => x.Index)
             .ToListAsync(cancellationToken);
+
+        if (rootId.HasValue)
+        {
+            // ✅ BFS: collects root + ALL descendants, not just direct children.
+            return CollectSubtree(all, rootId.Value);
+        }
+
+        return all;
+    }
+
+    /// <summary>
+    /// Iterative BFS that returns the root node and every descendant below it.
+    /// </summary>
+    private static List<Table_StockRoom_TreeView> CollectSubtree(List<Table_StockRoom_TreeView> all, int rootId)
+    {
+        var result = new List<Table_StockRoom_TreeView>();
+        var queue = new Queue<int>();
+        queue.Enqueue(rootId);
+
+        while (queue.Count > 0)
+        {
+            int currentId = queue.Dequeue();
+
+            var node = all.FirstOrDefault(x => x.ID == currentId);
+            if (node is not null)
+                result.Add(node);
+
+            foreach (var child in all.Where(x => x.Parent_ID == currentId))
+                queue.Enqueue(child.ID);
+        }
+
+        return result;
     }
 
     #endregion

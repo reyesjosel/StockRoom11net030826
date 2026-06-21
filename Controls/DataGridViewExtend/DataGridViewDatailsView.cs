@@ -882,7 +882,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
         }
 
         /// <summary>
-        /// Fills the specified rectangle with item border roundness
+        /// Fills the specified rectangle with itemEFtableTreeView border roundness
         /// </summary>
         public void ItemFill(DataGridViewRowPrePaintEventArgs e, Rectangle bounds, Color north, Color south)
         {
@@ -899,7 +899,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
         }
 
         /// <summary>
-        /// Creates a rectangle with item roundess
+        /// Creates a rectangle with itemEFtableTreeView roundess
         /// </summary>
         public GraphicsPath ItemRectangle(DataGridViewRowPrePaintEventArgs evtData, Rectangle bounds)
         {
@@ -910,7 +910,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
               if (pointerPadding == ItemRoundness)
               {
 
-               * Trace pointed item
+               * Trace pointed itemEFtableTreeView
                * 
                *     C--------------------D
                *     |                    |
