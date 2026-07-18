@@ -40,9 +40,9 @@ public partial class Table_Employee
 
     /// <summary>
     /// Department or division the employee belongs to, e.g., "Sales", "IT", "HR".
-    /// if this string contains "Department", it indicates the item is a department.
+    /// if this string contains "Department", it indicates the itemEFtableTreeView is a department.
     /// Remenber to update the logic in the application to check for "Department" in this field
-    /// when determining if an item is a department or an employee. We trated department as a special type of employee,
+    /// when determining if an itemEFtableTreeView is a department or an employee. We trated department as a special type of employee,
     /// so we can use the same table to store both employees and departments.
     /// </summary>
     public string? Department { get; set; }

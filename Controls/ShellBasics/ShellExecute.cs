@@ -44,9 +44,9 @@ namespace StockRoom11net.Controls.ShellBasics
         {
             SEE_MASK_CLASSNAME = 0x00000001,        // Use the class name given by the lpClass member. 
             SEE_MASK_CLASSKEY = 0x00000003,     // Use the class key given by the hkeyClass member.
-            SEE_MASK_IDLIST = 0x00000004,       // Use the item identifier list given by the lpIDList member. 
+            SEE_MASK_IDLIST = 0x00000004,       // Use the itemEFtableTreeView identifier list given by the lpIDList member. 
                                                 // The lpIDList member must point to an ITEMIDLIST structure.
-            SEE_MASK_INVOKEIDLIST = 0x0000000c,     // Use the IContextMenu interface of the selected item's 
+            SEE_MASK_INVOKEIDLIST = 0x0000000c,     // Use the IContextMenu interface of the selected itemEFtableTreeView's 
                                                     // shortcut menu handler.
             SEE_MASK_ICON = 0x00000010,     // Use the icon given by the hIcon member.
             SEE_MASK_HOTKEY = 0x00000020,       // Use the hot key given by the dwHotKey member.

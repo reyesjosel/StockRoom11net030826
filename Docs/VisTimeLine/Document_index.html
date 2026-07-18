@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BlazorAppProgressive</title>
+    <base href="/" />
+
+    <!-- 1. Global Third-Party Stylesheet -->
+    <!--Custom CSS-->
+    <link rel="stylesheet" href="css/app.css" />
+    <link rel="stylesheet" href="css/site.css" />
+    <link rel="stylesheet" href="css/themes.css" />
+    <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css" />
+    <link rel="stylesheet" href="css/BlazorWinFormsApp.styles.css" />
+    
+</head>
+
+<body>
+    <div id="app" style="min-height: 100%; display: grid; grid-template-rows: 1fr auto"> </div>
+
+    <div id="blazor-error-ui">
+        An unhandled error has occurred.
+        Index.html line 28.
+        <a href="." class="reload">Reload</a>
+        <span class="dismiss">🗙</span>
+    </div>
+            
+    <!-- 2. Global Third-Party JavaScript Bundle -->
+    <!-- vis timeline lib -->
+    <script src="Jscript/vis/vis-timeline-graph2d.min.js"></script>
+    <link href="Jscript/vis/vis-timeline-graph2d.min.css" rel="stylesheet" />
+
+    <!-- 3. Your custom Blazor JS bridge file -->
+    <!-- your interop ( bridge ) file -->
+    <script src="Jscript/VisTimeLine_bridge.js"></script>
+
+    <!-- 4. Blazor Bootstrapper -->
+    <!-- Blazor WebView bootstrap must load after your static scripts are present -->
+    <script src="_framework/blazor.webview.js"></script>
+</body>
+
+</html>

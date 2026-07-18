@@ -425,7 +425,7 @@ namespace StockRoom11net.Controls
             if (panelFilterConditions.Controls.Count > 1)
                 RemoveUp(1);
 
-            if (string.IsNullOrEmpty(stringFilter.Trim()))
+            if (stringFilter == null || string.IsNullOrEmpty(stringFilter.Trim()))
             {
                 comboBoxStringFilter.Text = "";
                 filterCondition0.Update_Filter(null);

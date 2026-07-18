@@ -59,7 +59,7 @@ namespace StockRoom11net.Controls.DocumentationBehavior
                     radioButton_Public.Checked = true;
                 }
 
-                Text = "DocumentsAddressEditor    " + "ID value for this item is " + ScanDocumentAddressItem.ID + ".";
+                Text = "DocumentsAddressEditor    " + "ID value for this itemEFtableTreeView is " + ScanDocumentAddressItem.ID + ".";
 
                 textBox_DescriptionReference.Text = ScanDocumentAddressItem.ScanDocumentsAddressNameDescription;
                 textBox_DirectoryPathFolder.Text = ScanDocumentAddressItem.ScanDocumentsAddressValueDirectory;

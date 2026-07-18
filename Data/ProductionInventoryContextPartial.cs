@@ -65,28 +65,28 @@ public partial class ProductionInventoryContext
 
         // int? (entity) <-> int? (SQLite)  null <-> SQL NULL / DBNull
         var parentIdConverter = new ValueConverter<int?, int?>(
-            toDb => toDb > 0 ? toDb : (int?)null,   // null/<=0 -> SQL NULL
-            fromDb => fromDb > 0 ? fromDb : (int?)null    // SQL NULL/<=0 -> null
+            toDb => toDb >= 0 ? toDb : (int?)null,   // null/negative -> SQL NULL
+            fromDb => fromDb >= 0 ? fromDb : (int?)null    // SQL NULL/negative -> null
         );
 
         modelBuilder.Entity<Table_TimeLine>(entity =>
         {
             // Apply converter to problematic columns
-           // entity.Property(e => e.EndTime)
-            //      .HasConversion(dateTimeConverter);
+            entity.Property(e => e.EndTime)
+                  .HasConversion(dateTimeConverter1);
 
-         //   entity.Property(e => e.StartTime)
-         //         .HasConversion(dateTimeConverter);
+            entity.Property(e => e.StartTime)
+                  .HasConversion(dateTimeConverter1);
 
             // Default values
-         //   entity.Property(e => e.StartDate)
-         //         .HasDefaultValueSql("CURRENT_TIMESTAMP");
+            entity.Property(e => e.StartDate)
+                  .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
-         //   entity.Property(e => e.EndDate)
-         //         .HasDefaultValueSql("CURRENT_TIMESTAMP");
+            entity.Property(e => e.EndDate)
+                  .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
             // Indexes
-         //   entity.HasIndex(e => new { e.StartDate, e.EndDate });
+            entity.HasIndex(e => new { e.StartDate, e.EndDate });
 
         });
         
@@ -97,9 +97,21 @@ public partial class ProductionInventoryContext
                   .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
             // null <-> SQL NULL (DBNull.Value equivalent in ADO.NET)
-        //    entity.Property(e => e.Parent_ID)
-         //         .HasConversion(parentIdConverter)
-         //         .HasDefaultValue(null);
+            entity.Property(e => e.Parent_ID)
+                  .HasConversion(parentIdConverter)
+                  .HasDefaultValue(null);
+        });
+
+        modelBuilder.Entity<Table_StockRoom_TreeView>(entity =>
+        {
+            entity.Property(e => e.DateCreated)
+                  .HasConversion(dateTimeConverter1)
+                  .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+            // null <-> SQL NULL (DBNull.Value equivalent in ADO.NET)
+            entity.Property(e => e.Parent_ID)
+                  .HasConversion(parentIdConverter)
+                  .HasDefaultValue(null);
         });
     }
 }

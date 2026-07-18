@@ -5,7 +5,7 @@ namespace StockRoom11net.Controls.ComponentInformations
 {
     // [ProvideToolboxControl("General", false)]
     //[ProvideToolboxControl("General", false)]
-    // Set the display name and custom bitmap to use for this item. 
+    // Set the display name and custom bitmap to use for this itemEFtableTreeView. 
     // The build action for the bitmap must be "Embedded Resource".
     [DisplayName("Antenna")]
     [Description("Antenna control for receiving related materials.")]

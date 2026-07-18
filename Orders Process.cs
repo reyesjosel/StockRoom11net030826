@@ -122,7 +122,7 @@ namespace StockRoom11net
                     numberOfRowAdded++;
                     dataGridViewExtended_GPS.LockCurrentRow();
                     dataGridViewExtended_GPS.MarkUnerasableCurrentRow();
-                    On_StatusBarMessage(new StatusBarMessage_EventArgs("A new item has been received, count = " + numberOfRowAdded));
+                    On_StatusBarMessage(new StatusBarMessage_EventArgs("A new itemEFtableTreeView has been received, count = " + numberOfRowAdded));
 
                     if (numberOfRowAdded == 5)
                     {

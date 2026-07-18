@@ -454,7 +454,7 @@ namespace StockRoom11net.Controls
         {
             /// <summary>
             /// Unknown new project, an event from WeekPlanerGrid, double click over
-            /// nothing, no select row or no select item or record.
+            /// nothing, no select row or no select itemEFtableTreeView or record.
             /// </summary>
             [Description("Unknown new project, event from WeekplanerGrid.")]
             UnknownNewProject,
@@ -465,7 +465,7 @@ namespace StockRoom11net.Controls
             [Description("New project, new record, event from WeekPlanerRow.")]
             NewProjectNewRecord,
             /// <summary>
-            /// View or edit a record, an event from a record or item doubleClick, the accessLevel
+            /// View or edit a record, an event from a record or itemEFtableTreeView doubleClick, the accessLevel
             /// determines whether the current employee is selected to edit o view mode.
             /// </summary>
             [Description("View or Edit a record, event from a Item or Record.")]
@@ -790,7 +790,7 @@ namespace StockRoom11net.Controls
 
         /// <summary>
         /// This enum is used to determine the status of each element in a DataGridView rows collection,
-        /// also to alter the status of a selected item.
+        /// also to alter the status of a selected itemEFtableTreeView.
         /// </summary>
         public enum RowStatus
         {
@@ -935,7 +935,7 @@ namespace StockRoom11net.Controls
             if (stringDict.Contains(";"))
                 allRecords = stringDict.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
 
-            // Walk through each item
+            // Walk through each itemEFtableTreeView
             int countError = 0;
             foreach (string projectRecord in allRecords)
             {
@@ -1014,7 +1014,7 @@ namespace StockRoom11net.Controls
             if (_strings.Length < 2)
                 return dict;
 
-            // Walk through each item
+            // Walk through each itemEFtableTreeView
             for (int i = 0; i < _strings.Length; i += 2)
             {
                 string _name = _strings[i];

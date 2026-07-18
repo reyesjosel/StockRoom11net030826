@@ -56,7 +56,7 @@ namespace StockRoom11net
             toolStripMenuItem_Translucent = new ToolStripMenuItem();
             toolStripMenuItem_FullRowSelect = new ToolStripMenuItem();
             timeLineToolStripMenuItem = new ToolStripMenuItem();
-            dataTreeViewToAdd_Cancel_Delete = new DataTreeViewToAdd_Cancel_Delete();
+            dataTreeViewToAdd_Cancel_Delete = new DataTreeViewToAddCancelDelete();
             contextMenuStripPicturesBox = new ContextMenuStrip(components);
             toolStripMenuItem_SetToNoPicturesFound = new ToolStripMenuItem();
             toolStripMenuItem_AddANewPictures = new ToolStripMenuItem();
@@ -320,10 +320,6 @@ namespace StockRoom11net
             dataTreeViewToAdd_Cancel_Delete.Name = "dataTreeViewToAdd_Cancel_Delete";
             dataTreeViewToAdd_Cancel_Delete.Size = new Size(513, 510);
             dataTreeViewToAdd_Cancel_Delete.TabIndex = 0;
-            dataTreeViewToAdd_Cancel_Delete.Switch_DataTable += DataTreeViewToAdd_Cancel_Delete_Switch_DataTable;
-            dataTreeViewToAdd_Cancel_Delete.Save_Requested += DataTreeViewToAdd_Cancel_Delete_Save_Requested;
-            dataTreeViewToAdd_Cancel_Delete.SelectedIndexChanged += DataTreeViewToAdd_Cancel_Delete_SelectedIndexChangedAsync;
-            dataTreeViewToAdd_Cancel_Delete.Load += DataTreeViewToAdd_Cancel_Delete_Load;
             // 
             // contextMenuStripPicturesBox
             // 
@@ -1253,7 +1249,7 @@ namespace StockRoom11net
             // 
             ToolStripMenuItem_GroupByThisColumn.Name = "ToolStripMenuItem_GroupByThisColumn";
             ToolStripMenuItem_GroupByThisColumn.Size = new Size(205, 22);
-            ToolStripMenuItem_GroupByThisColumn.Text = "Test Add item";
+            ToolStripMenuItem_GroupByThisColumn.Text = "Test Add itemEFtableTreeView";
             // 
             // StockRoom_Inventory
             // 
@@ -1370,7 +1366,7 @@ namespace StockRoom11net
         private System.Windows.Forms.Button button_Save;
         private System.Windows.Forms.Button button_Delete;
         private StockRoom11net.Controls.ThumbViewer.ThumbViewer thumbViewer_Location;
-        private DataTreeViewToAdd_Cancel_Delete dataTreeViewToAdd_Cancel_Delete;
+        private DataTreeViewToAddCancelDelete dataTreeViewToAdd_Cancel_Delete;
         private ToolStripMenuItem toolStripMenuItem_Border;
         private ToolStripMenuItem toolStripMenuItem_Translucent;
         private ToolStripMenuItem toolStripMenuItem_TextColor;

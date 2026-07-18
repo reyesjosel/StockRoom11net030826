@@ -224,7 +224,7 @@ namespace StockRoom11net.Controls.SMTcontrol
             componentInformations = new ComponentInformation((Table_StockRoom)bindingSource[stockRoomIndex]);
 
             Description = componentInformations.Description + remplacementsComp;
-            CompOnHand = componentInformations.OnAvailable;
+            CompOnHand = componentInformations.OnAvailable ?? 0;
             SizePackaging = componentInformations.Package;
         }
 

@@ -12,7 +12,7 @@ public partial class Table_TimeLine
     [Key]
     public int ID { get; set; }
 
-    public string StartDate { get; set; } = null!;
+    public string? StartDate { get; set; }
 
     public string? StartTime { get; set; } = null!;
 

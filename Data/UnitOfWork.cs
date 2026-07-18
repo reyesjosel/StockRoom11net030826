@@ -13,19 +13,27 @@ namespace StockRoom11net.Data;
 public interface IUnitOfWork : IDisposable
 {
     // Repository properties
-    IStockRoomRepository StockRooms { get; }
-    ITableStockRoomTreeViewRepository TableStockRoomTreeViews { get; }
+    IStockRoomRepository TableStockRoomRepository { get; }
+    ITableStockRoomTreeViewRepository TableStockRoomTreeViewRepository { get; }
 
-    ITableTimeLineRepository TableTimeLines { get; }
-    ITableTimeLineTreeViewRepository TableTimeLineTreeViews { get; }
+    ITableTimeLineRepository TableTimeLineRepository { get; }
+    ITableTimeLineTreeViewRepository TableTimeLineTreeViewRepository { get; }
 
-    ITableEmployeeRepository TableEmployees { get; }
-    ITableEmployeeTreeViewRepository TableEmployeeTreeViews { get; }
+    ITableEmployeeRepository TableEmployeeRepository { get; }
+    ITableEmployeeTreeViewRepository TableEmployeeTreeViewRepository { get; }
 
     // Save changes methods
     Task<int> CompleteAsync();
     Task<int> SaveChangesAsync(); // ✅ Add this alias
-    
+
+    /// <summary>
+    /// Checks if the given DataGridViewCell corresponds to a key column in the specified entity type
+    /// </summary>
+    /// <param name="cell">The DataGridViewCell to check</param>
+    /// <param name="entityType">The entity type to check against</param>
+    /// <returns>True if the cell corresponds to a key column, otherwise false</returns>
+    Task<bool> IsKeyColumn(DataGridViewCell cell, Type entityType);
+
     // Transaction support
     Task<IDbContextTransaction> BeginTransactionAsync();
     Task CommitTransactionAsync();
@@ -51,32 +59,32 @@ public class UnitOfWork : IUnitOfWork
         _context = context;
     }
 
-    public IStockRoomRepository StockRooms
+    public IStockRoomRepository TableStockRoomRepository
     {
         get { return _stockRooms ??= new StockRoomRepository(_context); }
     }
 
-    public ITableStockRoomTreeViewRepository TableStockRoomTreeViews
+    public ITableStockRoomTreeViewRepository TableStockRoomTreeViewRepository
     {
         get { return _tableStockRoomTreeViews ??= new TableStockRoomTreeViewRepository(_context); }
     }
 
-    public ITableTimeLineRepository TableTimeLines
+    public ITableTimeLineRepository TableTimeLineRepository
     {
         get { return _tableTimeLines ??= new TableTimeLineRepository(_context); }
     }
 
-    public ITableTimeLineTreeViewRepository TableTimeLineTreeViews
+    public ITableTimeLineTreeViewRepository TableTimeLineTreeViewRepository
     {
         get { return _tableTimeLineTreeViews ??= new TableTimeLineTreeViewRepository(_context); }
     }
     
-    public ITableEmployeeRepository TableEmployees
+    public ITableEmployeeRepository TableEmployeeRepository
     {
         get { return _tableEmployees ??= new TableEmployeeRepository(_context); }
     }
 
-    public ITableEmployeeTreeViewRepository TableEmployeeTreeViews
+    public ITableEmployeeTreeViewRepository TableEmployeeTreeViewRepository
     {
         get { return _tableEmployeeTreeViews ??= new TableEmployeeTreeViewRepository(_context); }
     }
@@ -100,6 +108,21 @@ public class UnitOfWork : IUnitOfWork
     public async Task<int> SaveChangesAsync()
     {
         return await CompleteAsync();
+    }
+
+    public async Task<bool> IsKeyColumn(DataGridViewCell cell, Type entityType)
+    {
+        var propName = cell?.OwningColumn?.DataPropertyName;
+        if (string.IsNullOrEmpty(propName)) return false;
+
+        var keyProps = _context.Model
+            .FindEntityType(entityType)?
+            .FindPrimaryKey()?
+            .Properties
+            .Select(p => p.Name)
+            .ToHashSet();
+
+        return keyProps?.Contains(propName) ?? false;
     }
 
     #region "Transaction Management"

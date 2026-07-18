@@ -398,7 +398,7 @@ namespace StockRoom11net.Controls.SMTcontrol
         public string PartNumber { get; private set; }
 
         /// <summary>
-        /// Gets the part number tag associated with the item.
+        /// Gets the part number tag associated with the itemEFtableTreeView.
         /// </summary>
         /// <remarks>
         /// This is typically the first four characters of the part number,
@@ -412,10 +412,10 @@ namespace StockRoom11net.Controls.SMTcontrol
         public string Supplier { get; private set; }
         public string DataSheet_File { get; private set; }
         public string Who_uses_this { get; private set; }
-        public int OnHand { get; private set; }
-        public int OnHold { get; private set; }
+        public int? OnHand { get; private set; }
+        public int? OnHold { get; private set; }
         public string OnHoldBy { get; private set; }
-        public int OnAvailable { get; private set; }
+        public int? OnAvailable { get; private set; }
         public string Reel_Number { get; private set; }
         public string OnOrder { get; private set; }
         public string OnDemand { get; private set; }

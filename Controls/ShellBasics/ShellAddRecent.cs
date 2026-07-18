@@ -8,7 +8,7 @@ namespace StockRoom11net.Controls.ShellBasics
         {
             SHARD_PIDL = 0x00000001,    // The pv parameter points to a null-terminated string with the path
                                         // and file name of the object.
-            SHARD_PATHA = 0x00000002,   // The pv parameter points to a pointer to an item identifier list
+            SHARD_PATHA = 0x00000002,   // The pv parameter points to a pointer to an itemEFtableTreeView identifier list
                                         // (PIDL) that identifies the document's file object. PIDLs that
                                         // identify nonfile objects are not allowed.
             SHARD_PATHW = 0x00000003    // same as SHARD_PATHA but unicode string
