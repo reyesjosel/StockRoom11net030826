@@ -1,5 +1,7 @@
+using StockRoom11net.Controls.BindingSourceExt;
 using StockRoom11net.Data.Entities;
 using System.ComponentModel;
+using System.Data;
 
 namespace StockRoom11net.Data.Services;
 
@@ -10,6 +12,7 @@ namespace StockRoom11net.Data.Services;
 /// </summary>
 public partial interface ITableTimeLineService
 {
+    Task<DataTable> LoadTimeLinesDataTableAsync();
     Task<BindingList<Table_TimeLine>> LoadTimelinesAsync();
     Task<BindingList<Table_TimeLine>> SearchTimeLinesAsync(string searchTerm);
     Task<Table_TimeLine?> GetTimeLineByIdAsync(int id);
@@ -30,9 +33,15 @@ public partial class TableTimeLineService : ITableTimeLineService
         _unitOfWork = unitOfWork;
     }
 
+    public async Task<DataTable> LoadTimeLinesDataTableAsync()
+    {
+        var items = await _unitOfWork.TableTimeLineRepository.GetAllAsync();
+        return items.ToDataTable();
+    }
+
     public async Task<BindingList<Table_TimeLine>> LoadTimelinesAsync()
     {
-        var items = await _unitOfWork.TableTimeLines.GetAllAsync();
+        var items = await _unitOfWork.TableTimeLineRepository.GetAllAsync();
         return new BindingList<Table_TimeLine>(items.ToList());
     }
 
@@ -41,7 +50,7 @@ public partial class TableTimeLineService : ITableTimeLineService
         if (string.IsNullOrWhiteSpace(searchTerm))
             return await LoadTimelinesAsync();
 
-        var items = await _unitOfWork.TableTimeLines.FindAsync(t => 
+        var items = await _unitOfWork.TableTimeLineRepository.FindAsync(t => 
         (t.HeadLine != null && t.HeadLine.Contains(searchTerm)) ||
              (t.ItemText != null && t.ItemText.Contains(searchTerm)) ||
              (t.DisplayDate != null && t.DisplayDate.Contains(searchTerm)));
@@ -57,7 +66,7 @@ public partial class TableTimeLineService : ITableTimeLineService
         if (string.IsNullOrWhiteSpace(filter))
             return await LoadTimelinesAsync();
 
-        var items = await _unitOfWork.TableTimeLines.FindAsync(t => 
+        var items = await _unitOfWork.TableTimeLineRepository.FindAsync(t => 
         (t.HeadLine != null && t.HeadLine.Contains(filter)) ||
              (t.ItemText != null && t.ItemText.Contains(filter)) ||
              (t.DisplayDate != null && t.DisplayDate.Contains(filter)));
@@ -69,7 +78,7 @@ public partial class TableTimeLineService : ITableTimeLineService
 
     public async Task<Table_TimeLine?> GetTimeLineByIdAsync(int id)
     {
-        return await _unitOfWork.TableTimeLines.GetByIdAsync(id);
+        return await _unitOfWork.TableTimeLineRepository.GetByIdAsync(id);
     }
 
     public async Task<Table_TimeLine> CreateTimeLineAsync(Table_TimeLine timeLine)
@@ -81,23 +90,22 @@ public partial class TableTimeLineService : ITableTimeLineService
       //  if (string.IsNullOrEmpty(timeLine.Status))
       //      timeLine.Status = "Active";
 
-        var created = await _unitOfWork.TableTimeLines.AddAsync(timeLine);
+        var created = await _unitOfWork.TableTimeLineRepository.AddAsync(timeLine);
         await _unitOfWork.SaveChangesAsync();
         return created;
     }
 
     public async Task UpdateTimeLineAsync(Table_TimeLine timeLine)
     {
-        _unitOfWork.TableTimeLines.Update(timeLine);
-        await _unitOfWork.SaveChangesAsync();
+        await _unitOfWork.TableTimeLineRepository.UpdateSaveAsync(timeLine);
     }
 
     public async Task DeleteTimeLineAsync(int id)
     {
-        var timeLine = await _unitOfWork.TableTimeLines.GetByIdAsync(id);
+        var timeLine = await _unitOfWork.TableTimeLineRepository.GetByIdAsync(id);
         if (timeLine != null)
         {
-            _unitOfWork.TableTimeLines.Remove(timeLine);
+            _unitOfWork.TableTimeLineRepository.Remove(timeLine);
             await _unitOfWork.SaveChangesAsync();
         }
     }

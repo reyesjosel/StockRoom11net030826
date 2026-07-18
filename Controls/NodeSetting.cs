@@ -1,5 +1,9 @@
-﻿using StockRoom11net.Properties;
+﻿using StockRoom11net.Controls.BindingSourceExt;
 using StockRoom11net.Controls.EmployeeInformation;
+using StockRoom11net.Data;
+using StockRoom11net.Data.Entities;
+using StockRoom11net.Data.Services;
+using StockRoom11net.Properties;
 using System.ComponentModel;
 using System.Data;
 using static StockRoom11net.Controls.Custom_Events_Args;
@@ -7,8 +11,6 @@ using HeightChange_EventArgs = StockRoom11net.Controls.Custom_Events_Args.Height
 using Save_Requested_EventArgs = StockRoom11net.Controls.Custom_Events_Args.Save_Requested_EventArgs;
 using StatusBarMessage_EventArgs = StockRoom11net.Controls.Custom_Events_Args.StatusBarMessage_EventArgs;
 using StringFilterControl_EventArgs = StockRoom11net.Controls.Custom_Events_Args.StringFilterControl_EventArgs;
-using StockRoom11net.Data.Entities;
-using StockRoom11net.Data.Services;
 
 
 namespace StockRoom11net.Controls
@@ -46,6 +48,83 @@ namespace StockRoom11net.Controls
         string _tableName = "Not DataTable defined.";
 
         string initialDirectory = Settings.Default.DataBaseAddress;// + "\\Resources\\PNG\\48\\";
+
+        /// <summary>
+        /// An empty node item used as a placeholder when there are no matching tasks to display in the tree view.
+        /// </summary>
+        Table_Base_TreeView _emptyNodeItem = new Table_Base_TreeView()
+        {
+            Index = 100000,
+            ID = 100000,
+            Parent_ID = 100000,
+            Code = "",
+            Text_Name = "",
+            Node_PDF = "",
+            Node_Picture = "",
+            Description_Short = "",
+            Description_Expand = "",
+            Image = "",
+            String_Filter = "",
+            ItemCount = 0,
+            ItemOpen = 0,
+            DateCreated = "",
+            Created_by = "",
+            AvailableDepartments = "",
+            Properties = "",
+            Message_String = ""
+        };
+
+        #region"Timer SaveUserSetting if it's modifying the user interface."
+
+        int _sec = 10;
+
+        /// <summary>
+        /// An interval of 10 seconds to save user setting if this is modifying the user interface.
+        /// </summary>
+        System.Windows.Forms.Timer SaveUserSettingTimer;
+
+        void SaveUserSetting()
+        {
+            if (itemBindingTableTreeView.ID == 100000)
+                return;
+
+            SaveUserSettingTimer.Start();
+            NeedSaveData = false;
+            _sec = 10;
+
+            On_StatusBarMessage(new StatusBarMessage_EventArgs("", "  10 sec less to save data changed."));
+        }
+
+        /// <summary>
+        /// Initialize the SaveUserSettingTimer to 10 seconds to save
+        /// user setting if this is modifying the user interface.
+        /// </summary>
+        void InitializeSaveUserSettingTimer()
+        {
+            SaveUserSettingTimer = new System.Windows.Forms.Timer
+            {
+                Interval = 1000
+            };
+            SaveUserSettingTimer.Tick += new EventHandler(SaveUserSettingTick);
+        }
+
+        void SaveUserSettingTick(object? sender, EventArgs e)
+        {
+            _sec--;
+
+            if (_sec > 0)
+            {
+                On_StatusBarMessage(new StatusBarMessage_EventArgs("", "  " + _sec + " sec less to save data changed."));
+                return;
+            }
+
+            SaveUserSettingTimer.Stop();
+            On_StatusBarMessage(new StatusBarMessage_EventArgs("", "  "));//Clear the StatusBar.
+
+            OnSaveRequested(new Save_Requested_EventArgs(itemBindingTableTreeView){ });
+        }
+
+        #endregion"Timer SaveUserSetting if it's modifying the user interface."   
 
         #region"Events, Custom Controls Events with custom Args.*********************"
 
@@ -89,9 +168,6 @@ namespace StockRoom11net.Controls
 
             if (StatusBarMessage != null)
             {
-                if (FocusedNodePropertyTimer.Enabled)
-                    return;
-
                 // Notify Subscribers
                 StatusBarMessage(this, e);
             }
@@ -179,7 +255,7 @@ namespace StockRoom11net.Controls
                 if (value == null)
                     return;
 
-                _currentDepartmentLogIn = value;      
+                _currentDepartmentLogIn = value;
             }
         }
 
@@ -218,97 +294,6 @@ namespace StockRoom11net.Controls
 
         #endregion"CurrentUserBroadcast"
 
-        #region"Timer SaveUserSetting if it's modifying the user interface."
-
-        int _sec = 10;
-
-        /// <summary>
-        /// An interval of 10 seconds to save user setting if this is modifying the user interface.
-        /// </summary>
-        System.Windows.Forms.Timer SaveUserSettingTimer;
-
-        /// <summary>
-        /// Represents a timer used to manage operations related to the focused node property.
-        /// </summary>
-        /// <remarks>This timer is typically used to perform periodic updates or checks related to the
-        /// focused node in a user interface. Ensure the timer is properly started and stopped to avoid unnecessary
-        /// resource usage.</remarks>
-        System.Windows.Forms.Timer FocusedNodePropertyTimer;
-
-        void SaveUserSetting()
-        {
-            if (!IsMouseDrivenEvent)
-                return;
-
-            if (FocusedNodePropertyTimer.Enabled)
-                return;
-
-            IsMouseDrivenEvent = false;
-
-            SaveUserSettingTimer.Start();
-            NeedSaveData = false;
-            _sec = 10;
-
-            On_StatusBarMessage(new StatusBarMessage_EventArgs("", "  10 sec less to save data changed."));
-        }
-
-        /// <summary>
-        /// Initialize the SaveUserSettingTimer to 10 seconds to save
-        /// user setting if this is modifying the user interface.
-        /// </summary>
-        void InitializeTimers()
-        {
-            SaveUserSettingTimer = new System.Windows.Forms.Timer
-            {
-                Interval = 1000
-            };
-            SaveUserSettingTimer.Tick += new EventHandler(SaveUserSettingTick);
-
-
-            FocusedNodePropertyTimer = new System.Windows.Forms.Timer
-            {
-                Interval = 1000
-            };
-            FocusedNodePropertyTimer.Tick += new EventHandler(FocusedNodePropertyTick);
-        }
-
-        void FocusedNodePropertyTick(object? sender, EventArgs e)
-        {
-            FocusedNodePropertyTimer.Stop();
-        }
-
-        void SaveUserSettingTick(object? sender, EventArgs e)
-        {
-            /*
-            _sec--;
-
-            if (_sec > 0)
-            {
-                On_StatusBarMessage(new StatusBarMessage_EventArgs("", "  " + _sec + " sec less to save data changed."));
-                return;
-            }
-
-            SaveUserSettingTimer.Stop();
-            On_StatusBarMessage(new StatusBarMessage_EventArgs("", "  "));//Clear the StatusBar.
-
-            if (_focusedNodeProperties.DataRowViewProperties == null)
-                _tableName = "Not DataTable defined.";
-            else
-                _tableName = _focusedNodeProperties.DataRowViewProperties.Row.Table.TableName;
-
-            OnSaveRequested(new Save_Requested_EventArgs()
-            {
-                NotificationEvent = MyCode.NotificationEvents.DataBaseUpDated,
-                Message = "NodeSetting{ SaveUserSettingTick(); }, _focusedNodeProperties.SaveProperties() has been called.",
-                DataTableName = _tableName
-            });
-
-            */
-        }
-
-        #endregion"Timer SaveUserSetting if it's modifying the user interface."        
-
-
         #endregion "Events, Custom Controls Events with custom Args.*********************"
 
         #region"Properties"
@@ -332,22 +317,34 @@ namespace StockRoom11net.Controls
         }
 
         public DataRowView nextNewNode;
-
-        NodeProperties _focusedNodeProperties;
+                
+        Table_Base_TreeView itemBindingTableTreeView;
         /// <summary>
-        /// Set the focused node;
+        /// Set the current focused node,
+        /// Input property to update the user interface with the properties of this recent selected node.
         /// </summary>
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public NodeProperties FocusedNodeProperties
+        public Table_Base_TreeView CurrentNode
         {
-            get
-            {
-                return _focusedNodeProperties;
-            }
             set
             {
                 _needSaveData = false;
-                FocusedNodePropertyTimer.Start();
+
+                if(SaveUserSettingTimer.Enabled)
+                {
+                    _sec = 0;
+
+                    SaveUserSettingTick(null, EventArgs.Empty);
+
+                    /*   MessageBox.Show(new Form() { TopMost = true },
+                                       $"The autosave process is active, indicating there is data to be saved.{Environment.NewLine}" +
+                                       $"Press YES to save it immediately.{Environment.NewLine}" +
+                                       $"Press NO to cancel the changes.",
+                                        "The autosave process is active.",
+                                       MessageBoxButtons.YesNo,
+                                       MessageBoxIcon.Question);
+                                       */
+                }
 
                 if (value == null)
                 {
@@ -357,40 +354,50 @@ namespace StockRoom11net.Controls
                     return;
                 }
 
-                _focusedNodeProperties = value;
-                if (_focusedNodeProperties.DataRowViewProperties != null)
-                    _tableName = _focusedNodeProperties.DataRowViewProperties.Row.Table.TableName;
+                itemBindingTableTreeView = value;
 
-                queryBuilder.Process_StringFilter(_focusedNodeProperties.StringFilter);
+                if (itemBindingTableTreeView.ID == 100000)
+                {
+                    // This is the empty node, we don't need to process the string filter because this node
+                    // is just a placeholder when there are no matching tasks to display in the tree view.
+                    textBox_Node_Name.Text = "";
+                    pictureBox_Image.Image = null;
+                    textBox_Title.Text = "";
+                    textBox_Description.Text = "";
+                    textBox_Node_PDF_Information.Text = "";
+                    textBox_Node_Picture.Text = "";
 
-                UpdateUi();
-                UpdateAvailableDepartment();
+                    this.Enabled = false;
+
+                }
+                else
+                {
+                    this.Enabled = true;
+
+                    queryBuilder.Process_StringFilter(itemBindingTableTreeView.String_Filter);
+
+                    UpdateUi();
+                    UpdateAvailableDepartment();
+                }
             }
-        }        
+        }
 
         /// <summary>
         /// Reference to dataTable were is saved all information.
         /// </summary>
         DataTable table_treeView;
-        BindingSource _treeView_bindingSource;
+
+        BindingSourceValidating<Table_Base_TreeView> _bindingSource_TreeView;
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public BindingSource TreeViewBindingSource
+        public BindingSourceValidating<Table_Base_TreeView> BindingSourceTreeView
         {
             get
             {
-                return _treeView_bindingSource;
+                return _bindingSource_TreeView;
             }
             set
             {
-                _treeView_bindingSource = value;
-
-                if (value != null)
-                {
-                    if (value.DataSource is DataTable)
-                        table_treeView = (DataTable)_treeView_bindingSource.DataSource;
-                    if (value.DataSource is DataSet)
-                        table_treeView = ((DataSet)_treeView_bindingSource.DataSource).Tables[_treeView_bindingSource.DataMember];
-                }
+                _bindingSource_TreeView = value;
             }
         }
 
@@ -499,7 +506,7 @@ namespace StockRoom11net.Controls
 
         public bool UpdateParentID(int? parentID)
         {
-        //    _focusedNodeProperties.UpdateParentID(parentID);
+            //    _focusedNodeProperties.UpdateParentID(parentID);
 
             return true;
         }
@@ -518,39 +525,6 @@ namespace StockRoom11net.Controls
             NodeSettingInitialize();
         }
 
-        public NodeSetting(BindingSource treeView_datasource, Table_Employee currentEmployeesLogIn)
-        {
-            InitializeComponent();
-
-            _treeView_bindingSource = treeView_datasource;
-
-          //  ColumnsCollection = columnCollection;
-
-            // If we are using a bindingsource, used 
-        //    table_treeView = ((DataSet)_treeView_bindingSource.DataSource).Tables[_treeView_bindingSource.DataMember];
-
-            CurrentEmployeesLogIn = currentEmployeesLogIn;
-
-            NodeSettingInitialize();
-        }
-
-        public NodeSetting(BindingSource treeView_datasource, DataColumnCollection columnCollection,
-                                Table_Employee currentEmployeesLogIn)
-        {
-            InitializeComponent();
-
-            _treeView_bindingSource = treeView_datasource;
-
-            ColumnsCollection = columnCollection;
-
-            // If we are using a bindingsource, used 
-            table_treeView = ((DataSet)_treeView_bindingSource.DataSource).Tables[_treeView_bindingSource.DataMember];
-
-            CurrentEmployeesLogIn = currentEmployeesLogIn;
-
-            NodeSettingInitialize();
-        }
-
         /// <summary>
         /// If the nodeSetting dialog will bee used in Node setting used this constructor.
         /// </summary>
@@ -558,18 +532,18 @@ namespace StockRoom11net.Controls
         /// <param name="stockroomcollection"></param>
         /// <param name="currentEmployeesLogIn"></param>
         /// <param name="flexibleTreeView"></param>
-        public NodeSetting(BindingSource treeView_datasource, DataColumnCollection columnCollection,
+        public NodeSetting(BindingSourceValidating<Table_Base_TreeView> treeView_datasource, DataColumnCollection columnCollection,
                                 ITableEmployeeService employeesService)
         {
             try
             {
                 InitializeComponent();
 
-                TreeViewBindingSource = treeView_datasource;
+                BindingSourceTreeView = treeView_datasource;
 
                 ColumnsCollection = columnCollection;
 
-                _employeesService = employeesService;
+                _employeesService = employeesService;                
 
                 NodeSettingInitialize();
             }
@@ -584,26 +558,32 @@ namespace StockRoom11net.Controls
         {
             SendStatusBarMessage("NodeSettingInitialize");
 
-            InitializeTimers();
+            InitializeSaveUserSettingTimer();
 
             customTabControl.Alignment = TabAlignment.Right;
 
             _cache = new ResourcesCache.ResourcesCache();
 
-            queryBuilder.StringFilter += QueryBuilderStringFilter;
             queryBuilder.Resize += QueryBuilder_Resize;
+            queryBuilder.StringFilter += QueryBuilderStringFilter;
             queryBuilder.StatusBarMessage += QueryBuilder_StatusBarMessage;
 
+            textBox_Title.TextChanged += textBox_Title_TextChanged;
+            textBox_Description.TextChanged += textBox_Description_TextChanged;
+            textBox_Node_Name.TextChanged += TextBoxNodeNameTextChanged;
             textBox_Node_Name.MouseDoubleClick += TextBoxNodeNameMouseDoubleClick;
 
-            //      _focusedNodeProperties = new NodeProperties();
-            //      _focusedNodeProperties.Save_Requested += FocusedNodeProperties_Save_Requested;
+            textBox_Node_PDF_Information.TextChanged += TextBoxNodePdfInformationTextChanged;
+            textBox_Node_PDF_Information.DoubleClick += TextBoxNodePdfInformationDoubleClick;
 
-            if (TreeViewBindingSource == null)
+            textBox_Node_Picture.TextChanged += TextBoxNodePictureTextChanged;
+            pictureBox_Image.DoubleClick += pictureBox_Image_DoubleClick;
+
+            if (BindingSourceTreeView == null)
                 return;
 
             label_FilterStatus.Text = "Department filter applied.";
-            label_FilterString.Text = TreeViewBindingSource.Filter;
+            label_FilterString.Text = BindingSourceTreeView.Filter;
 
             if (table_treeView == null)
                 return;
@@ -624,19 +604,19 @@ namespace StockRoom11net.Controls
 
         void UpdateAvailableDepartment()
         {
-            /*
-            if (_focusedNodeProperties == null)
+
+            if (itemBindingTableTreeView == null)
                 return;
 
-            if (_focusedNodeProperties.AvailableDepartmentList.Count == 0)
+            if (itemBindingTableTreeView.AvailableDepartmentList.Count == 0)
                 return;
 
             /// Reset or uncheck all AvailableDepartments checkBox
             for (int i = 0; i <= (flowLayoutPanel_AvailableDepartments.Controls.Count - 1); i++)
                 ((CheckBox)flowLayoutPanel_AvailableDepartments.Controls[i]).Checked = false;
 
-            /// Set or check those departments where the menu is avalaible.
-            foreach (string depart in _focusedNodeProperties.AvailableDepartmentList)
+            /// Set or check those departments where the menu is available.
+            foreach (string depart in itemBindingTableTreeView.AvailableDepartmentList)
             {
                 string Name = "checkBox_" + depart;
 
@@ -645,7 +625,6 @@ namespace StockRoom11net.Controls
 
                 ((CheckBox)flowLayoutPanel_AvailableDepartments.Controls[Name]).Checked = true;
             }
-            */
         }
 
         void CheckBoxDepart_MouseClick(object? sender, MouseEventArgs e)
@@ -681,13 +660,13 @@ namespace StockRoom11net.Controls
 
             foreach (int childID in itemsToProcess)
             {
-                var index = _treeView_bindingSource.Find("ID", childID);
+                var index = _bindingSource_TreeView.Find("ID", childID);
                 if (index == -1)
                     continue;
 
                 //   table_treeView.Rows.Find(childID).ItemArray[19] = parentNode.AvalaibleDepartments;
 
-                if (_treeView_bindingSource[index] is DataRowView rowView)
+                if (_bindingSource_TreeView[index] is DataRowView rowView)
                 {              //AvailableDepartments
                     rowView.Row["AvalaibleDepartments"] = parentNode.AvalaibleDepartments;
                 }
@@ -719,27 +698,27 @@ namespace StockRoom11net.Controls
         }
 
         void UpdateUi()
-        {            
+        {
             SendStatusBarMessage("UpdateUi");
 
-            if (_focusedNodeProperties == null)
+            if (itemBindingTableTreeView == null)
                 return;
 
-            textBox_Node_Name.Text = _focusedNodeProperties.Text_Name;
+            textBox_Node_Name.Text = itemBindingTableTreeView.Text_Name;
 
-            textBox_Node_PDF_Information.Text = !string.IsNullOrEmpty(_focusedNodeProperties.Node_PDF) ?
-                                                                      _focusedNodeProperties.Node_PDF : @"Double click to select a PDF file.";
+            textBox_Node_PDF_Information.Text = !string.IsNullOrEmpty(itemBindingTableTreeView.Node_PDF) ?
+                                                                      itemBindingTableTreeView.Node_PDF : @"Double click to select a PDF file.";
 
-            textBox_Node_Picture.Text = !string.IsNullOrEmpty(_focusedNodeProperties.Node_Picture) ?
-                                                              _focusedNodeProperties.Node_Picture : @"Double click to select a picture.";
+            textBox_Node_Picture.Text = !string.IsNullOrEmpty(itemBindingTableTreeView.Node_Picture) ?
+                                                              itemBindingTableTreeView.Node_Picture : @"Double click to select a picture.";
 
-            if (_focusedNodeProperties.Image.Contains("Undefined") || _focusedNodeProperties.Image == "")
+            if (itemBindingTableTreeView.Image == null || itemBindingTableTreeView.Image.Contains("Undefined") || itemBindingTableTreeView.Image == "")
             {
                 pictureBox_Image.Image = null;
             }
             else
             {
-                var imageResourcePathName = Path.Join(initialDirectory, _focusedNodeProperties.Image);
+                var imageResourcePathName = Path.Join(initialDirectory, itemBindingTableTreeView.Image);
 
                 if (File.Exists(imageResourcePathName))
                 {
@@ -755,8 +734,8 @@ namespace StockRoom11net.Controls
 
             }
 
-            textBox_Title.Text = _focusedNodeProperties.Description_Short;
-            textBox_Description.Text = _focusedNodeProperties.Description_Expand;
+            textBox_Title.Text = itemBindingTableTreeView.Description_Short;
+            textBox_Description.Text = itemBindingTableTreeView.Description_Expand;
         }
 
         void SendStatusBarMessage(string info)
@@ -773,16 +752,16 @@ namespace StockRoom11net.Controls
             string path = "";
             try
             {
-              //  var newNodeProperties = new NodeProperties(rowNode);
+                //  var newNodeProperties = new NodeProperties(rowNode);
 
                 //  node.Text = newNodeProperties.Text_Name;
                 //   node.Tag = newNodeProperties;
 
-             //   if (newNodeProperties.Parent_ID != null)
-            //    {
-                    //         Node parentNode = _flexibleTreeView.Root.FindChildNodeById<BindableNode, object>(newNodeProperties.Parent_ID);
-                    //         node.AttachTo(parentNode);
-           //     }
+                //   if (newNodeProperties.Parent_ID != null)
+                //    {
+                //         Node parentNode = _flexibleTreeView.Root.FindChildNodeById<BindableNode, object>(newNodeProperties.Parent_ID);
+                //         node.AttachTo(parentNode);
+                //     }
                 //     else
                 //        node.AttachTo(_flexibleTreeView);
 
@@ -801,10 +780,10 @@ namespace StockRoom11net.Controls
         /*
         DataRowView AddNewRow(NodeProperties nodeProperties)
         {
-            _treeView_bindingSource.SuspendBinding();
-            _treeView_bindingSource.RaiseListChangedEvents = false;
+            _bindingSource_TreeView.SuspendBinding();
+            _bindingSource_TreeView.RaiseListChangedEvents = false;
 
-            object? newObject = _treeView_bindingSource.AddNew();
+            object? newObject = _bindingSource_TreeView.AddNew();
             DataRowView? newRow = newObject as DataRowView;
 
             try
@@ -832,12 +811,12 @@ namespace StockRoom11net.Controls
 
                 newRow.EndEdit();
 
-                _treeView_bindingSource.EndEdit();
-                _treeView_bindingSource.RaiseListChangedEvents = true;
-                _treeView_bindingSource.ResumeBinding();
-                _treeView_bindingSource.ResetBindings(false);
-                _treeView_bindingSource.Sort = "ID ASC";
-                _treeView_bindingSource.Position = _treeView_bindingSource.Count - 1;
+                _bindingSource_TreeView.EndEdit();
+                _bindingSource_TreeView.RaiseListChangedEvents = true;
+                _bindingSource_TreeView.ResumeBinding();
+                _bindingSource_TreeView.ResetBindings(false);
+                _bindingSource_TreeView.Sort = "ID ASC";
+                _bindingSource_TreeView.Position = _bindingSource_TreeView.Count - 1;
             }
             catch (Exception error)
             {
@@ -847,7 +826,7 @@ namespace StockRoom11net.Controls
             return newRow;
         }
         */
-        
+
         /// <summary>
         /// Return the path as string of the next possible node to select front the current focused node.
         /// </summary>
@@ -873,11 +852,11 @@ namespace StockRoom11net.Controls
 
             foreach (int childID in itemsToProcess)
             {
-                int index = _treeView_bindingSource.Find("ID", childID);
+                int index = _bindingSource_TreeView.Find("ID", childID);
                 if (index == -1)
                     continue;
 
-                _treeView_bindingSource.RemoveAt(index);
+                _bindingSource_TreeView.RemoveAt(index);
             }
         }
 
@@ -979,10 +958,9 @@ namespace StockRoom11net.Controls
             if (!(Bounds.Contains(PointToClient(MousePosition))))
                 return;
 
-      //      _focusedNodeProperties.Text_Name = textBox_Node_Name.Text;
-      //      _focusedNodeProperties.SaveProperties();
-
-            IsMouseDrivenEvent = true;
+            itemBindingTableTreeView.Text_Name = textBox_Node_Name.Text;
+            BindingSourceTreeView.ResetCurrentItem();
+            
             SaveUserSetting();
         }
 
@@ -996,10 +974,9 @@ namespace StockRoom11net.Controls
             if (!(Bounds.Contains(PointToClient(MousePosition))))
                 return;
 
- //           _focusedNodeProperties.Node_PDF = textBox_Node_PDF_Information.Text;
- //           _focusedNodeProperties.SaveProperties();
+            itemBindingTableTreeView.Node_PDF = textBox_Node_PDF_Information.Text;
+            BindingSourceTreeView.ResetCurrentItem();
 
-            IsMouseDrivenEvent = true;
             SaveUserSetting();
         }
 
@@ -1008,10 +985,9 @@ namespace StockRoom11net.Controls
             if (!(Bounds.Contains(PointToClient(MousePosition))))
                 return;
 
- //           _focusedNodeProperties.Node_Picture = textBox_Node_Picture.Text;
- //           _focusedNodeProperties.SaveProperties();
+            itemBindingTableTreeView.Node_Picture = textBox_Node_Picture.Text;
+            BindingSourceTreeView.ResetCurrentItem();
 
-            IsMouseDrivenEvent = true;
             SaveUserSetting();
         }
 
@@ -1042,10 +1018,9 @@ namespace StockRoom11net.Controls
 
                 textBox_Node_PDF_Information.Text = Path.GetFileName(_openFile.FileName);
 
-  //              _focusedNodeProperties.Node_PDF = _openFile.FileName.Replace(Settings.Default.DataBaseAddress, "");
-    //            _focusedNodeProperties.SaveProperties();
+                itemBindingTableTreeView.Node_PDF = textBox_Node_PDF_Information.Text;
+                BindingSourceTreeView.ResetCurrentItem();
 
-                IsMouseDrivenEvent = true;
                 SaveUserSetting();
             }
         }
@@ -1069,8 +1044,8 @@ namespace StockRoom11net.Controls
                 {
                     textBox_Node_Picture.Text = Path.GetFileNameWithoutExtension(openFileDialogExt.FileName);
 
-  //                  _focusedNodeProperties.Node_Picture = openFileDialogExt.FileName.Replace(Settings.Default.DataBaseAddress, "");
-  //                  _focusedNodeProperties.SaveProperties();
+                    //                  _focusedNodeProperties.Node_Picture = openFileDialogExt.FileName.Replace(Settings.Default.DataBaseAddress, "");
+                    //                  _focusedNodeProperties.SaveProperties();
 
                     IsMouseDrivenEvent = true;
                     SaveUserSetting();
@@ -1095,8 +1070,8 @@ namespace StockRoom11net.Controls
 
                         if (fo.DoOperation())
                         {
-  //                          _focusedNodeProperties.Node_Picture = "\\Pictures\\" + Path.GetFileName(openFileDialogExt.FileName);
-  //                          _focusedNodeProperties.SaveProperties();
+                            //                          _focusedNodeProperties.Node_Picture = "\\Pictures\\" + Path.GetFileName(openFileDialogExt.FileName);
+                            //                          _focusedNodeProperties.SaveProperties();
 
                             IsMouseDrivenEvent = true;
                             SaveUserSetting();
@@ -1109,7 +1084,7 @@ namespace StockRoom11net.Controls
                 }
                 catch (Exception excp)
                 {
-  //                  _focusedNodeProperties.Node_Picture = null;
+                    //                  _focusedNodeProperties.Node_Picture = null;
                     MessageBox.Show(@"Image Error ; " + excp.Message);
                 }
             }
@@ -1119,7 +1094,10 @@ namespace StockRoom11net.Controls
         {
             pictureBox_Image.Image = null;
 
-//            _focusedNodeProperties.Image = "";
+            itemBindingTableTreeView.Node_Picture = "";
+            BindingSourceTreeView.ResetCurrentItem();
+
+            SaveUserSetting();
         }
 
         void tabPage_Properties_Click(object sender, EventArgs e)
@@ -1146,11 +1124,8 @@ namespace StockRoom11net.Controls
                 {
                     pictureBox_Image.Image = Image.FromFile(openFileDialogExt.FileName);
 
-  //                  _focusedNodeProperties.Image = openFileDialogExt.FileName.Replace(initialDirectory, "");
-   //                 _focusedNodeProperties.SaveProperties();
+                    itemBindingTableTreeView.Image = openFileDialogExt.FileName.Replace(initialDirectory, "");
 
-                    IsMouseDrivenEvent = true;
-                    SaveUserSetting();
 
                     OnNodeImageChange(new NodeImageChange_EventArgs());
 
@@ -1166,7 +1141,7 @@ namespace StockRoom11net.Controls
                         source[0] = openFileDialogExt.FileName;
 
                         dest[0] = Settings.Default.DataBaseAddress + "\\Resources\\Imported\\" + Path.GetFileName(openFileDialogExt.FileName);
-  //                      _focusedNodeProperties.Image = "\\Resources\\Imported\\" + Path.GetFileName(openFileDialogExt.FileName);
+                        itemBindingTableTreeView.Image = "\\Resources\\Imported\\" + Path.GetFileName(openFileDialogExt.FileName);
 
                         fo.Operation = ShellBasics.ShellFileOperation.FileOperations.FO_COPY;
                         fo.OwnerWindow = Handle;
@@ -1180,10 +1155,14 @@ namespace StockRoom11net.Controls
 
                         #endregion"Copy the file front source directory to destinity directory"
                     }
+
+                    BindingSourceTreeView.ResetCurrentItem();
+
+                    SaveUserSetting();
                 }
                 catch (Exception excp)
                 {
-   //                 _focusedNodeProperties.Image = null;
+                    itemBindingTableTreeView.Image = "";
                     MessageBox.Show(@"Image Error ; " + excp.Message);
                 }
             }
@@ -1196,10 +1175,9 @@ namespace StockRoom11net.Controls
             if (!(Bounds.Contains(PointToClient(MousePosition))))
                 return;
 
-   //         _focusedNodeProperties.Description_Short = textBox_Title.Text;
-   //         _focusedNodeProperties.SaveProperties();
+            itemBindingTableTreeView.Description_Short = textBox_Title.Text;
+            BindingSourceTreeView.ResetCurrentItem();
 
-            IsMouseDrivenEvent = true;
             SaveUserSetting();
         }
 
@@ -1208,10 +1186,9 @@ namespace StockRoom11net.Controls
             if (!(Bounds.Contains(PointToClient(MousePosition))))
                 return;
 
-   //         _focusedNodeProperties.Description_Expand = textBox_Description.Text;
-   //         _focusedNodeProperties.SaveProperties();
+            itemBindingTableTreeView.Description_Expand = textBox_Description.Text;
+            BindingSourceTreeView.ResetCurrentItem();
 
-            IsMouseDrivenEvent = true;
             SaveUserSetting();
         }
 
@@ -1220,17 +1197,46 @@ namespace StockRoom11net.Controls
             if (buttonFilter.Text == "Show Filter")
             {
                 buttonFilter.Text = "Hide Filter";
-                TreeViewBindingSource.Filter = " AvalaibleDepartments LIKE '*" + _employeesService.CurrentDepartmentLogIn.DepartmentName + "*'";
+                BindingSourceTreeView.Filter = " AvalaibleDepartments LIKE '*" + _employeesService.CurrentDepartmentLogIn.DepartmentName + "*'";
                 label_FilterStatus.Text = "Department filter applied.";
-                label_FilterString.Text = TreeViewBindingSource.Filter;
+                label_FilterString.Text = BindingSourceTreeView.Filter;
             }
             else
             {
                 buttonFilter.Text = "Show Filter";
-                TreeViewBindingSource.RemoveFilter();
+                BindingSourceTreeView.RemoveFilter();
                 label_FilterStatus.Text = "No Department filter applied.";
                 label_FilterString.Text = "";
             }
+        }
+
+        /// <summary>
+        /// Finds the BindingSource position of the itemEFtableTreeView with the given ID.
+        /// BindingList&lt;T&gt; does not support BindingSource.Find() — this is the correct alternative.
+        /// Returns -1 if not found.
+        /// </summary>
+        private int FindPositionById(int id)
+        {
+            for (int i = 0; i < BindingSourceTreeView.Count; i++)
+            {
+                var item = BindingSourceTreeView[i];
+                if (item is Table_Base_TreeView node && node.ID == id)
+                    return i;
+            }
+            return -1;
+        }
+
+        void ContextMenuStripNodeSetting_Opening(object sender, CancelEventArgs e)
+        {
+
+        }
+
+        void ToolStripMenuItem_RemoveImage_Click(object sender, EventArgs e)
+        {
+            pictureBox_Image.Image = null;
+            itemBindingTableTreeView.Image = "";
+            BindingSourceTreeView.ResetCurrentItem();
+            SaveUserSetting();
         }
     }
 }

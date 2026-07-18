@@ -219,28 +219,47 @@ public partial class ProductionInventoryContext : DbContext
         modelBuilder.Entity<Table_StockRoom_TreeView>(entity =>
         {
             entity.Property(e => e.Index).ValueGeneratedNever();
-            entity.Property(e => e.Image).HasDefaultValueSql("'No_Picture_Found'");
             entity.Property(e => e.ItemOpen).HasDefaultValueSql("false");
-            entity.Property(e => e.Parent_ID).HasDefaultValue(0);
+            entity.Property(e => e.Parent_ID).IsRequired(false); // NULL allowed: root nodes have no parent
+
+            // NULL → "" converters: IsRequired(false) tells EF Core to call IsDBNull
+            // before GetString, so the null-coalescing converter is actually reached.
+            entity.Property(e => e.Code)               .IsRequired(false).HasConversion(v => v, v => v ?? "");
+            entity.Property(e => e.Range)              .IsRequired(false).HasConversion(v => v, v => v ?? "");
+            entity.Property(e => e.Text_Name)          .IsRequired(false).HasConversion(v => v, v => v ?? "");
+            entity.Property(e => e.Node_PDF)           .IsRequired(false).HasConversion(v => v, v => v ?? "");
+            entity.Property(e => e.Node_Picture)       .IsRequired(false).HasConversion(v => v, v => v ?? "");
+            entity.Property(e => e.Description_Short)  .IsRequired(false).HasConversion(v => v, v => v ?? "");
+            entity.Property(e => e.Description_Expand) .IsRequired(false).HasConversion(v => v, v => v ?? "");
+            entity.Property(e => e.Image)              .IsRequired(false).HasDefaultValueSql("'No_Picture_Found'").HasConversion(v => v, v => v ?? "");
+            entity.Property(e => e.String_Filter)      .IsRequired(false).HasConversion(v => v, v => v ?? "");
+            entity.Property(e => e.DateCreated)        .IsRequired(false).HasConversion(v => v, v => v ?? "");
+            entity.Property(e => e.Created_by)         .IsRequired(false).HasConversion(v => v, v => v ?? "");
+            entity.Property(e => e.AvailableDepartments).IsRequired(false).HasConversion(v => v, v => v ?? "");
+            entity.Property(e => e.Properties)         .IsRequired(false).HasConversion(v => v, v => v ?? "");
+            entity.Property(e => e.Message_String)     .IsRequired(false).HasConversion(v => v, v => v ?? "");
+            entity.Property(e => e.Status)             .IsRequired(false).HasConversion(v => v, v => v ?? "");
         });
 
         modelBuilder.Entity<Table_TimeLine>(entity =>
         {
-            entity.Property(e => e.AltText).HasDefaultValueSql("0");
-            entity.Property(e => e.Background).HasDefaultValueSql("0");
-            entity.Property(e => e.DisplayDate).HasDefaultValueSql("0");
-            entity.Property(e => e.EndDate).HasDefaultValueSql("0");
-            entity.Property(e => e.EndTime).HasDefaultValueSql("0");
-            entity.Property(e => e.Group).HasDefaultValueSql("0");
-            entity.Property(e => e.HeadLine).HasDefaultValueSql("0");
-            entity.Property(e => e.ItemText).HasDefaultValueSql("0");
-            entity.Property(e => e.Media).HasDefaultValueSql("0");
-            entity.Property(e => e.MediaCaption).HasDefaultValueSql("0");
-            entity.Property(e => e.MediaCredit).HasDefaultValueSql("0");
-            entity.Property(e => e.MediaThumbnail).HasDefaultValueSql("0");
-            entity.Property(e => e.StartDate).HasDefaultValueSql("0");
-            entity.Property(e => e.StartTime).HasDefaultValueSql("0");
-            entity.Property(e => e.Type).HasDefaultValueSql("0");
+            // IsRequired(false) tells EF Core to call IsDBNull before GetString,
+            // preventing InvalidOperationException when a column value is NULL.
+            entity.Property(e => e.StartDate)      .IsRequired(false).HasDefaultValueSql("0");
+            entity.Property(e => e.StartTime)      .IsRequired(false).HasDefaultValueSql("0");
+            entity.Property(e => e.EndDate)        .IsRequired(false).HasDefaultValueSql("0");
+            entity.Property(e => e.EndTime)        .IsRequired(false).HasDefaultValueSql("0");
+            entity.Property(e => e.DisplayDate)    .IsRequired(false).HasDefaultValueSql("0");
+            entity.Property(e => e.HeadLine)       .IsRequired(false).HasDefaultValueSql("0");
+            entity.Property(e => e.ItemText)       .IsRequired(false).HasDefaultValueSql("0");
+            entity.Property(e => e.Media)          .IsRequired(false).HasDefaultValueSql("0");
+            entity.Property(e => e.MediaCredit)    .IsRequired(false).HasDefaultValueSql("0");
+            entity.Property(e => e.MediaCaption)   .IsRequired(false).HasDefaultValueSql("0");
+            entity.Property(e => e.MediaThumbnail) .IsRequired(false).HasDefaultValueSql("0");
+            entity.Property(e => e.AltText)        .IsRequired(false).HasDefaultValueSql("0");
+            entity.Property(e => e.Type)           .IsRequired(false).HasDefaultValueSql("0");
+            entity.Property(e => e.Group)          .IsRequired(false).HasDefaultValueSql("0");
+            entity.Property(e => e.Background)     .IsRequired(false).HasDefaultValueSql("0");
         });
 
         modelBuilder.Entity<Table_TimeLine_TreeView>(entity =>

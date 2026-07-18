@@ -1,4 +1,5 @@
-﻿using StockRoom11net.Controls.SMTcontrol;
+﻿using SQLitePCL;
+using StockRoom11net.Controls.SMTcontrol;
 using StockRoom11net.Controls.UtilsLibrary;
 using StockRoom11net.Controls.WinFormsControls;
 using System.ComponentModel;
@@ -14,6 +15,118 @@ namespace StockRoom11net.Controls.DataGridViewExtend
     [ToolboxBitmap(typeof(DataGridView))]
     public class DataGridViewControlExtended : DataGridView
     {
+        #region "Index"
+        // ── Constructor ────────────────────────────────────────────────────────
+        //  DataGridViewControlExtended()
+        //
+        // ── Overrides ──────────────────────────────────────────────────────────
+        //  OnLayout()
+        //  Sort()
+        //  ProcessCmdKey()
+        //
+        // ── Initialization ─────────────────────────────────────────────────────
+        //  InitializeBrush_Pen_Icon()
+        //  InitialDelay_Tick()
+        //  InitializeDataGridView()
+        //  InitializeGrouper()
+        //  InitializeToolTip()
+        //  InitializeMouseSingleClickDetectTimer()
+        //  InitializeMouseDoubleClickDetectTimer()
+        //  AddColumn()
+        //
+        // ── Row Events ─────────────────────────────────────────────────────────
+        //  DataGridViewControlExtended_RowEnterFocus()
+        //  DataGridViewControlExtended_RowLeaveFocus()
+        //  DataGridViewControlExtended_RowPrePaint()
+        //  DataGridViewControlExtended_RowPostPaint()
+        //  DataGridViewControlExtended_RowHeaderMouseClick()
+        //
+        // ── Cell Events ────────────────────────────────────────────────────────
+        //  DataGridViewControlExtended_CellMouseDown()
+        //  DataGridViewControlExtended_CellMouseUp()
+        //  DataGridViewControlExtended_CellMouseEnter()
+        //  DataGridViewControlExtended_CellMouseLeave()
+        //  DataGridViewControlExtended_CellDoubleClick()
+        //  DataGridView_TopLeftHeader_CellPainting()
+        //
+        // ── Column Events ──────────────────────────────────────────────────────
+        //  DataGridViewControlExtended_ColumnHeaderMouseClick()
+        //  DataGridViewControlExtended_ColumnWidthChanged()
+        //  DataGridViewControlExtended_ColumnDisplayIndexChanged()
+        //  DataGridView_ColumnHeader_CellPainting()
+        //
+        // ── Mouse Events ───────────────────────────────────────────────────────
+        //  DataGridViewControlExtended_MouseDown()
+        //  DataGridViewControlExtended_MouseUp()
+        //  DataGridViewControlExtended_MouseMove()
+        //  DataGridViewControlExtended_MouseClick()
+        //  DataGridViewControlExtended_MouseLeave()
+        //
+        // ── Keyboard Events ────────────────────────────────────────────────────
+        //  DataGridViewControlExtended_PreviewKeyDown()
+        //  DataGridViewControlExtended_KeyDown()
+        //  DataGridViewControlExtended_KeyUp()
+        //
+        // ── Paint / Scroll Events ──────────────────────────────────────────────
+        //  DataGridViewControlExtended_Paint()
+        //  DataGridViewControlExtended_Scroll()
+        //  DataGridViewControlExtended_SizeChanged()
+        //  DataGridViewControlExtended_DataError()
+        //  PaintBOMRow()
+        //
+        // ── Column Selection ───────────────────────────────────────────────────
+        //  SelectColumnLogicProcess()
+        //  SelectColumn()
+        //  ReSelectColumn()
+        //  UnSelectColumn()
+        //  ClearSelectedColumns()
+        //
+        // ── Mouse Click Detection ──────────────────────────────────────────────
+        //  MouseSingleClickDetectTimer_Tick()
+        //  MouseSingleClickDetectTimerStop()
+        //  MouseTwoClickDetector_Tick()
+        //  SortCancel()
+        //  TimeDelaySortCancel_Tick()
+        //
+        // ── Grouper ────────────────────────────────────────────────────────────
+        //  SetGroupOn()
+        //  ExpandAll()
+        //  CollapseAll()
+        //  Collapse_expand()
+        //  Get_rows()
+        //  CheckIfMouseOverCollapseExpandSymbol()
+        //  CheckCollapsedFocused()
+        //  InvalidateHeaderCell()
+        //
+        // ── ToolTip ────────────────────────────────────────────────────────────
+        //  ToolTipDraw()
+        //  ToolTip_MouseLeave()
+        //  ToolTip_CellMouseEnter()
+        //
+        // ── Helper / Navigation ────────────────────────────────────────────────
+        //  GetTopLeftHeaderCellBounds()
+        //  IsColumnResizeInternalType()
+        //  SyncDisplayedColumns()
+        //  InvalidateColumnHeaders()
+        //  InvalidateColumnArea()
+        //  ResetMembersToDefault()
+        //  ThreadSafeInvoke()
+        //  MoveHorizScrollBar()
+        //
+        // ── Column Coordinate Helpers ──────────────────────────────────────────
+        //  GetLeftmostColumnHeaderXCoordinate()
+        //  GetTopmostColumnHeaderYCoordinate()
+        //  GetBottommostColumnHeaderYCoordinate()
+        //  GetColumnHeight()
+        //  GetColumnHeaderHeight()
+        //
+        // ── Row Search Helpers ─────────────────────────────────────────────────
+        //  GetRowIndexInDataGridView()
+        //  GetRowInDataGridView()
+        //  GetListRowInDataGridView()            // 2 overloads
+        //  GetRowListInDataGridView()
+        #endregion "Index"
+
         #region"Properties"
 
         /// <summary>
@@ -385,19 +498,23 @@ namespace StockRoom11net.Controls.DataGridViewExtend
 
         /// <summary>
         /// A collection of selected column, incluide FilteredColumn and SelectedColumn.
+        /// In DataGridViewControlExtended_Paint(), we scroll through this collection to paint the background of selected column.
         /// </summary>
         public SortedDictionary<int, SelectedDataGridColumn> SelectedColumnCollection;
+
+        /// <summary>
+        /// A collection of selected column header.
+        /// </summary>
+        public SortedDictionary<int, SelectedDataGridColumn> SelectedColumnHeaderCollection;
 
         /// <summary>
         /// MyStuff11net.Generic_Sorting, explained in details...
         /// </summary>
         //readonly AggregateBindingListView<ComponentData> _componentDataSource = new AggregateBindingListView<ComponentData>();
-        
-        readonly List<DataGridViewRow> rowsWithDefaultCellStyle = new List<DataGridViewRow>();
-
+               
         DataGridViewCellStyle _dataGridViewCellStyle = new DataGridViewCellStyle();
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public DataGridViewCellStyle DataGridViewCellStyle
+        public DataGridViewCellStyle DataGridViewCellStyleP
         {
             get
             {
@@ -479,6 +596,38 @@ namespace StockRoom11net.Controls.DataGridViewExtend
         #endregion"Fields"         
 
         #region"Events, Custom Controls Events with custom Args.*********************"
+
+        #region"SettingChanged"
+
+        // # 1 ... ***** New Event Declaration. *****
+        // Declare the delegates for this event:
+        public delegate void SettingChangedEventHandler(object sender, SettingChangedEventArgs e);
+
+        // # 3 ... Declare the event in the control class
+        // put some information to Properties Manager.
+        [Category("Controls Events")]
+        [Description("SettingChanged event has changed")]
+        public event SettingChangedEventHandler SettingChanged;
+
+        // # 4 ... Declare the protected virtual methods for
+        // this events, in this procedure we calling the event itself.
+        protected virtual void OnSettingChanged(SettingChangedEventArgs e)
+        {
+            SettingChanged?.Invoke(this, e);
+        }
+
+        public class SettingChangedEventArgs : EventArgs
+        {
+            // Add properties or fields here as needed
+            bool DefaultSetting;
+
+            public SettingChangedEventArgs(bool defaultSetting)
+            {
+                DefaultSetting = defaultSetting;
+            }
+        }
+
+        #endregion"SettingChanged"
 
         #region"PreviewKeyDown"        
         public delegate void PreviewKeyDownEventHandler(object sender, PreviewKeyDownEventArgs e);
@@ -660,20 +809,20 @@ namespace StockRoom11net.Controls.DataGridViewExtend
 
         */
 
-
         public DataGridViewControlExtended() : base()
         {
             try
             {
                 AllowUserToAddRows = false;
 
-                this.Font                               = new Font("Microsoft Sans Serif", 12F, FontStyle.Regular, GraphicsUnit.Point, 161);
+                Font                                    = new Font("Microsoft Sans Serif", 12F, FontStyle.Regular, GraphicsUnit.Point, 161);
                 _dataGridViewCellStyle.Font             = new Font("Microsoft Sans Serif", 12F, FontStyle.Regular, GraphicsUnit.Point, 161); 
                 _dataGridViewCellStyleSelectedRow.Font  = new Font("Microsoft Sans Serif", 14F, FontStyle.Bold, GraphicsUnit.Point, 161);
                 _dataGridViewColumnHeaderCellStyle.Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Bold, GraphicsUnit.Point, 161);
 
-                this.DefaultCellStyle               = _dataGridViewCellStyle;
-                this.ColumnHeadersDefaultCellStyle  = _dataGridViewColumnHeaderCellStyle;
+                DefaultCellStyle               = _dataGridViewCellStyle;
+                RowTemplate.DefaultCellStyle   = _dataGridViewCellStyle;
+                ColumnHeadersDefaultCellStyle  = _dataGridViewColumnHeaderCellStyle;
 
                 MessagePositionString = "Initialize initialDelay timer..";
                 initialDelay = new System.Windows.Forms.Timer
@@ -684,6 +833,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
                 initialDelay.Start();
 
                 ActiveFilterCollection = new SortedDictionary<int, FilteredHeaderCell>();
+                SelectedColumnHeaderCollection = new SortedDictionary<int, SelectedDataGridColumn>();
                 SelectedColumnCollection = new SortedDictionary<int, SelectedDataGridColumn>();
 
                 HitTestData = HitTest(25, 25);
@@ -722,6 +872,18 @@ namespace StockRoom11net.Controls.DataGridViewExtend
         {
             base.OnLayout(e);
             base.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
+        }
+
+        /// <summary>
+        /// Override Sort to block auto-sort during click-and-hold (column select).
+        /// This avoids the need to toggle SortMode=Programmatic, which wipes SortGlyphDirection.
+        /// </summary>
+        public override void Sort(DataGridViewColumn dataGridViewColumn, ListSortDirection direction)
+        {
+            if (SuppressSortOnNextColumnHeaderClick)
+                return;
+
+            base.Sort(dataGridViewColumn, direction);
         }
 
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
@@ -805,16 +967,17 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             MouseDown   += DataGridViewControlExtended_MouseDown;
             MouseMove   += DataGridViewControlExtended_MouseMove;
             MouseClick  += DataGridViewControlExtended_MouseClick;
+            MouseWheel  += DataGridViewControlExtended_MouseWheel;
 
-            CellPainting    += DataGridView_CellPainting;
+            CellPainting    += DataGridView_TopLeftHeader_CellPainting;
+            CellPainting    += DataGridView_ColumnHeader_CellPainting;
             CellMouseUp     += DataGridViewControlExtended_CellMouseUp;
             CellMouseDown   += DataGridViewControlExtended_CellMouseDown;
             CellMouseEnter  += DataGridViewControlExtended_CellMouseEnter;
             CellMouseLeave  += DataGridViewControlExtended_CellMouseLeave;
             CellDoubleClick += DataGridViewControlExtended_CellDoubleClick;
 
-            RowEnter += DataGridViewControlExtended_RowEnter;
-            RowLeave += DataGridViewControlExtended_RowLeave;
+            RowEnter += DataGridViewControlExtended_RowEnterFocus;
 
             KeyDown         += DataGridViewControlExtended_KeyDown;
             PreviewKeyDown  += DataGridViewControlExtended_PreviewKeyDown;
@@ -823,8 +986,6 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             ColumnWidthChanged           += DataGridViewControlExtended_ColumnWidthChanged;
             ColumnHeaderMouseClick       += DataGridViewControlExtended_ColumnHeaderMouseClick;
             ColumnDisplayIndexChanged    += DataGridViewControlExtended_ColumnDisplayIndexChanged;
-
-            RowHeaderMouseClick += DataGridViewControlExtended_RowHeaderMouseClick;
 
             #endregion"Wire the handles..."
 
@@ -848,8 +1009,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
 
             SyncDisplayedColumns();
         }
-
-
+                
         void AddColumn(string headerText, string name)
         {
             using (var newColumn = new DataGridViewColumn())
@@ -869,35 +1029,30 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             }
         }
 
-
-        void DataGridViewControlExtended_RowLeave(object sender, DataGridViewCellEventArgs e)
-        {
-            //Occurs when a row loses input focus and is no longer the current row.
-            //But it also fire when the control loses the focus...
-            if (CurrentRow == null || CurrentRow.Index == e.RowIndex)
-                return;
-
-            foreach (DataGridViewRow row in rowsWithDefaultCellStyle)
-                row.DefaultCellStyle = _dataGridViewCellStyle;
-
-            rowsWithDefaultCellStyle.Clear();
-        }
-
-        void DataGridViewControlExtended_RowEnter(object sender, DataGridViewCellEventArgs e)
+        /// <summary>
+        /// Occurs when a row receives input focus but before it becomes the current row.
+        /// When event fire, the CurrentRow is the previous row, so we need restore the style of CurrentRow,
+        /// remenber that we change the style of CurrentRow in DataGridViewControlExtended_RowPrePaint event to
+        /// _dataGridViewCellStyleSelectedRow, so we need restore to _dataGridViewCellStyle.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        void DataGridViewControlExtended_RowEnterFocus(object? sender, DataGridViewCellEventArgs e)
         {
             //Occurs when a row receives input focus but before it becomes the current row.
             //But it also fire when the control receives the focus...
+            // If CurrentRow == e.RowIndex, it is the selected row, do not change style, Return.
+            // When event fire, the CurrentRow is the previous row, so we need restore the style of CurrentRow,
+            // remenber that we change the style of CurrentRow in DataGridViewControlExtended_RowPrePaint event to
+            // _dataGridViewCellStyleSelectedRow, so we need restore to _dataGridViewCellStyle.
             if (CurrentRow == null || CurrentRow.Index == e.RowIndex)
                 return;
 
-            foreach (DataGridViewRow row in rowsWithDefaultCellStyle)
-                row.DefaultCellStyle = _dataGridViewCellStyle;
-
-            rowsWithDefaultCellStyle.Clear();
+            CurrentRow.DefaultCellStyle = _dataGridViewCellStyle;
         }
 
         int countError = 0;
-        void DataGridViewControlExtended_DataError(object sender, DataGridViewDataErrorEventArgs e)
+        void DataGridViewControlExtended_DataError(object? sender, DataGridViewDataErrorEventArgs e)
         {
             if (countError == 0)
             {
@@ -937,21 +1092,22 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             ReSelectColumn();
         }
 
-        void DataGridViewControlExtended_ColumnWidthChanged(object sender, DataGridViewColumnEventArgs e)
+        void DataGridViewControlExtended_ColumnWidthChanged(object? sender, DataGridViewColumnEventArgs e)
         {
             SyncDisplayedColumns();
             ReSelectColumn();
         }
 
-        void DataGridViewControlExtended_ColumnDisplayIndexChanged(object sender, DataGridViewColumnEventArgs e)
+        void DataGridViewControlExtended_ColumnDisplayIndexChanged(object? sender, DataGridViewColumnEventArgs e)
         {
             SyncDisplayedColumns();
             ReSelectColumn();
         }
 
         #region"KeyDown event & KeyUp event"
+
         KeyEventArgs _keyEvent = new KeyEventArgs(Keys.Cancel);
-        void DataGridViewControlExtended_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
+        void DataGridViewControlExtended_PreviewKeyDown(object? sender, PreviewKeyDownEventArgs e)
         {
             if (e.Control)
             {
@@ -984,7 +1140,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             return base.ProcessCmdKey(ref msg, keyData);
         }
 
-        void DataGridViewControlExtended_KeyDown(object sender, KeyEventArgs e)
+        void DataGridViewControlExtended_KeyDown(object? sender, KeyEventArgs e)
         {
             _keyEvent = e;
 
@@ -1060,15 +1216,30 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             #endregion"Control-C  (Copy)"
         }
 
-        void DataGridViewControlExtended_KeyUp(object sender, KeyEventArgs e)
+        void DataGridViewControlExtended_KeyUp(object? sender, KeyEventArgs e)
         {
             _keyEvent = e;
         }
 
         #endregion"KeyDown event & KeyUp event"
 
-        void DataGridViewControlExtended_Paint(object sender, PaintEventArgs e)
+        void DataGridViewControlExtended_Paint(object? sender, PaintEventArgs e)
         {
+            #region"SelectedColumnHeaderCollection"
+
+            if (SelectedColumnHeaderCollection.Count != 0)
+            {
+                foreach (KeyValuePair<int, SelectedDataGridColumn> selectedColumnKeyValue in SelectedColumnHeaderCollection)
+                {
+                    var g = e.Graphics;
+
+                    g.FillRectangle(darkGreyBrush, selectedColumnKeyValue.Value.InitialRegion);
+                    //g.DrawRectangle(blackPen, selectedColumn.HeaderCell.ContentBounds);
+                }
+            }
+
+            #endregion"SelectedColumnHeaderCollection"
+
             #region"SelectedColumnCollection"
 
             if (SelectedColumnCollection.Count == 0)
@@ -1139,8 +1310,8 @@ namespace StockRoom11net.Controls.DataGridViewExtend
         /// CellMouseDown, ColumnHeaderMouseClick, etc...and in MouseUp we need to reset it to default value for the same reason.
         /// </summary>
         MouseEventArgs _mouseEvent = new MouseEventArgs(MouseButtons.None, 0, 0, 0, 0);
-
-        void DataGridViewControlExtended_MouseMove(object sender, MouseEventArgs e)
+               
+        void DataGridViewControlExtended_MouseMove(object? sender, MouseEventArgs e)
         {
             _mouseLocation = e.Location;
 
@@ -1198,19 +1369,19 @@ namespace StockRoom11net.Controls.DataGridViewExtend
 
                 if (TopLeftColumnHeaderSelectRect.Contains(_mouseLocation))
                 {
-                    IsMouseOverTopLeftColumnHeaderCell = true;
+                    IsMouseOverTopLeftColumnHeaderCellGlyph = true;
                 }
                 else
-                    IsMouseOverTopLeftColumnHeaderCell = false;
+                    IsMouseOverTopLeftColumnHeaderCellGlyph = false;
 
                 if (TopLeftRowsHeaderSelectRect.Contains(_mouseLocation))
                 {
-                    IsMouseOverTopLeftRowsHeaderCell = true;
+                    IsMouseOverTopLeftRowsHeaderCellGlyph = true;
                 }
                 else
-                    IsMouseOverTopLeftRowsHeaderCell = false;
+                    IsMouseOverTopLeftRowsHeaderCellGlyph = false;
 
-                if ((IsMouseOverTopLeftColumnHeaderCell || IsMouseOverTopLeftRowsHeaderCell) && !_isPainted)
+                if ((IsMouseOverTopLeftColumnHeaderCellGlyph || IsMouseOverTopLeftRowsHeaderCellGlyph) && !_isPainted)
                 {
                     _isPainted = true;
                     this.InvalidateCell(TopLeftHeaderCell);
@@ -1244,7 +1415,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
 
             #region"Mouse over ColumnHeader"
 
-            if (_currentRowMouseOverIndex == -1 && _currentColumnMouseOverIndex > -1)
+            if (_currentRowMouseOverIndex == -1 && _currentColumnMouseOverIndex >= 0)
             {
                 _isMouseOverColumnHeaderCell = true;
 
@@ -1375,14 +1546,13 @@ namespace StockRoom11net.Controls.DataGridViewExtend
 
             #region"Mouse over RowHeader"
 
-            if (_currentRowMouseOverIndex > -1 && _currentColumnMouseOverIndex == -1)
+            if (_currentRowMouseOverIndex >= 0 && _currentColumnMouseOverIndex == -1)
             {
                 _isMouseOverRowHeaderCell = true;
 
-                if (SelectedRows.Count == 1)
+                // Only start drag when left button is held down
+                if (e.Button == MouseButtons.Left && SelectedRows.Count == 1)
                     DoDragDrop(CurrentRow, DragDropEffects.Move);
-              //  else
-              //      DoDragDrop(SelectedRows, DragDropEffects.Move);
             }
             else
                 _isMouseOverRowHeaderCell = false;
@@ -1400,7 +1570,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
 
         }
 
-        void DataGridViewControlExtended_MouseClick(object sender, MouseEventArgs e)
+        void DataGridViewControlExtended_MouseClick(object? sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left && _currentColumnMouseOverIndex == -1)
             {
@@ -1423,12 +1593,12 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             }
         }
 
-        void DataGridViewControlExtended_MouseLeave(object sender, EventArgs e)
+        void DataGridViewControlExtended_MouseLeave(object? sender, EventArgs e)
         {
             ToolTip_MouseLeave();
         }
 
-        void DataGridViewControlExtended_MouseDown(object sender, MouseEventArgs e)
+        void DataGridViewControlExtended_MouseDown(object? sender, MouseEventArgs e)
         {
             // Note: DataGridViewMouseDown is the first event handler and then is called DataGridViewCellMouseDown event handler,
             // opposite to DataGridViewCellMouseUp/DataGridViewMouseUp event handler.
@@ -1451,7 +1621,12 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             }
 
             if (IsColumnResizeInternalType())
+            {
+                // Reset _mouseEvent so MouseMove doesn't treat this resize as a column drag,
+                // which would cause the resized column to be incorrectly highlighted.
+                _mouseEvent = new MouseEventArgs(MouseButtons.None, 0, 0, 0, 0);
                 return;
+            }
 
             // In mouse down event, we create System Information.Drag Size rectangle regardless of where the click occurred
             var dragSize = SystemInformation.DragSize;
@@ -1461,6 +1636,28 @@ namespace StockRoom11net.Controls.DataGridViewExtend
 
             if (HitTestData.Type == DataGridViewHitTestType.TopLeftHeader)
             {
+                MultiSelect = false;
+
+                if (IsMouseOverTopLeftColumnHeaderCellGlyph)
+                {
+                    if (SelectedColumnHeaderCollection.Count != 0)
+                    {
+                        SelectAllColumnsHeader(false);
+                        return;
+                    }
+                    else
+                    {
+                        SelectAllColumnsHeader(true);
+                        return;
+                    }
+                }
+
+                if(IsMouseOverTopLeftRowsHeaderCellGlyph)
+                {
+                    return;
+                }
+
+                ToolStripMenuItem_SortByPDF_Click();
                 OnTopLeftHeaderMouseDown(new EventArgs());
                 return;
             }
@@ -1503,7 +1700,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
 
         }
 
-        void DataGridViewControlExtended_MouseUp(object sender, MouseEventArgs e)
+        void DataGridViewControlExtended_MouseUp(object? sender, MouseEventArgs e)
         {
             _mouseEvent = new MouseEventArgs(MouseButtons.None, 0, 0, 0, 0);
             MouseSingleClickDetectTimer.Stop();
@@ -1519,10 +1716,10 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             #endregion"MouseUp over TopLeftHeader"
 
             //Set HeaderText only to repaint it again.
-            if (_currentColumnActive != null)
-                _currentColumnActive.HeaderText = _currentColumnActive.HeaderText;
+         //   if (_currentColumnActive != null)
+         //       _currentColumnActive.HeaderText = _currentColumnActive.HeaderText;
 
-            Cursor = Cursors.Default;
+         //   Cursor = Cursors.Default;
 
             if (IsDraggedColumn != null)
             {
@@ -1532,8 +1729,117 @@ namespace StockRoom11net.Controls.DataGridViewExtend
                 Invalidate();
                 Update();
             }
+
             // Note: SortMode restoration for click-and-hold is handled by
             // BeginInvoke in DataGridViewControlExtended_ColumnHeaderMouseClick.
+
+        }
+
+        void DataGridViewControlExtended_MouseWheel(object? sender, MouseEventArgs e)
+        {
+            if (ModifierKeys == Keys.Control)
+            {
+                if (IsMouseOverCell)
+                {
+                    float currentSize = DefaultCellStyle.Font?.Size ?? Font.Size;
+                    float newSize = e.Delta > 0 ? currentSize + 0.5f : currentSize - 0.5f;
+                    newSize = Math.Clamp(newSize, 10f, 34f);
+
+                    Font newFont = new Font(_dataGridViewCellStyle.Font!.FontFamily, newSize, _dataGridViewCellStyle.Font.Style);
+
+                    Set_DefaultCellStyle_SelectedCellStyle(newFont);
+                }
+
+                if (IsMouseOverColumnHeaderCell)
+                {
+                    // ✅ Column headers
+                    if (ColumnHeadersDefaultCellStyle.Font != null)
+                    {
+                        float currentSizeHeader = ColumnHeadersDefaultCellStyle.Font.Size;
+                        float newSizeHeader = Math.Clamp(e.Delta > 0 ? currentSizeHeader + 0.5f : currentSizeHeader - 0.5f, 10f, 34f);
+                        Font colHeaderFont = new Font(ColumnHeadersDefaultCellStyle.Font.FontFamily, newSizeHeader,
+                                                      ColumnHeadersDefaultCellStyle.Font.Style);
+
+                        Set_ColumnHeaderCellStyle(colHeaderFont);
+                    }
+                }
+
+                ((HandledMouseEventArgs)e).Handled = true;
+                OnSettingChanged(new SettingChangedEventArgs(true));
+            }
+        }
+
+        public void Set_DefaultCellStyle_SelectedCellStyle(Font newFont)
+        {
+            if (newFont is null) return;
+
+            Font newFontSelected = new Font(newFont.FontFamily, newFont.Size + 2f, FontStyle.Bold);
+
+            // ✅ Update the two backing style objects directly
+            _dataGridViewCellStyle.Font = newFont;
+            _dataGridViewCellStyleSelectedRow.Font = newFontSelected;
+
+            // ✅ Sync grid-level styles
+            this.Font = newFont;
+            this.DefaultCellStyle.Font = newFont;
+            base.RowsDefaultCellStyle.Font = newFont;
+            RowTemplate.DefaultCellStyle.Font = newFont;
+
+            if (!_doOverDefaultCellStyleScheduled)
+            {
+                _doOverDefaultCellStyleScheduled = true;
+
+                if (IsHandleCreated)
+                {
+                    // Using BeginInvoke here batches rapid wheel events into a single style
+                    // pass at the end of the current message loop, which also eliminates flicker.
+                    BeginInvoke(() =>
+                    {
+                        DoOverDefaultCellStyle();
+                        _doOverDefaultCellStyleScheduled = false;
+                    });
+                }
+                else
+                {
+                    // Handle not yet created (e.g. called during constructor/DI setup),
+                    // apply immediately or defer until the handle is ready.
+                    void OnHandleCreated(object? s, EventArgs e)
+                    {
+                        HandleCreated -= OnHandleCreated;
+                        DoOverDefaultCellStyle();
+                        _doOverDefaultCellStyleScheduled = false;
+                    }
+                    HandleCreated += OnHandleCreated;
+                }
+            }
+
+            Invalidate();
+            Update();
+        }
+
+        public void Set_ColumnHeaderCellStyle(Font colHeaderFont)
+        {
+            _dataGridViewColumnHeaderCellStyle.Font = colHeaderFont;
+            ColumnHeadersHeight = colHeaderFont.Height + _rowHeightAdd;
+            InvalidateColumnHeaders(colHeaderFont);
+        }
+
+        /// <summary>
+        /// This method forces each row to re-apply the DefaultCellStyle,
+        /// which is necessary for the font change to take effect on all cells.
+        /// </summary>
+        bool _doOverDefaultCellStyleScheduled = false;
+        void DoOverDefaultCellStyle()
+        {
+            _doOverDefaultCellStyleScheduled = true;
+
+            // ✅ Force each row to use the correct backing style with the new font
+            //    Row.DefaultCellStyle = Row.DefaultCellStyle is a no-op — we must re-assign
+            //    the actual style object so the grid picks up the font change.
+            foreach (DataGridViewRow row in Rows)
+            {
+                row.DefaultCellStyle = _dataGridViewCellStyle;
+            }
         }
 
         //  The flag _isOverTopLeft simulates the enter/leave state of the mouse over the TopLeftHeaderCell,
@@ -1545,13 +1851,70 @@ namespace StockRoom11net.Controls.DataGridViewExtend
         Rectangle CollapsibleSignRect;
         public int _hitTestColumnDisplayIndex = -1;
 
+        /// <summary>
+        /// This property is set to true when the mouse is over the TopLeftHeaderCell,
+        /// and false when the mouse leave it.
+        /// </summary>
         bool IsMouseOverTopLeftHeaderCell       = false;
         Rectangle ColumnClearFilterIndicatorRect = new Rectangle(5,5,5,5);
 
-        bool IsMouseOverTopLeftRowsHeaderCell   = false;
+        /// <summary>
+        /// These two flags are used to determine if the mouse is over the respective glyph areas in the top-left header cell,
+        /// which allows us to provide visual feedback and handle clicks on those areas for selecting all rows or columns.
+        /// The rectangles define the areas within the top-left header cell that are considered "glyph" areas for rows and columns.
+        /// Ths are updated dynamically in the MouseMove, MouseDown event based on the current mouse position to ensure they are always in the
+        /// correct location relative to the top-left header cell.
+        /// </summary>
+        bool _isMouseOverTopLeftRowsHeaderCellGlyph   = false;
+
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        /// <summary>
+        /// This property is set to true when the mouse is over the TopLeftHeaderCell glyph for the rows header,
+        /// and false when the mouse leaves it.
+        /// </summary>
+        public bool IsMouseOverTopLeftRowsHeaderCellGlyph
+        {
+            get => _isMouseOverTopLeftRowsHeaderCellGlyph;
+            set
+            {
+                if (_isMouseOverTopLeftRowsHeaderCellGlyph != value)
+                {
+                    _isMouseOverTopLeftRowsHeaderCellGlyph = value;                    
+                }
+            }
+        }
+
+        /// <summary>
+        /// The rectangle defines the area within the top-left header cell that is considered the "glyph" area for the rows header.
+        /// </summary>
         Rectangle TopLeftRowsHeaderSelectRect = new Rectangle(5,5,5,5);
 
-        bool IsMouseOverTopLeftColumnHeaderCell = false;
+        /// <summary>
+        /// This flag is used to determine if the mouse is over the column header glyph area in the top-left header cell,
+        /// which allows us to provide visual feedback and handle clicks on that area for selecting all columns headers.
+        /// </summary>
+        bool _isMouseOverTopLeftColumnHeaderCellGlyph = false;
+        
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        /// <summary>
+        /// This property is set to true when the mouse is over the TopLeftHeaderCell glyph for the column header,
+        /// and false when the mouse leaves it.
+        /// </summary>
+        public bool IsMouseOverTopLeftColumnHeaderCellGlyph
+        {
+            get => _isMouseOverTopLeftColumnHeaderCellGlyph;
+            set
+            {
+                if (_isMouseOverTopLeftColumnHeaderCellGlyph != value)
+                {
+                    _isMouseOverTopLeftColumnHeaderCellGlyph = value;                    
+                }
+            }
+        }
+
+        /// <summary>
+        /// The rectangle defines the area within the top-left header cell that is considered the "glyph" area for the column header.
+        /// </summary>
         Rectangle TopLeftColumnHeaderSelectRect = new Rectangle(5,5,5,5);
 
         Pen PenColumnClearFilterIndicador = new(Color.Black, 1);
@@ -1615,17 +1978,69 @@ namespace StockRoom11net.Controls.DataGridViewExtend
                 yield return Rows[index];
         }
 
-        void DataGridView_CellPainting(object? sender, DataGridViewCellPaintingEventArgs e)
+        /// <summary>
+        /// Manually paint column header cells to ensure sort glyph is always visible, even when EnableHeadersVisualStyles=false.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        void DataGridView_ColumnHeader_CellPainting(object? sender, DataGridViewCellPaintingEventArgs e)
         {
-            if (e.RowIndex != -1)
-                return;
-            if (_currentColumnMouseOverIndex != -1)
+            // Only column headers (not top-left, not filtered columns — FilteredHeaderCell handles those)
+            if (e.RowIndex != -1 || e.ColumnIndex < 0)
                 return;
 
-            // We are in the header row, but not in the top left header cell.
-            // Remenber that TopLeftHeaderCell do not fire CellMouseEnter. It's no a cell.
-            if (e.ColumnIndex >= 0)
+            // If this column has a FilteredHeaderCell, it handles its own painting — skip.
+            if (ActiveFilterCollection.ContainsKey(e.ColumnIndex))
                 return;
+
+            e.PaintBackground(e.ClipBounds, true);
+            e.PaintContent(e.ClipBounds);
+
+            // Manually draw sort glyph when EnableHeadersVisualStyles=false suppresses it.
+            if (SortedColumn != null && SortedColumn.Index == e.ColumnIndex && SortOrder != SortOrder.None)
+            {
+                bool ascending = SortOrder == SortOrder.Ascending;
+                
+                // Scale glyph to column header height.
+                int glyphHeight = Math.Max(4, e.CellBounds.Height / 3);
+                int glyphWidth = glyphHeight * 2;                      // keep equilateral-ish ratio
+                int glyphX = e.CellBounds.Right - glyphWidth - 6;      // right-aligned with margin
+                int glyphCenterY = e.CellBounds.Top + e.CellBounds.Height / 2;
+
+                Point[] triangle = ascending  // ▲
+                    ? new Point[]
+                    {
+                        new Point(glyphX,              glyphCenterY + glyphHeight / 2),
+                        new Point(glyphX + glyphWidth, glyphCenterY + glyphHeight / 2),
+                        new Point(glyphX + glyphWidth / 2, glyphCenterY - glyphHeight / 2)
+                    }
+                    : new Point[]             // ▼
+                    {
+                        new Point(glyphX,              glyphCenterY - glyphHeight / 2),
+                        new Point(glyphX + glyphWidth, glyphCenterY - glyphHeight / 2),
+                        new Point(glyphX + glyphWidth / 2, glyphCenterY + glyphHeight / 2)
+                    };
+
+                e.Graphics.FillPolygon(Brushes.Black, triangle);
+            }
+
+            e.Handled = true;
+        }
+
+        /// <summary>
+        /// Manually paint the TopLeftHeaderCell to draw custom glyphs when mouse is over them, and also to ensure consistent visual feedback
+        /// for mouse hover since CellMouseEnter is never fired for this cell (but CellMouseLeave is fired when the mouse exits it).
+        /// Inconsistent behavior by design in WinForms.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        void DataGridView_TopLeftHeader_CellPainting(object? sender, DataGridViewCellPaintingEventArgs e)
+        {
+            // We are in the top left header cell. DataGridViewHeaderCell type, but not all events are fire for this cell,
+            // like CellMouseEnter, but CellMouseLeave is fire when the mouse exit it. Inconsistent behavior by design.
+            // Remenber that TopLeftHeaderCell do not fire CellMouseEnter.
+            if (e.RowIndex != -1 || e.ColumnIndex != -1)
+                return;                        
 
             e.PaintBackground(e.ClipBounds, true);
             //  e.CellStyle.ForeColor = Color.Crimson;
@@ -1657,7 +2072,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
 
             if (IsMouseOverTopLeftHeaderCell)
             {
-                if (IsMouseOverTopLeftColumnHeaderCell)
+                if (IsMouseOverTopLeftColumnHeaderCellGlyph)
                 {
                    // e.Graphics.FillRoundedRectangle(Brushes.LightYellow, TopLeftColumnHeaderSelectRect, new Size(1, 1));
                    // e.Graphics.DrawRoundedRectangle(PenColumnClearFilterIndicador, TopLeftColumnHeaderSelectRect, new Size(1, 1));
@@ -1669,7 +2084,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
                     });
                 }
 
-                if (IsMouseOverTopLeftRowsHeaderCell)
+                if (IsMouseOverTopLeftRowsHeaderCellGlyph)
                 {
                     //e.Graphics.FillRoundedRectangle(Brushes.LightBlue, TopLeftRowsHeaderSelectRect, new Size(1, 1));
                     //e.Graphics.DrawRoundedRectangle(PenColumnClearFilterIndicador, TopLeftRowsHeaderSelectRect, new Size(1, 1));
@@ -1683,12 +2098,13 @@ namespace StockRoom11net.Controls.DataGridViewExtend
 
                 // Access it:
                 TopLeftHeaderCell.Value = "";
+                //DataGridViewHeaderCell topLeftHeaderCell = TopLeftHeaderCell;
             }
 
             e.Handled = true;
         }
 
-        void DataGridViewControlExtended_CellMouseUp(object sender, DataGridViewCellMouseEventArgs e)
+        void DataGridViewControlExtended_CellMouseUp(object? sender, DataGridViewCellMouseEventArgs e)
         {
             // Note: DataGridViewCellMouseUp  is the first event handler and then is called DataGridViewMouseUp event handler,
             // opposite to DataGridViewMouseDown/DataGridViewCellMouseDown event handler.
@@ -1697,7 +2113,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             MouseSingleClickDetectTimerStop();
         }
 
-        void DataGridViewControlExtended_CellMouseDown(object sender, DataGridViewCellMouseEventArgs e)
+        void DataGridViewControlExtended_CellMouseDown(object? sender, DataGridViewCellMouseEventArgs e)
         {
             // Note: DataGridViewMouseDown is the first event handler and then is called DataGridViewCellMouseDown event handler,
             // opposite to DataGridViewCellMouseUp/DataGridViewMouseUp event handler.
@@ -1723,7 +2139,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
         }
 
         int rowIndex = 0;
-        void DataGridViewControlExtended_CellMouseEnter(object sender, DataGridViewCellEventArgs e)
+        void DataGridViewControlExtended_CellMouseEnter(object? sender, DataGridViewCellEventArgs e)
         {
             _currentColumnMouseOverIndex = e.ColumnIndex;
             _currentRowMouseOverIndex = e.RowIndex;
@@ -1798,7 +2214,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             ToolTip_CellMouseEnter(e);
         }
 
-        void DataGridViewControlExtended_CellMouseLeave(object sender, DataGridViewCellEventArgs e)
+        void DataGridViewControlExtended_CellMouseLeave(object? sender, DataGridViewCellEventArgs e)
         {
             if(e.ColumnIndex == -1 && e.RowIndex == -1)
             {
@@ -1813,7 +2229,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
            // rowIndex = 0;
         }
 
-        void DataGridViewControlExtended_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        void DataGridViewControlExtended_CellDoubleClick(object? sender, DataGridViewCellEventArgs e)
         {
             MouseTwoClickDetectorTimer.Change(Timeout.Infinite, Timeout.Infinite); //disable
                                                                                    // Allow the MouseDown event handler to process clicks again.
@@ -1825,19 +2241,12 @@ namespace StockRoom11net.Controls.DataGridViewExtend
 
         void DataGridViewControlExtended_ColumnHeaderMouseClick(object? sender, DataGridViewCellMouseEventArgs e)
         {
-            // If this click came from a click-and-hold, suppress sort.
-            // Do NOT reset the flag here — FilteredHeaderCell's handler (subscribed later)
-            // still needs to read it. Use BeginInvoke to reset after all handlers complete.
             if (SuppressSortOnNextColumnHeaderClick)
             {
-                int colIndex = e.ColumnIndex;
+                // Reset the flag after all ColumnHeaderMouseClick handlers have run.
                 BeginInvoke(() =>
                 {
                     SuppressSortOnNextColumnHeaderClick = false;
-                    // Restore SortMode = Automatic for non-filtered columns.
-                    // (FilteredHeaderCell manages SortMode for filtered columns itself.)
-                    if (colIndex >= 0 && !ActiveFilterCollection.ContainsKey(colIndex))
-                        Columns[colIndex].SortMode = DataGridViewColumnSortMode.Automatic;
                 });
                 return;
             }
@@ -1857,41 +2266,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
                     }
                 }
         }
-
-        void DataGridViewControlExtended_RowHeaderMouseClick(object? sender, DataGridViewCellMouseEventArgs e)
-        {
-            if (e.RowIndex == -1)
-                return;
-
-            if (Rows[e.RowIndex].DataBoundItem.GetType().Name == "GroupRow")
-                return;
-
-            var _row = ((DataRowView)Rows[e.RowIndex].DataBoundItem).Row;
-            if (_row.HasErrors)
-            {
-                //  _dataGridView.Rows[e.RowIndex].HeaderCell.ToolTipText = "Prueba del tooltip";
-
-
-                //    m_mb = new MessageBalloon();
-                //    m_mb.Parent = panel;
-                //    m_mb.Title = "Traders corp. Inc";
-                //    m_mb.TitleIcon = TooltipIcon.Info;
-                //    m_mb.Text = "This control helps group all inventory items.";
-
-                //     BalloonAlignment ba = BalloonAlignment.;
-                //     m_mb.Align = ba;
-                //     m_mb.CenterStem = true;
-                //     m_mb.UseAbsolutePositioning = true;
-                //     m_mb.Show();
-
-                //      m_eb.Title = "Order Warning";
-                //      m_eb.TitleIcon = TooltipIcon.Warning;
-                //      m_eb.Text = "This character is invalid. \r\nNo |, ~ are allowed.\r\n'Place Order' may or may not work correctly.";
-                //      m_eb.Parent = panel;
-                //      m_eb.Show();
-                //    
-            }
-        }
+                
 
         void DataGridViewControlExtended_RowPrePaint(object? sender, DataGridViewRowPrePaintEventArgs e)
         {
@@ -1905,7 +2280,6 @@ namespace StockRoom11net.Controls.DataGridViewExtend
                     if (Rows[e.RowIndex].DefaultCellStyle == _dataGridViewCellStyleSelectedRow)
                         return;
 
-                    rowsWithDefaultCellStyle.Add(Rows[e.RowIndex]);
                     Rows[e.RowIndex].DefaultCellStyle = _dataGridViewCellStyleSelectedRow;
                 }
             }
@@ -1942,13 +2316,26 @@ namespace StockRoom11net.Controls.DataGridViewExtend
                 if (CurrentRow == null)
                     return;
 
+                // Defer row height changes to avoid conflict with auto-fill column resizing,
+                // which throws InvalidOperationException if row height is set during a paint cycle.
+                int targetHeight;
                 if (e.RowIndex == CurrentRow.Index)
                 {
-                    CurrentRow.Height = _dataGridViewCellStyle.Font.Height + _rowHeightSelectedAdd;
+                    targetHeight = _dataGridViewCellStyle.Font.Height + _rowHeightSelectedAdd;
+                    if (CurrentRow.Height != targetHeight)
+                    {
+                        var row = CurrentRow;
+                        BeginInvoke(() => { row.Height = targetHeight; });
+                    }
                 }
                 else
                 {
-                    Rows[e.RowIndex].Height = _dataGridViewCellStyle.Font.Height + _rowHeightAdd;
+                    targetHeight = _dataGridViewCellStyle.Font.Height + _rowHeightAdd;
+                    if (Rows[e.RowIndex].Height != targetHeight)
+                    {
+                        var row = Rows[e.RowIndex];
+                        BeginInvoke(() => { row.Height = targetHeight; });
+                    }
                 }
 
                 RowBoundsColumnsDisplayed = e.RowBounds;
@@ -1956,7 +2343,6 @@ namespace StockRoom11net.Controls.DataGridViewExtend
                 RowBoundsColumnsDisplayed.X = RowHeadersWidth;
 
                 MessagePositionString = "_currentRowPostPaintStatus initialization";
-
                 var _currentRow = Rows[e.RowIndex];
                 if (_currentRow == null)
                     return;
@@ -2045,33 +2431,36 @@ namespace StockRoom11net.Controls.DataGridViewExtend
                 #endregion"Alternate row paint."                
 
                 #region"MouseOverRow Hot mode"
+                /* TODO: Implement hot mode for mouse over row, but first need to decide if it's really useful for the user, because we already
+                 * have a lot of visual indicators for the current row like selection by status, selected, note, etc... and maybe this hot mode
+                 * can be more confusing than helpful. Also, is not working good because when the mouse move between cells into the same row, the
+                 * RowPostPaint is called and the hot mode is lost, so need to find a way to keep it until the mouse leave the row.
+               if (CurrentDataGridViewRowMouseEnter != null && CurrentDataGridViewRowMouseEnter.Index == e.RowIndex)
+               {
+                   //_selectionPen.Width = 1;
+                   //_selectionPen.Color = Color.Red;
+                   //e.Graphics.DrawRectangle(_selectionPen, eRowBounds.X, eRowBounds.Y,
+                   //						 eRowBounds.Width, eRowBounds.Height - 2);
+                   e.Graphics.FillRectangle(new SolidBrush(_currentRowPostPaintStatus.SelectedColor), RowBoundsColumnsDisplayed);
 
-                /* if
-				if (CurrentDataGridViewRowMouseEnter != null && CurrentDataGridViewRowMouseEnter.Index == e.RowIndex)
-				{
-					//_selectionPen.Width = 1;
-					//_selectionPen.Color = Color.Red;
-					//e.Graphics.DrawRectangle(_selectionPen, eRowBounds.X, eRowBounds.Y,
-					//						 eRowBounds.Width, eRowBounds.Height - 2);
-                    e.Graphics.FillRectangle(new SolidBrush(_currentRowPostPaintStatus.SelectedColor), RowBoundsColumnsDisplayed);
-                    
-					e.PaintCellsContent(RowBoundsColumnsDisplayed);
-                    e.PaintCells(RowBoundsColumnsDisplayed, DataGridViewPaintParts.Border);
-					return;
-				}
-				//*/
-
+                   e.PaintCellsContent(RowBoundsColumnsDisplayed);
+                   e.PaintCells(RowBoundsColumnsDisplayed, DataGridViewPaintParts.Border);
+                   return;
+               }
+               */
                 #endregion"MouseOverRow Hot mode"              
 
                 #region"Select by Status."
 
                 #region"Selected"
-                if (_currentRowPostPaintStatus.Selected)
+
+                if (_currentRow.Selected || _currentRowPostPaintStatus.Selected)
                 {
                     MessagePositionString = "Select by Status.";
-                    _solidBrush = new SolidBrush(_currentRowPostPaintStatus.SelectedColor);
+                    _solidBrush = new SolidBrush(CurrentRowBackgroundColor);
                     e.Graphics.FillRectangle(_solidBrush, RowBoundsColumnsDisplayed);
                 }
+
                 #endregion"Selected"
 
                 #region"Is UnLocked"
@@ -2085,6 +2474,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
                 #endregion"Is UnLocked"
 
                 #region"Note"
+
                 MessagePositionString = "Note";
 
                 if (_currentRowPostPaintStatus.HasNote)
@@ -2107,6 +2497,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
                 #endregion"Select by Status."
 
                 #region"Current row, Selection type."
+
                 if (CurrentRow != null)
                 {
                     // if is painting now the current row?
@@ -2130,6 +2521,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
                                                 e.RowBounds.Width - SelectionBorderWidth, e.RowBounds.Height - SelectionBorderWidth - HalfSelectionBorderWidth);
                     }
                 }
+
                 #endregion"Current row, Selection type."
 
                 MessagePositionString = "e.PaintCellsContent";
@@ -2239,8 +2631,8 @@ namespace StockRoom11net.Controls.DataGridViewExtend
         /// <returns></returns>
         public bool IsColumnResizeInternalType()
         {
-            if (HitTestData.ColumnIndex == -1)
-                return true;
+          //  if (HitTestData.ColumnIndex == -1)
+          //      return true;
 
             var _type = DataGridViewHitTestType.ColumnHeader;
 
@@ -2261,14 +2653,15 @@ namespace StockRoom11net.Controls.DataGridViewExtend
         /// <summary>
         /// Collection of columns displayed, orden by DisplayedIndex.
         /// </summary>
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        /// <summary>
-        /// Collection of columns displayed, orden by DisplayedIndex.
-        /// </summary>
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]        
         public IEnumerable<DataGridViewColumn> DisplayedColumns { get; set; }
 
         bool _isMouseOverColumnHeaderCell = false;
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        /// <summary>
+        /// This property is set to true when the mouse is over a column header cell,
+        /// and false when the mouse leave it.
+        /// </summary>
         public bool IsMouseOverColumnHeaderCell
         {
             get
@@ -2283,6 +2676,10 @@ namespace StockRoom11net.Controls.DataGridViewExtend
         
         bool _isMouseOverRowHeaderCell = false;
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        /// <summary>
+        /// This property is set to true when the mouse is over a row header cell,
+        /// and false when the mouse leave it.
+        /// </summary>
         public bool IsMouseOverRowHeaderCell
         {
             get
@@ -2297,6 +2694,10 @@ namespace StockRoom11net.Controls.DataGridViewExtend
         
         bool _isMouseOverCell = false;
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        /// <summary>
+        /// This property is set to true when the mouse is over a cell,
+        /// and false when the mouse leave it.
+        /// </summary>
         public bool IsMouseOverCell
         {
             get
@@ -2316,8 +2717,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
         /// </summary>
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public bool SuppressSortOnNextColumnHeaderClick { get; set; } = false;
-
-
+        
         /// <summary>
         /// Kept in sync DisplayedColumns collection, is kept in sync with ColumnDisplayIndexChanged event,
         /// ColumnDividerWidthChanged event.
@@ -2333,6 +2733,36 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             timeDelaySortCancel.Tick -= TimeDelaySortCancel_Tick;
             Columns[columnIndexSortMode].SortMode = DataGridViewColumnSortMode.Automatic;
         }
+
+
+        public void ToolStripMenuItem_SortByPDF_Click()
+        {
+            if (!Columns.Contains("CountPDF"))
+                return;
+
+            switch (SortOrder)
+            {
+                case SortOrder.None:
+                    {
+                        Sort(Columns["CountPDF"], ListSortDirection.Ascending);
+                        TopLeftHeaderCell.Value = "▲";
+                        break;
+                    }
+                case SortOrder.Ascending:
+                    {
+                        Sort(Columns["CountPDF"], ListSortDirection.Descending);
+                        TopLeftHeaderCell.Value = "▼";
+                        break;
+                    }
+                case SortOrder.Descending:
+                    {
+                        Sort(Columns["CountPDF"], ListSortDirection.Ascending);
+                        TopLeftHeaderCell.Value = "▲";
+                        break;
+                    }
+            }
+        }
+
 
         #region"Grouper"
 
@@ -2472,7 +2902,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
                                   "To lock it press Esc or right-click\r\n" +
                                   "over row header and click \"Lock\"";
 
-                            _toolTip.ToolTipTitle = "Warning, it item is not locked.";
+                            _toolTip.ToolTipTitle = "Warning, it itemEFtableTreeView is not locked.";
                             _toolTip.ToolTipIcon = ToolTipIcon.Warning;
                             _toolTip.SetToolTip(this, tip);
                             _toolTip.Show(tip, this, mousePos);
@@ -2486,7 +2916,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
                         {
                             tip = CurrentRowMouseEnterStatus.Note;
 
-                            _toolTip.ToolTipTitle = "Attention, this item is marked with a note.";
+                            _toolTip.ToolTipTitle = "Attention, this itemEFtableTreeView is marked with a note.";
                             _toolTip.ToolTipIcon = ToolTipIcon.Info;
                             _toolTip.SetToolTip(this, tip);
                             _toolTip.Show(tip, this, mousePos);
@@ -2498,11 +2928,11 @@ namespace StockRoom11net.Controls.DataGridViewExtend
 
                         if (CurrentRowMouseEnterStatus.IsMarkToDelete)
                         {
-                            tip = "Attention, this item is marked for deletion.\r\n" +
+                            tip = "Attention, this itemEFtableTreeView is marked for deletion.\r\n" +
                                   "To deselect press Esc or right-click over\r\n" +
                                   "row header and click \"Mark as Unerasable\"";
 
-                            _toolTip.ToolTipTitle = "Warning, it item is marked to be delete.";
+                            _toolTip.ToolTipTitle = "Warning, it itemEFtableTreeView is marked to be delete.";
                             _toolTip.ToolTipIcon = ToolTipIcon.Warning;
                             _toolTip.SetToolTip(this, tip);
                             _toolTip.Show(tip, this, mousePos);
@@ -2662,29 +3092,14 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             }
         }
 
-        /// <summary>
-        /// Select the column where mouse click...
-        /// </summary>
         public void SelectColumn()
         {
-            // Set Programmatic to block the DataGridView's built-in auto-sort
-            // while this column is selected. SortMode is restored to Automatic
-            // after ColumnHeaderMouseClick fires (via BeginInvoke), or when
-            // UnSelectColumn is called. FilteredHeaderCell manages its own SortMode.
-            Columns[HitTestData.ColumnIndex].SortMode = DataGridViewColumnSortMode.Programmatic;
-
             var xCoordinate = GetLeftmostColumnHeaderXCoordinate(_hitTestColumnDisplayIndex);
             var yCoordinate = GetTopmostColumnHeaderYCoordinate(HitTestData.ColumnX, HitTestData.RowY);
             var columnWidth = DisplayedColumns.First(col => col.DisplayIndex == _hitTestColumnDisplayIndex).Width;
             var columnHeight = GetColumnHeight(yCoordinate);
 
-            var columnSize = Size.Empty;
-
-            var startingLocation = new Point(xCoordinate, yCoordinate);
             var columnRegion = new Rectangle(xCoordinate, yCoordinate, columnWidth, columnHeight);
-            var cursorLocation = new Point(HitTestData.ColumnX - xCoordinate, HitTestData.RowY - yCoordinate);
-
-            columnSize = new Size(columnWidth, columnHeight);
 
             SelectedColumnCollection.Add(_hitTestColumnDisplayIndex, new SelectedDataGridColumn(HitTestData, columnRegion, _hitTestColumnDisplayIndex));
 
@@ -2728,20 +3143,8 @@ namespace StockRoom11net.Controls.DataGridViewExtend
 
             if (col != null && !ActiveFilterCollection.ContainsKey(col.Index))
             {
-                if (SuppressSortOnNextColumnHeaderClick)
-                {
-                    // Hold (unselect): force Programmatic to block DataGridView auto-sort
-                    // during the ColumnHeaderMouseClick that fires after this hold release.
-                    // BeginInvoke in DataGridViewControlExtended_ColumnHeaderMouseClick
-                    // restores SortMode = Automatic after all handlers complete.
-                    col.SortMode = DataGridViewColumnSortMode.Programmatic;
-                }
-                else
-                {
-                    // Drag: restore Automatic here — ColumnHeaderMouseClick does not
-                    // fire after a drag, so BeginInvoke will never run for this case.
-                    col.SortMode = DataGridViewColumnSortMode.Automatic;
-                }
+                // SortMode is NOT changed here — Sort() override blocks unwanted sorts.
+                // FilteredHeaderCell manages SortMode for filtered columns itself.
             }
 
             SelectedColumnCollection.Remove(columnDisplayIndex);
@@ -2756,6 +3159,37 @@ namespace StockRoom11net.Controls.DataGridViewExtend
         {
             ResetMembersToDefault();
             SelectedColumnCollection.Clear();
+
+            Invalidate();
+            Update();
+        }
+
+        /// <summary>
+        /// Selects all visible columns, adding them to SelectedColumnHeaderCollection.
+        /// Triggered by clicking the column-select arrow in the TopLeftHeaderCell glyph for the column header.
+        /// </summary>
+        /// <param name="selectcol">If set to true, selects all columns; otherwise, clears the selection.</param>
+        public void SelectAllColumnsHeader(bool selectcol)
+        {
+            if (selectcol)
+            {
+                SelectedColumnHeaderCollection.Clear();
+
+                foreach (var col in DisplayedColumns)
+                {
+                    var xCoordinate = GetLeftmostColumnHeaderXCoordinate(col.DisplayIndex);
+                    var yCoordinate = GetTopmostColumnHeaderYCoordinate(HitTestData.ColumnX, HitTestData.RowY);
+                    var columnWidth = DisplayedColumns.First(c => c.DisplayIndex == col.DisplayIndex).Width;
+                    var columnHeight = ColumnHeadersHeight;
+
+                    var columnRegion = new Rectangle(xCoordinate, yCoordinate, columnWidth, columnHeight);
+
+                    SelectedColumnHeaderCollection.Add(col.DisplayIndex, new SelectedDataGridColumn(HitTestData,
+                                                                            columnRegion, _hitTestColumnDisplayIndex));
+                }
+            }
+            else
+                SelectedColumnHeaderCollection.Clear();
 
             Invalidate();
             Update();
@@ -2970,8 +3404,11 @@ namespace StockRoom11net.Controls.DataGridViewExtend
         /// <param name="cellValue"></param>
         public IEnumerable<DataGridViewRow> GetRowListInDataGridView(string columnName, string cellValue)
         {
-            yield return Rows.OfType<DataGridViewRow>().Where(x =>
-                         x.Cells[columnName].Value.ToString().Contains(cellValue)) as DataGridViewRow;
+            foreach (var row in Rows.OfType<DataGridViewRow>().Where(x =>
+                         x.Cells[columnName].Value.ToString().Contains(cellValue)))
+            {
+                yield return row;
+            }
         }
 
         #endregion

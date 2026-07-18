@@ -1,0 +1,33 @@
+﻿@page "/"
+@using StockRoom11net.Controls.VisTimeLine
+@using StockRoom11net.Docs.VisTimeLine
+
+<h3>Component1</h3>
+<h3>My High-Density Dashboard</h3>
+
+<DocumentVisComp
+    Items=   "_dashboardItems"
+    Options= "_timelineOptions"
+                  
+/>
+
+@code {
+
+    private TimeLineOptions _timelineOptions = new()
+    {
+        Margin = new TimeLineMargin
+        {
+            Axis = 5,
+            Item = new ItemMargin { Horizontal = 0, Vertical = 2 } // Renders as { horizontal: 0, vertical: 2 }
+        }
+    };
+
+    private List<TimeLineItem> _dashboardItems = new()
+    {
+        new() { Id = Convert.ToString(1), Content = "Task A", Start = DateTime.TryParse("2026-07-11", out DateTime startA) ? startA : DateTime.Now },
+        new() { Id = Convert.ToString(2), Content = "Task B", Start = DateTime.TryParse("2026-07-12", out DateTime startB) ? startB : DateTime.Now }
+    };
+
+   
+}
+

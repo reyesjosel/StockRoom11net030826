@@ -64,7 +64,7 @@ public partial class TableStockRoomTreeViewService : ITableStockRoomTreeViewServ
         if (string.IsNullOrEmpty(nodeName))
             return null;
 
-        return await _unitOfWork.TableStockRoomTreeViews
+        return await _unitOfWork.TableStockRoomTreeViewRepository
             .FirstOrDefaultAsync(node => node.Text_Name == nodeName);
     }
 
@@ -75,7 +75,7 @@ public partial class TableStockRoomTreeViewService : ITableStockRoomTreeViewServ
             return -1;
 
         IEnumerable<Table_StockRoom_TreeView> allNodes =
-            await _unitOfWork.TableStockRoomTreeViews.GetAllAsync(cancellationToken);
+            await _unitOfWork.TableStockRoomTreeViewRepository.GetAllAsync(cancellationToken);
 
         return allNodes.ToList().FindIndex(node => node.Text_Name == nodeName);
     }
@@ -86,7 +86,7 @@ public partial class TableStockRoomTreeViewService : ITableStockRoomTreeViewServ
         if (string.IsNullOrEmpty(code))
             return Enumerable.Empty<Table_StockRoom_TreeView>();
 
-        return await _unitOfWork.TableStockRoomTreeViews
+        return await _unitOfWork.TableStockRoomTreeViewRepository
             .GetAllAsync(cancellationToken)
             .ContinueWith(t => t.Result.Where(node => node.Code == code), cancellationToken);
     }
@@ -97,7 +97,7 @@ public partial class TableStockRoomTreeViewService : ITableStockRoomTreeViewServ
         if (string.IsNullOrEmpty(status))
             return Enumerable.Empty<Table_StockRoom_TreeView>();
 
-        return await _unitOfWork.TableStockRoomTreeViews
+        return await _unitOfWork.TableStockRoomTreeViewRepository
             .GetAllAsync(cancellationToken)
             .ContinueWith(t => t.Result.Where(node => node.Status == status), cancellationToken);
     }
@@ -108,7 +108,7 @@ public partial class TableStockRoomTreeViewService : ITableStockRoomTreeViewServ
         if (string.IsNullOrEmpty(searchTerm))
             return Enumerable.Empty<Table_StockRoom_TreeView>();
 
-        return await _unitOfWork.TableStockRoomTreeViews
+        return await _unitOfWork.TableStockRoomTreeViewRepository
             .GetAllAsync(cancellationToken)
             .ContinueWith(t => t.Result.Where(node => 
                 (node.Text_Name != null && node.Text_Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)) ||

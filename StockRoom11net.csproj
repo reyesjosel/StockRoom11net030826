@@ -77,6 +77,14 @@
     <Content Remove="wwwroot\Jscript\VisTimeLineHelper1.js" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Docs\VisTimeLine\DocumentVisComp.razor.js" />
+    <Content Include="Docs\VisTimeLine\Document_index.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="Be.Windows.Forms.HexBox.Net5" Version="1.8.0" />
     <PackageReference Include="Blazor.Extensions.Canvas" Version="1.1.1" />
     <PackageReference Include="GenCode128" Version="2.0.0" />
@@ -372,7 +380,7 @@
   <ItemGroup>
     <Content Update="wwwroot\**">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    </Content>	
   </ItemGroup>
   <ItemGroup>
     <Content Update="BlazorWebAssembly\Components\Pages\TimeLineComp.razor">
@@ -403,9 +411,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="wwwroot\js\counterInterop.js" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="wwwroot\Jscript\vis\" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Update="Properties\Resources.resx">

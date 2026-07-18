@@ -3,7 +3,12 @@ using System.ComponentModel;
 
 namespace StockRoom11net.Controls.BindingSourceExt
 {
-    public class BindingSourceValidating<T> : BindingSource where T : class
+    public interface IBindingSourceValidating
+    {
+        string TableName { get; set; }
+    }
+
+    public class BindingSourceValidating<T> : BindingSource, IBindingSourceValidating where T : class
     {
         public event EventHandler<ValidationEventArgs>? ValidationFailed;
 
@@ -17,7 +22,9 @@ namespace StockRoom11net.Controls.BindingSourceExt
         /// </summary>
         public string TypeFullName => typeof(T).FullName ?? typeof(T).Name;
 
-        // Add custom properties
+        /// <summary>
+        /// Gets the name of the "table" or entity type that this BindingSource is associated with.
+        /// </summary>
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public string TableName { get; set; }
 
@@ -31,7 +38,7 @@ namespace StockRoom11net.Controls.BindingSourceExt
         /// <returns>The name of the generic type T</returns>
         public string GetTableName()
         {
-            return TypeName;
+            return TableName;
         }
 
 
@@ -51,10 +58,14 @@ namespace StockRoom11net.Controls.BindingSourceExt
 
                 IsDirty = true;
 
-                var item = this[e.NewIndex] as T;
-                if (item != null && !ValidateItem(item))
+                // For ItemDeleted, the item is already removed — accessing e.NewIndex would throw.
+                if (e.ListChangedType != ListChangedType.ItemDeleted)
                 {
-                    ValidationFailed?.Invoke(this, new ValidationEventArgs(item, e.NewIndex));
+                    var item = this[e.NewIndex] as T;
+                    if (item != null && !ValidateItem(item))
+                    {
+                        ValidationFailed?.Invoke(this, new ValidationEventArgs(item, e.NewIndex));
+                    }
                 }
             }
         }
@@ -90,16 +101,67 @@ namespace StockRoom11net.Controls.BindingSourceExt
             IsDirty = false;
         }
 
-        public T? GetCurrentItem<T>() where T : class
+        public T? GetCurrentItem()
         {
             return Current as T;
         }
 
-        public List<T> GetAllItems<T>() where T : class
+        public List<T> GetAllItems()
         {
             return this.Cast<T>().ToList();
         }
-                
+
+        /// <summary>
+        /// Returns all items as a typed list, safely handling both typed-list-backed and
+        /// DataView-backed sources.  When the DataSource is a DataView, each DataRowView is
+        /// mapped to T by matching column names to writable public properties (case-insensitive)
+        /// via reflection — no per-entity boilerplate required at call sites.
+        /// </summary>
+        public List<T> GetItems()
+        {
+            var result = new List<T>();
+
+            foreach (var item in this)
+            {
+                if (item is T typedItem)
+                {
+                    // Typed-list backed BindingSource — direct use.
+                    result.Add(typedItem);
+                }
+                else if (item is System.Data.DataRowView rowView)
+                {
+                    // DataView-backed BindingSource — map columns → T properties by name.
+                    var entity = Activator.CreateInstance<T>();
+
+                    var props = typeof(T).GetProperties()
+                                         .Where(p => p.CanWrite)
+                                         .ToDictionary(p => p.Name, StringComparer.OrdinalIgnoreCase);
+
+                    foreach (System.Data.DataColumn col in rowView.Row.Table.Columns)
+                    {
+                        if (!props.TryGetValue(col.ColumnName, out var prop))
+                            continue;
+
+                        var rawValue = rowView[col.ColumnName];
+                        if (rawValue == DBNull.Value || rawValue == null)
+                        {
+                            prop.SetValue(entity, null);
+                        }
+                        else
+                        {
+                            var targetType = Nullable.GetUnderlyingType(prop.PropertyType)
+                                             ?? prop.PropertyType;
+                            prop.SetValue(entity, Convert.ChangeType(rawValue, targetType));
+                        }
+                    }
+
+                    result.Add(entity);
+                }
+            }
+
+            return result;
+        }
+
     }
     
     public class ValidationEventArgs : EventArgs

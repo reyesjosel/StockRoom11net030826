@@ -8,16 +8,16 @@ namespace StockRoom11net.Controls.ShellBasics
     public class FilterByExtension : IFolderFilter
     {
         // Allows a client to specify which individual items should be enumerated.
-        // Note: The host calls this method for each item in the folder. Return S_OK, to have the item enumerated.
-        // Return S_FALSE to prevent the item from being enumerated.
+        // Note: The host calls this method for each itemEFtableTreeView in the folder. Return S_OK, to have the itemEFtableTreeView enumerated.
+        // Return S_FALSE to prevent the itemEFtableTreeView from being enumerated.
         public Int32 ShouldShow(
             Object psf,				// A pointer to the folder's IShellFolder interface.
             IntPtr pidlFolder,		// The folder's PIDL.
-            IntPtr pidlItem)		// The item's PIDL.
+            IntPtr pidlItem)		// The itemEFtableTreeView's PIDL.
         {
             // check extension, and if not ok return 1 (S_FALSE)
 
-            // get display name of item
+            // get display name of itemEFtableTreeView
             IShellFolder isf = (IShellFolder)psf;
 
             ShellApi.STRRET ptrDisplayName;
@@ -26,7 +26,7 @@ namespace StockRoom11net.Controls.ShellBasics
             string sDisplay;
             ShellApi.StrRetToBSTR(ref ptrDisplayName, (IntPtr)0, out sDisplay);
 
-            // check if item is file or folder
+            // check if itemEFtableTreeView is file or folder
             IntPtr[] aPidl = new IntPtr[1];
             aPidl[0] = pidlItem;
             uint Attrib;
@@ -35,11 +35,11 @@ namespace StockRoom11net.Controls.ShellBasics
             int temp;
             temp = isf.GetAttributesOf(1, aPidl, ref Attrib);
 
-            // if item is a folder, accept
+            // if itemEFtableTreeView is a folder, accept
             if ((Attrib & (uint)ShellApi.SFGAO.SFGAO_FOLDER) == (uint)ShellApi.SFGAO.SFGAO_FOLDER)
                 return 0;
 
-            // if item is file, check if it has a valid extension
+            // if itemEFtableTreeView is file, check if it has a valid extension
             for (int i = 0; i < ValidExtension.Length; i++)
             {
                 if (sDisplay.ToUpper().EndsWith("." + ValidExtension[i].ToUpper()))

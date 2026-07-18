@@ -179,7 +179,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             else
             {
                 _dataGridView.ActiveFilterCollection.Clear();
-                _dataGridView.EnableHeadersVisualStyles = true;
+                _dataGridView.EnableHeadersVisualStyles = false;
                 _dataGridView.ActiveFilter = "";
             }
 
@@ -214,32 +214,72 @@ namespace StockRoom11net.Controls.DataGridViewExtend
                 return;
 
             e.PaintBackground(e.ClipBounds, true);
-            //  e.CellStyle.ForeColor = Color.Crimson;
             e.PaintContent(e.ClipBounds);
 
-            #region"Where you want the bitmap in the cell"
+            int iconSize = Math.Max(14, e.CellBounds.Height - 8); // single scale basis for all elements
 
-            offsetX = 10;
-            //if sort indicator is visible, the column is sorted, give extra space.
-            if (_dataGridView.SortedColumn != null && _dataGridView.SortedColumn.Index == e.ColumnIndex)
-                offsetX = 25;
+            #region"Manually draw sort glyph"
 
-            var offsetY = (e.CellBounds.Height - ColumnClearFilterIndicatorSize.Height) / 2;
-            var pt = new Point(e.CellBounds.Right - offsetX - ColumnClearFilterIndicatorSize.Width, e.CellBounds.Location.Y + offsetY);
-            ColumnClearFilterIndicatorRect = new Rectangle(pt, ColumnClearFilterIndicatorSize);
-            e.Graphics.DrawImage(ColumnClearFilterIndicator, pt);
+            if (_dataGridView.SortedColumn != null &&
+                _dataGridView.SortedColumn.Index == e.ColumnIndex &&
+                _dataGridView.SortOrder != SortOrder.None)
+            {
+                bool ascending = _dataGridView.SortOrder == SortOrder.Ascending;
 
-            #endregion"Where you want the bitmap in the cell"
+                int glyphHeight = iconSize / 2;        // proportional to iconSize
+                int glyphWidth = iconSize;            // same width as icon
+                int glyphX = e.CellBounds.Right - glyphWidth - 6;
+                int glyphCenterY = e.CellBounds.Top + e.CellBounds.Height / 2;
+
+                Point[] triangle = ascending            // ▲
+                    ? new Point[]
+                    {
+                        new Point(glyphX,             glyphCenterY + glyphHeight / 2),
+                        new Point(glyphX + glyphWidth, glyphCenterY + glyphHeight / 2),
+                        new Point(glyphX + glyphWidth / 2, glyphCenterY - glyphHeight / 2)
+                    }
+                    : new Point[]                       // ▼
+                    {
+                        new Point(glyphX,             glyphCenterY - glyphHeight / 2),
+                        new Point(glyphX + glyphWidth, glyphCenterY - glyphHeight / 2),
+                        new Point(glyphX + glyphWidth / 2, glyphCenterY + glyphHeight / 2)
+                    };
+
+                e.Graphics.FillPolygon(Brushes.Black, triangle);
+                offsetX = glyphWidth + 8;    // glyph width + icon width + spacing
+            }
+            else
+            {
+                offsetX = iconSize + 4;
+            }
+
+            #endregion"Manually draw sort glyph"
+
+            #region"Draw filter clear indicator"
+
+            // Scale filter icon to column header height (same basis as the sort glyph).
+            var scaledIcon = new Rectangle(Point.Empty, new Size(iconSize, iconSize));
+
+            var offsetY = (e.CellBounds.Height - iconSize) / 2;
+            var pt = new Point(e.CellBounds.Right - offsetX - iconSize, e.CellBounds.Location.Y + offsetY);
+
+            // Update hit-test rect with scaled size.
+            ColumnClearFilterIndicatorRect = new Rectangle(pt, new Size(iconSize, iconSize));
+
+            // Draw icon scaled into the computed rect.
+            e.Graphics.DrawImage(ColumnClearFilterIndicator, ColumnClearFilterIndicatorRect);
 
             if (IsMouseOverColumnClearFilterIndicator)
             {
                 IsClearFilterIndicatorPainted = true;
-                e.Graphics.DrawRoundedRectangle(PenColumnClearFilterIndicador, ColumnClearFilterIndicatorRect, new Size(10,10));
+                e.Graphics.DrawRoundedRectangle(PenColumnClearFilterIndicador, ColumnClearFilterIndicatorRect, new Size(iconSize / 2, iconSize / 2));
             }
+
+            #endregion"Draw filter clear indicator"
 
             e.Handled = true;
         }
-
+               
         void DataGridView_ColumnHeaderMouseClick(object? sender, DataGridViewCellMouseEventArgs e)
         {
             if (e.ColumnIndex != _headerCell.ColumnIndex)

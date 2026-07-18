@@ -1,7 +1,9 @@
-﻿using StockRoom11net.Controls.BindingSourceExt;
+﻿using Microsoft.EntityFrameworkCore;
+using StockRoom11net.Controls.BindingSourceExt;
 using StockRoom11net.Controls.EmployeeInformation;
 using StockRoom11net.Controls.FindAndReplace;
 using StockRoom11net.Data;
+using StockRoom11net.Data.Entities;
 using StockRoom11net.Data.Services;
 using StockRoom11net.Properties;
 using System.ComponentModel;
@@ -9,6 +11,7 @@ using System.Data;
 using System.Drawing.Design;
 using System.Text.RegularExpressions;
 using static StockRoom11net.Controls.DataGridViewExtend.BindingSourceGroups;
+using static StockRoom11net.Controls.DataGridViewExtend.DataGridViewControlExtended;
 using static StockRoom11net.Controls.Utilities;
 using CellClick_EventArgs = StockRoom11net.Controls.Custom_Events_Args.CellClick_EventArgs;
 using CellDoubleClick_EventArgs = StockRoom11net.Controls.Custom_Events_Args.CellDoubleClick_EventArgs;
@@ -61,6 +64,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             ComponentResourceManager resources = new ComponentResourceManager(typeof(DataGridViewExtended));
             DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
             DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
             _contextMenuStrip_DataGridView = new ContextMenuStrip(components);
             toolStripTextBox_SearchBy = new ToolStripTextBox();
             toolStripSeparatorSearchBy = new ToolStripSeparator();
@@ -90,7 +94,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             toolStripSeparator4 = new ToolStripSeparator();
             toolStripMenuItem_SortByPDF = new ToolStripMenuItem();
             ToolStripMenuItem_columnsMaintenance = new ToolStripMenuItem();
-            ToolStripMenuItem_Font = new ToolStripMenuItem();
+            ToolStripMenuItem_Font_Style = new ToolStripMenuItem();
             boltRegularToolStripMenuItem = new ToolStripMenuItem();
             ToolStripMenuItem_Alignment = new ToolStripMenuItem();
             leftToolStripMenuItem = new ToolStripMenuItem();
@@ -104,6 +108,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             ToolStripMenuItem_AllCellsExceptHeader = new ToolStripMenuItem();
             ToolStripMenuItem_DisplayedCellsExceptHeader = new ToolStripMenuItem();
             ToolStripMenuItem_None = new ToolStripMenuItem();
+            toolStripMenuItem_FontStyle_BindingNavegator = new ToolStripMenuItem();
             ToolStripMenuItem_Maintenance = new ToolStripMenuItem();
             ToolStripMenuItem_Setting = new ToolStripMenuItem();
             ToolStripMenuItem_ClearColumns = new ToolStripMenuItem();
@@ -172,7 +177,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             _contextMenuStrip_DataGridView.Name = "PreviewDataGridViewContextMenuStrip";
             _contextMenuStrip_DataGridView.RenderMode = ToolStripRenderMode.Professional;
             _contextMenuStrip_DataGridView.ShowImageMargin = false;
-            _contextMenuStrip_DataGridView.Size = new Size(257, 730);
+            _contextMenuStrip_DataGridView.Size = new Size(257, 708);
             _contextMenuStrip_DataGridView.Opening += ContextMenuStripDataGridViewOpening;
             // 
             // toolStripTextBox_SearchBy
@@ -390,20 +395,20 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             // 
             // ToolStripMenuItem_columnsMaintenance
             // 
-            ToolStripMenuItem_columnsMaintenance.DropDownItems.AddRange(new ToolStripItem[] { ToolStripMenuItem_Font, ToolStripMenuItem_Alignment, ToolStripMenuItem_AutoSizeMode });
+            ToolStripMenuItem_columnsMaintenance.DropDownItems.AddRange(new ToolStripItem[] { ToolStripMenuItem_Font_Style, ToolStripMenuItem_Alignment, ToolStripMenuItem_AutoSizeMode, toolStripMenuItem_FontStyle_BindingNavegator });
             ToolStripMenuItem_columnsMaintenance.Name = "ToolStripMenuItem_columnsMaintenance";
             ToolStripMenuItem_columnsMaintenance.Size = new Size(256, 26);
             ToolStripMenuItem_columnsMaintenance.Text = "Columns Setting";
             // 
-            // ToolStripMenuItem_Font
+            // ToolStripMenuItem_Font_Style
             // 
-            ToolStripMenuItem_Font.BackColor = Color.LightGoldenrodYellow;
-            ToolStripMenuItem_Font.DropDownItems.AddRange(new ToolStripItem[] { boltRegularToolStripMenuItem });
-            ToolStripMenuItem_Font.Name = "ToolStripMenuItem_Font";
-            ToolStripMenuItem_Font.Size = new Size(185, 26);
-            ToolStripMenuItem_Font.Text = "Font / Style";
-            ToolStripMenuItem_Font.DropDownItemClicked += ToolStripMenuItem_Font_DropDownItemClicked;
-            ToolStripMenuItem_Font.Click += ToolStripMenuItem_Font_Click;
+            ToolStripMenuItem_Font_Style.BackColor = Color.LightGoldenrodYellow;
+            ToolStripMenuItem_Font_Style.DropDownItems.AddRange(new ToolStripItem[] { boltRegularToolStripMenuItem });
+            ToolStripMenuItem_Font_Style.Name = "ToolStripMenuItem_Font_Style";
+            ToolStripMenuItem_Font_Style.Size = new Size(185, 26);
+            ToolStripMenuItem_Font_Style.Text = "Font / Style";
+            ToolStripMenuItem_Font_Style.DropDownItemClicked += ToolStripMenuItem_Font_DropDownItemClicked;
+            ToolStripMenuItem_Font_Style.Click += ToolStripMenuItem_Font_Click;
             // 
             // boltRegularToolStripMenuItem
             // 
@@ -515,6 +520,14 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             ToolStripMenuItem_None.Size = new Size(287, 26);
             ToolStripMenuItem_None.Text = "None";
             // 
+            // toolStripMenuItem_FontStyle_BindingNavegator
+            // 
+            toolStripMenuItem_FontStyle_BindingNavegator.BackColor = Color.LightGoldenrodYellow;
+            toolStripMenuItem_FontStyle_BindingNavegator.Name = "toolStripMenuItem_FontStyle_BindingNavegator";
+            toolStripMenuItem_FontStyle_BindingNavegator.Size = new Size(185, 26);
+            toolStripMenuItem_FontStyle_BindingNavegator.Text = "Font / Style";
+            toolStripMenuItem_FontStyle_BindingNavegator.Click += ToolStripMenuItem_FontStyleBindingNavigator_Click;
+            // 
             // ToolStripMenuItem_Maintenance
             // 
             ToolStripMenuItem_Maintenance.DropDownItems.AddRange(new ToolStripItem[] { ToolStripMenuItem_Setting, ToolStripMenuItem_Tools });
@@ -612,6 +625,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             // 
             _bindingNavigator.AddNewItem = null;
             _bindingNavigator.BindingSource = _bindingSource;
+            _bindingNavigator.ContextMenuStrip = _contextMenuStrip_DataGridView;
             _bindingNavigator.CountItem = bindingNavigatorCountItem;
             _bindingNavigator.DeleteItem = null;
             _bindingNavigator.ImageScalingSize = new Size(18, 18);
@@ -624,9 +638,12 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             _bindingNavigator.Name = "_bindingNavigator";
             _bindingNavigator.Padding = new Padding(0, 0, 2, 0);
             _bindingNavigator.PositionItem = bindingNavigatorPositionItem;
+            _bindingNavigator.RenderMode = ToolStripRenderMode.Professional;
             _bindingNavigator.Size = new Size(1213, 28);
             _bindingNavigator.TabIndex = 1;
             _bindingNavigator.Text = "bindingNavigator";
+            _bindingNavigator.MouseEnter += BindingNavigator_MouseEnter;
+            _bindingNavigator.MouseLeave += BindingNavigator_MouseLeave;
             // 
             // bindingNavigatorCountItem
             // 
@@ -889,14 +906,13 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             _dataGridView.BorderStyle = BorderStyle.None;
             _dataGridView.CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
             _dataGridView.ClipboardCopyMode = DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            dataGridViewCellStyle1.Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Bold, GraphicsUnit.Point, 161);
             _dataGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             _dataGridView.ContextMenuStrip = _contextMenuStrip_DataGridView;
             _dataGridView.CurrentRowBackgroundColor = Color.DeepSkyBlue;
             _dataGridView.CurrentRowBorderColor = Color.DarkBlue;
             dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle2.BackColor = SystemColors.Window;
-            dataGridViewCellStyle2.Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Regular, GraphicsUnit.Point, 161);
+            dataGridViewCellStyle2.Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             dataGridViewCellStyle2.ForeColor = SystemColors.ControlText;
             dataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight;
             dataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText;
@@ -910,7 +926,9 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             _dataGridView.Location = new Point(0, 28);
             _dataGridView.Margin = new Padding(4);
             _dataGridView.Name = "_dataGridView";
+            _dataGridView.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
             _dataGridView.RowHeadersWidth = 30;
+            _dataGridView.RowTemplate.DefaultCellStyle.Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             _dataGridView.SelectionBorderWidth = 3;
             _dataGridView.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             _dataGridView.ShowCellToolTips = false;
@@ -974,7 +992,6 @@ namespace StockRoom11net.Controls.DataGridViewExtend
         private ToolStripButton bindingNavigatorMoveLastItem;
         private ToolStripSeparator bindingNavigatorSeparator2;
         private ToolStripMenuItem ToolStripMenuItem_Maintenance;
-
         private ToolStripButton toolStripButton_Save;
         private ToolStripButton toolStripButton_Refresh;
         private ToolStripLabel toolStripLabel2;
@@ -1047,17 +1064,16 @@ namespace StockRoom11net.Controls.DataGridViewExtend
         private ITableEmployeeService _employeesService;
         private EmployeeInformation.EmployeeInformation _currentEmployeeLogIn;
 
-        //TODO: To be remove, just for test the delay of initial loading of the control.
-        //private readonly System.Windows.Forms.Timer initialDelay;
-
         /// <summary>
-        /// The user setting name, we save _dataGridView.Name + _dataGridView.DataMember.
+        /// The user setting name, we save userSettingName = Name + "_" + TableName;
+        /// It is update at public object DataSource{ set }
         /// We saved the datasource name because in some cases,
         /// the same dataGridView manipulates different dataSources.
         /// </summary>
         private string userSettingName = "";
-        private ToolStripMenuItem ToolStripMenuItem_Font;
+        private ToolStripMenuItem ToolStripMenuItem_Font_Style;
         private ToolStripMenuItem boltRegularToolStripMenuItem;
+        private ToolStripMenuItem toolStripMenuItem_FontStyle_BindingNavegator;
         bool _isMouseDrivenEvent;
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         /// <summary>
@@ -1138,7 +1154,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
         /// <summary>
         /// The name of the table source of bindingSource.
         /// </summary>
-        public string TableName;
+        public string TableName = "";
 
         /// <summary>
         /// Message to debug the code. 
@@ -1169,6 +1185,14 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             }
 
             set { }
+        }
+
+        public DataGridViewCell? CurrentCell
+        {
+            get
+            {
+                return _dataGridView.CurrentCell;
+            }            
         }
 
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
@@ -1299,9 +1323,6 @@ namespace StockRoom11net.Controls.DataGridViewExtend
                     return;
                 }
 
-                Font Editable = new Font(_dataGridView.Font, FontStyle.Regular);
-
-                Font NoEdit = new Font(_dataGridView.Font, FontStyle.Italic);
                 var columnsList = _settingColumns.OrderBy(i => i.DisplayIndex);
 
                 _dataGridView.SuspendLayout();
@@ -1314,6 +1335,31 @@ namespace StockRoom11net.Controls.DataGridViewExtend
                     DataGridViewColumn dgvColumn = _dataGridView.Columns[column.Name];
                     if (dgvColumn == null)
                         continue;
+
+                    #region"Column Edit" glyph
+
+                    Font? baseFont = _dataGridView.Columns[column.Name].HeaderCell.Style.Font ??
+                                    _dataGridView.Columns[column.Name].HeaderCell.InheritedStyle.Font;
+
+                    Font noeditFont = new Font(baseFont, FontStyle.Italic);
+                    Font editableFont = new Font(baseFont, baseFont.Style);
+
+                    DataGridViewCellStyle style = _dataGridView.Columns[column.Name].HeaderCell.Style;
+
+                    if (column.Edit)
+                    {
+                        _dataGridView.Columns[column.Name].ReadOnly = false;
+                        style.Font = editableFont;
+                        _dataGridView.EnableHeadersVisualStyles = false;
+                    }
+                    else
+                    {
+                        _dataGridView.Columns[column.Name].ReadOnly = true;
+                        style.Font = noeditFont;
+                        _dataGridView.EnableHeadersVisualStyles = false;
+                    }
+
+                    #endregion"Column Edit"
 
                     #region"Column Visible"                        
 
@@ -1356,23 +1402,6 @@ namespace StockRoom11net.Controls.DataGridViewExtend
 
                     #endregion"Column Width"
 
-                    #region"Column Edit"
-
-                    DataGridViewCellStyle style = _dataGridView.Columns[column.Name].HeaderCell.Style;
-
-                    if (column.Edit)
-                    {
-                        _dataGridView.Columns[column.Name].ReadOnly = false;
-                        style.Font = Editable;
-                    }
-                    else
-                    {
-                        _dataGridView.Columns[column.Name].ReadOnly = true;
-                        style.Font = NoEdit;
-                    }
-
-                    #endregion"Column Edit"
-
                     dgvColumn.HeaderCell.Style.Alignment = column.Alignment;
                     dgvColumn.DefaultCellStyle.Alignment = column.Alignment;
                 }
@@ -1382,10 +1411,16 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             }
         }
 
-        #region"InitializeThreadTimer"
+        #region"TimerDelayProcessSettingColumns"
 
         int _firstInterval;
         System.Threading.Timer timerColumnsNotReady;
+
+        /// <summary>
+        /// In some cases, the columns collection is not ready when we set SettingColumns, because we set SettingColumns
+        /// in DataSource{ set } before the dataGridView have the chance to create the columns collection, so we use a
+        /// timer to delay the process of SettingColumns until the columns collection is ready.
+        /// </summary>
         void InitializeThreadTimer()
         {
             _firstInterval += 1000;
@@ -1428,10 +1463,11 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             timerColumnsNotReady.Change(Timeout.Infinite, Timeout.Infinite); //disable
         }
 
-        #endregion"InitializeThreadTimer"        
+        #endregion"TimerDelayProcessSettingColumns"        
 
         /// <summary>
-        /// Get a collection that contains all the columns in the control.
+        /// Get a collection that contains all the columns in the dataGridView control.
+        /// It return _dataGridView.Columns;
         /// </summary>
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public DataGridViewColumnCollection ColumnsCollection
@@ -1504,7 +1540,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
         //DataGridViewExtend.BindingSourceGroups _bindingGroupsView;
 
         /// <summary>
-        /// Enable or disable the bindingNavigator option to add a new item.
+        /// Enable or disable the bindingNavigator option to add a new itemEFtableTreeView.
         /// </summary>
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public bool BindingNavigatorAddNewItemEnable
@@ -1520,7 +1556,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
         }
 
         /// <summary>
-        /// Enable or disable the bindingNavigator option to delete a item.
+        /// Enable or disable the bindingNavigator option to delete a itemEFtableTreeView.
         /// </summary>
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public bool BindingNavigatorDeleteItemEnable
@@ -1550,6 +1586,20 @@ namespace StockRoom11net.Controls.DataGridViewExtend
                 _dataGridView.AllowUserToAddRows = value;
             }
         }
+
+        /// <summary>
+        /// Tracks Index of rows edited in the DataGridView since last save.
+        /// Index is the unique identifier of the row in the Table_XXTreeView,
+        /// so we can use it to identify the row in the database and update it.
+        /// </summary>
+        public readonly HashSet<int> DirtyDataGridViewIndexes = new();
+
+        /// <summary>
+        /// Tracks PartNumbers of rows edited in the DataGridView since last save.
+        /// PartNumber is the unique identifier of the row in the Table_StockRoom,
+        /// so we must use it to identify the row in the database and update it.
+        /// </summary>
+        public readonly HashSet<string> DirtyDataGridViewPartNumbers = new();
 
         #endregion"Properties"
 
@@ -1653,6 +1703,10 @@ namespace StockRoom11net.Controls.DataGridViewExtend
 
                 try
                 {
+                    if (!Name.Contains("DGVExt_"))
+                        MessageBox.Show($"Control Name '{Name}' is missing the 'DGVExt_' prefix.",
+                                                  "Naming Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
                     MessageDebugPosition = "BindingSource";
                     if (value.GetType() == typeof(BindingSource))
                     {
@@ -1758,10 +1812,15 @@ namespace StockRoom11net.Controls.DataGridViewExtend
                     {
                         _bindingSource = (BindingSource)value;
 
+                        // ✅ Track which rows are dirtied by the DGV so SaveRequested
+                        //    saves ALL changed rows, not just Current.
+                        _bindingSource.ListChanged += OnBindingSourceListChanged;
+
                         // Direct access instead of reflection
-                        if (_bindingSource is BindingSourceValidating<object> validatingSource)
+                        if (value is IBindingSourceValidating validatingSource)
                         {
                             TableName = validatingSource.TableName;
+                            userSettingName = Name + "_" + TableName;
                         }
 
                         if (InvokeRequired)
@@ -1927,7 +1986,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
                             _dataGridView.AllowUserToDeleteRows = false;
 
                             _dataGridView.ReadOnly = false;
-                            toolStripButton_Save.Enabled = true;
+                            //toolStripButton_Save.Enabled = true;
                             break;
                         }
                     case EditMode.Delete:
@@ -1939,7 +1998,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
                             _dataGridView.AllowUserToDeleteRows = true;
 
                             _dataGridView.ReadOnly = false;
-                            toolStripButton_Save.Enabled = true;
+                            //toolStripButton_Save.Enabled = true;
                             break;
                         }
 
@@ -1952,7 +2011,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
                             _dataGridView.AllowUserToDeleteRows = false;
 
                             _dataGridView.ReadOnly = false;
-                            toolStripButton_Save.Enabled = true;
+                            //toolStripButton_Save.Enabled = true;
                             break;
                         }
                     case EditMode.View:
@@ -2925,6 +2984,9 @@ namespace StockRoom11net.Controls.DataGridViewExtend
         /// </summary>
         void LoadDataGridViewColumnsSetting()
         {
+            if (_currentEmployeeLogIn == null)
+                return; // No employee logged in yet; settings will load when EmployeesService is set
+
             if (_currentEmployeeLogIn.ContainsDataGridViewColumnsSettingList(userSettingName))
             {
                 _dataGridView._needSaveSetting = false;
@@ -2932,6 +2994,16 @@ namespace StockRoom11net.Controls.DataGridViewExtend
 
                 if (columnsSetting != null)
                     SettingColumns = columnsSetting;
+            }
+
+            if (_currentEmployeeLogIn.ContainsUserSetting(userSettingName))
+            {
+                UserSetting userSetting = _currentEmployeeLogIn.UserSettingEntity(userSettingName);
+
+                _dataGridView.Set_DefaultCellStyle_SelectedCellStyle(userSetting.DgvFont);
+                _dataGridView.Set_ColumnHeaderCellStyle(userSetting.HeaderFont);
+                Set_BindingNavegatorFont(userSetting.BindingNaFont);
+                _bindingNavigator.ImageScalingSize = userSetting.ImageSize;
             }
         }
 
@@ -2968,16 +3040,6 @@ namespace StockRoom11net.Controls.DataGridViewExtend
                 MessageDebugPosition = "InitializeComp..";
                 InitializeComponent();
 
-                /*
-                MessageDebugPosition = "Initialize initialDelay timer..";
-                initialDelay = new System.Windows.Forms.Timer
-                {
-                    Interval = 100
-                };
-                initialDelay.Tick += new EventHandler(InitialDelay_Tick);
-                initialDelay.Start();
-                */
-
                 MessageDebugPosition = "ColumnFilterIndicator..";
                 //_dataGridView.ColumnFilterIndicator = Resources.Filtering;
                 //_dataGridView.ColumnClearFilterIndicator = Resources.FilterClearing;
@@ -2998,6 +3060,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
                 MessageDebugPosition = "InitializeContextMenu..";
                 InitializeContextMenu();
                 InitializeToolStrip();
+                InitializedBindingNavegator();
             }
             catch (Exception error)
             {
@@ -3010,7 +3073,41 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             }
         }
 
-        private void _dataGridView_DataSourceChanged(object? sender, EventArgs e)
+        /// <summary>
+        /// Fires when the DGV commits a cell edit into the underlying BindingList.
+        /// Records the identity of the changed row so SaveRequested can save all dirty rows.
+        /// </summary>
+        void OnBindingSourceListChanged(object? sender, ListChangedEventArgs e)
+        {
+            if (e.ListChangedType == ListChangedType.PropertyDescriptorChanged || e.ListChangedType == ListChangedType.Reset)
+                return;
+
+            toolStripButton_Save.Enabled = true;
+
+            if (e.ListChangedType == ListChangedType.ItemChanged && e.NewIndex >= 0)
+            {
+                // TreeView entities derive from Table_Base_TreeView which implements ITableBaseTreeView
+                if (TableName.Contains("_TreeView"))
+                {
+                    if (_bindingSource[e.NewIndex] is ITableBaseTreeView hasIndex)
+                        DirtyDataGridViewIndexes.Add(hasIndex.Index);  // HashSet → idempotent
+                    return;
+                }
+
+                // Table_TimeLine uses a DataView as its source — items are DataRowView, not entities
+                if (TableName == "Table_TimeLine")
+                {
+                    if (_bindingSource[e.NewIndex] is DataRowView drv && drv.Row["ID"] != DBNull.Value)
+                        DirtyDataGridViewIndexes.Add((int)drv.Row["ID"]);
+                    return;
+                }
+
+                if (TableName == "Table_StockRoom")
+                    DirtyDataGridViewPartNumbers.Add(_dataGridView.Rows[e.NewIndex].Cells["PartNumber"].Value.ToString());
+            }
+        }
+
+        void _dataGridView_DataSourceChanged(object? sender, EventArgs e)
         {
             if (_dataGridView.DataSource == null)
                 return;
@@ -3026,20 +3123,6 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             // because in some cases, the same dataGridView manipulates different dataSources.
             LoadDataGridViewColumnsSetting();
         }
-
-        /*
-        void InitialDelay_Tick(object? sender, EventArgs e)
-        {
-            initialDelay.Stop();
-
-            MessageDebugPosition = "DataGridViewInitialize..";
-            DataGridViewInitialize();
-
-            CurrentRowStatus = new CurrentStatus(_dataGridView.CurrentRowActived);
-
-            InitializeDataGridViewEventHandler();
-        }
-        */
 
         #region"DataGridView Method"
 
@@ -3071,11 +3154,11 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             _dataGridView.ReadOnly = true;
             _dataGridView.TopLeftHeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleRight;
 
-            _dataGridViewCellStyle.Font = new Font("Segoe UI", 10F, FontStyle.Regular, GraphicsUnit.Point, 161);
-            _dataGridViewCellStyleSelectedRow.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point, 161);
-            _dataGridViewColumnHeaderCellStyle.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point, 161);
+            _dataGridViewCellStyle.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 161);
+            _dataGridViewCellStyleSelectedRow.Font = new Font("Segoe UI", 14F, FontStyle.Bold, GraphicsUnit.Point, 161);
+            _dataGridViewColumnHeaderCellStyle.Font = new Font("Segoe UI", 14F, FontStyle.Bold, GraphicsUnit.Point, 161);
 
-            _dataGridView.DataGridViewCellStyle = _dataGridViewCellStyle;
+            _dataGridView.DataGridViewCellStyleP = _dataGridViewCellStyle;
             _dataGridView.SelectedRowsDefaultCellStyle = _dataGridViewCellStyleSelectedRow;
             _dataGridView.DataGridViewColumnHeaderCellStyle = _dataGridViewColumnHeaderCellStyle;
 
@@ -3115,7 +3198,6 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             _dataGridView.MouseEnter += DataGridViewMouseEnter;
             _dataGridView.MouseDown += DataGridViewMouseDown;
             _dataGridView.MouseUp += DataGridViewMouseUp;
-            _dataGridView.MouseWheel += DataGridViewMouseWheel;
 
             _dataGridView.DragLeave += DataGridView_DragLeave;
 
@@ -3143,10 +3225,22 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             _dataGridView.KeyDown += DataGridView_KeyDown;
             _dataGridView.KeyPress += DataGridView_KeyPress;
             _dataGridView.KeyUp += DataGridView_KeyUp;
-
+            _dataGridView.SettingChanged += DataGridView_SettingChanged;
             _dataGridView.Disposed += DataGridView_Disposed;
         }
 
+        public void SavedRequestedDone()
+        {
+            toolStripButton_Save.Enabled = false;
+            DirtyDataGridViewIndexes.Clear();
+            DirtyDataGridViewPartNumbers.Clear();
+        }
+
+        void DataGridView_SettingChanged(object? sender, DataGridViewControlExtended.SettingChangedEventArgs e)
+        {
+            IsMouseDrivenEvent = true;
+            SaveUserSetting();
+        }
 
         void DataGridView_DragLeave(object? sender, EventArgs e)
         {
@@ -3198,7 +3292,6 @@ namespace StockRoom11net.Controls.DataGridViewExtend
                 return;
 
             _dataGridView.MultiSelect = false;
-            ToolStripMenuItem_SortByPDF_Click(sender, e);
         }
 
         int countError = 0;
@@ -3268,47 +3361,6 @@ namespace StockRoom11net.Controls.DataGridViewExtend
         {
             // Note: DataGridViewCellMouseUp  is the first event handler and then is called DataGridViewMouseUp event handler,
             // opposite to DataGridViewMouseDown/DataGridViewCellMouseDown event handler.		   
-        }
-
-        void DataGridViewMouseWheel(object? sender, MouseEventArgs e)
-        {
-            if (ModifierKeys == Keys.Control)
-            {
-                float currentSize = _dataGridView.DefaultCellStyle.Font?.Size ?? _dataGridView.Font.Size;
-                float newSize = e.Delta > 0 ? currentSize + 0.5f : currentSize - 0.5f;
-
-                // Clamp between min and max size
-                newSize = Math.Clamp(newSize, 6f, 48f);
-
-                Font newFont = new Font(_dataGridViewCellStyle.Font!.FontFamily, newSize, _dataGridViewCellStyle.Font.Style);
-                Font newFontSelected = new Font(_dataGridViewCellStyleSelectedRow.Font!.FontFamily, newSize + 2f, FontStyle.Bold);
-
-                // ✅ Update the internal styles your RowPostPaint uses for row height
-                _dataGridView.DataGridViewCellStyle.Font = newFont;
-                _dataGridView.SelectedRowsDefaultCellStyle.Font = newFontSelected;
-
-                // ✅ Also update DefaultCellStyle so cells render with new font
-                _dataGridView.DefaultCellStyle.Font = newFont;
-
-                // ✅ Manually resize header height because ColumnHeadersHeightSizeMode = DisableResizing
-                // so it won't auto-resize — we must set it explicitly
-                float currentSizeHeader = _dataGridView.ColumnHeadersDefaultCellStyle.Font?.Size ?? _dataGridView.ColumnHeadersDefaultCellStyle.Font.Size;
-                float newSizeHeader = e.Delta > 0 ? currentSizeHeader + 0.5f : currentSizeHeader - 0.5f;
-                // Clamp between min and max size
-                newSizeHeader = Math.Clamp(newSizeHeader, 6f, 48f);
-                Font colHeaderFont = new Font(_dataGridView.ColumnHeadersDefaultCellStyle.Font!.FontFamily, newSizeHeader,
-                                          _dataGridView.ColumnHeadersDefaultCellStyle.Font.Style);
-                _dataGridView.ColumnHeadersHeight = newFont.Height + _rowHeightAdd;
-                _dataGridView.InvalidateColumnHeaders(colHeaderFont);
-
-                // ✅ Force repaint + row height recalculation
-                _dataGridView.Invalidate();
-
-                ((HandledMouseEventArgs)e).Handled = true;
-                return;
-            }
-
-            base.OnMouseWheel(e);
         }
 
         void DataGridView_RowsCollectionChanged(object? sender, CollectionChangeEventArgs e)
@@ -3393,7 +3445,6 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             // # 3 _dataGridView_UserDeletedRow.
         }
 
-
         string _owningColumnHeader = "";
         void DataGridViewCellBeginEdit(object? sender, DataGridViewCellCancelEventArgs e)
         {
@@ -3427,7 +3478,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
                     },
                      _dataGridView.Rows[e.RowIndex]));
         }
-
+        
         void DataGridViewCellEndEdit(object? sender, DataGridViewCellEventArgs e)
         {
             //if cell value type is boolean return, mouse over and focus firet this event.
@@ -3468,18 +3519,17 @@ namespace StockRoom11net.Controls.DataGridViewExtend
 
         }
 
+        /// <summary>
+        /// This event is fired when the user click on a cell, but not on a checkbox cell, for checkbox cell click event is CellContentClick.
+        /// We only process the click event for non header cell, just the grid cell, because the header cell click is for sort or select column,
+        /// and this process is different than click on a normal cell.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         void DataGridViewCellClick(object? sender, DataGridViewCellEventArgs e)
         {
-            // TopLeftHeader.
-            if (e.RowIndex == -1 && e.ColumnIndex == -1)
-                return;
-
-            // Column header event.
-            if (e.RowIndex == -1)
-                return;
-
-            // Row header event.
-            if (e.ColumnIndex == -1)
+            // TopLeftHeader, row header and column header event is not processed by this event.
+            if (e.RowIndex == -1 || e.ColumnIndex == -1)
                 return;
 
             if (_dataGridView.CurrentCell.ValueType == typeof(bool))
@@ -3490,15 +3540,11 @@ namespace StockRoom11net.Controls.DataGridViewExtend
 
         void DataGridViewCellContentClick(object? sender, DataGridViewCellEventArgs e)
         {
-            // Column header event.
-            if (e.RowIndex == -1)
+            // TopLeftHeader, row header and column header event is not processed by this event.
+            if (e.RowIndex == -1 || e.ColumnIndex == -1)
                 return;
 
-            // Row header event.
-            if (e.ColumnIndex == -1)
-                return;
-
-            if (_dataGridView.CurrentCell.ValueType != typeof(bool))
+            if (_dataGridView.CurrentCell?.ValueType != typeof(bool))
                 return;
 
             _dataGridView.EndEdit();
@@ -3508,12 +3554,8 @@ namespace StockRoom11net.Controls.DataGridViewExtend
 
         void DataGridViewCellDoubleClick(object? sender, DataGridViewCellEventArgs e)
         {
-            // Column header event.
-            if (e.RowIndex == -1)
-                return;
-
-            // Row header event.
-            if (e.ColumnIndex == -1)
+            // TopLeftHeader, row header and column header event is not processed by this event.
+            if (e.RowIndex == -1 || e.ColumnIndex == -1)
                 return;
 
             if (_dataGridView.CurrentRowActived.DataBoundItem.GetType() == typeof(GroupRow))
@@ -3698,6 +3740,72 @@ namespace StockRoom11net.Controls.DataGridViewExtend
 
         #endregion"DataGridView Method"
 
+        #region"Timer SaveUserSetting if it's modifying the user interface."
+
+        /// <summary>
+        /// Initialize the SaveUserSettingTimer to 10 seconds to save
+        /// user setting if this is modifying the user interface.
+        /// </summary>
+        void InitializeSaveUserSettingTimer()
+        {
+            SaveUserSettingTimer = new System.Windows.Forms.Timer
+            {
+                Interval = 1000
+            };
+            SaveUserSettingTimer.Tick += async (sender, e) => await SaveUserSettingTickAsync(sender, e);
+
+            // Add the timer to the components container to ensure it is disposed properly when the control is disposed.
+            // otherswise, the timer would continue to run and could cause memory leaks or unexpected behavior after the control is disposed.
+            components.Add(SaveUserSettingTimer);
+        }
+
+        int _sec = 10;
+        /// <summary>
+        /// An interval of 10 seconds to save user setting if this is modifying the user interface.
+        /// </summary>
+        System.Windows.Forms.Timer SaveUserSettingTimer;
+
+        void SaveUserSetting()
+        {
+            if (!IsMouseDrivenEvent)
+                return;
+
+            IsMouseDrivenEvent = false;
+
+            SaveUserSettingTimer.Start();
+            NeedSaveData = false;
+            _sec = 10;
+
+            On_StatusBarMessage(new StatusBarMessage_EventArgs("", "  10 sec less to save dataGridViewSetting."));
+        }
+
+        async Task SaveUserSettingTickAsync(object? sender, EventArgs e)
+        {
+            _sec--;
+
+            if (_sec > 0)
+            {
+                On_StatusBarMessage(new StatusBarMessage_EventArgs("", "  " + _sec + " sec less to save dataGridViewSetting."));
+                return;
+            }
+
+            SaveUserSettingTimer.Stop();
+            On_StatusBarMessage(new StatusBarMessage_EventArgs("", "  "));//Clear the StatusBar.
+
+            var userSetting = new UserSetting(_dataGridView.AutoSizeColumnsMode, CustomEdit,
+                                              _dataGridView.DefaultCellStyle.Font,
+                                              _dataGridView.ColumnHeadersDefaultCellStyle.Font,
+                                              _bindingNavigator.Font,
+                                              _bindingNavigator.ImageScalingSize);
+
+            await _currentEmployeeLogIn.Save_UserSetting_ColumnsSetting(userSettingName,
+                                                                            userSetting,
+                                                                      ColumnsCollection,
+                                                      _dataGridView.AutoSizeColumnsMode);
+        }
+
+        #endregion"Timer SaveUserSetting if it's modifying the user interface."   
+
         #region "ContextMenuStrip_DataGridView"
 
         /**
@@ -3735,60 +3843,10 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             InitializeToolTipContextMenu();
         }
 
-        #region"Timer SaveUserSetting if it's modifying the user interface."
-
-        int _sec = 10;
-        /// <summary>
-        /// An interval of 10 seconds to save user setting if this is modifying the user interface.
-        /// </summary>
-        System.Windows.Forms.Timer SaveUserSettingTimer;
-
-        void SaveUserSetting()
+        void ToolStripMenuItem_SortByPDF_Click(object? sender, EventArgs e)
         {
-            if (!IsMouseDrivenEvent)
-                return;
-
-            IsMouseDrivenEvent = false;
-
-            SaveUserSettingTimer.Start();
-            NeedSaveData = false;
-            _sec = 10;
-
-            On_StatusBarMessage(new StatusBarMessage_EventArgs("", "  10 sec less to save dataGridViewSetting."));
+            _dataGridView.ToolStripMenuItem_SortByPDF_Click();
         }
-
-        /// <summary>
-        /// Initialize the SaveUserSettingTimer to 10 seconds to save
-        /// user setting if this is modifying the user interface.
-        /// </summary>
-        void InitializeSaveUserSettingTimer()
-        {
-            SaveUserSettingTimer = new System.Windows.Forms.Timer
-            {
-                Interval = 1000
-            };
-            SaveUserSettingTimer.Tick += async (sender, e) => await SaveUserSettingTickAsync(sender, e);
-        }
-
-        async Task SaveUserSettingTickAsync(object? sender, EventArgs e)
-        {
-            _sec--;
-
-            if (_sec > 0)
-            {
-                On_StatusBarMessage(new StatusBarMessage_EventArgs("", "  " + _sec + " sec less to save dataGridViewSetting."));
-                return;
-            }
-
-            SaveUserSettingTimer.Stop();
-            On_StatusBarMessage(new StatusBarMessage_EventArgs("", "  "));//Clear the StatusBar.
-
-            var userSetting = new UserSetting(_dataGridView.AutoSizeColumnsMode, CustomEdit);
-
-            await _currentEmployeeLogIn.SaveUserSettingAsync(userSettingName, userSetting);
-        }
-
-        #endregion"Timer SaveUserSetting if it's modifying the user interface."        
 
         #region"ToolTipContextMenu"
 
@@ -3862,30 +3920,68 @@ namespace StockRoom11net.Controls.DataGridViewExtend
                 if (_dataGridView.ColumnCount == 0)
                     return;
 
-                #region "Rows Selected & Maintenance"
+                #region"BindingNavegator"
 
+                // If the user right click on the BindingNavigator, show the menu to change the font style,
+                // font hieght and color.
+                
+                if (IsMouseOverBindingNavigator)
+                {
+                   _contextMenuStrip_DataGridView.Items.AddRange(new ToolStripItem[]
+                                                            {
+                                                                toolStripMenuItem_FontStyle_BindingNavegator
+                                                            });
+                    return;
+                }
+                
+
+                #endregion"BindingNavegator"
+
+                #region "TopLeftHeaderCell"
+
+                // If the user right click on the TopLeftHeaderCell
                 if (_dataGridView.HitTestData.RowIndex == -1 & _dataGridView.HitTestData.ColumnIndex == -1)
                 {
-                    _contextMenuStrip_DataGridView.Items.AddRange(new ToolStripItem[]
-                                                          {
-                                                                toolStripMenuItem_SortByPDF,
-                                                          });
-
-                    MessageDebugPosition = "Maintenance.";
-                    if (_employeeAccessLevel == AccessLevel.Manager)
+                    if (_dataGridView.IsMouseOverTopLeftColumnHeaderCellGlyph)
                     {
+                        _dataGridView.SelectAllColumnsHeader(true);
                         _contextMenuStrip_DataGridView.Items.AddRange(new ToolStripItem[]
-                                                                 {
+                                                              {
+                                                                ToolStripMenuItem_Font_Style,
+                                                                ToolStripMenuItem_Alignment,
+                                                                ToolStripMenuItem_AutoSizeMode
+                                                              });
+                    }
+
+                    if (_dataGridView.IsMouseOverTopLeftRowsHeaderCellGlyph)
+                    {
+
+                    }
+
+                    if (!_dataGridView.IsMouseOverTopLeftColumnHeaderCellGlyph && !_dataGridView.IsMouseOverTopLeftRowsHeaderCellGlyph)
+                    {
+                        // TopLeftHeaderCell was clicked.Show the menu for sort by PDF, because
+                        // this is the only column that we have in this project that we can sort by it.
+                        _contextMenuStrip_DataGridView.Items.AddRange(new ToolStripItem[]
+                                                              {
+                                                                toolStripMenuItem_SortByPDF,
+                                                              });
+
+                        MessageDebugPosition = "Maintenance.";
+                        if (_employeeAccessLevel == AccessLevel.Manager)
+                        {
+                            _contextMenuStrip_DataGridView.Items.AddRange(new ToolStripItem[]
+                                                                     {
                                                                      ToolStripMenuItem_columnsMaintenance,
                                                                      ToolStripMenuItem_Maintenance
-                                                                 });
+                                                                     });
 
-                        _contextMenuStrip_DataGridView.Items.Add(toolStripSeparator1);
+                            _contextMenuStrip_DataGridView.Items.Add(toolStripSeparator1);
+                        }
                     }
                 }
 
-
-                #endregion "Rows Selected & Maintenance"
+                #endregion "TopLeftHeaderCell"
 
                 #region"ColumnHeader right-Click"
 
@@ -4142,34 +4238,6 @@ namespace StockRoom11net.Controls.DataGridViewExtend
                                     @"StockRoom Inventory has generated an error.",
                                     MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
-            }
-        }
-
-        void ToolStripMenuItem_SortByPDF_Click(object? sender, EventArgs e)
-        {
-            if (!_dataGridView.Columns.Contains("CountPDF"))
-                return;
-
-            switch (_dataGridView.SortOrder)
-            {
-                case SortOrder.None:
-                    {
-                        _dataGridView.Sort(_dataGridView.Columns["CountPDF"], ListSortDirection.Ascending);
-                        _dataGridView.TopLeftHeaderCell.Value = "▲";
-                        break;
-                    }
-                case SortOrder.Ascending:
-                    {
-                        _dataGridView.Sort(_dataGridView.Columns["CountPDF"], ListSortDirection.Descending);
-                        _dataGridView.TopLeftHeaderCell.Value = "▼";
-                        break;
-                    }
-                case SortOrder.Descending:
-                    {
-                        _dataGridView.Sort(_dataGridView.Columns["CountPDF"], ListSortDirection.Ascending);
-                        _dataGridView.TopLeftHeaderCell.Value = "▲";
-                        break;
-                    }
             }
         }
 
@@ -4882,7 +4950,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             findRemplace.TopMost = true;
             findRemplace.ShowDialog();
         }
-                
+
         private Find_and_Remplace.Find_Remplace_Execute_EventArgs eventArgFill;
 
         /// <summary>
@@ -5322,17 +5390,15 @@ namespace StockRoom11net.Controls.DataGridViewExtend
         void ToolStripMenuItem_Font_Click(object sender, EventArgs e)
         {
             _contextMenuStrip_DataGridView.Close();
+            _dataGridView.SelectAllColumnsHeader(false);
 
             //using var fontDialog = new FontPickerDialog.FontPickerDialog(_dataGridViewCellStyle.Font);
 
             using var fontDialog = new FontDialog();
 
             // Optional: pre-select the current font
-            if (_dataGridView.IsMouseOverColumnHeaderCell)
-                fontDialog.Font = _dataGridView.ColumnHeadersDefaultCellStyle.Font;
-            else
-                fontDialog.Font = _dataGridView.DefaultCellStyle.Font;
-                                    
+            fontDialog.Font = _dataGridView.ColumnHeadersDefaultCellStyle.Font;
+
             // Optional settings:
             fontDialog.ShowColor = true;    // show color picker too
             fontDialog.ShowEffects = true;  // strikeout, underline
@@ -5344,18 +5410,58 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             fontDialog.Apply += (s, e) =>
             {
                 // fires when user clicks Apply (without closing dialog)
-                ApplyNewFontToDataGridView(fontDialog.Font);
+                _dataGridView.Set_ColumnHeaderCellStyle(fontDialog.Font);
             };
 
             if (fontDialog.ShowDialog() == DialogResult.OK)
             {
-                ApplyNewFontToDataGridView(fontDialog.Font);
+                _dataGridView.Set_ColumnHeaderCellStyle(fontDialog.Font);
+                SaveUserSetting();
+            }
+        }
+
+
+        void ToolStripMenuItem_FontStyleBindingNavigator_Click(object sender, EventArgs e)
+        {
+            _contextMenuStrip_DataGridView.Close();
+
+            //using var fontDialog = new FontPickerDialog.FontPickerDialog(_dataGridViewCellStyle.Font);
+
+            using var fontDialog = new FontDialog();
+
+            // Optional: pre-select the current font
+            fontDialog.Font = _bindingNavigator.Font;
+
+            // Optional settings:
+            fontDialog.ShowColor = true;    // show color picker too
+            fontDialog.ShowEffects = true;  // strikeout, underline
+            fontDialog.ShowApply = true;    // show Apply button
+            fontDialog.MinSize = 8;
+            fontDialog.MaxSize = 24;
+            fontDialog.FontMustExist = true;
+            fontDialog.ShowApply = true;
+            fontDialog.Apply += (s, e) =>
+            {
+                // fires when user clicks Apply (without closing dialog)
+                _bindingNavigator.Font = fontDialog.Font;
+                foreach (ToolStripItem item in _bindingNavigator.Items)
+                {
+                    item.Font = fontDialog.Font;
+                }
+                _bindingNavigator.Invalidate();
+            };
+
+            if (fontDialog.ShowDialog() == DialogResult.OK)
+            {
+                Set_BindingNavegatorFont(fontDialog.Font);
+                
+                SaveUserSetting();
             }
         }
 
         void ApplyNewFontToDataGridView(Font newFont)
         {
-            if(_dataGridView.IsMouseOverColumnHeaderCell)
+            if (_dataGridView.IsMouseOverColumnHeaderCell)
             {
                 _dataGridView.ColumnHeadersDefaultCellStyle.Font = newFont;
                 _dataGridView.ColumnHeadersHeight = newFont.Height + _rowHeightAdd;
@@ -5363,7 +5469,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
                 return;
             }
 
-            _dataGridView.DataGridViewCellStyle.Font = newFont;
+            _dataGridView.DataGridViewCellStyleP.Font = newFont;
             _dataGridView.SelectedRowsDefaultCellStyle.Font = newFont;
 
             float currentSize = newFont?.Size ?? newFont.Size;
@@ -5384,27 +5490,25 @@ namespace StockRoom11net.Controls.DataGridViewExtend
 
         #endregion "End ContextMenuStrip_DataGridView"
 
-        #region"Tools Strip"
+        #region"BindingNavigator Tools Strip"
 
         void InitializeToolStrip()
         {
-            bindingNavigatorDeleteItem.Enabled = false;
+            toolStripButton_Save.Enabled = false;
+            bindingNavigatorDeleteItem.Enabled = false;            
         }
 
         void ToolStripButtonSaveClick(object? sender, EventArgs e)
         {
             NeedSaveData = false;
 
-            if (_dataGridView.CurrentRow != null)
+            if (_dataGridView.CurrentRow == null)
+                return;
+                            
+            On_Save_Requested(new Save_Requested_EventArgs
             {
-                DataRowView row = (DataRowView)_dataGridView.CurrentRow.DataBoundItem;
-                DataRow rowData = row.Row;
-                rowData.EndEdit();
-                _bindingSource.EndEdit();
-            }
-
-            // TODO:  Call the event to save data, this event will be wired in the form that use this control,
-            // and execute the code to save data in database.
+                DirtyDataGridViewIndexes = DirtyDataGridViewIndexes
+            });
 
             On_LogFileMessage(new Custom_Events_Args.LogFileMessageEventArgs(new List<string>
                     {
@@ -5634,21 +5738,18 @@ namespace StockRoom11net.Controls.DataGridViewExtend
 
             On_UserDeletingRow(new DataGridViewRowCancelEventArgs(_dataGridView.CurrentRowActived));
 
-            On_LogFileMessage(new Custom_Events_Args.LogFileMessageEventArgs(new List<string>
-                    {
-                        Tags.NewLine(""),
-                        Tags.NewLineBold(_employeeName + " " + _employeeLastName),
-                        Tags.NewLine(Name + " deleting a row by hit the bindingNavigatorDeleteItem by the mouse at " + DateTime.Now)
-                    },
-                     (DataRowView)_bindingSource.Current));
-
-            _bindingSource.RemoveCurrent();
+          //  On_LogFileMessage(new Custom_Events_Args.LogFileMessageEventArgs(new List<string>
+          //          {
+          //              Tags.NewLine(""),
+          //              Tags.NewLineBold(_employeeName + " " + _employeeLastName),
+          //              Tags.NewLine(Name + " deleting a row by hit the bindingNavigatorDeleteItem by the mouse at " + DateTime.Now)
+          //          },
+          //           (DataRowView)_bindingSource.Current));
 
             bindingNavigatorDeleteItem.Enabled = false;
         }
 
-        #endregion"Tools Strip"
-
+        #endregion"BindingNavigator Tools Strip"
 
         /// <summary>
         /// Utilized to print.
@@ -5732,6 +5833,78 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             dataSet.Tables.Add(dataTable);
             return dataSet;
         }
+
+        #region"BindingNavigator"
+
+        bool _isMouseOverBindingNavigator = false;
+
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public bool IsMouseOverBindingNavigator
+        { 
+            get
+            {
+               return  _isMouseOverBindingNavigator;
+            }
+
+            set
+            {
+                _isMouseOverBindingNavigator = value;
+            }
+        }
+        void InitializedBindingNavegator()
+        {
+            _bindingNavigator.MouseWheel += BindingNavigator_MouseWheel;
+        }
+
+        private void BindingNavigator_MouseWheel(object? sender, MouseEventArgs e)
+        {
+            if (ModifierKeys == Keys.Control)
+            {
+                if (IsMouseOverBindingNavigator)
+                {
+                    float currentSize = _bindingNavigator.Font?.Size ?? Font.Size;
+                    float newSize = e.Delta > 0 ? currentSize + 1f : currentSize - 1f;
+                    newSize = Math.Clamp(newSize, 10f, 34f);
+
+                    Font newFont = new Font(_bindingNavigator.Font!.FontFamily, newSize, _bindingNavigator.Font.Style);
+
+                    Set_BindingNavegatorFont(newFont);
+
+                    Size imageSize = _bindingNavigator.ImageScalingSize;
+                    Size newImageSize = e.Delta > 0 ? new Size(imageSize.Width + 1, imageSize.Height + 1) :
+                                                      new Size(imageSize.Width - 1, imageSize.Height - 1);
+
+                    newImageSize = new Size(Math.Clamp(newImageSize.Width, 18, 32), Math.Clamp(newImageSize.Height, 18, 32));
+                    _bindingNavigator.ImageScalingSize = newImageSize;
+                }
+
+                ((HandledMouseEventArgs)e).Handled = true;
+            }
+        }
+
+        void BindingNavigator_MouseEnter(object sender, EventArgs e)
+        {
+            _isMouseOverBindingNavigator = true;
+        }
+
+        void BindingNavigator_MouseLeave(object sender, EventArgs e)
+        {
+            _isMouseOverBindingNavigator = false;
+        }
+
+        void Set_BindingNavegatorFont(Font newFont)
+        {
+            _bindingNavigator.Font = newFont;
+
+            foreach (ToolStripItem item in _bindingNavigator.Items)
+            {
+                item.Font = newFont;
+            }
+
+            _bindingNavigator.Invalidate();
+        }
+           
+        #endregion"BindingNavigator"
 
         class DataGridViewExt : DataGridView
         {
@@ -6636,6 +6809,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
 
                 return height - topmostYCoordinate;
             }
-        }        
+        }
+               
     }
 }

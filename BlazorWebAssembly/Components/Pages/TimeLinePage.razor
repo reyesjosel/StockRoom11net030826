@@ -1,11 +1,9 @@
 ﻿@page "/timeline"
-@using StockRoom11net.Controls.VisTimeLine
-@using StockRoom11net.BlazorWebAssembly
-@using StockRoom11net.BlazorWebAssembly.Components
 @using StockRoom11net.BlazorWebAssembly.Components.Pages
 @using StockRoom11net.BlazorWebAssembly.Data
+@using StockRoom11net.Controls.VisTimeLine
 @inject IJSRuntime JSRuntime
-@inject AppService AppService
+@inject AppService _appService
 
 
 <head>
@@ -55,7 +53,8 @@
 
         /* This is the general class applied to all individual items within a vis.js Timeline. */
 
-        .vis-item {
+        .vis-item
+        {
             /*height: 20px;*/
             color: black;
             font-size: 10pt;
@@ -358,19 +357,79 @@
             color: gray;
         }
 
-	</style>
+            /* custom styles for individual items, load this after vis-timeline-graph2d.min.css/vis-timeline-graph2d.min.css */
+
+            .vis-item.green { background-color: greenyellow;
+                              border-color: green;}
+
+            /* create a custom sized dot at the bottom of the red item */
+            .vis-item.red {
+                background-color: red;
+                border-color: darkred;
+                color: white;
+                font-family: monospace;
+                box-shadow: 0 0 10px gray;
+            }
+
+            .vis-item.vis-dot.red {
+                border-radius: 10px;
+                border-width: 10px;
+            }
+
+            .vis-item.vis-line.red {
+                border-width: 5px;
+            }
+
+            .vis-item.vis-box.red {
+                border-radius: 0;
+                border-width: 2px;
+                font-size: 24pt;
+                font-weight: bold;
+            }
+
+            .vis-item.orange { background-color: gold;
+                               border-color: orange;}
+
+            .vis-item.vis-selected.orange {
+                /* custom colors for selected orange items */
+                background-color: orange;
+                border-color: orangered;
+            }
+
+            .vis-item.magenta {
+                background-color: magenta;
+                border-color: purple;
+                color: white;
+				block-size: 10px;
+                /* line-height: 10px; /* controls text vertical centering */
+                /* padding: 2px 4px; /* controls inner spacing */
+            }
+
+            .vis-item.vis-box.magenta {
+                font-size: 4pt;
+            }
+
+            /* our custom classes overrule the styles for selected events,
+                   so lets define a new style for the selected events */
+            .vis-item.vis-selected { background-color: white;
+                                     border-color: black;
+                                     color: black;
+                                     box-shadow: 0 0 10px gray;}
+
+    </style>
+	
 </head>
 
 <body>
     <main>
         <p>Welcome to my website!</p>
+        <img src="/Resources/img/comment_48.png" style="width:48px;height:48px;" />
         @ChildContent
     </main>
     <footer>
         <div id="@ElementId"></div>
 
-        <TimeLineComp @ref="timelinecomp"
-                      Items="@Items"
+        <TimeLineComp @ref="_timelinecomp"
                       Options="@TimeLineOptions"
                       ElementId="@ElementId"
                       OnSelect="SelectEvent"
@@ -388,42 +447,44 @@
 -->
 
 @code {
-    /// <summary>
-    /// In a Blazor App, you would wrap a BECanvas element
-    /// in the CanvasHelper
-    /// </summary>
-    [Parameter] public RenderFragment ChildContent { get; set; }
+	/// <summary>
+	/// In a Blazor App, you would wrap a BECanvas element
+	/// in the CanvasHelper
+	/// </summary>
+	[Parameter] public RenderFragment ChildContent { get; set; }
 
-    string ElementId = "timeline-" + Guid.NewGuid().ToString("N");
+	/// <summary>
+	/// Unique identifier for the timeline element div.
+	/// </summary>
+	string ElementId = "timeline-" + Guid.NewGuid().ToString("N");
 
-    private TimeLineComp? timelinecomp;
+	private TimeLineComp? _timelinecomp;
 
-    List<TimelineGroup> Groups = new()
+	List<TimelineGroup> Groups = new()
     {
         new() { Id = 0, Content = "" },
         new() { Id = 1, Content = "Group A" },
         new() { Id = 2, Content = "Group B" }
     };
 
-    List<TimeLineItem> Items = new()
+	List<TimeLineItem> Items = new()
     {
-		new() { Id = 0, Content = "Item 0", Start = DateTime.Today.AddDays(-10), Editable = false },
-        new() { Id = 1, Group = 1, Content = "Item A", Start = DateTime.Today, Editable = true },
-        new() { Id = 2, Group = 2, Content = "Item B", Start = DateTime.Today.AddDays(1), Editable = true },
-        new() { Id = 3, Content = "Resizable Item", Start = DateTime.Parse("2025-12-10"), End = DateTime.Parse("2025-12-12"), Editable = true },
-        new() { Id = 4, Content = "Fixed Duration Item", Start = DateTime.Parse("2025-12-15"), End = DateTime.Parse("2025-12-16"), Editable = false }
+        new() { Id = "0", Content = "Item 0", Start = DateTime.Today.AddDays(-10), Editable = new TimeLineItemEditableOptions(){ UpdateTime = true, UpdateGroup = true, Remove = false } },
+        new() { Id = "1", Group = "1", Content = "Item A", Start = DateTime.Today, Editable = false },
+		new() { Id = "2", Group = "2", Content = "Item B", Start = DateTime.Today.AddDays(1)}, // Editable defaults to true
+        new() { Id = "3", Content = "Resizable Item", Start = DateTime.Parse("2025-12-10"), End = DateTime.Parse("2025-12-12"), Editable = true },
+        new() { Id = "4", Content = "Fixed Duration Item", Start = DateTime.Parse("2025-12-15"), End = DateTime.Parse("2025-12-16"), Editable = false }
     };
 
-
-    object TimeLineOptions = new TimeLineOptions
+	object TimeLineOptions = new TimeLineOptions
     {
         Start = new DateTime(2025, 9, 1),
         End = new DateTime(2026, 2, 10),
         Min = new DateTime(2020, 12,01, 12, 00, 00),
         Max = DateTime.Today + TimeSpan.FromDays(200),
-        // Height = "125px",
-        MaxHeight = "50%",
-        MinHeight = "10%",
+		// Height = "125px",
+        MaxHeight = "150px",//"25%"
+        MinHeight = "50px",
         ShowCurrentTime = true,
         Selectable = true,
         Moveable = true,
@@ -442,27 +503,29 @@
             UpdateGroup = true,
             Remove = true
         },        
-        Margin = new TimeLineMarginOptions
+        Margin = new TimeLineMargin
         {
-            Item = 10,
-            Axis = 5
+            Item = new ItemMargin
+            {
+				Horizontal = 5,     // Set horizontal space between items explicitly
+				Vertical = 2        // Set vertical space between items explicitly,
+                                    // it's items margin, the space will be doubled when stacked
+            },
+            Axis = 2                // Set space between items and the time axis
         },
-        Orientation = new TimeLineOrientationOptions
-        {
-            Axis = "bottom",
-            Item = "bottom"
-		},
+        Orientation = "bottom",
+
         Format = new TimeLineFormatOptions
         {
             MinorLabels = new Dictionary<string, string>
             {
-                // sub-day
+				// sub-day
                 ["millisecond"] = "SSS",
                 ["second"] = "HH:mm:ss",
                 ["minute"] = "HH:mm",
                 ["hour"] = "HH:mm",
 
-                // date
+				// date
                 ["weekday"] = "ddd D",
                 ["day"] = "D",
                 ["month"] = "MMM",
@@ -471,12 +534,12 @@
 
             MajorLabels = new Dictionary<string, string>
             {
-                // sub-day
+				// sub-day
                 ["millisecond"] = "HH:mm",
                 ["second"] = "HH:mm",
                 ["minute"] = "HH:mm",
                 ["hour"] = "MMM D HH:mm",
-                // date
+				// date
                 ["weekday"] = "MMM D",
                 ["day"] = "MMMM YYYY",
                 ["month"] = "YYYY",
@@ -485,68 +548,53 @@
         }
 	};
 
-    Task SelectEvent(int? id)
-    {
-        Console.WriteLine($"Selected: {id}");
-        return Task.CompletedTask;
-    }
+	async Task SelectEvent(string id)
+	{
+		await _appService.NotifySelect(id);
+	}
 
-    Task MoveEvent(TimeLineItem item)
-    {
-        Console.WriteLine($"Moved: {item.Id} → {item.Start}");
-        return Task.CompletedTask;
-    }
+	async Task MoveEvent(TimeLineItem item)
+	{
+		await _appService.NotifyMoved(item);
+	}
 
-    Task ResizeEvent(TimeLineItem item)
-    {
-        Console.WriteLine($"Resized: {item.Id}");
-        return Task.CompletedTask;
-    }
+	async Task ResizeEvent(TimeLineItem item)
+	{
+		await _appService.NotifyResize(item);
+	}
 
-    Task RangeEvent((DateTime start, DateTime end) window)
-    {
-        Console.WriteLine($"Range: {window.start} → {window.end}");
-        return Task.CompletedTask;
-    }
+	async Task RangeEvent((DateTime start, DateTime end) window)
+	{
+		await _appService.NotifyRangeChanged(window.start, window.end);
+	}
 
+	/// <summary>
+	/// OnInitialize we add event handlers to the AppService.MessageReceived event.
+	/// </summary>
+	protected override void OnInitialized()
+	{
+		// _appService.MessageReceivedEvent += HandleMessage;
+		//  _appService.UpDateTimeLineEvent += UpDateData;
+		//  _appService.UpDateItemEvent += ItemUpDate;
+	}
 
-    /// <summary>
-    /// The message received from the AppService.
-    /// Updated at HandleMessage() .
-    /// </summary>
-    private string Message { get; set; } = string.Empty;
+	/// <summary>
+	/// This method is called by the AppService event handlers whenever the data is updated.
+	/// OnInitialized we add event handlers to the AppService.MessageReceived event.
+	/// </summary>
+	public async void UpDateData(string message)
+	{
+		await InvokeAsync(async () => await _timelinecomp!.UpDateData(message));
+	}
 
-    /// <summary>
-    /// OnInitialize we add event handlers to the AppService.MessageReceived event.
-    /// </summary>
-    protected override void OnInitialized()
-    {
-        AppService.MessageReceived += HandleMessage;
-        AppService.UpDateTimeLineEvent += UpDateData;
-    }
+	async void ItemUpDate(TimeLineItem item)
+	{
+		await InvokeAsync(async () => await _timelinecomp!.UpdateItem(item));
+	}
 
-    /// <summary>
-    /// This method is called whenever the AppService.MessageReceived event is raised.
-    /// Here we handle the message and call the UpDateData method to update the data.
-    /// </summary>
-    private void HandleMessage(string message)
-    {
-        UpDateData(message);
-        Message = message;
-        //StateHasChanged(); // Important: Force UI update
-    }
-
-    /// <summary>
-    /// this method is called by the AppService event handlers whenever the data is updated.
-    /// OnInitialized we add event handlers to the AppService.MessageReceived event.
-    /// </summary>
-    public async void UpDateData(string message)
-    {
-       // await timelinecomp.UpDateData(message);
-    }
-
-    public void Dispose()
-    {
-        AppService.MessageReceived -= HandleMessage;
-    }
+	public void Dispose()
+	{        
+		_appService.UpDateTimeLineEvent -= UpDateData;
+		_appService.UpDateItemEvent -= ItemUpDate;
+	}	
 }

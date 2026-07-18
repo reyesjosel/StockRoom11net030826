@@ -123,7 +123,7 @@ public partial class TableEmployeeService : ITableEmployeeService
     
     public async Task<bool> InitializeEmployeeAsync(int last6Digit)
     {
-        var UserLogInEntity = await _unitOfWork.TableEmployees.FirstOrDefaultAsync(e => e.Last6Digit == last6Digit);
+        var UserLogInEntity = await _unitOfWork.TableEmployeeRepository.FirstOrDefaultAsync(e => e.Last6Digit == last6Digit);
 
         if(UserLogInEntity == null)
         {
@@ -164,7 +164,7 @@ public partial class TableEmployeeService : ITableEmployeeService
 
     private void InitializeDepartmentList()
     {
-        IEnumerable<Table_Employee> departments = _unitOfWork.TableEmployees.GetAllDepartmentsAsync().Result;
+        IEnumerable<Table_Employee> departments = _unitOfWork.TableEmployeeRepository.GetAllDepartmentsAsync().Result;
 
         foreach (Table_Employee department in departments)
         {

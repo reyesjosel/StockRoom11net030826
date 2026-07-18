@@ -303,7 +303,7 @@ namespace StockRoom11net.Controls.TabControl.Control
 
         /// <summary>
         /// Add a <see cref="FATabStripItem"/> to this control.
-        /// User can make the currently selected item or not.
+        /// User can make the currently selected itemEFtableTreeView or not.
         /// </summary>
         /// <param name="tabItem"></param>
         public void AddTab(FATabStripItem tabItem, bool autoSelect)
@@ -361,7 +361,7 @@ namespace StockRoom11net.Controls.TabControl.Control
 
         /// <summary>
         /// Get a <see cref="FATabStripItem"/> at provided point.
-        /// If no item was found, returns null value.
+        /// If no itemEFtableTreeView was found, returns null value.
         /// </summary>
         /// <param name="pt"></param>
         /// <returns></returns>

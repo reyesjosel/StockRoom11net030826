@@ -103,7 +103,7 @@ namespace StockRoom11net
         {
             timerDelay.Stop();
 
-            //Note: focused node will call CalculateNextAvailablePartNumber(_currentFocusedNodeProperties.CodeString);
+            //Note: focused node will call CalculateNextAvailablePartNumber(_currentNodeItem.CodeString);
         }
 
         void GetListFrontDataTable()

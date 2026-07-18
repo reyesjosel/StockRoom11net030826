@@ -551,13 +551,7 @@ namespace StockRoom11net
         /// </summary>
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public string CurrentPartNumber { get; set; } = string.Empty;
-
-        /// <summary>
-        /// Current focused node in treeViewBase,
-        /// update in FocusedNodeChanged event.
-        /// </summary>
-        public NodeProperties _currentFocusedNodeproperties = new NodeProperties();
-
+                
         public ResourcesCache _cache = new ResourcesCache();
 
         #endregion"Properties"
@@ -567,7 +561,7 @@ namespace StockRoom11net
         {
             dataGridViewExtendedBase = dataGridView;
 
-            dataGridViewExtendedBase.SaveRequested += DataGridViewExtendedBase_SaveRequested;
+            //dataGridViewExtendedBase.SaveRequested += DataGridViewExtendedBase_SaveRequested;
             dataGridViewExtendedBase.StatusBarMessage += DataGridViewExtendedBase_StatusBarMessage;
         }
 

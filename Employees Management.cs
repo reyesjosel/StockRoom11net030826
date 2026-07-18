@@ -136,7 +136,7 @@ namespace StockRoom11net
 
             _cache = new ResourcesCache();
 
-            MessageDebugPosition = "Initialize_DataTreeListView";
+            MessageDebugPosition = "Initialize_olvDataTreeMaster";
             Initialize_DataTreeListView();
             DataTreeListView_Shown();
 
@@ -232,7 +232,7 @@ namespace StockRoom11net
 
         private Type DataBoundObject;
         private string DataBoundObject_Name;
-        private DataRowView CurrentDataRowViewActive;
+        private Table_Base_TreeView currentNodeItem;
         private void OlvDataTree_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (olvDataTree.SelectedItem != null)
@@ -241,9 +241,9 @@ namespace StockRoom11net
                 DataBoundObject_Name = DataBoundObject.Name;
                 if (DataBoundObject_Name.Contains("DataRowView"))
                 {
-                    CurrentDataRowViewActive = (DataRowView)olvDataTree.SelectedItem.RowObject;
+                    currentNodeItem = (Table_Base_TreeView)olvDataTree.SelectedItem.RowObject;
 
-          //          _currentFocusedNodeproperties = new NodeProperties(CurrentDataRowViewActive);
+          //          _currentFocusedNodeproperties = new NodeProperties(currentNodeItem);
          //           if (_currentFocusedNodeproperties == null)
          //               return;
 
@@ -254,7 +254,7 @@ namespace StockRoom11net
 
                     #region"tabPage_Employee"
 
-                    if (_currentFocusedNodeproperties.IsEmployee)
+                    if (currentNodeItem.IsEmployee)
                     {
                         customTabControl_Employee.SelectedTab = customTabControl_Employee.TabPages["tabPage_Employee"];
                         customTabControl_Employee.ShowTab("tabPage_ProFile");
@@ -264,7 +264,7 @@ namespace StockRoom11net
 
                     #region"TabControl_Inventory.ActiveTab.Name == "tabPage_TimeLine", show the TimeLine.
 
-                    if (_currentFocusedNodeproperties.IsDepartment)
+                    if (currentNodeItem.IsDepartment)
                     {
                         customTabControl_Employee.SelectedTab = customTabControl_Employee.TabPages["tabPage_Department"];
                         customTabControl_Employee.HideTab("tabPage_ProFile");
@@ -700,7 +700,9 @@ namespace StockRoom11net
             EmployeesSelected.EmployeeEditMode = (Utilities.EditMode)comboBox_EditMode.SelectedItem;
             EmployeesSelected.EmployeeEnableTreeViewSetting = (Utilities.EnableSetting)comboBox_EnableSetting.SelectedItem;
 
-            EmployeesSelected.SaveSetting();
+            //TODO: We need to update the EmployeeInformation class, to save the AccessLevel, EditMode and EnableTreeViewSetting
+            //in the DataTable, and then we can call EmployeesSelected.SaveSetting() here.
+            // EmployeesSelected.SaveSetting();
 
             _dataGridViewExtended_Employee.FirstDisplayedRow = "ID/" + EmployeesSelected.ID;
 
@@ -1066,7 +1068,8 @@ namespace StockRoom11net
             //                                                                        dataGridViewSetting.SettingName.Value);
             }
 
-            EmployeesSelected.SaveSetting();
+            //TODO: We need to update the EmployeeInformation class, to save the AccessLevel, EditMode and EnableTreeViewSetting
+            // EmployeesSelected.SaveSetting();
         }
 
         private void Button_Profile_Cancel_Click(object sender, EventArgs e)

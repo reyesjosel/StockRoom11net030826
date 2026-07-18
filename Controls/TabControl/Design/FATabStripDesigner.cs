@@ -34,7 +34,7 @@ namespace StockRoom11net.Controls.TabControl.Design
         {
             IDesignerHost host = (IDesignerHost)GetService(typeof(IDesignerHost));
 
-            //Removing a tab strip item
+            //Removing a tab strip itemEFtableTreeView
             if (e.Component is FATabStripItem)
             {
                 FATabStripItem itm = e.Component as FATabStripItem;

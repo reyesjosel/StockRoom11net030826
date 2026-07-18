@@ -1,6 +1,8 @@
+using StockRoom11net.Controls.BindingSourceExt;
 using StockRoom11net.Data;
 using StockRoom11net.Data.Entities;
 using System.ComponentModel;
+using System.Data;
 
 namespace StockRoom11net.Data.Services;
 
@@ -12,6 +14,7 @@ namespace StockRoom11net.Data.Services;
 /// </summary>
 public interface IStockRoomService
 {
+    Task<DataTable> LoadStockRoomsDataTableAsync();
     Task<BindingList<Table_StockRoom>> LoadStockRoomsAsync();
     Task<BindingList<Table_StockRoom>> SearchStockRoomsAsync(string searchTerm);
     Task<Table_StockRoom?> GetStockRoomByIdAsync(int id);
@@ -37,9 +40,15 @@ public class StockRoomService : IStockRoomService
         _unitOfWork = unitOfWork;
     }
 
+    public async Task<DataTable> LoadStockRoomsDataTableAsync()
+    {
+        var items = await _unitOfWork.TableStockRoomRepository.GetAllAsync();
+        return items.ToDataTable();
+    }
+
     public async Task<BindingList<Table_StockRoom>> LoadStockRoomsAsync()
     {
-        var items = await _unitOfWork.StockRooms.GetAllAsync();
+        var items = await _unitOfWork.TableStockRoomRepository.GetAllAsync();
         return new BindingList<Table_StockRoom>(items.ToList());
     }
 
@@ -48,19 +57,19 @@ public class StockRoomService : IStockRoomService
         if (string.IsNullOrWhiteSpace(searchTerm))
             return await LoadStockRoomsAsync();
 
-        var items = await _unitOfWork.StockRooms.SearchByDescriptionAsync(searchTerm);
+        var items = await _unitOfWork.TableStockRoomRepository.SearchByDescriptionAsync(searchTerm);
         return new BindingList<Table_StockRoom>(items.ToList());
     }
 
     public async Task<Table_StockRoom?> GetStockRoomByIdAsync(int id)
     {
-        return await _unitOfWork.StockRooms.GetByIdAsync(id);
+        return await _unitOfWork.TableStockRoomRepository.GetByIdAsync(id);
     }
 
     public async Task<Table_StockRoom> CreateStockRoomAsync(Table_StockRoom stockRoom)
     {
         stockRoom.LastAccessTime = DateTime.Now;
-        await _unitOfWork.StockRooms.AddAsync(stockRoom);
+        await _unitOfWork.TableStockRoomRepository.AddAsync(stockRoom);
         await _unitOfWork.SaveChangesAsync();
         return stockRoom;
     }
@@ -68,29 +77,28 @@ public class StockRoomService : IStockRoomService
     public async Task UpdateStockRoomAsync(Table_StockRoom stockRoom)
     {
         stockRoom.LastAccessTime = DateTime.Now;
-        _unitOfWork.StockRooms.Update(stockRoom);
-        await _unitOfWork.SaveChangesAsync();
+        await _unitOfWork.TableStockRoomRepository.UpdateSaveAsync(stockRoom);
     }
 
     public async Task DeleteStockRoomAsync(int id)
     {
-        var item = await _unitOfWork.StockRooms.GetByIdAsync(id);
+        var item = await _unitOfWork.TableStockRoomRepository.GetByIdAsync(id);
         if (item != null)
         {
-            _unitOfWork.StockRooms.Remove(item);
+            _unitOfWork.TableStockRoomRepository.Remove(item);
             await _unitOfWork.SaveChangesAsync();
         }
     }
 
     public async Task<BindingList<Table_StockRoom>> GetLowInventoryItemsAsync(int threshold)
     {
-        var items = await _unitOfWork.StockRooms.GetLowInventoryAsync(threshold);
+        var items = await _unitOfWork.TableStockRoomRepository.GetLowInventoryAsync(threshold);
         return new BindingList<Table_StockRoom>(items.ToList());
     }
 
     public async Task<BindingList<Table_StockRoom>> FilterByStringFilterAsync(string stringFilter)
     {
-        var results = await _unitOfWork.StockRooms.FilterByStringFilterAsync(stringFilter);
+        var results = await _unitOfWork.TableStockRoomRepository.FilterByStringFilterAsync(stringFilter);
         return new BindingList<Table_StockRoom>(results.ToList());
     }
 

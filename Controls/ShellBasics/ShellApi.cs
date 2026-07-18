@@ -14,7 +14,7 @@ namespace StockRoom11net.Controls.ShellBasics
         {
             public IntPtr hwndOwner;                // Handle to the owner window for the dialog box.
 
-            public IntPtr pidlRoot;                 // Pointer to an item identifier list (PIDL) specifying the 
+            public IntPtr pidlRoot;                 // Pointer to an itemEFtableTreeView identifier list (PIDL) specifying the 
                                                     // location of the root folder from which to start browsing.
 
             [MarshalAs(UnmanagedType.LPStr)]        // Address of a buffer to receive the display name of the 
@@ -79,7 +79,7 @@ namespace StockRoom11net.Controls.ShellBasics
                                                     // is opened.
             public IntPtr hInstApp;                 // If the function succeeds, it sets this member to a value 
                                                     // greater than 32.
-            public IntPtr lpIDList;                 // Address of an ITEMIDLIST structure to contain an item identifier
+            public IntPtr lpIDList;                 // Address of an ITEMIDLIST structure to contain an itemEFtableTreeView identifier
                                                     // list uniquely identifying the file to execute.
             [MarshalAs(UnmanagedType.LPWStr)]
             public string lpClass;                  // Address of a null-terminated string that specifies the name of 
@@ -350,14 +350,14 @@ namespace StockRoom11net.Controls.ShellBasics
             Int32 nFolder,          // A CSIDL value that identifies the folder to be located.
             IntPtr hToken,          // Token that can be used to represent a particular user.
             UInt32 dwReserved,      // Reserved.
-            out IntPtr ppidl);      // Address of a pointer to an item identifier list structure 
+            out IntPtr ppidl);      // Address of a pointer to an itemEFtableTreeView identifier list structure 
                                     // specifying the folder's location relative to the root of the namespace 
                                     // (the desktop). 
 
-        // Converts an item identifier list to a file system path. 
+        // Converts an itemEFtableTreeView identifier list to a file system path. 
         [DllImport("shell32.dll")]
         public static extern Int32 SHGetPathFromIDList(
-            IntPtr pidl,            // Address of an item identifier list that specifies a file or directory location 
+            IntPtr pidl,            // Address of an itemEFtableTreeView identifier list that specifies a file or directory location 
                                     // relative to the root of the namespace (the desktop). 
             StringBuilder pszPath); // Address of a buffer to receive the file system path.
 
@@ -372,8 +372,8 @@ namespace StockRoom11net.Controls.ShellBasics
                                         // the folder associated with a CSIDL may be moved or renamed by the user. 
             StringBuilder pszPath);     // Pointer to a null-terminated string which will receive the path.
 
-        // Translates a Shell namespace object's display name into an item identifier list and returns the attributes 
-        // of the object. This function is the preferred method to convert a string to a pointer to an item 
+        // Translates a Shell namespace object's display name into an itemEFtableTreeView identifier list and returns the attributes 
+        // of the object. This function is the preferred method to convert a string to a pointer to an itemEFtableTreeView 
         // identifier list (PIDL). 
         [DllImport("shell32.dll")]
         public static extern Int32 SHParseDisplayName(
@@ -382,7 +382,7 @@ namespace StockRoom11net.Controls.ShellBasics
                                         // to parse. 
             IntPtr pbc,                 // Optional bind context that controls the parsing operation. This parameter 
                                         // is normally set to NULL.
-            out IntPtr ppidl,           // Address of a pointer to a variable of type ITEMIDLIST that receives the item
+            out IntPtr ppidl,           // Address of a pointer to a variable of type ITEMIDLIST that receives the itemEFtableTreeView
                                         // identifier list for the object.
             UInt32 sfgaoIn,             // ULONG value that specifies the attributes to query.
             out UInt32 psfgaoOut);      // Pointer to a ULONG. On return, those attributes that are true for the 
@@ -395,16 +395,16 @@ namespace StockRoom11net.Controls.ShellBasics
             out IntPtr ppshf);          // Address that receives an IShellFolder interface pointer for the 
                                         // desktop folder.
 
-        // This function takes the fully-qualified pointer to an item identifier list (PIDL) of a namespace object, 
+        // This function takes the fully-qualified pointer to an itemEFtableTreeView identifier list (PIDL) of a namespace object, 
         // and returns a specified interface pointer on the parent object.
         [DllImport("shell32.dll")]
         public static extern Int32 SHBindToParent(
-            IntPtr pidl,            // The item's PIDL. 
+            IntPtr pidl,            // The itemEFtableTreeView's PIDL. 
             [MarshalAs(UnmanagedType.LPStruct)]
-            Guid riid,              // The REFIID of one of the interfaces exposed by the item's parent object. 
+            Guid riid,              // The REFIID of one of the interfaces exposed by the itemEFtableTreeView's parent object. 
             out IntPtr ppv,         // A pointer to the interface specified by riid. You must release the object when 
                                     // you are finished. 
-            ref IntPtr ppidlLast);  // The item's PIDL relative to the parent folder. This PIDL can be used with many
+            ref IntPtr ppidlLast);  // The itemEFtableTreeView's PIDL relative to the parent folder. This PIDL can be used with many
                                     // of the methods supported by the parent folder's interfaces. If you set ppidlLast 
                                     // to NULL, the PIDL will not be returned. 
 
@@ -424,7 +424,7 @@ namespace StockRoom11net.Controls.ShellBasics
         public static extern Int32 StrRetToBuf(
             ref STRRET pstr,        // Pointer to the STRRET structure. When the function returns, this pointer will no
                                     // longer be valid.
-            IntPtr pidl,            // Pointer to the item's ITEMIDLIST structure.
+            IntPtr pidl,            // Pointer to the itemEFtableTreeView's ITEMIDLIST structure.
             StringBuilder pszBuf,   // Buffer to hold the display name. It will be returned as a null-terminated
                                     // string. If cchBuf is too small, the name will be truncated to fit. 
             UInt32 cchBuf);         // Size of pszBuf, in characters. If cchBuf is too small, the string will be 
@@ -620,7 +620,7 @@ namespace StockRoom11net.Controls.ShellBasics
                                             // path is C:\Documents and Settings\username\Local Settings\
                                             // Application Data.
             CSIDL_MYDOCUMENTS = (0x000c), // Version 6.0. The virtual folder representing the My Documents
-                                          // desktop item. This should not be confused with 
+                                          // desktop itemEFtableTreeView. This should not be confused with 
                                           // CSIDL_PERSONAL, which represents the file system folder that 
                                           // physically stores the documents.
             CSIDL_MYMUSIC = (0x000d), // The file system directory that serves as a common repository 
