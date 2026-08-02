@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.JSInterop;
+using Microsoft.Web.WebView2.Core;
 using StockRoom11net.BlazorWebAssembly.Components.Pages;
 using StockRoom11net.BlazorWebAssembly.Data;
 using StockRoom11net.Controls;
@@ -41,8 +42,9 @@ namespace StockRoom11net
         #region "Properties"
 
         // Injected EF Core services
-        private readonly ITableTimeLineService _timeLineService;
-        private readonly ITableTimeLineTreeViewService _timeLineTreeViewService;
+        private readonly ITimeLineService _itimeLineService;
+        private readonly ITableTimeLineService _itableTimeLineService;
+        private readonly ITableTimeLineTreeViewService _itableTimeLineTreeViewService;
         private readonly IUnitOfWork _unitOfWork;
         
         // ✅ Updated to use scaffolded entity
@@ -51,12 +53,10 @@ namespace StockRoom11net
         // Declare as extended type
         public BindingSourceValidating<Table_TimeLine> _bindingSourceTimeLineVal;
         public BindingSourceValidating<Table_Base_TreeView> _bindingSourceTimeLineTreeViewVal;
-               
-
+        
         DataColumnCollection _stockroomColumns;
 
         readonly AppState _appState = new();
-        readonly AppService _appService = new();
 
         #endregion
 
@@ -147,8 +147,7 @@ namespace StockRoom11net
         /// setting at this moment, it is not a user action, it is just the application of the user setting.
         /// </summary>
         bool internalResizeEvent = false;
-
-
+                
         // Parameterless constructor for designer
         [Obsolete("Use constructor with dependency injection")]
         public TimeLineEditor()
@@ -158,20 +157,22 @@ namespace StockRoom11net
 
         // ✅ Constructor with DI
         public TimeLineEditor(ITableEmployeeService employeesService,
-                              ITableTimeLineService timeLineService,
+                              ITimeLineService timeLineService,
+                              ITableTimeLineService itableTimeLineService,
                               ITableTimeLineTreeViewService timeLineTreeViewService,
                               IUnitOfWork unitOfWork)
         {
             InitializeComponent();
 
+            _itimeLineService = timeLineService ?? throw new ArgumentNullException(nameof(timeLineService));
+            _itableTimeLineService = itableTimeLineService ?? throw new ArgumentNullException(nameof(itableTimeLineService));
+            _itableTimeLineTreeViewService = timeLineTreeViewService ?? throw new ArgumentNullException(nameof(timeLineTreeViewService));
+            _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
+            EmployeesService = employeesService ?? throw new ArgumentNullException(nameof(employeesService));            
+
             // Do NOT call InitializeTimeLineItems on Shown — the BlazorWebView has not rendered yet.
             // Instead, subscribe to TimelineReadyEvent which fires after timelineInterop.create() completes.
-            _appService.TimelineReadyEvent += async () => await InitializeTimeLineItems();
-
-            _timeLineService = timeLineService ?? throw new ArgumentNullException(nameof(timeLineService));
-            _timeLineTreeViewService = timeLineTreeViewService ?? throw new ArgumentNullException(nameof(timeLineTreeViewService));
-            _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
-            EmployeesService = employeesService ?? throw new ArgumentNullException(nameof(employeesService));
+            _itimeLineService.TimelineReadyEvent += async () => await InitializeTimeLineItems();
 
             Name = "TimeLineEditor";
             dataGridViewExtended.Name = "DGVExt_TimeLine";
@@ -185,9 +186,9 @@ namespace StockRoom11net
             InitializeBlazorWebView();
         }
 
-       
+        
 
-        private void InitializeBlazorWebView()
+        void InitializeBlazorWebView()
         {
             try
             {
@@ -203,7 +204,7 @@ namespace StockRoom11net
                 var serviceCollection = new ServiceCollection();
                 serviceCollection.AddWindowsFormsBlazorWebView();
                 serviceCollection.AddSingleton<AppState>(_appState);
-                serviceCollection.AddSingleton<AppService>(_appService);
+                serviceCollection.AddSingleton<ITimeLineService>(_itimeLineService);
                 serviceCollection.AddSingleton<WeatherForecastService>();
                 serviceCollection.AddLogging(builder =>             // Add logging services and configure them
                 {
@@ -220,18 +221,46 @@ namespace StockRoom11net
                 // Log a message
                 logger.LogInformation("Application started.");
 
+                // In constructor or TimeLineEditor_Load — NO async needed
+                var userDataFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                                                "StockRoom11net", "WebView2UserData");
+
+                // Delete stale cache synchronously
+                if (Directory.Exists(userDataFolder))
+                {
+                    try { Directory.Delete(userDataFolder, recursive: true); }
+                    catch { /* non-fatal */ }
+                }
+
+                // Point the BlazorWebView's internal WebView2 at the fresh folder
+                // MUST be set BEFORE the control is shown/rendered
+                blazorWebView_TimeLine.WebView.CreationProperties =
+                    new Microsoft.Web.WebView2.WinForms.CoreWebView2CreationProperties
+                    {
+                        UserDataFolder = userDataFolder
+                    };
+
                 blazorWebView_TimeLine.HostPage = "wwwroot\\index.html";
-                //  blazorWebView_TimeLine.HostPage = Path.Combine(Path.GetDirectoryName(Environment.ProcessPath), "wwwroot\\index.html");
                 blazorWebView_TimeLine.Services = serviceProvider;
                 blazorWebView_TimeLine.RootComponents.Add<TimeLinePage>("#app");
 
+                _itimeLineService.OpenDevToolsEvent += () =>
+                {
+                    blazorWebView_TimeLine.WebView.CoreWebView2.OpenDevToolsWindow();
+                };
+                /*
+                blazorWebView_TimeLine.WebView.CoreWebView2InitializationCompleted += (s, e) =>
+                {
+                    blazorWebView_TimeLine.WebView.CoreWebView2.OpenDevToolsWindow();
+                };*/
+
                 AppDomain.CurrentDomain.UnhandledException += (sender, error) =>
                 {
-                    //#if DEBUG
-                    MessageBox.Show(text: error.ExceptionObject.ToString(), caption: "Error");
-                    //#else
-                    //    MessageBox.Show(text: "An error has occurred.", caption: "Error");
-                    //#endif
+                    #if DEBUG
+                        MessageBox.Show(text: error.ExceptionObject.ToString(), caption: "Error");
+                    #else
+                        MessageBox.Show(text: "An error has occurred.", caption: "Error");
+                    #endif
                 };
 
                 #endregion"BlazorWebView"
@@ -271,8 +300,8 @@ namespace StockRoom11net
                
         void InitializeAppServiceCallBackEvents()
         {
-            _appService.OnSelectEvent = EventCallback.Factory.Create<string>(this, OnSelectedItem);
-            _appService.OnMovedEvent = EventCallback.Factory.Create<TimeLineItem>(this, OnMoveItem);
+            _itimeLineService.OnSelectEvent = EventCallback.Factory.Create<string>(this, OnSelectedItem);
+            _itimeLineService.OnMovedEvent = EventCallback.Factory.Create<TimeLineItem>(this, OnMoveItem);
         }
 
         void OnSelectedItem(string e)
@@ -322,7 +351,7 @@ namespace StockRoom11net
                 StatusBarMessage(new StatusBarMessage_EventArgs("Loading TimeLine data..."));
 
                 // ✅ Load DataTable convert to → DataView → BindingSource (supports .Filter)
-                var dataTable = await _timeLineService.LoadTimeLinesDataTableAsync();
+                var dataTable = await _itableTimeLineService.LoadTimeLinesDataTableAsync();
                 var dataView = new DataView(dataTable);
 
                 // Create BindingSource
@@ -337,7 +366,7 @@ namespace StockRoom11net
                 dataGridViewExtended.DataSource = _bindingSourceTimeLineVal;
 
 
-                _timeLineTreeViewBindingList = await _timeLineTreeViewService.LoadTimelinesTreeViewAsync();
+                _timeLineTreeViewBindingList = await _itableTimeLineTreeViewService.LoadTimelinesTreeViewAsync();
 
                 if (HasCircularReference(_timeLineTreeViewBindingList))
                 {
@@ -656,7 +685,7 @@ namespace StockRoom11net
                 };
 
                 // Save to database
-                var savedTimeLine = await _timeLineService.CreateTimeLineAsync(newTimeLine);
+                var savedTimeLine = await _itableTimeLineService.CreateTimeLineAsync(newTimeLine);
 
                 // Add to binding list
                 _bindingSourceTimeLineVal.Add(savedTimeLine);
@@ -713,7 +742,7 @@ namespace StockRoom11net
                     Title   = row["ItemText"]?.ToString()
                 };
 
-                _appService.UpDateItem(itemToUpDate);
+                _itimeLineService.UpDateItem(itemToUpDate);
 
             }
             catch (Exception ex)
@@ -787,7 +816,7 @@ namespace StockRoom11net
                     Title = row["ItemText"]?.ToString()
                 };
 
-                _appService.SelectItem(JsonSerializer.Serialize(itemToUpDate));
+                _itimeLineService.SelectItem(JsonSerializer.Serialize(itemToUpDate));
 
             }
             catch (Exception ex)
@@ -1045,6 +1074,11 @@ namespace StockRoom11net
             }
         }
 
+        /// <summary>
+        /// Callback method from TimeLineComp.razor, OnAfterRenderAsync(bool firstRender) indicates that the JS interop is ready,
+        /// so we can now initialize the timeline items.
+        /// </summary>
+        /// <returns></returns>
         async Task InitializeTimeLineItems()
         {
             try
@@ -1079,14 +1113,18 @@ namespace StockRoom11net
                     });
                 }
 
-                //InitialDataJson = JsonSerializer.Serialize(visItems);
+                // InitialDataJson = JsonSerializer.Serialize(visItems);
 
-                //OnItemsClassName(visItems);       // Construct timeline items with class names and serialize to JSON
+                // OnItemsClassName(visItems);       // Construct timeline items with class names and serialize to JSON
                 OnHTMLContents(visItems);           // Construct HTML content for timeline items and serialize to JSON
 
-                await Task.Delay(300); // visTimelineForceLayout() in the JS bridge handles layout now
-
-                _appService.InitializeData(InitialDataJson);
+                // TODO: Consider using a more robust mechanism to ensure that the JS interop is ready before calling InitializeData.
+                await Task.Delay(300);              // Wait for the JS interop to be ready before calling InitializeData
+                                                    // 155ms is the minimun delay where the JS interop is ready, but 300ms
+                                                    // is a safe delay to ensure the JS interop is ready, but you can adjust
+                                                    // this value based on your application's performance and responsiveness.
+                                                    
+                await _itimeLineService.InitializeData(InitialDataJson);
             }
             catch (JSException ex)
             {
@@ -1137,7 +1175,7 @@ namespace StockRoom11net
 
                 //OnItemsClassName(visItems);       // Construct timeline items with class names and serialize to JSON
                 OnHTMLContents(visItems);           // Construct HTML content for timeline items and serialize to JSON
-                _appService.UpDateTimeLine(InitialDataJson);
+                _itimeLineService.UpDateTimeLine(InitialDataJson);
             }
             catch (Exception error)
             {

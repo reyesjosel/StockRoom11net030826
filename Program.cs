@@ -4,6 +4,7 @@ using System.Diagnostics;
 using StockRoom11net.Data;
 using StockRoom11net.BlazorWebAssembly.Data;
 using StockRoom11net.Controls.DependencyInjection;
+using StockRoom11net.Controls.VisTimeLine;
 
 namespace StockRoom11net
 {
@@ -23,6 +24,7 @@ namespace StockRoom11net
 
                     // Legacy Services (can be removed gradually)
                     services.AddSingleton<AppService, AppService>();
+                    services.AddSingleton<ITimeLineService, TimeLineService>();
 
                     // Forms
                     services.AddTransient<Solutions_TempleClass>();

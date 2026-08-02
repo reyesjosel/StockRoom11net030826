@@ -1,0 +1,7 @@
+root = true
+
+# JavaScript colocation files used by Blazor (.razor.js)
+# Tell Visual Studio to treat them as JavaScript so that
+# syntax highlighting, IntelliSense, and code folding work.
+[*.razor.js]
+language = javascript

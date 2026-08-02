@@ -777,9 +777,15 @@ namespace StockRoom11net
                 solutionProperties.SpeechSynthesizerBase -= SpeechSynthesizerBaseSpeak; // ✅ explicit, clear intent
 
                 if (solutionProperties.DialogResult == DialogResult.Cancel)//An error has been found in the initialization.
+                {
+                    MessageBox.Show(@"The department name was incorrectly assigned, the system stores the properties for each department," +
+                                          @" we recommend that you name the department for the proper development of the system.",
+                                          @"System Installation fail.",
+                                          MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
+                }
 
-                SolutionPropertiesFormClosed(new object(), new FormClosedEventArgs(CloseReason.FormOwnerClosing));
+                SolutionPropertiesFormClosed();
             }
 
             if (Settings.Default.DepartmentName.Contains("No set to any department"))
@@ -800,7 +806,7 @@ namespace StockRoom11net
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        void SolutionPropertiesFormClosed(object sender, FormClosedEventArgs e)
+        void SolutionPropertiesFormClosed()
         {
             IsDoneInstallation = true;
 
@@ -2410,6 +2416,9 @@ namespace StockRoom11net
             if (!IsDoneInstallation)
             {
                 WaitingTaskQueue.Enqueue(new Action(() => InitTimeLineEditor(textTitle)));
+                MessageBox.Show(@"The system is still initializing, please wait a few seconds and try again.",
+                                @"Warning, system not ready.",
+                                MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 

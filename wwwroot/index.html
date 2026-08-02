@@ -11,14 +11,13 @@
     <link rel="icon" type="image/png" href="favicon.png" />
     <link rel="apple-touch-icon" sizes="512x512" href="icon-512.png" />
     <link rel="apple-touch-icon" sizes="192x192" href="icon-192.png" />
-
+        
     <!--Custom CSS-->
     <link rel="stylesheet" href="css/app.css" />
     <link rel="stylesheet" href="css/site.css" />
     <link rel="stylesheet" href="css/themes.css" />
     <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css" />
     <link rel="stylesheet" href="css/BlazorWinFormsApp.styles.css" />
-
     <!--This do not work in BlazorWebView,
         so moved to Blazor component <head><style>.../style></head>
     <link href="StockRoom11net.styles.css" rel="stylesheet" />-->
@@ -35,9 +34,12 @@
         <span class="dismiss">🗙</span>
     </div>
 
+    <script src="Jscript/JQuery4/jquery-4.0.0.min.js"></script>
+
+    <!--
     <script src="_content/Blazor.Extensions.Canvas/blazor.extensions.canvas.js"></script>
 
-    <script src="Jscript/JQuery4/jquery-4.0.0-beta.min.js"></script>
+    -->
     <!--
     <link href="Jscript/fancytree/skin-lion/ui.fancytree.min.css" rel="stylesheet">
     <script src="Jscript/fancytree/jquery.fancytree-all-deps.min.js"></script>
@@ -47,12 +49,11 @@
     <script src="Jscript/fancytree/contextmenu/jquery.contextMenu-custom.js"></script>
     <script src="Jscript/fancytree/modules/jquery.fancytree.menu.js"></script>
      -->
-    <!-- vis timeline lib -->
+    <!-- vis timeline lib
     <script src="Jscript/vis/vis-timeline-graph2d.min.js"></script>
-    <link href="Jscript/vis/vis-timeline-graph2d.min.css" rel="stylesheet" />
-    <!-- your bridge file -->
-    <script src="Jscript/vis/vis-timeline-bridge.js"></script>
-
+    <link href="Jscript/vis/vis-timeline-graph2d.min.css" rel="stylesheet" /> -->
+    <!-- your bridge file
+    <script src="Jscript/vis/vis-timeline-bridge.js"></script> -->
     <!-- Blazor WebView bootstrap must load after your static scripts are present -->
     <script src="_framework/blazor.webview.js"></script>
 </body>

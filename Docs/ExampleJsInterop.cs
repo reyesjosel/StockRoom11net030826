@@ -2,7 +2,7 @@ using Microsoft.JSInterop;
 using System;
 using System.Threading.Tasks;
 
-namespace StockRoom11net.BlazorWebAssembly
+namespace StockRoom11net.Docs
 {
     // This class provides an example of how JavaScript functionality can be wrapped
     // in a .NET class for easy consumption. The associated JavaScript module is

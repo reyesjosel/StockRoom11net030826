@@ -30,7 +30,7 @@ namespace StockRoom11net
         // Injected EF Core services
         private readonly IUnitOfWork _unitOfWork;
         private ITableEmployeeService _employeesService;
-      //  private readonly IStockRoomService _stockRoomService;
+      //  private readonly IStockRoomService _tableStockRoomService;
       //  private readonly ITableStockRoomTreeViewService _tableStockRoomTreeViewService;
 
         #region"On_ScannedData"

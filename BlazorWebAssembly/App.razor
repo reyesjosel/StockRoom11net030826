@@ -1,10 +1,10 @@
 <Router AppAssembly="@this.GetType().Assembly">
     <Found Context="routeData">
-        <RouteView RouteData="@routeData" DefaultLayout="@typeof(StockRoom11net.BlazorWebAssembly.Components.Layout.MainLayout)"/>
+        <RouteView RouteData="@routeData" DefaultLayout="@typeof(StockRoom11net.BlazorWebAssembly.Components.Layout.EmptyLayout)"/>
         <FocusOnNavigate RouteData="@routeData" Selector="h1" />
     </Found>
     <NotFound>
-        <LayoutView Layout="@typeof(StockRoom11net.BlazorWebAssembly.Components.Layout.MainLayout)">
+        <LayoutView Layout="@typeof(StockRoom11net.BlazorWebAssembly.Components.Layout.EmptyLayout)">
             <p> App.razor Line 7. Sorry, there's nothing at this address.</p>
         </LayoutView>
     </NotFound>

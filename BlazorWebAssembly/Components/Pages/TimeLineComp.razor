@@ -6,8 +6,50 @@
 @using StockRoom11net.BlazorWebAssembly.Data
 @using global::StockRoom11net.Controls.VisTimeLine
 @inject IJSRuntime JSRuntime
-@inject AppService AppService
-@implements IDisposable
+@inject ITimeLineService iTimeLineService
+
+<head>
+    <style>
+            .tl-ctx-backdrop {
+                position: fixed;
+                inset: 0;
+                z-index: 999;
+            }
+
+            .tl-ctx-menu {
+                position: fixed;
+                z-index: 1000;
+                background: #fff;
+                border: 1px solid #ccc;
+                border-radius: 3px;
+                box-shadow: 2px 2px 6px rgba(0,0,0,.2);
+                padding: 1px 0;
+                min-width: 80px;
+                font-size: 10px;
+            }
+
+            .tl-ctx-menu-item {
+                padding: 2px 8px;
+                cursor: pointer;
+                user-select: none;
+                line-height: 1.4;
+            }
+
+                .tl-ctx-menu-item:hover {
+                    background: #f0f0f0;
+                }
+
+    </style>
+</head>
+
+@* ── dismiss the menu when clicking anywhere else ─────────────────────── *@
+@if (_ctxVisible)
+{
+    <div class="tl-ctx-backdrop" @onclick="CompContextMenuClose"></div>
+    <div class="tl-ctx-menu" style="left:@(_ctxX)px; top:@(_ctxY)px" @onclick="CompContextMenuClose">
+        @ContextMenuItems!(_ctxArgs)
+    </div>
+}
 
 
 @code
@@ -52,7 +94,7 @@
 
     #endregion *****************    "Lifecycle Events Documentation"    ***********
 
-	#region *****************  Parameters/EventCallbacks    *****************
+    #region *****************  Parameters/EventCallbacks    *****************
 
 	// Those parameters are passed from the parent component to this TimeLineComp component.
     // When the parent component declares (initialization) the TimeLineComp component, it can set these parameters
@@ -63,7 +105,7 @@
     [Parameter] public IEnumerable<TimelineGroup>? Groups { get; set; }
     [Parameter] public object? Options { get; set; }
 
-	// This eventCallback are available for the parent component at declaration (initialization) time of the TimeLineComp component.
+    // This eventCallback are available for the parent component at declaration (initialization) time of the TimeLineComp component.
     // The parent component can subscribe to these events
     // EventCallbacks
     [Parameter] public EventCallback<string> OnSelect { get; set; }
@@ -73,10 +115,11 @@
     [Parameter] public EventCallback<CanvasMouseArgs> MouseDown { get; set; }
     [Parameter] public EventCallback<CanvasMouseArgs> MouseUp { get; set; }
     [Parameter] public EventCallback<CanvasMouseArgs> MouseMove { get; set; }
+    [Parameter] public EventCallback<TimeLineContextMenuArgs> OnContextMenu { get; set; }
 
-	#endregion *****************    Parameters/EventCallbacks    *****************
-   
-	#region *****************  This are component's Lifecycle Events    ******
+    #endregion *****************    Parameters/EventCallbacks    *****************
+
+    #region *****************  This are component's Lifecycle Events    ******
 
     // #1 Receives [Parameter] values from parent or route
     // — must call base or parameters won't be set
@@ -105,12 +148,13 @@
         // It can be used to perform any necessary actions based on the new parameter values.
         // For example, you might want to update the timeline data or options based on the new parameters.
     }
-    
+
     // Store the lambda reference so it can be unsubscribed later
-	Action<string>? _initializeDataHandler;
+    Action<string>? _initializeDataHandler;
     Action<string>? _upDateTimeLineHandler;
     Action<TimeLineItem>? _upDateItemHandler;
     Action<string>? _selectItemHandler;
+    Action<bool, bool>? _setMajorLabelsHandler;
 
     /// <summary>
     /// Reference to the current instance of the TimeLineComp component.
@@ -118,7 +162,9 @@
     /// calls back using invokeMethodAsync("NotifySelect", id);<br/>
     /// </summary>
     DotNetObjectReference<TimeLineComp>? selfRef;
-    DotNetObjectReference<AppService>? refAppService;
+    DotNetObjectReference<ITimeLineService>? refITimeLineService;
+
+    private IJSObjectReference? _module;
 
     // #8 DOM is ready — safe for JS interop, firstRender=true only on first render
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -126,7 +172,7 @@
         // This method is called after the component has been rendered to the DOM.
         // It can be used to perform any necessary actions that require access to the DOM.
         // For example, you might want to initialize JavaScript interop or set up event listeners.
-    
+
         // This method is called when the component's parameters are set or updated.
         if (firstRender)
         {
@@ -134,15 +180,31 @@
             // This allows JavaScript to call C# methods on this instance using the reference, and it
             // is passed to the JavaScript interop function to enable callbacks from JavaScript to C#.
             selfRef = DotNetObjectReference.Create(this);
-            refAppService = DotNetObjectReference.Create(AppService);
-            await JSRuntime.InvokeVoidAsync("vis_timeline_bridge.create", ElementId, Items, Groups, Options, selfRef, refAppService);
+            refITimeLineService = DotNetObjectReference.Create(iTimeLineService);
+
+            /* <ItemGroup>
+                <!-- None (not Content) so the Razor SDK does not trigger BLAZOR106.
+                The Link places the file under wwwroot in the build output so
+                BlazorWebView can serve it at ./Components/Pages/TimeLineComp.razor.js -->
+                <None Include="BlazorWebAssembly\Components\Pages\TimeLineComp.razor.js">
+                  <Link>wwwroot\Components\Pages\TimeLineComp.razor.js</Link>
+                  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+                  <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+                </None>
+               </ItemGroup>*/
+    // Most be set in the project file to ensure the JS file is copied to the output directory and served correctly by BlazorWebView.
+    // In Blazor Hybrid (WinForms + BlazorWebView), WebView2 serves only files under wwwroot.
+    // The virtual host https://0.0.0.1/ maps directly to the wwwroot/ folder at runtime. Since there is no wwwroot\Components\Pages\ subfolder,
+    // the link placed in the project file ensures that WebView2 can find the file.
+    _module = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./Components/Pages/TimeLineComp.razor.js");
+            await _module.InvokeVoidAsync("create", ElementId, Items, Groups, Options, selfRef, refITimeLineService);
 
             // Store the handler in a field — anonymous lambdas cannot be unsubscribed
             _initializeDataHandler = async (data) =>
             {
                 try
                 {
-                    await JSRuntime.InvokeVoidAsync("vis_timeline_bridge.initializeData", ElementId, data);
+                    await _module.InvokeVoidAsync("initializeData", ElementId, data);
                 }
                 catch (JSException ex)
                 {
@@ -156,7 +218,7 @@
             {
                 try
                 {
-                    await JSRuntime.InvokeVoidAsync("vis_timeline_bridge.updateData", ElementId, data);
+                    await _module.InvokeVoidAsync("updateData", ElementId, data);
                 }
                 catch (JSException ex)
                 {
@@ -168,7 +230,7 @@
             {
                 try
                 {
-                    await JSRuntime.InvokeVoidAsync("vis_timeline_bridge.updateItem", ElementId, data);
+                    await _module.InvokeVoidAsync("updateItem", ElementId, data);
                 }
                 catch (JSException ex)
                 {
@@ -180,7 +242,7 @@
             {
                 try
                 {
-                    await JSRuntime.InvokeVoidAsync("vis_timeline_bridge.selectItem", ElementId, data);
+                    await _module.InvokeVoidAsync("selectItem", ElementId, data);
                 }
                 catch (JSException ex)
                 {
@@ -188,31 +250,52 @@
                 }
             };
 
-			// Subscribe to the AppService events using the stored handler references
-            AppService.InitializeDataEvent += _initializeDataHandler;
-            AppService.UpDateTimeLineEvent += _upDateTimeLineHandler;
-            AppService.UpDateItemEvent += _upDateItemHandler;
-            AppService.SelectItemEvent += _selectItemHandler;  
-            
-            // Notify AppService that the vis-timeline JS instance is now ready.
+			// Flow: iTimeLineService.SetMajorLabelsEvent += _setMajorLabelsHandler; →
+            // timelineInterop.setMajorLabels() → vis-timeline.setOptions() → redraw()
+            _setMajorLabelsHandler = async (showMajor, showMinor) =>
+            {
+                try
+                {
+                    await _module.InvokeVoidAsync("setMajorLabels", ElementId, showMajor, showMinor);
+                }
+                catch (JSException ex)
+                {
+                    Console.WriteLine($"[TimeLineComp] setMajorLabels JS error: {ex.Message}");
+                }
+            };
+
+            // Subscribe to the TimeLineService events using the stored handler references
+            iTimeLineService.InitializeDataEvent += _initializeDataHandler;
+            iTimeLineService.UpDateTimeLineEvent += _upDateTimeLineHandler;
+            iTimeLineService.UpDateItemEvent += _upDateItemHandler;
+            iTimeLineService.SelectItemEvent += _selectItemHandler;
+
+
+            iTimeLineService.SetMajorLabelsEvent += _setMajorLabelsHandler; 
+            // Notify TimeLineService that the vis-timeline JS instance is now ready.
             // This drains any data that WinForms buffered before this render, and signals
             // WinForms via TimelineReadyEvent so it knows it can safely call InitializeData.
-            AppService.NotifyTimelineReady();
+            iTimeLineService.NotifyTimelineReady();
         }
     }
 
-	// #9 Component Removed from DOM, Framework calls Dispose() to allow
+    // #9 Component Removed from DOM, Framework calls Dispose() to allow
     // the component to clean up resources and unsubscribe from events.
-    public void Dispose()
+    public async ValueTask DisposeAsync()
     {
-        AppService.InitializeDataEvent -= _initializeDataHandler;
-        AppService.UpDateTimeLineEvent -= _upDateTimeLineHandler;
-		AppService.UpDateItemEvent -= _upDateItemHandler;
-        AppService.SelectItemEvent -= _selectItemHandler;
+        iTimeLineService.InitializeDataEvent -= _initializeDataHandler;
+        iTimeLineService.UpDateTimeLineEvent -= _upDateTimeLineHandler;
+        iTimeLineService.UpDateItemEvent -= _upDateItemHandler;
+        iTimeLineService.SelectItemEvent -= _selectItemHandler;
+        iTimeLineService.SetMajorLabelsEvent -= _setMajorLabelsHandler;
 
-		// Dispose of the DotNetObjectReference to release resources and prevent memory leaks
+        // Dispose of the DotNetObjectReference to release resources and prevent memory leaks
         selfRef?.Dispose();
-        refAppService?.Dispose();
+        refITimeLineService?.Dispose();
+        if (_module != null)
+        {
+            await _module.DisposeAsync();
+        }
     }
 
     #endregion *****************    This component's Lifecycle Events    ******
@@ -240,9 +323,9 @@
     public async Task NotifyMove(TimeLineItem item) => await OnMove.InvokeAsync(item);
 
     /// <summary>
-    /// Called by JavaScript to notify the Blazor component of a resize event.
+    /// Called by JavaScript to notify the Blazor component of a timeline item resize event.
     /// </summary>
-    /// <param name="item">The item that was resized.</param>
+    /// <param name="item">The timeline item that was resized.</param>
     /// <returns></returns>
     [JSInvokable]
     public async Task NotifyResize(TimeLineItem item) => await OnResize.InvokeAsync(item);
@@ -293,13 +376,14 @@
     #endregion *****************    JSRuntime → C#   **************************
 
     #region *****************  C# → JS calls   **************************
-	// This are public methods that can be called from C# code in the Blazor page ( parent component )
+    // This are public methods that can be called from C# code in the Blazor page ( parent component )
     // to interact with the JavaScript timelineInterop component. Invoke JavaScript functions through
     // the JSRuntime to perform actions on the timelineinterop component in the browser.
-	// This allows the Blazor component to control the timeline's behavior and appearance from C# code.
-	// This is the standard way to call JavaScript functions from C# in Blazor using JSRuntime.
-	// Blazor page ( parent component ) --> TimeLineComp component ( C# ) --> JSRuntime --> timelineInterop.js ( JS ) --> Vis.js Timeline ( JS )
+    // This allows the Blazor component to control the timeline's behavior and appearance from C# code.
+    // This is the standard way to call JavaScript functions from C# in Blazor using JSRuntime.
+    // Blazor page ( parent component ) --> TimeLineComp component ( C# ) --> JSRuntime --> timelineInterop.js ( JS ) --> Vis.js Timeline ( JS )
     // C# → JS
+
     /// <summary>
     /// Update the timeline data with the provided JSON string.
     /// </summary>
@@ -332,7 +416,63 @@
     public async Task ZoomOut() => await JSRuntime.InvokeVoidAsync("timelineInterop.zoomOut", ElementId);
     public async Task MoveLeft() => await JSRuntime.InvokeVoidAsync("timelineInterop.moveLeft", ElementId);
     public async Task MoveRight() => await JSRuntime.InvokeVoidAsync("timelineInterop.moveRight", ElementId);
-    
+
+    public async Task SetMajorLabels(bool showMajor, bool showMinor) =>
+                                    await JSRuntime.InvokeVoidAsync("timelineInterop.setMajorLabels", ElementId, showMajor, showMinor);
+
     #endregion *****************   C# → JS calls   **************************
+
+    #region ****** Comp Contextmenu ******
+
+    /// <summary>When false the right-click context menu is completely suppressed. Default is true.</summary>
+    [Parameter] public bool EnableContextMenu { get; set; } = true;
+
+    /// <summary>
+    /// Optional menu items rendered inside the built-in context menu popup.
+    /// Receives the <see cref="TimeLineContextMenuArgs"/> of the right-click so items
+    /// can be hidden/disabled based on whether an item or empty space was clicked.
+    /// If not set, no popup is shown and only <see cref="OnContextMenu"/> fires.
+    /// </summary>
+    [Parameter] public RenderFragment<TimeLineContextMenuArgs>? ContextMenuItems { get; set; }
+
+    // ── context-menu overlay state ────────────────────────────────────────────
+    bool _ctxVisible;
+    double _ctxX;
+    double _ctxY;
+    TimeLineContextMenuArgs _ctxArgs = new();
+
+    /// <summary>
+    /// Notifies the component that the context menu has been triggered.
+    /// Flow: interop.invokeMethodAsync("NotifyContextMenuComp") → Comp.NotifyContextMenuComp() -> Page.OnContextMenu()
+    /// </summary>
+    /// <param name="args">The arguments for the context menu event.</param>
+    /// <returns>A task that represents the asynchronous operation.</returns>
+    [JSInvokable]
+    public async Task NotifyContextMenuComp(TimeLineContextMenuArgs args)
+    {
+        if (!EnableContextMenu)
+            return;
+
+        _ctxArgs = args;
+        _ctxX = args.ClientX;
+        _ctxY = args.ClientY;
+        _ctxVisible = ContextMenuItems is not null;  // only show popup if items were provided
+        await OnContextMenu.InvokeAsync(args);
+        if (_ctxVisible) StateHasChanged();
+    }
+        
+    /// <summary>Dismisses the built-in context menu popup.</summary>
+    /// <remarks>Also called from JS via <c>_compDotnetRef.invokeMethodAsync("CompContextMenuClose")</c>
+    /// when the window loses focus.</remarks>
+    [JSInvokable]
+    public async Task CompContextMenuClose()
+    {
+        _ctxVisible = false;
+        await InvokeAsync(StateHasChanged);
+    }
+
+    #endregion ****** Comp Contextmenu ******
+
+    
 
 }
