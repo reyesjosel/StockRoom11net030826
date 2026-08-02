@@ -4,7 +4,11 @@
     <WebView2UseWinRT>False</WebView2UseWinRT>
     <WebView2LoaderPreference>Dynamic</WebView2LoaderPreference>
     <Platforms>AnyCPU</Platforms>
+    <!-- WebView2EnableCsWinRTProjection must NOT be True on .NET 5+.
+         WinRT projection is handled automatically via the net*-windows TFM (CsWinRT).
+         Setting it True causes NETSDK1130: direct .winmd references are not supported. -->
     <WebView2EnableCsWinRTProjection>False</WebView2EnableCsWinRTProjection>
+    <WebView2UseDispatchAdapter>False</WebView2UseDispatchAdapter>
   </PropertyGroup>
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
@@ -38,15 +42,20 @@
     <RootNamespace>StockRoom11net</RootNamespace>
     <AssemblyName>StockRoom11net</AssemblyName>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <ApplicationIcon>Properties\Resources\Tutorial.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="Docs\VisTimeLine\**" />
     <Compile Remove="MyStuff11net\**" />
     <Compile Remove="obj\**" />
+    <Content Remove="Docs\VisTimeLine\**" />
     <Content Remove="MyStuff10net\**" />
     <Content Remove="MyStuff11net\**" />
     <Content Remove="obj\**" />
+    <EmbeddedResource Remove="Docs\VisTimeLine\**" />
     <EmbeddedResource Remove="MyStuff11net\**" />
     <EmbeddedResource Remove="obj\**" />
+    <None Remove="Docs\VisTimeLine\**" />
     <None Remove="MyStuff11net\**" />
     <None Remove="obj\**" />
   </ItemGroup>
@@ -72,49 +81,65 @@
     <None Remove="Pages\**" />
     <None Remove="WebviewAppShared\**" />
   </ItemGroup>
-  <ItemGroup>
+  <ItemGroup>    
     <Content Remove="wwwroot\Jscript\CanvasHelper.js" />
     <Content Remove="wwwroot\Jscript\VisTimeLineHelper1.js" />
+    <!-- Exclude MVC .cshtml scaffolding — this is a Blazor/WinForms app (RAZORSDK1004) -->
+    <Content Remove="BlazorWebAssembly\**\*.cshtml" />
+    <Compile Remove="BlazorWebAssembly\**\*.cshtml.cs" />
+    <None Include="BlazorWebAssembly\**\*.cshtml" />
+    <None Include="BlazorWebAssembly\**\*.cshtml.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Docs\VisTimeLine\DocumentVisComp.razor.js" />
-    <Content Include="Docs\VisTimeLine\Document_index.html">
+    <Content Include="Properties\Resources\Tutorial.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <!-- None (not Content) so the Razor SDK does not trigger BLAZOR106.
+         The Link places the file under wwwroot in the build output so
+         BlazorWebView can serve it at ./Components/Pages/TimeLineComp.razor.js -->
+    <None Include="BlazorWebAssembly\Components\Pages\TimeLineComp.razor.js">
+      <SubType>JavaScript</SubType>
+      <Link>wwwroot\Components\Pages\TimeLineComp.razor.js</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Be.Windows.Forms.HexBox.Net5" Version="1.8.0" />
     <PackageReference Include="Blazor.Extensions.Canvas" Version="1.1.1" />
     <PackageReference Include="GenCode128" Version="2.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebView" Version="11.0.0-preview.2.26159.112" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebView.WindowsForms" Version="11.0.0-preview.2.26152.10" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.RazorPages" Version="2.3.0" />
-    <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="11.0.100-preview.2.26159.112">
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebView" Version="11.0.0-preview.6.26359.118" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebView.WindowsForms" Version="11.0.0-preview.6.26360.8" />
+    <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="11.0.100-preview.6.26359.118">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="11.0.0-preview.2.26159.112" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="11.0.0-preview.2.26159.112" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="11.0.0-preview.2.26159.112">
+    <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="11.0.0-preview.6.26359.118" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="11.0.0-preview.6.26359.118" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="11.0.0-preview.6.26359.118">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="11.0.0-preview.2.26159.112" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="11.0.0-preview.2.26159.112" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="11.0.0-preview.2.26159.112">
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="11.0.0-preview.6.26359.118" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="11.0.0-preview.6.26359.118" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="11.0.0-preview.6.26359.118">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.Extensions.Hosting" Version="11.0.0-preview.2.26159.112" />
-    <PackageReference Include="Microsoft.IdentityModel.JsonWebTokens" Version="8.17.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
-    <PackageReference Include="System.Data.OleDb" Version="10.0.3" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="11.0.0-preview.6.26359.118" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="11.0.0-preview.6.26359.118" />
+    <PackageReference Include="Microsoft.Extensions.Primitives" Version="11.0.0-preview.6.26359.118" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="11.0.0-preview.6.26359.118" />
+    <PackageReference Include="Microsoft.IdentityModel.JsonWebTokens" Version="8.21.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.5-beta1" />
+    <PackageReference Include="SQLite3MC.PCLRaw.bundle" Version="2.3.6" />
+    <PackageReference Include="SQLite3MC.PCLRaw.lib" Version="2.3.6" />
+    <PackageReference Include="SQLite3MC.PCLRaw.provider" Version="2.3.6" />
+    <PackageReference Include="System.Data.OleDb" Version="11.0.0-preview.6.26359.118" />
     <PackageReference Include="System.Data.SQLite" Version="2.0.3" />
-    <PackageReference Include="System.Management" Version="11.0.0-preview.2.26159.112" />
-    <PackageReference Include="System.Memory.Data" Version="11.0.0-preview.2.26159.112" />
-    <PackageReference Include="System.Speech" Version="11.0.0-preview.2.26159.112" />
+    <PackageReference Include="System.Management" Version="11.0.0-preview.6.26359.118" />
+    <PackageReference Include="System.Memory.Data" Version="11.0.0-preview.6.26359.118" />
+    <PackageReference Include="System.Speech" Version="11.0.0-preview.6.26359.118" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="CodeVendor.Controls">

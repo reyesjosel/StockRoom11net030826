@@ -12,16 +12,16 @@ namespace StockRoom11net.Examples;
 /// </summary>
 public partial class StockRoomFormExample : Form
 {
-    private readonly IStockRoomService _stockRoomService;
+    private readonly ITableStockRoomService _tableStockRoomService;
     private BindingList<Table_StockRoom> _bindingList;
 
     #region Constructor with Dependency Injection
 
     // Modern approach: Constructor injection
-    public StockRoomFormExample(IStockRoomService stockRoomService)
+    public StockRoomFormExample(ITableStockRoomService tableStockRoomService)
     {
         InitializeComponent();
-        _stockRoomService = stockRoomService ?? throw new ArgumentNullException(nameof(stockRoomService));
+        _tableStockRoomService = tableStockRoomService ?? throw new ArgumentNullException(nameof(tableStockRoomService));
         _bindingList = new BindingList<Table_StockRoom>();
     }
 
@@ -32,7 +32,7 @@ public partial class StockRoomFormExample : Form
 
         // Get service manually
         using var scope = DependencyInjection.CreateScope();
-        _stockRoomService = scope.ServiceProvider.GetRequiredService<IStockRoomService>();
+        _tableStockRoomService = scope.ServiceProvider.GetRequiredService<ITableStockRoomService>();
         _bindingList = new BindingList<Table_StockRoom>();
     }
 
@@ -67,7 +67,7 @@ public partial class StockRoomFormExample : Form
             statusLabel.Text = "Loading data...";
 
             // Load data asynchronously
-     //       _bindingList = await _stockRoomService.LoadStockRoomsAsync();
+     //       _bindingList = await _tableStockRoomService.LoadStockRoomsAsync();
 
             // Bind to DataGridView (supports automatic updates via INotifyPropertyChanged)
      //       dataGridView.DataSource = _bindingList;
@@ -108,12 +108,12 @@ public partial class StockRoomFormExample : Form
             if (string.IsNullOrWhiteSpace(searchTerm))
             {
                 // Load all
-   //             _bindingList = await _stockRoomService.LoadStockRoomsAsync();
+   //             _bindingList = await _tableStockRoomService.LoadStockRoomsAsync();
             }
             else
             {
                 // Search with service
-   //             _bindingList = await _stockRoomService.SearchStockRoomsAsync(searchTerm);
+   //             _bindingList = await _tableStockRoomService.SearchStockRoomsAsync(searchTerm);
             }
 
             dataGridView.DataSource = _bindingList;
@@ -161,7 +161,7 @@ public partial class StockRoomFormExample : Form
             }
 
             // Save to database
-    //        await _stockRoomService.CreateStockRoomAsync(newItem);
+    //        await _tableStockRoomService.CreateStockRoomAsync(newItem);
 
             // Add to binding list (automatic UI update)
             _bindingList.Add(newItem);
@@ -197,7 +197,7 @@ public partial class StockRoomFormExample : Form
             {
                 // Entity already has changes from UI binding
                 // Just save it
-          //      await _stockRoomService.UpdateStockRoomAsync(selectedItem);
+          //      await _tableStockRoomService.UpdateStockRoomAsync(selectedItem);
 
                 MessageBox.Show("Record updated successfully!");
             }
@@ -236,7 +236,7 @@ public partial class StockRoomFormExample : Form
 
                 if (result == DialogResult.Yes)
                 {
-                   // await _stockRoomService.DeleteStockRoomAsync(selectedItem.Index);
+                   // await _tableStockRoomService.DeleteStockRoomAsync(selectedItem.Index);
                     _bindingList.Remove(selectedItem); // Automatic UI update
 
                     MessageBox.Show("Record deleted successfully!");
@@ -336,7 +336,7 @@ public partial class StockRoomFormExample : Form
     {
         try
         {
-    //        var lowStock = await _stockRoomService.GetLowInventoryItemsAsync(10);
+    //        var lowStock = await _tableStockRoomService.GetLowInventoryItemsAsync(10);
     //        dataGridView.DataSource = lowStock;
     //        statusLabel.Text = $"Found {lowStock.Count} low inventory items";
         }

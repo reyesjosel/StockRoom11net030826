@@ -1,9 +1,8 @@
 ﻿@page "/timeline"
 @using StockRoom11net.BlazorWebAssembly.Components.Pages
-@using StockRoom11net.BlazorWebAssembly.Data
 @using StockRoom11net.Controls.VisTimeLine
 @inject IJSRuntime JSRuntime
-@inject AppService _appService
+@inject ITimeLineService itimeLineService
 
 
 <head>
@@ -25,9 +24,9 @@
             --color-theme-split1: spin( --color-theme, -158);
             --color-theme-split2: spin( --color-theme, 158);
             --color-text: lch(from var(--color-foreground) calc(l + 25%) c h); /* Increase lightness by 25% */
-            --color-header-text: --color-dark;
+            --color-header-text: var(--color-dark);
             --color-text-inverted: darken( --color-background,5);
-            --color-header-text-inverted: --color-background;
+            --color-header-text-inverted: var(--color-background);
             --color-text-credit: #999999;
             --color: ActiveBorder;
         }
@@ -51,371 +50,36 @@
             grid-row-end: 3;
         }
 
-        /* This is the general class applied to all individual items within a vis.js Timeline. */
-
-        .vis-item
-        {
-            /*height: 20px;*/
-            color: black;
-            font-size: 10pt;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            border-width: 1px;
-            border-radius: 3px;
-            border-color: #333;
-            /*background-color: #CCCCCC;
-                    /* box-shadow: 5px 5px 20px rgba(128, 128, 128, 0.5);*/
-
-            :hover {
-                cursor: move;
+			/* ── Context Menu Styles ─────────────────────────────── */
+            .tl-ctx-backdrop {
+                position: fixed;
+                inset: 0;
+                z-index: 999;
             }
-        }
 
-            /* This is an additional class applied to a vis-item when its type property is set to 'box'.
-               In vis.js Timelines, items can be of different types like 'box', 'point', 'range', or 'background'.
-               The 'box' type represents an item with a defined start date, displayed as a rectangular box on the timeline.*/
-            
-               .vis-item.vis-box {
-                /*text-align: center;*/
-                border-style: solid;
+            .tl-ctx-menu {
+                position: fixed;
+                z-index: 1000;
+                background: #fff;
+                border: 1px solid #ccc;
                 border-radius: 3px;
+                box-shadow: 2px 2px 6px rgba(0,0,0,.2);
+                padding: 1px 0;
+                min-width: 80px;
+                font-size: 10px;
             }
 
-            .vis-item.vis-point {
-                background: none;
-            }
-
-            .vis-item.vis-dot {
-                position: absolute;
-                padding: 0;
-                border-width: 4px;
-                border-style: solid;
-                border-radius: 4px;
-            }
-
-            .vis-item.vis-range {
-                /*border-left: 3px solid #ff4d4f;
-                border-right: 3px solid #ff4d4f;
-                height : 20px;*/
-                border-style: solid;
-                border-radius: 3px;
-                box-sizing: border-box;
-            }
-
-            .vis-item.vis-background {
-                border: none;
-                border-width: 0px;
-                background-color: aqua;
-                box-sizing: content-box;
-                z-index: 0;
-            }
-
-                .vis-item.vis-background.vis-item-content {
-                    position: absolute;
-                    display: inline-block;
-                }
-
-                .vis-item.vis-background.positive {
-                    background-color: lightgray;
-                }
-
-                .vis-item.vis-background.negative {
-                    background-color: rgba(224, 208, 33, 0.729);
-                }
-
-        .vis-item-overflow {
-            color: black;
-            position: absolute;
-            border-width: 1px;
-            border-radius: 3px;
-            /*border-color: var(--color-items-border);
-            /*background-color: var(--color-items-background);*/
-            display: inline-block;
-            z-index: 1;
-            overflow: hidden;
-        }
-
-        .vis-item.vis-selected {
-            font-weight: bold;
-            border-width: 2px;
-            border-radius: 3px;
-            border-color: black;
-            background-color: white;
-            /*z-index must be higher than the z-index of custom time bar and current time bar */
-            z-index: 2;
-
-            :hover {
-                color: black;
-                /*background-color: var(--color-items-background-seledted-hover);*/
+            .tl-ctx-menu-item {
+                padding: 2px 8px;
                 cursor: pointer;
-            }
-        }
-
-        .vis-editable.vis-selected {
-            cursor: move;
-        }
-
-        .vis-item.vis-point.vis-selected {
-            background-color: #fff785;
-        }
-
-        .vis-item.vis-item-overflow {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            padding: 0;
-            margin: 0;
-            overflow: hidden;
-        }
-
-        .vis-item-visible-frame {
-            white-space: nowrap;
-        }
-
-        .vis-item.vis-range .vis-item-content {
-            position: relative;
-            display: inline-block;
-        }
-
-        .vis-item.vis-line {
-            padding: 0;
-            position: absolute;
-            width: 1px;
-            border-left-width: 1px;
-            border-left-style: solid;
-        }
-
-        .vis-item.vis-item-content {
-            white-space: nowrap;
-            box-sizing: border-box;
-            /*padding: 5px;*/
-        }
-
-        .vis-item.vis-onUpdateTime-tooltip {
-            position: absolute;
-            background: #4f81bd;
-            color: white;
-            width: 200px;
-            text-align: center;
-            white-space: nowrap;
-            padding: 5px;
-            border-radius: 1px;
-            transition: 0.4s;
-            -o-transition: 0.4s;
-            -moz-transition: 0.4s;
-            -webkit-transition: 0.4s;
-        }
-
-        .vis-item.vis-delete,
-        .vis-item.vis-delete-rtl {
-            position: absolute;
-            top: 0px;
-            width: 24px;
-            height: 24px;
-            box-sizing: border-box;
-            padding: 0px 5px;
-            cursor: pointer;
-            -webkit-transition: background 0.2s linear;
-            -moz-transition: background 0.2s linear;
-            -o-transition: background 0.2s linear;
-            transition: background 0.2s linear;
-        }
-
-        .vis-item.vis-delete {
-            right: -24px;
-        }
-
-        .vis-item.vis-delete-rtl {
-            left: -24px;
-        }
-
-            .vis-item.vis-delete:after,
-            .vis-item.vis-delete-rtl:after {
-                content: "\00D7"; /* MULTIPLICATION SIGN */
-                color: red;
-                font-family: arial, sans-serif;
-                font-size: 22px;
-                font-weight: bold;
-                -webkit-transition: color 0.2s linear;
-                -moz-transition: color 0.2s linear;
-                -o-transition: color 0.2s linear;
-                transition: color 0.2s linear;
+                user-select: none;
+                line-height: 1.4;
             }
 
-            .vis-item.vis-delete:hover,
-            .vis-item.vis-delete-rtl:hover {
-                background: red;
-            }
-
-                .vis-item.vis-delete:hover:after,
-                .vis-item.vis-delete-rtl:hover:after {
-                    color: white;
-                }
-
-        .vis-item.vis-drag-center {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            top: 0;
-            left: 0px;
-            cursor: move;
-        }
-
-        .vis-item.vis-range.vis-drag-left {
-            position: absolute;
-            width: 24px;
-            max-width: 20%;
-            min-width: 2px;
-            height: 100%;
-            top: 0;
-            left: -4px;
-            cursor: w-resize;
-        }
-
-        .vis-item.vis-range.vis-drag-right {
-            position: absolute;
-            width: 24px;
-            max-width: 20%;
-            min-width: 2px;
-            height: 100%;
-            top: 0;
-            right: -4px;
-            cursor: e-resize;
-        }
-
-        .vis-range.vis-item.vis-readonly.vis-drag-left,
-        .vis-range.vis-item.vis-readonly.vis-drag-right {
-            cursor: auto;
-        }
-
-        .vis-item.vis-cluster {
-            vertical-align: central;
-            text-align: center;
-            border-style: solid;
-            border-radius: 2px;
-        }
-
-        .vis-item.vis-cluster-line {
-            padding: 0;
-            position: absolute;
-            width: 0;
-            border-left-width: 1px;
-            border-left-style: solid;
-        }
-
-        .vis-item.vis-cluster-dot {
-            position: absolute;
-            padding: 0;
-            border-width: 4px;
-            border-style: solid;
-            border-radius: 4px;
-        }
-
-        div.vis-editable,
-        div.vis-editable.vis-selected {
-            /* custom styling for editable items... */
-        }
-
-        div.vis-readonly,
-        div.vis-readonly.vis-selected {
-            /* custom styling for readonly items... */
-            background-color: lightgreen;
-            border-color: green;
-            color: darkgrey;
-        }
-
-        /* alternating column backgrounds */
-        .vis-time-axis .vis-grid.vis-odd {
-            background: #f5f5f5;
-        }
-
-        /*gray background in weekends, white text color*/
-        .vis-time-axis .vis-grid.vis-saturday,
-        .vis-time-axis .vis-grid.vis-sunday {
-            background: #faffd6;
-        }
-
-        .vis-time-axis .vis-text.vis-saturday,
-        .vis-time-axis .vis-text.vis-sunday {
-            color: black;
-        }
-
-        /* Style for the major axis labels */
-        .vis-major {
-            font-weight: bold;
-            font-size: 10px;
-            font-family: Arial, sans-serif;
-            color: black;
-        }
-
-        /* You can also style minor labels using .vis-minor */
-        .vis-minor {
-            font-weight: normal;
-            font-size: 10px;
-            font-family: Arial, sans-serif;
-            color: gray;
-        }
-
-            /* custom styles for individual items, load this after vis-timeline-graph2d.min.css/vis-timeline-graph2d.min.css */
-
-            .vis-item.green { background-color: greenyellow;
-                              border-color: green;}
-
-            /* create a custom sized dot at the bottom of the red item */
-            .vis-item.red {
-                background-color: red;
-                border-color: darkred;
-                color: white;
-                font-family: monospace;
-                box-shadow: 0 0 10px gray;
-            }
-
-            .vis-item.vis-dot.red {
-                border-radius: 10px;
-                border-width: 10px;
-            }
-
-            .vis-item.vis-line.red {
-                border-width: 5px;
-            }
-
-            .vis-item.vis-box.red {
-                border-radius: 0;
-                border-width: 2px;
-                font-size: 24pt;
-                font-weight: bold;
-            }
-
-            .vis-item.orange { background-color: gold;
-                               border-color: orange;}
-
-            .vis-item.vis-selected.orange {
-                /* custom colors for selected orange items */
-                background-color: orange;
-                border-color: orangered;
-            }
-
-            .vis-item.magenta {
-                background-color: magenta;
-                border-color: purple;
-                color: white;
-				block-size: 10px;
-                /* line-height: 10px; /* controls text vertical centering */
-                /* padding: 2px 4px; /* controls inner spacing */
-            }
-
-            .vis-item.vis-box.magenta {
-                font-size: 4pt;
-            }
-
-            /* our custom classes overrule the styles for selected events,
-                   so lets define a new style for the selected events */
-            .vis-item.vis-selected { background-color: white;
-                                     border-color: black;
-                                     color: black;
-                                     box-shadow: 0 0 10px gray;}
-
+                .tl-ctx-menu-item:hover {
+                        background: #f0f0f0;
+                    }
+           
     </style>
 	
 </head>
@@ -424,7 +88,7 @@
     <main>
         <p>Welcome to my website!</p>
         <img src="/Resources/img/comment_48.png" style="width:48px;height:48px;" />
-        @ChildContent
+        @ChildContent        
     </main>
     <footer>
         <div id="@ElementId"></div>
@@ -435,39 +99,76 @@
                       OnSelect="SelectEvent"
                       OnMove="MoveEvent"
                       OnResize="ResizeEvent"
-                      OnRangeChanged="RangeEvent" />
+                      OnRangeChanged="RangeEvent"
+                      OnContextMenu="@OnContextMenu"
+                      EnableContextMenu="true">
+
+         <ContextMenuItems Context="ctx">
+            @if (ctx.ItemId is not null)
+            {
+                <div class="tl-ctx-menu-item" @onclick="() => OnCtxEditItem(ctx.ItemId!)">✏️ Edit</div>
+                <div class="tl-ctx-menu-item" @onclick="() => OnCtxDeleteItem(ctx.ItemId!)">🗑️ Delete</div>
+            }
+            else
+            {
+                <div class="tl-ctx-menu-item" @onclick="() => OnCtxAddItemAt(ctx.Time)">➕ Add item here</div>
+            }
+			@if(_argsContextMenuComp.ShowMajorLabels)
+			{
+			    <div class="tl-ctx-menu-item" @onclick="OnCtxMonthLabelToggle">🗓️ Hide Month Labels</div>
+			}
+			else
+			{
+			    <div class="tl-ctx-menu-item" @onclick="OnCtxMonthLabelToggle">🗓️ Show Month Labels</div>
+			}
+        </ContextMenuItems>
+
+        </TimeLineComp>
+
     </footer>
 </body>
 
- <!--
-<button @onclick="() => timelinecomp!.ZoomIn()">Zoom In</button>
-<button @onclick="() => timelinecomp!.ZoomOut()">Zoom Out</button>
-<button @onclick="() => timelinecomp!.MoveLeft()">Left</button>
-<button @onclick="() => timelinecomp!.MoveRight()">Right</button>
--->
+@* #region Context Menu page level *@
+@if (_pageCtxVisible)
+{
+    <div class="tl-ctx-backdrop" @onclick="PageContextMenuClose"></div>
+    <div class="tl-ctx-menu" style="@($"left:{_pageCtxX}px; top:{_pageCtxY}px")"@onclick="PageContextMenuClose">
+        <div class="tl-ctx-menu-item" @onclick="OnCtxPageAction1">⚙️ Page action 1</div>
+        <div class="tl-ctx-menu-item" @onclick="OnCtxPageAction2">⚙️ Page action 2</div>
+        <div class="tl-ctx-menu-item" @onclick="OnDevToolsWindow">⚙️ Developer Tools</div>
+    </div>
+}
+@* #endregion Context Menu page level  *@
+
 
 @code {
-	/// <summary>
-	/// In a Blazor App, you would wrap a BECanvas element
-	/// in the CanvasHelper
-	/// </summary>
-	[Parameter] public RenderFragment ChildContent { get; set; }
+    /// <summary>
+    /// In a Blazor App, you would wrap a BECanvas element
+    /// in the CanvasHelper
+    /// </summary>
+    [Parameter] public RenderFragment ChildContent { get; set; }
 
-	/// <summary>
-	/// Unique identifier for the timeline element div.
-	/// </summary>
-	string ElementId = "timeline-" + Guid.NewGuid().ToString("N");
+    /// <summary>
+    /// Reference to the JavaScript module for interop.
+    /// In OnAfterRenderAsync(), we dynamically import the JavaScript module "./Components/Pages/TimeLineComp.razor.js"
+    /// </summary>
+    private IJSObjectReference? _module;
 
-	private TimeLineComp? _timelinecomp;
+    /// <summary>
+    /// Unique identifier for the timeline element div.
+    /// </summary>
+    string ElementId = "timeline-" + Guid.NewGuid().ToString("N");
 
-	List<TimelineGroup> Groups = new()
+    private TimeLineComp? _timelinecomp;
+
+    List<TimelineGroup> Groups = new()
     {
         new() { Id = 0, Content = "" },
         new() { Id = 1, Content = "Group A" },
         new() { Id = 2, Content = "Group B" }
     };
 
-	List<TimeLineItem> Items = new()
+    List<TimeLineItem> Items = new()
     {
         new() { Id = "0", Content = "Item 0", Start = DateTime.Today.AddDays(-10), Editable = new TimeLineItemEditableOptions(){ UpdateTime = true, UpdateGroup = true, Remove = false } },
         new() { Id = "1", Group = "1", Content = "Item A", Start = DateTime.Today, Editable = false },
@@ -476,23 +177,24 @@
         new() { Id = "4", Content = "Fixed Duration Item", Start = DateTime.Parse("2025-12-15"), End = DateTime.Parse("2025-12-16"), Editable = false }
     };
 
-	object TimeLineOptions = new TimeLineOptions
+    object TimeLineOptions = new TimeLineOptions
     {
         Start = new DateTime(2025, 9, 1),
         End = new DateTime(2026, 2, 10),
         Min = new DateTime(2020, 12,01, 12, 00, 00),
         Max = DateTime.Today + TimeSpan.FromDays(200),
-		// Height = "125px",
+        //Height = "100px",
         MaxHeight = "150px",//"25%"
         MinHeight = "50px",
         ShowCurrentTime = true,
         Selectable = true,
         Moveable = true,
-        ShowMajorLabels = true,
-        ShowMinorLabels = true,
+        ShowMajorLabels = false,                    // hides day/month/year row
+        ShowMinorLabels = true,                     // keeps hours/minutes row
         HorizontalScroll = false,
         VerticalScroll = false,
-        Stack = true,
+        //ZoomKey = "ctrlKey",                      // optional: prevent accidental zoom
+        Stack = false,
         Multiselect = false,
         ZoomMin = 1000 * 60 * 60 * 24,            // One day in milliseconds  // 1000 * 60 * 60, -> 1 hour
         ZoomMax = 1000L * 60 * 60 * 24 * 30 * 18, // 1000L * 60 * 60 * 24 * 30 -> 30 days
@@ -508,10 +210,10 @@
             Item = new ItemMargin
             {
 				Horizontal = 5,     // Set horizontal space between items explicitly
-				Vertical = 2        // Set vertical space between items explicitly,
-                                    // it's items margin, the space will be doubled when stacked
+				Vertical = 4        // Set vertical space between items explicitly,
+                // it's items margin, the space will be doubled when stacked
             },
-            Axis = 2                // Set space between items and the time axis
+            Axis = 5                // Set space between items and the time axis
         },
         Orientation = "bottom",
 
@@ -519,13 +221,13 @@
         {
             MinorLabels = new Dictionary<string, string>
             {
-				// sub-day
+                // sub-day
                 ["millisecond"] = "SSS",
                 ["second"] = "HH:mm:ss",
                 ["minute"] = "HH:mm",
                 ["hour"] = "HH:mm",
 
-				// date
+                // date
                 ["weekday"] = "ddd D",
                 ["day"] = "D",
                 ["month"] = "MMM",
@@ -534,12 +236,12 @@
 
             MajorLabels = new Dictionary<string, string>
             {
-				// sub-day
+                // sub-day
                 ["millisecond"] = "HH:mm",
                 ["second"] = "HH:mm",
                 ["minute"] = "HH:mm",
                 ["hour"] = "MMM D HH:mm",
-				// date
+                // date
                 ["weekday"] = "MMM D",
                 ["day"] = "MMMM YYYY",
                 ["month"] = "YYYY",
@@ -548,53 +250,250 @@
         }
 	};
 
-	async Task SelectEvent(string id)
+    #region ********  JSRuntime → C#   **************************
+
+    /// <summary>
+    /// Handles the selection of a timeline item.
+    /// This method is called when a user selects an item on the timeline visible area (clicks on it)
+    /// and wire through the OnSelect="SelectEvent" event on the TimeLineComp component.
+    /// </summary>
+    /// <param name="id">The ID of the selected timeline item.</param>
+    /// <returns>A task that represents the asynchronous operation.</returns>
+    async Task SelectEvent(string id)
+    {
+        await itimeLineService.NotifySelect(id);
+    }
+
+    /// <summary>
+    /// Handles the movement of a timeline item.
+    /// This method is called when a user moves an item on the timeline axis (changes its start date)
+    /// and wire through the OnMove="MoveEvent" event on the TimeLineComp component.
+    /// </summary>
+    /// <param name="item">The timeline item that was moved.</param>
+    /// <returns>A task that represents the asynchronous operation.</returns>
+    async Task MoveEvent(TimeLineItem item)
+    {
+        await itimeLineService.NotifyMoved(item);
+    }
+
+    /// <summary>
+    /// Handles the resizing of a timeline item.
+    /// This method is called when a user resizes an item on the timeline
+    /// and wire through the OnResize="ResizeEvent" event on the TimeLineComp component.
+    /// Only applicable for items that have an end date (i.e., range items).
+    /// </summary>
+    /// <param name="item">The timeline item that was resized.</param>
+    /// <returns>A task that represents the asynchronous operation.</returns>
+    async Task ResizeEvent(TimeLineItem item)
+    {
+        await itimeLineService.NotifyResize(item);
+    }
+
+    /// <summary>
+    /// Handles the change of the range on the timeline.
+    /// This method is called when the visible range of the timeline changes
+    /// and wire through the OnRangeChanged="RangeEvent" event on the TimeLineComp component.
+    /// This is the axis range, not the item range. The timeline can be zoomed or panned, which changes the visible range.
+    /// </summary>
+    /// <param name="start">The start time of the range.</param>
+    /// <param name="end">The end time of the range.</param>
+    /// <returns>A task that represents the asynchronous operation.</returns>
+    async Task RangeEvent((DateTime start, DateTime end) range)
+    {
+        await itimeLineService.NotifyRangeChanged(range.start, range.end);
+    }
+
+    #endregion *****************  JSRuntime → C#   **************************
+
+    #region ********  This are pages's Lifecycle Events    ******
+
+    /// <summary>
+    /// OnInitialize we add event handlers to the AppService.MessageReceived event.
+    /// </summary>
+    protected override void OnInitialized()
+    {
+        // _appService.MessageReceivedEvent += HandleMessage;
+        //  _appService.UpDateTimeLineEvent += UpDateData;
+        //  _appService.UpDateItemEvent += ItemUpDate;               
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _module = await JSRuntime.InvokeAsync<IJSObjectReference>(
+            "import", "./Components/Pages/TimeLineComp.razor.js");
+
+            _pageRef = DotNetObjectReference.Create(this);
+            await _module.InvokeVoidAsync("registerPageContextMenu", _pageRef);
+        }
+    }
+
+    #endregion *****  This are pages's Lifecycle Events end.    ******
+
+    #region ********  C# → JS calls   ***************************
+    // This are the methods that are called by the AppService event handlers whenever the data needs to be updated.
+    // They are wired through the OnUpdate="UpDateData" event and  on the TimeLineComp component.
+
+    /// <summary>
+    /// This method is called by the AppService event handlers whenever the data is updated.
+    /// OnInitialized we add event handlers to the _appService.UpDateTimeLineEvent += UpDateData; event.
+    /// We are not using through the page level, we inject the AppService directly to the TimeLineComp component
+    /// and skip the page level, but we are showing it here for demonstration purposes.
+    /// </summary>
+    public async void UpDateData(string message)
+    {
+        await InvokeAsync(async () => await _timelinecomp!.UpDateData(message));
+    }
+
+    /// <summary>
+    /// This method is called by the AppService event handlers whenever the item needs to be updated.
+    /// and wire through the _appService.UpDateItemEvent += ItemUpDate; event.
+    /// It is standard practice when injecting AppServices to the page level,
+    /// to add event handlers to the AppService events in OnInitialized and remove them in Dispose.
+    /// We are not using through the page level, we inject the AppService directly to the TimeLineComp component
+    /// and skip the page level, but we are showing it here for demonstration purposes.
+    /// </summary>
+    /// <param name="item">The timeline item that was updated.</param>
+    /// <returns>A task that represents the asynchronous operation.</returns>
+    async void ItemUpDate(TimeLineItem item)
+    {
+        await InvokeAsync(async () => await _timelinecomp!.UpdateItem(item));
+    }
+
+    #endregion *****************  C# → JS calls   **************************
+
+    #region ********  Context Menu Component level **************
+
+    /// <summary>
+    /// Holds the arguments for the context menu component.
+    /// </summary>
+    TimeLineContextMenuArgs _argsContextMenuComp = new TimeLineContextMenuArgs();
+
+    async Task OnContextMenu(TimeLineContextMenuArgs args)
+    {
+        _argsContextMenuComp = args;
+    }
+
+    void OnCtxEditItem(string itemId)
+    {
+        // TODO: open your edit dialog / form for the item with this id
+    }
+
+    void OnCtxDeleteItem(string itemId)
+    {
+        // TODO: remove the item from your data source and refresh the timeline
+    }
+
+    void OnCtxAddItemAt(DateTime? time)
+    {
+        // TODO: open your add-item dialog pre-filled with this timestamp
+    }
+
+    /// <summary>
+    /// Toggles the visibility of the major labels on the timeline.
+    /// Flow: User right-clicks on the timeline → Context menu appears → User clicks "Toggle Month Labels" →
+    /// OnCtxMonthLabelToggle is invoked → ToggleMajorLabels() → itimeLineService.SetMajorLabels() ->
+    /// SetMajorLabelsEvent fires → TimeLineComp._setMajorLabelsHandler ->
+    /// interop.InvokeVoidAsync("setMajorLabels") → _timeline.setOptions({showMajorLabels}).
+    /// </summary>
+    /// <returns>A task that represents the asynchronous operation.</returns>
+    async Task OnCtxMonthLabelToggle()
 	{
-		await _appService.NotifySelect(id);
+		await ToggleMajorLabels();
 	}
 
-	async Task MoveEvent(TimeLineItem item)
+    // In your Blazor component
+	private bool _showMajorLabels = false; // Track the current state of major labels, we initialize at 
+                                           // TimeLineOptions -> ShowMajorLabels = false, // hides day/month/year row
+
+    private async Task ToggleMajorLabels()
+    {
+        _showMajorLabels = !_argsContextMenuComp.ShowMajorLabels;
+
+        itimeLineService.SetMajorLabels(_showMajorLabels, true);
+    }
+
+    #endregion ****** Context Menu Component level ******
+
+    #region ********  Context Menu Page level *******************
+
+    /// <summary>When false the right-click context menu is completely suppressed. Default is true.</summary>
+    [Parameter] public bool EnableContextMenu { get; set; } = true;
+
+    /// <summary>
+    /// Optional menu items rendered inside the built-in context menu popup.
+    /// Receives the <see cref="TimeLineContextMenuArgs"/> of the right-click so items
+    /// can be hidden/disabled based on whether an item or empty space was clicked.
+    /// If not set, no popup is shown and only <see cref="OnContextMenu"/> fires.
+    /// </summary>
+    [Parameter] public RenderFragment<TimeLineContextMenuArgs>? ContextMenuItems { get; set; }
+
+    // ── context-menu overlay state ────────────────────────────────────────────
+    bool _ctxVisible = true;
+    double _ctxX;
+    double _ctxY;
+    TimeLineContextMenuArgs _ctxArgs = new();
+
+    private bool _pageCtxVisible;
+    private double _pageCtxX;
+    private double _pageCtxY;
+    private TimeLineContextMenuArgs _pageCtxArgs = new();
+    private DotNetObjectReference<TimeLinePage>? _pageRef;
+
+    private void OnCtxPageAction1()
+    {
+        // your logic here for right-click outside the timeline - action 1
+    }
+
+    private void OnCtxPageAction2()
+    {
+        // your logic here for right-click outside the timeline - action 2
+    }
+
+	private void OnDevToolsWindow()
 	{
-		await _appService.NotifyMoved(item);
+		// your logic here for right-click outside the timeline - action 2
+        itimeLineService.OpenDevToolsWindow();
 	}
 
-	async Task ResizeEvent(TimeLineItem item)
-	{
-		await _appService.NotifyResize(item);
-	}
+    [JSInvokable]
+    public async Task PageContextMenuOpen(TimeLineContextMenuArgs args)
+    {
+        _pageCtxArgs = args;
+        _pageCtxX = args.ClientX;
+        _pageCtxY = args.ClientY;
+        _pageCtxVisible = true;
+        _ctxVisible = ContextMenuItems is not null;  // only show popup if items were provided
 
-	async Task RangeEvent((DateTime start, DateTime end) window)
-	{
-		await _appService.NotifyRangeChanged(window.start, window.end);
-	}
+        if (_ctxVisible) StateHasChanged();
+        await InvokeAsync(StateHasChanged);  // ← must use InvokeAsync from JS callbacks
+    }
 
-	/// <summary>
-	/// OnInitialize we add event handlers to the AppService.MessageReceived event.
-	/// </summary>
-	protected override void OnInitialized()
-	{
-		// _appService.MessageReceivedEvent += HandleMessage;
-		//  _appService.UpDateTimeLineEvent += UpDateData;
-		//  _appService.UpDateItemEvent += ItemUpDate;
-	}
+    [JSInvokable]
+    public async Task PageContextMenuClose()
+    {
+        _pageCtxVisible = false;
+        await InvokeAsync(StateHasChanged);
+    }
+    
+    #endregion ****** Context Menu Page level ******
 
-	/// <summary>
-	/// This method is called by the AppService event handlers whenever the data is updated.
-	/// OnInitialized we add event handlers to the AppService.MessageReceived event.
-	/// </summary>
-	public async void UpDateData(string message)
-	{
-		await InvokeAsync(async () => await _timelinecomp!.UpDateData(message));
-	}
+    public async ValueTask DisposeAsync()
+    {
+        await _module.InvokeVoidAsync("unregisterPageContextMenu");
 
-	async void ItemUpDate(TimeLineItem item)
-	{
-		await InvokeAsync(async () => await _timelinecomp!.UpdateItem(item));
-	}
+        _pageRef?.Dispose();
+
+        if (_module is not null)
+        {
+            await _module.DisposeAsync();
+        }
+    }
 
 	public void Dispose()
 	{        
-		_appService.UpDateTimeLineEvent -= UpDateData;
-		_appService.UpDateItemEvent -= ItemUpDate;
+		itimeLineService.UpDateTimeLineEvent -= UpDateData;
+		itimeLineService.UpDateItemEvent -= ItemUpDate;
 	}	
 }

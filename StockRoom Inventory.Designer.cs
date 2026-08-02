@@ -55,7 +55,6 @@ namespace StockRoom11net
             toolStripMenuItem_TextColor = new ToolStripMenuItem();
             toolStripMenuItem_Translucent = new ToolStripMenuItem();
             toolStripMenuItem_FullRowSelect = new ToolStripMenuItem();
-            timeLineToolStripMenuItem = new ToolStripMenuItem();
             dataTreeViewToAdd_Cancel_Delete = new DataTreeViewToAddCancelDelete();
             contextMenuStripPicturesBox = new ContextMenuStrip(components);
             toolStripMenuItem_SetToNoPicturesFound = new ToolStripMenuItem();
@@ -191,12 +190,12 @@ namespace StockRoom11net
             _contextMenuStripTreeView.BackColor = Color.LightGoldenrodYellow;
             _contextMenuStripTreeView.ImageScalingSize = new Size(20, 20);
             _contextMenuStripTreeView.ImeMode = ImeMode.On;
-            _contextMenuStripTreeView.Items.AddRange(new ToolStripItem[] { ToolStripMenuItem_singleExpandedNode, ToolStripMenuItem_multipleExpandedNodes, toolStripSeparator1, ToolStripMenuItem_ExpandAll, ToolStripMenuItem_CollapseAll, toolStripSeparator2, ToolStripMenuItem_AddNewComponent, toolStripSeparator4, ToolStripMenuItem_refresh, ToolStripMenuItem_SetPictures, toolStripMenuItem_HotItem, timeLineToolStripMenuItem });
+            _contextMenuStripTreeView.Items.AddRange(new ToolStripItem[] { ToolStripMenuItem_singleExpandedNode, ToolStripMenuItem_multipleExpandedNodes, toolStripSeparator1, ToolStripMenuItem_ExpandAll, ToolStripMenuItem_CollapseAll, toolStripSeparator2, ToolStripMenuItem_AddNewComponent, toolStripSeparator4, ToolStripMenuItem_refresh, ToolStripMenuItem_SetPictures, toolStripMenuItem_HotItem });
             _contextMenuStripTreeView.LayoutStyle = ToolStripLayoutStyle.HorizontalStackWithOverflow;
             _contextMenuStripTreeView.Name = "PreviewDataGridViewContextMenuStrip";
             _contextMenuStripTreeView.RenderMode = ToolStripRenderMode.Professional;
             _contextMenuStripTreeView.ShowImageMargin = false;
-            _contextMenuStripTreeView.Size = new Size(230, 256);
+            _contextMenuStripTreeView.Size = new Size(230, 230);
             // 
             // ToolStripMenuItem_singleExpandedNode
             // 
@@ -304,13 +303,6 @@ namespace StockRoom11net
             toolStripMenuItem_FullRowSelect.Name = "toolStripMenuItem_FullRowSelect";
             toolStripMenuItem_FullRowSelect.Size = new Size(177, 26);
             toolStripMenuItem_FullRowSelect.Text = "FullRowSelect";
-            // 
-            // timeLineToolStripMenuItem
-            // 
-            timeLineToolStripMenuItem.Name = "timeLineToolStripMenuItem";
-            timeLineToolStripMenuItem.Size = new Size(229, 26);
-            timeLineToolStripMenuItem.Text = "TimeLine";
-            timeLineToolStripMenuItem.Click += TimeLineToolStripMenuItem_Click;
             // 
             // dataTreeViewToAdd_Cancel_Delete
             // 
@@ -486,7 +478,7 @@ namespace StockRoom11net
             tabPage_Location.Margin = new Padding(1);
             tabPage_Location.Name = "tabPage_Location";
             tabPage_Location.Padding = new Padding(1);
-            tabPage_Location.Size = new Size(1148, 482);
+            tabPage_Location.Size = new Size(1148, 478);
             tabPage_Location.TabIndex = 2;
             tabPage_Location.Text = " Location";
             tabPage_Location.UseVisualStyleBackColor = true;
@@ -499,7 +491,7 @@ namespace StockRoom11net
             thumbViewer_Location.Margin = new Padding(1);
             thumbViewer_Location.Name = "thumbViewer_Location";
             thumbViewer_Location.PathFromPartNumber = null;
-            thumbViewer_Location.Size = new Size(1146, 480);
+            thumbViewer_Location.Size = new Size(1146, 476);
             thumbViewer_Location.SplitterDistance = 88;
             thumbViewer_Location.TabIndex = 1;
             thumbViewer_Location.ThumbNailHeight = 70;
@@ -555,7 +547,7 @@ namespace StockRoom11net
             tabPage_AddNewItem.Margin = new Padding(1);
             tabPage_AddNewItem.Name = "tabPage_AddNewItem";
             tabPage_AddNewItem.Padding = new Padding(1);
-            tabPage_AddNewItem.Size = new Size(1148, 478);
+            tabPage_AddNewItem.Size = new Size(1148, 482);
             tabPage_AddNewItem.TabIndex = 5;
             tabPage_AddNewItem.Text = "Add New Item";
             tabPage_AddNewItem.UseVisualStyleBackColor = true;
@@ -573,7 +565,7 @@ namespace StockRoom11net
             grouper_NewItemButtons.Dock = DockStyle.Bottom;
             grouper_NewItemButtons.GroupImage = null;
             grouper_NewItemButtons.GroupTitle = "";
-            grouper_NewItemButtons.Location = new Point(1, 476);
+            grouper_NewItemButtons.Location = new Point(1, 480);
             grouper_NewItemButtons.Margin = new Padding(0);
             grouper_NewItemButtons.MinimumSize = new Size(4, 1);
             grouper_NewItemButtons.Name = "grouper_NewItemButtons";
@@ -745,7 +737,7 @@ namespace StockRoom11net
             tabPage_UpDateModifCompValue.Location = new Point(4, 4);
             tabPage_UpDateModifCompValue.Margin = new Padding(0);
             tabPage_UpDateModifCompValue.Name = "tabPage_UpDateModifCompValue";
-            tabPage_UpDateModifCompValue.Size = new Size(1148, 478);
+            tabPage_UpDateModifCompValue.Size = new Size(1148, 482);
             tabPage_UpDateModifCompValue.TabIndex = 7;
             tabPage_UpDateModifCompValue.Tag = "";
             tabPage_UpDateModifCompValue.Text = "   UpDate/Modif";
@@ -965,7 +957,7 @@ namespace StockRoom11net
             flowLayoutPanel.Controls.Add(button_Edit);
             flowLayoutPanel.Controls.Add(button_Add_Other);
             flowLayoutPanel.Dock = DockStyle.Bottom;
-            flowLayoutPanel.Location = new Point(0, 414);
+            flowLayoutPanel.Location = new Point(0, 418);
             flowLayoutPanel.Margin = new Padding(0);
             flowLayoutPanel.Name = "flowLayoutPanel";
             flowLayoutPanel.Size = new Size(1144, 60);

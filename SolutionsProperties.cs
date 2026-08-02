@@ -32,7 +32,7 @@ namespace StockRoom11net
         public bool IsInstallationMode;
 
         FileAttributes _fileAttributes = new FileAttributes();
-                
+
         // public CustomTabControl tabControlExtendBase = new CustomTabControl();
         public CurrentStatus CurrentStatusReference = new CurrentStatus();
 
@@ -281,7 +281,7 @@ namespace StockRoom11net
         #endregion"Custom Controls Events with custom Arg.*********************"      
 
         #region"CurrentUserBroadcast"
-        
+
         public Action ProcessCurrentEmployeesLogIn;
         EmployeeInformation _currentEmployeesLogIn;
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
@@ -301,7 +301,7 @@ namespace StockRoom11net
                 ProcessCurrentEmployeesLogIn?.Invoke();
             }
         }
-               
+
         #endregion"CurrentUserBroadcast"
 
 
@@ -327,7 +327,7 @@ namespace StockRoom11net
         {
             InitializeComponent();
         }
-                
+
         public SolutionsProperties(ITableEmployeeService employeesService)
         {
             InitializeComponent();
@@ -385,13 +385,26 @@ namespace StockRoom11net
         {
         }
 
-        void ButtonSaveClick(object sender, EventArgs e)
+        bool isSettingsSaved;
+        private void ButtonSave_ExitClick(object sender, EventArgs e)
         {
             SaveTheProperties();
+
+            DialogResult = DialogResult.OK;
+            Close();
         }
 
         void ButtonCancelClick(object sender, EventArgs e)
         {
+            if (!isSettingsSaved)
+            {
+                MessageBox.Show(@"Are you sure you want to exit without saving the changes?",
+                                       @"Exit without saving", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+                if (DialogResult == DialogResult.No)
+                    return;
+            }
+
             Close();
         }
 
@@ -416,7 +429,7 @@ namespace StockRoom11net
                 Settings.Default.DataBaseConnectionStringSQLite = "data source=" + openfile.FileName + ";";
                 Settings.Default.DataBaseAddress = Path.GetDirectoryName(openfile.FileName);
                 Settings.Default.DataBaseName = Path.GetFileNameWithoutExtension(openfile.FileName);
-                Settings.Default.Save();                
+                Settings.Default.Save();
             }
         }
 
@@ -526,7 +539,10 @@ namespace StockRoom11net
             Settings.Default.DepartmentName = comboBox_ApplicationDepartmentName.Text;
             Settings.Default.ApplicationDefaultHtmlPages = textBoxApplicationHTMLtemples.Text;
 
+            Settings.Default.InstallationFirstDate = DateTime.Now;
+
             Settings.Default.Save();
+            isSettingsSaved = true;
         }
 
         #region"Application Setting Tab"
@@ -2432,7 +2448,8 @@ namespace StockRoom11net
                         radioButton_NoDocumentsToShow.Checked = true;
                         break;
                     }
-            };
+            }
+            ;
 
         }
 
@@ -2516,6 +2533,31 @@ namespace StockRoom11net
         #endregion"Peer To Peer Management"
 
 
+        private void TabPage_RegisterDLL_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void ComboBox_ApplicationDepartmentName_TextChanged(object sender, EventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(comboBox_ApplicationDepartmentName.Text))
+                return;
+
+            button_Save_Exit.Enabled = true;
+        }
+
+        private void TextBox_DataBaseAddress_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void ComboBox_ApplicationDepartmentName_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(comboBox_ApplicationDepartmentName.Text))
+                return;
+
+            button_Save_Exit.Enabled = true;
+        }
     }
 
     public class DragHelper

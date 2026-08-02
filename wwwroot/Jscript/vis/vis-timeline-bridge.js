@@ -1,4 +1,31 @@
-﻿window.vis_timeline_bridge =
+﻿/* Warning: Host the assets locally within your project's static assets folder.
+
+   Directory Layout:
+  
+    YourProjectName
+      ├── wwwroot
+      │    └── Jscript
+      │         └── vis
+      │               ├── vis-timeline-graph2d.min.js  <--Copy downloaded script here
+      │               ├── vis-timeline-graph2d.min.css <--Copy downloaded style here
+      │               └── vis-timeline-bridge.js  <--This file most likely goes here
+  
+        This file is a bridge between Blazor and the vis - timeline JavaScript library.
+   It allows Blazor components to interact with the vis - timeline library by providing a
+   set of JavaScript functions that can be called from C# code.The functions are exposed
+   globally on the window object, so they can be accessed from anywhere in the application.
+
+   It most be loaded after the vis-timeline library, and before the Blazor script that uses it.
+   At Index.html, add the following lines in the end of <body> section:
+
+    <!-- your bridge file
+    <script src="Jscript/vis/vis-timeline-bridge.js"></script> -->
+
+    <!-- Blazor WebView bootstrap must load after your static scripts are present -->
+    <script src="_framework/blazor.webview.js"></script>
+
+Exposed globally on the window object  */
+window.vis_timeline_bridge =
 {
     create: function (elementId, items, groups, options, dotnetRef, refAppService)
     {

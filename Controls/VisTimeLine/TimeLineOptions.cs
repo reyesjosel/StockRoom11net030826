@@ -10,9 +10,9 @@ namespace StockRoom11net.Controls.VisTimeLine
         /// 'center', 'left', or 'right'. For 'box' items, the 'auto' alignment is 'center'. For 'range' items,
         /// the auto alignment is dynamic: positioned left and shifted such that the contents is always visible on screen.
         /// </summary>
-        [JsonPropertyName("aling")]
+        [JsonPropertyName("align")]
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-        public String Aling { get; set; } = "center";
+        public string Align { get; set; } = "center";
 
         /// <summary>
         /// If true, the Timeline will automatically detect when its container is resized, and redraw itself accordingly.
@@ -101,34 +101,6 @@ namespace StockRoom11net.Controls.VisTimeLine
         public object? Locales { get; set; } = null;
 
         /// <summary>
-        /// The minimal margin in pixels between items and the time axis.
-        /// </summary>
-        [JsonPropertyName("margin.axis")]
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-        public int MarginAxis { get; set; } = 20;
-
-        /// <summary>
-        /// The minimal margin in pixels between items in both horizontal and vertical direction.
-        /// </summary>
-        [JsonPropertyName("margin.item")]
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-        public int MarginItem { get; set; } = 10;
-
-        /// <summary>
-        /// The minimal horizontal margin in pixels between items.
-        /// </summary>
-        [JsonPropertyName("margin.item.horizontal")]
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-        public int MarginItemHorizontal { get; set; } = 10;
-
-        /// <summary>
-        /// The minimal vertical margin in pixels between items.
-        /// </summary>
-        [JsonPropertyName("margin.item.vertical")]
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-        public int MarginItemVertical { get; set; } = 10;
-
-        /// <summary>
         /// Set a maximum Date for the visible range.
         /// It will not be possible to move beyond this maximum.
         /// </summary>
@@ -158,6 +130,24 @@ namespace StockRoom11net.Controls.VisTimeLine
         [JsonPropertyName("minHeight")]
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public string? MinHeight { get; set; } = null;  // Number | String	none
+
+        /// <summary>
+        /// Show or hide the major time axis labels. When true (default),
+        /// the major labels (e.g. day, month, year) are shown on the top
+        /// row of the time axis. Set to false to hide them.
+        /// </summary>
+        [JsonPropertyName("showMajorLabels")]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public bool? ShowMajorLabels { get; set; } = null; // default: true
+
+        /// <summary>
+        /// Show or hide the minor time axis labels. When true (default),
+        /// the minor labels (e.g. hours, minutes) are shown on the bottom
+        /// row of the time axis. Set to false to hide them.
+        /// </summary>
+        [JsonPropertyName("showMinorLabels")]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public bool? ShowMinorLabels { get; set; } = null; // default: true
 
         /// <summary>
         /// Specifies whether the Timeline can be moved and zoomed by dragging the window. See also option zoomable.
@@ -222,9 +212,20 @@ namespace StockRoom11net.Controls.VisTimeLine
         /// with the css of items, for example when setting options.padding=10, corresponding css is:
         /// .vis.timeline.item { padding: 10px; }
         /// </summary>
-        [JsonPropertyName("padding")]
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-        public int Padding { get; set; } = 5;
+        // 'padding' was removed from vis-timeline; use Margin.Axis instead
+        [JsonIgnore]
+        public int Padding
+        {
+        get
+            {
+                return Margin?.Axis ?? 5;
+            }
+        set
+            {
+                Margin ??= new TimeLineMargin();
+                Margin.Axis = value;
+            }        
+        }
 
         /// <summary>
         /// If true, the items on the timeline can be selected. Multiple items can be selected
@@ -251,26 +252,7 @@ namespace StockRoom11net.Controls.VisTimeLine
         [JsonPropertyName("showCustomTime")]
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public bool ShowCustomTime { get; set; } = false;
-
-        /// <summary>
-        /// By default, the timeline shows both minor and major date labels on the time axis.
-        /// For example the minor labels show minutes and the major labels show hours.
-        /// When showMajorLabels is false, no major labels are shown.
-        /// </summary>
-        [JsonPropertyName("showMajorLabels")]
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-        public bool ShowMajorLabels { get; set; } = true;
-
-        /// <summary>
-        /// By default, the timeline shows both minor and major date labels on the time axis.
-        /// For example the minor labels show minutes and the major labels show hours.
-        /// When showMinorLabels is false, no minor labels are shown. When both showMajorLabels
-        /// and showMinorLabels are false, no horizontal axis will be visible.
-        /// </summary>
-        [JsonPropertyName("showMinorLabels")]
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-        public bool ShowMinorLabels { get; set; } = true;
-
+                
         /// <summary>
         /// If true (default), items will be stacked on top of each other such that they do not overlap.
         /// </summary>
@@ -363,8 +345,9 @@ namespace StockRoom11net.Controls.VisTimeLine
         /// <remarks>Typical values include "ctrlKey", "altKey", or other supported modifier key names.
         /// The value determines which keyboard modifier must be held to enable zoom functionality in the associated
         /// context.</remarks>
-          [JsonPropertyName("zoomKey")]
-          public string? ZoomKey { get; set; }
+        [JsonPropertyName("zoomKey")]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public string? ZoomKey { get; set; }
 
         /// <summary>
         /// Gets or sets the configuration options for the time axis of the timeline chart.

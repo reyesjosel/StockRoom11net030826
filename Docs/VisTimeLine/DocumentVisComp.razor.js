@@ -1,32 +1,32 @@
-﻿// 1. Import the third-party library dynamically inside the isolated module
-import 'https://unpkg.com';
+﻿/* 1. Import the third-party library dynamically inside the isolated module
+      import 'https://unpkg.com';
 
-// 2. Going Local: Shipping Assets with Your NuGet PackageIf you are building this wrapper inside a Razor Class Library (RCL)
-// to distribute as a NuGet package or shared library, you should avoid relying on external CDNs(unpkg.com).You can host the
-// assets locally within your project's static assets folder.
+   2. Going Local: Shipping Assets with Your NuGet Package. If you are building this wrapper inside a Razor Class Library (RCL)
+   to distribute as a NuGet package or shared library, you should avoid relying on external CDNs(unpkg.com).You can host the
+   assets locally within your project's static assets folder.
 
-// Directory Layout:
-//  YourProjectName
-//    ├── wwwroot
-//    │    └── Jscript
-//    │         └── vis
-//    │               ├── vis-timeline-graph2d.min.js  <--Copy downloaded script here
-//    │               └── vis-timeline-graph2d.min.css <--Copy downloaded style here
-//    │
-//    └── BlazorWebAssembly
-//              └── Components
-//                    └── Pages
-//                          ├── VisTimeline.razor
-//                          └── VisTimeline.razor.js
+   Directory Layout:
+    YourProjectName
+      ├── wwwroot
+      │    └── Jscript
+      │         └── vis
+      │               ├── vis-timeline-graph2d.min.js  <--Copy downloaded script here
+      │               └── vis-timeline-graph2d.min.css <--Copy downloaded style here
+      │
+      └── BlazorWebAssembly
+                └── Components
+                      └── Pages
+                            ├── VisTimeline.razor
+                            └── VisTimeline.razor.js
 
-// Import from your local project static assets folder
-import '../../_content/YourRclProjectAssemblyName/vis-timeline.min.js';
-
-// Why this approach is ideal:
-//   Zero - Configuration for Consumers: Developers who install your Blazor wrapper do not need to paste any <script> or <link> tags
-//                                       into their root HTML files.They just drop your < VisTimeline /> component onto a page, and it works.
-//   Smart Garbage Collection: The browser downloads the heavy vis - timeline.min.js file only when that specific route is rendered.
-//                             If a user never visits the timeline page, they never fetch the asset.
+   Import from your local project static assets folder
+   import '../../_content/YourRclProjectAssemblyName/vis-timeline.min.js';
+  
+   Why this approach is ideal:
+     Zero - Configuration for Consumers: Developers who install your Blazor wrapper do not need to paste any <script> or <link> tags
+                                         into their root HTML files.They just drop your < VisTimeline /> component onto a page, and it works.
+     Smart Garbage Collection: The browser downloads the heavy vis - timeline.min.js file only when that specific route is rendered.
+                               If a user never visits the timeline page, they never fetch the asset.  */
 
 
 const instances = new Map();

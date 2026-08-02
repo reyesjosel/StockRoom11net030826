@@ -12,7 +12,7 @@ namespace StockRoom11net.Data.Services;
 /// Service layer for StockRoom business logic
 /// Returns BindingList for WinForms DataGridView compatibility
 /// </summary>
-public interface IStockRoomService
+public interface ITableStockRoomService
 {
     Task<DataTable> LoadStockRoomsDataTableAsync();
     Task<BindingList<Table_StockRoom>> LoadStockRoomsAsync();
@@ -31,11 +31,11 @@ public interface IStockRoomService
 /// Data access delegated to repository via UnitOfWork.
 /// Returns BindingList for WinForms DataGridView compatibility
 /// </summary>
-public class StockRoomService : IStockRoomService
+public class TableStockRoomService : ITableStockRoomService
 {
     private readonly IUnitOfWork _unitOfWork;
 
-    public StockRoomService(IUnitOfWork unitOfWork)
+    public TableStockRoomService(IUnitOfWork unitOfWork)
     {
         _unitOfWork = unitOfWork;
     }
