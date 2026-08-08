@@ -27,8 +27,7 @@ namespace System.Windows.Forms
         public const int WM_PAINT = 0xf;
         public const int WS_EX_LAYOUTRTL = 0x400000;
         public const int WS_EX_NOINHERITLAYOUT = 0x100000;
-
-
+        public const int WM_LBUTTONDOWN = 0x0201;
         #endregion
 
         #region Content Alignment

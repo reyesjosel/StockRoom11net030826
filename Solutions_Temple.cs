@@ -391,6 +391,12 @@ namespace StockRoom11net
         public Solutions_TempleClass()
         {
             InitializeComponent();
+
+            if (DesignMode)
+            {
+                MessageBox.Show(@"Solutions_TempleClass() parameterless constructor is obsolete. Use DI constructor instead.",
+                                @"Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
         }
 
         public Solutions_TempleClass(ITableEmployeeService employeesService, IServiceProvider serviceProvider)

@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using StockRoom11net.BlazorWebAssembly.Components.Pages;
 using System.Security.Cryptography.X509Certificates;
+using System.Text.Json;
 
 namespace StockRoom11net.Controls.VisTimeLine
 {
@@ -86,6 +87,14 @@ namespace StockRoom11net.Controls.VisTimeLine
         public Task OnMouseMove(CanvasMouseArgs args);
 
         #endregion JSInterop calls back to Blazor page
+
+        /// <summary>
+        /// Constructs HTML content for timeline items and returns a list of TimeLineItem objects for use in the frontend.
+        /// Seven timeline items are created, each with different HTML content, including text, images,
+        /// classNames and links. This is for testing and demonstration purposes, and can be modified
+        /// to suit specific application needs.
+        /// </summary>
+        public List<TimeLineItem> OnHTMLContents(int ID);
     }
 
 
@@ -423,5 +432,69 @@ namespace StockRoom11net.Controls.VisTimeLine
 
         #endregion JSInterop calls back to Blazor page.
 
+        int _nextId = 100; // Initialize the next ID for timeline items
+        int ID
+        {
+            get
+            {
+                _nextId++;
+                return _nextId;
+            }
+            set { _nextId = value; }
+        }
+
+        /// <summary>
+        /// Constructs HTML content for timeline items and serializes it to JSON for use in the frontend.
+        /// Seven timeline items are created, each with different HTML content, including text, images,
+        /// classNames and links. This is for testing and demonstration purposes, and can be modified
+        /// to suit specific application needs.
+        /// </summary>
+        public List<TimeLineItem> OnHTMLContents(int id)
+        {
+            _nextId = id;  // Reset the ID counter to the provided value
+
+            // ✅ Build the HTML content as a C# string instead
+            string item1 = "<div>Your content here</div>";
+
+            // ✅ More complex example matching your timeline use case """<div>item2<br>
+            string item2 = """<div>item2<img src="/Resources/img/Flag_Red.png" width="22"/></div>""";
+
+            // ✅ Then assign it to the TimeLineItem
+            TimeLineItem itemToUpDate = new TimeLineItem
+            {
+                //Id = row["ID"] is int id ? id : Convert.ToInt32(row["ID"]),
+                Content = item1,   // ← HTML string rendered directly by vis.js
+            };
+
+            // ✅ Option 2 — C# 11 raw string literal (no escaping needed)
+            string item6 = """item6<br><img src="/Resources/img/Flag_Blue.png" width="22"/>""";
+
+            string item7 = """item7<br><a href="https://visjs.org" target="_blank">click here</a>""";
+
+            List<TimeLineItem> myItems = new List<TimeLineItem>
+            {
+                new TimeLineItem { Id = ID.ToString(), Content = item1, ClassName = ""    , Start = DateTime.Parse("2026-06-27") },
+                new TimeLineItem { Id = ID.ToString(), Content = item2, ClassName = ""    , Start = DateTime.Parse("2026-06-28") },
+                new TimeLineItem { Id = ID.ToString(), Content = item6, ClassName = ""    , Start = DateTime.Parse("2026-06-29") },
+                new TimeLineItem { Id = ID.ToString(), Content = "green", ClassName = "green", Start = DateTime.Parse("2026-06-30") },
+                new TimeLineItem { Id = ID.ToString(), Content = "red", ClassName = "red"    , Start = DateTime.Parse("2026-07-01") },
+                new TimeLineItem { Id = ID.ToString(), Content = "orange", ClassName = "orange", Start = DateTime.Parse("2026-07-02") },
+                new TimeLineItem {
+                Id = ID.ToString(), // "font-size: 18px;" maximum font size for the label, but can be adjusted down.
+                Content = """
+                            <div style="font-size:14px; font-weight:bold;">
+                            <img src="/Resources/img/Flag_Green.png" width="12"/> My Label</div>
+                          """,
+                ClassName = "magenta",
+                Start = DateTime.Parse("2026-07-03"),
+                End = DateTime.Parse("2026-07-05"),
+                Style = "height: 20px;" +
+                         "line-height: 5px;",    // = height → vertically centered
+                Type = TimeLineTypeEnum.range.ToString()
+                }
+            };
+
+            return myItems;
+        }
     }
 }

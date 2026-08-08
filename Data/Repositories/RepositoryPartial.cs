@@ -69,10 +69,10 @@ public partial class Repository<T> : IRepository<T> where T : class
             {
                 // No conflict — attach normally
                 _dbSet.Update(entity);
-            }
-
-            await _context.SaveChangesAsync(cancellationToken);
+            }            
         }
+
+        await _context.SaveChangesAsync(cancellationToken);
     }
       
 }

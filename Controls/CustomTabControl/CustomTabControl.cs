@@ -536,7 +536,8 @@ namespace System.Windows.Forms
         #region Drag 'n' Drop
         protected override void OnMouseDown(MouseEventArgs e)
         {
-            base.OnMouseDown(e);
+            base.OnMouseDown(e);            
+
             if (AllowDrop)
             {
                 _dragStartPosition = new Drawing.Point(e.X, e.Y);
@@ -749,6 +750,7 @@ namespace System.Windows.Forms
 
             }
             base.OnResize(e);
+            Invalidate(true); // Force child TabPage windows to repaint too
         }
 
         protected override void OnParentBackColorChanged(EventArgs e)
@@ -853,37 +855,39 @@ namespace System.Windows.Forms
             }
             return base.ProcessMnemonic(charCode);
         }
-
-        //protected override void OnSelectedIndexChanged(EventArgs e)
-        //{
-        //    if (Handle == null)
-        //        return;
-
-        //	base.OnSelectedIndexChanged(e);
-        //}
-
+                
         protected override void WndProc(ref Message m)
         {
             switch (m.Msg)
             {
                 case NativeMethods.WM_HSCROLL:
-
-                    //	Raise the scroll event when the scroller is scrolled
                     base.WndProc(ref m);
                     OnHScroll(new ScrollEventArgs(((ScrollEventType)NativeMethods.LoWord(m.WParam)), _oldValue, NativeMethods.HiWord(m.WParam), ScrollOrientation.HorizontalScroll));
                     break;
-                //				case NativeMethods.WM_PAINT:
-                //					
-                //					//	Handle painting ourselves rather than call the base OnPaint.
-                //					CustomPaint(ref m);
-                //					break;
+
+                case NativeMethods.WM_LBUTTONDOWN:
+                    int x = NativeMethods.LoWord((int)m.LParam);
+                    int y = NativeMethods.HiWord((int)m.LParam);
+                    if (ResizeGripRect.Contains(new Point(x, y)))
+                    {
+                        int savedIndex = SelectedIndex;
+                        base.WndProc(ref m);
+                        // Native TabControl changed selection — restore it
+                        if (SelectedIndex != savedIndex)
+                            SelectedIndex = savedIndex;
+                    }
+                    else
+                    {
+                        base.WndProc(ref m);
+                    }
+                    break;
 
                 default:
                     base.WndProc(ref m);
                     break;
             }
         }
-
+               
         void CustomTabControl_MouseDown(object? sender, MouseEventArgs e)
         {
             if (ResizeGripRect.Contains(e.Location))
@@ -1336,16 +1340,16 @@ namespace System.Windows.Forms
         /// <returns></returns>
         public Rectangle GetPageBounds(int index)
         {
-            Rectangle pageBounds = TabPages[index].Bounds;
+            // Use DisplayRectangle instead of TabPages[index].Bounds.
+            // Non-selected TabPages have their native window hidden by Win32, so
+            // their .Bounds remain stale after a resize until they become selected.
+            // DisplayRectangle is always computed from the current control size.
+            Rectangle pageBounds = DisplayRectangle;
             pageBounds.Width += 1;
             pageBounds.Height += 1;
             pageBounds.X -= 1;
             pageBounds.Y -= 1;
 
-            if (pageBounds.Bottom > Height - 4)
-            {
-                pageBounds.Height -= (pageBounds.Bottom - Height + 4);
-            }
             return pageBounds;
         }
 

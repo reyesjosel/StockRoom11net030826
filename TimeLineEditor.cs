@@ -54,10 +54,6 @@ namespace StockRoom11net
         public BindingSourceValidating<Table_TimeLine> _bindingSourceTimeLineVal;
         public BindingSourceValidating<Table_Base_TreeView> _bindingSourceTimeLineTreeViewVal;
         
-        DataColumnCollection _stockroomColumns;
-
-        readonly AppState _appState = new();
-
         #endregion
 
         #region"CurrentUserBroadcast"
@@ -185,9 +181,7 @@ namespace StockRoom11net
 
             InitializeBlazorWebView();
         }
-
-        
-
+                
         void InitializeBlazorWebView()
         {
             try
@@ -203,9 +197,7 @@ namespace StockRoom11net
 
                 var serviceCollection = new ServiceCollection();
                 serviceCollection.AddWindowsFormsBlazorWebView();
-                serviceCollection.AddSingleton<AppState>(_appState);
                 serviceCollection.AddSingleton<ITimeLineService>(_itimeLineService);
-                serviceCollection.AddSingleton<WeatherForecastService>();
                 serviceCollection.AddLogging(builder =>             // Add logging services and configure them
                 {
                     builder.SetMinimumLevel(LogLevel.Information);  // Set a minimum log level
@@ -248,12 +240,7 @@ namespace StockRoom11net
                 {
                     blazorWebView_TimeLine.WebView.CoreWebView2.OpenDevToolsWindow();
                 };
-                /*
-                blazorWebView_TimeLine.WebView.CoreWebView2InitializationCompleted += (s, e) =>
-                {
-                    blazorWebView_TimeLine.WebView.CoreWebView2.OpenDevToolsWindow();
-                };*/
-
+                
                 AppDomain.CurrentDomain.UnhandledException += (sender, error) =>
                 {
                     #if DEBUG
@@ -278,7 +265,7 @@ namespace StockRoom11net
             try
             {
                 MessageDebugPosition = "InitializeProperties()";
-                InitializeProperties();
+                //InitializeProperties();
                                 
                 InitTabControlExtend();
                 InitDataTreeViewTo();
@@ -289,7 +276,7 @@ namespace StockRoom11net
                 // like filtering with the treeView.               
                 LoadDataEF();
 
-                InitializeAppServiceCallBackEvents();                
+                InitializeItimeLineServiceCallBackEvents();                
             }
             catch (Exception error)
             {
@@ -298,7 +285,7 @@ namespace StockRoom11net
             }
         }
                
-        void InitializeAppServiceCallBackEvents()
+        void InitializeItimeLineServiceCallBackEvents()
         {
             _itimeLineService.OnSelectEvent = EventCallback.Factory.Create<string>(this, OnSelectedItem);
             _itimeLineService.OnMovedEvent = EventCallback.Factory.Create<TimeLineItem>(this, OnMoveItem);
@@ -423,11 +410,7 @@ namespace StockRoom11net
             }
             return false;
         }
-                      
-        void InitializeProperties()
-        {
-        }
-
+        
         #region"CustomTabControl"
 
         Plexiglass ShowResizeRectangle;

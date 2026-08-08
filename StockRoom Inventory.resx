@@ -138,6 +138,9 @@
   <metadata name="dataView_TreeView.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>1445, 17</value>
   </metadata>
+  <metadata name="dataView_TreeView.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>1445, 17</value>
+  </metadata>
   <metadata name="_bindingSource_StockRoom.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 59</value>
   </metadata>
