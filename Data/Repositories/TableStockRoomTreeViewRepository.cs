@@ -42,6 +42,8 @@ public interface ITableStockRoomTreeViewRepository : IRepository<Table_StockRoom
     /// </summary>
     Task DeleteRangeAsync(IEnumerable<int> indexes, CancellationToken cancellationToken = default);
 
+    Task FixOrphansParentIdAsync(IEnumerable<int> orphanIds, int newParentId, CancellationToken cancellationToken = default);
+
     // Tree-specific operations
     Task<IEnumerable<Table_StockRoom_TreeView>> GetRootNodesAsync(CancellationToken cancellationToken = default);
     Task<IEnumerable<Table_StockRoom_TreeView>> GetChildrenAsync(int parentId, CancellationToken cancellationToken = default);
@@ -147,6 +149,19 @@ public class TableStockRoomTreeViewRepository : Repository<Table_StockRoom_TreeV
         await _context.Table_StockRoom_TreeViews
             .Where(x => indexList.Contains(x.Index))
             .ExecuteDeleteAsync(cancellationToken);
+    }
+
+    public async Task FixOrphansParentIdAsync(IEnumerable<int> orphanIds, int newParentId, CancellationToken cancellationToken = default)
+    {
+        var ids = orphanIds.ToList();
+        if (ids.Count == 0) return;
+
+        // Single SQL: UPDATE Table_StockRoom_TreeView SET Parent_ID = @newParentId
+        //             WHERE ID IN (...)
+        await _context.Table_StockRoom_TreeViews
+            .Where(x => ids.Contains(x.ID))
+            .ExecuteUpdateAsync(s => s.SetProperty(x => x.Parent_ID, newParentId),
+                                cancellationToken);
     }
 
     #endregion

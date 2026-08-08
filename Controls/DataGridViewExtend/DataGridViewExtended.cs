@@ -3616,14 +3616,26 @@ namespace StockRoom11net.Controls.DataGridViewExtend
 
         void DataGridViewColumnWidthChanged(object? sender, DataGridViewColumnEventArgs e)
         {
+            // We set the IsMouseDrivenEvent at DataGridViewMouseDown() event handler,
+            // because the user can change the column width by mouse or by code, we only
+            // want to save the setting when the user change the column width by mouse.
+            if(!IsMouseDrivenEvent)
+                return;
+
             SaveUserSetting();
+            
         }
 
         void DataGridViewColumnDisplayIndexChanged(object? sender, DataGridViewColumnEventArgs e)
         {
-            //Occurs when a column shown in the display is dragged,
-            //it does not occur when a column is hide.
+            // We set the IsMouseDrivenEvent at DataGridViewMouseDown() event handler,
+            // because the user can change the column width by mouse or by code, we only
+            // want to save the setting when the user change the column width by mouse.
+            if (!IsMouseDrivenEvent)
+                return;
+
             SaveUserSetting();
+            
         }
 
         void DataGridView_ColumnRemoved(object? sender, DataGridViewColumnEventArgs e)
@@ -3792,16 +3804,29 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             SaveUserSettingTimer.Stop();
             On_StatusBarMessage(new StatusBarMessage_EventArgs("", "  "));//Clear the StatusBar.
 
-            var userSetting = new UserSetting(_dataGridView.AutoSizeColumnsMode, CustomEdit,
-                                              _dataGridView.DefaultCellStyle.Font,
-                                              _dataGridView.ColumnHeadersDefaultCellStyle.Font,
-                                              _bindingNavigator.Font,
-                                              _bindingNavigator.ImageScalingSize);
+            try
+            {
+                var userSetting = new UserSetting(_dataGridView.AutoSizeColumnsMode, CustomEdit,
+                                                  _dataGridView.DefaultCellStyle.Font,
+                                                  _dataGridView.ColumnHeadersDefaultCellStyle.Font,
+                                                  _bindingNavigator.Font,
+                                                  _bindingNavigator.ImageScalingSize);
 
-            await _currentEmployeeLogIn.Save_UserSetting_ColumnsSetting(userSettingName,
-                                                                            userSetting,
-                                                                      ColumnsCollection,
-                                                      _dataGridView.AutoSizeColumnsMode);
+                await _currentEmployeeLogIn.Save_UserSetting_ColumnsSetting(userSettingName,
+                                                                                userSetting,
+                                                                          ColumnsCollection,
+                                                          _dataGridView.AutoSizeColumnsMode);
+            }
+            catch (Exception error)
+            {
+                using (var form = new Form { TopMost = true })
+                {
+                    MessageBox.Show(form, @"Message related to this error is " + error.Message +
+                                          @", Break code at position " + MessageDebugPosition,
+                                          @"DataGridViewExtended has generated an error.",
+                                          MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
         }
 
         #endregion"Timer SaveUserSetting if it's modifying the user interface."   
@@ -5263,8 +5288,10 @@ namespace StockRoom11net.Controls.DataGridViewExtend
         {
             // Set true, the change was by mouse, need save the setting;
             NeedSaveData = true;
+            IsMouseDrivenEvent = true;
+            SaveUserSetting();
 
-            switch (e.ClickedItem.Text)
+            switch (e.ClickedItem?.Text)
             {
                 case "Fill the display":
                     {
@@ -5302,7 +5329,6 @@ namespace StockRoom11net.Controls.DataGridViewExtend
                         return;
                     }
             }
-            IsMouseDrivenEvent = true;
         }
 
         void ToolStripMenuItem_Setting_DropDownItemClicked(object? sender, ToolStripItemClickedEventArgs e)
@@ -5310,8 +5336,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             List<string> _keytoDelete = new List<string>(0);
             DialogResult result;
 
-            switch (e.ClickedItem.Text)
-
+            switch (e.ClickedItem?.Text)
             {
                 case "Clear Columns":
                     {
@@ -5360,7 +5385,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             NeedSaveData = true;
             DataGridViewCellStyle customCellStyle = new DataGridViewCellStyle(_dataGridView.Columns[_dataGridView.CurrentColumnIndex].DefaultCellStyle);
 
-            switch (e.ClickedItem.Text)
+            switch (e.ClickedItem?.Text)
             {
                 case "Left <--":
                     {
@@ -5384,7 +5409,9 @@ namespace StockRoom11net.Controls.DataGridViewExtend
                         return;
                     }
             }
+
             IsMouseDrivenEvent = true;
+            SaveUserSetting();
         }
 
         void ToolStripMenuItem_Font_Click(object sender, EventArgs e)
@@ -5420,7 +5447,6 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             }
         }
 
-
         void ToolStripMenuItem_FontStyleBindingNavigator_Click(object sender, EventArgs e)
         {
             _contextMenuStrip_DataGridView.Close();
@@ -5454,7 +5480,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             if (fontDialog.ShowDialog() == DialogResult.OK)
             {
                 Set_BindingNavegatorFont(fontDialog.Font);
-                
+                IsMouseDrivenEvent = true;
                 SaveUserSetting();
             }
         }

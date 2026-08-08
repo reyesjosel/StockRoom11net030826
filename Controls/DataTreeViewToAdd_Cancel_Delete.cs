@@ -9,6 +9,7 @@ using System.Collections;
 using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
+using System.Numerics.Colors;
 using System.Xml;
 using static StockRoom11net.Controls.Custom_Events_Args;
 using static StockRoom11net.Controls.Utilities;
@@ -212,26 +213,33 @@ namespace StockRoom11net.Controls
         }
 
         #endregion"CurrentUserBroadcast"
-
-        DataTable _dataTableTreeView;
+                
         int _lastID = 99;
-        // If we are using a bindingSource, used this in Load procedure.
-        //    table = ((DataSet)_bindingSource.DataSource).Tables[_bindingSource.DataMember];
-        // We ask per the lastID just before used.
-        //            if (table.Rows.Count > 0)
-        //                LastID = (int)table.Compute("MAX(ID)", "ID is Not null");
-        //            else
-        //                LastID = 0;
+
         /// <summary>
-        /// Top value for ID field, option filter to select a group of row.
-        /// table.Compute("MAX(ID)", "filter condition").
-        /// LastID autoIncrement itself on each access
+        /// Gets the next unique ID for the tree view nodes.
+        /// This is the next available ID for the tree view nodes,
+        /// it is incremented each time it is accessed to ensure uniqueness.
         /// </summary>
-        private int LastID
+        private int NextID
         {
             get
             {
                 ++_lastID;
+                return _lastID;
+            }            
+        }
+
+        /// <summary>
+        /// Gets or sets the last used ID for the tree view nodes.
+        /// This is the last used ID for the tree view nodes, it is not available 
+        /// for use in the next node added to the tree view. The next node added
+        /// to the tree view will use the NextID property to get a unique ID.
+        /// </summary>
+        private int LastID
+        {
+            get
+            {                
                 return _lastID;
             }
             set
@@ -335,6 +343,10 @@ namespace StockRoom11net.Controls
                     if (_bindingSourceTreeView.Count == 0)
                         return;
 
+                    // Initialize the last used ID for the tree view nodes based on the current data source.
+                    // We need to ensure that the LastID is set correctly to avoid ID collisions when adding new nodes.
+                    InitializedLastID();
+
                     // ⚠️ Warning: The ObjectListView (OLV) control can enter an infinite recursion state if
                     // the data source contains circular references or invalid parent-child relationships.
                     // ✅ Data validation and integrity checks before assigning to OLV
@@ -352,15 +364,30 @@ namespace StockRoom11net.Controls
                     // So we most be careful to exclude these reserved values from the valid ID set when checking for orphan nodes,
                     // and to use the "Deleted" bucket for any nodes that fail validation or cycle detection.
 
-                    // The best aproach is to delete any record with ID == 0, because 0 is reserved for "Master" root nodes, and any
-                    // record with ID == 25, 50 or 75, because these values are reserved for the "Add", "Cancel" and "Deleted" buckets.
+                    // The best aproach is to delete any record with reserved IDs, the problem is not the ID itself,
+                    // the problem are the children of these with Parent_ID == 0, 25, 50 or 75. So we need to re-key any
+                    // record with Parent_ID == 0, 25, 50 or 75, because these values
+                    // are reserved for the "Master", "Add", "Cancel" and "Deleted" buckets.
                     List<Table_Base_TreeView> itemsReservedID = _bindingSourceTreeView.List.Cast<Table_Base_TreeView>()
                                                                 .Where(n => n.ID == 0 || n.ID == 25 || n.ID == 50 || n.ID == 75)
                                                                 .ToList();
 
-                    if(itemsReservedID.Count > 0)
+                    if (itemsReservedID.Count > 0)
                     {
-                       RemoveRowReservedIDsAsync(itemsReservedID);
+                        // ── Reserved-ID repair ──────────────────────────────────────────────
+                        // IDs 0, 25, 50 and 75 are reserved for the virtual bucket roots.
+                        // Any real data node that accidentally carries one of those IDs must be
+                        // re-keyed to a safe NextID, and every child that pointed to the old
+                        // reserved value must be updated to point to the new one instead.
+
+                        // Work against a snapshot of the full list so re-keying one node cannot
+                        // disturb iteration over the others.
+                        var allNodes = _bindingSourceTreeView.List.Cast<Table_Base_TreeView>().ToList();
+
+                        foreach (var reservedNode in itemsReservedID)
+                        {
+                            Task.Run(() => UpDateID(reservedNode)).GetAwaiter().GetResult();
+                        }
                     }
 
                     // ✅ Diagnose data before assigning to OLV
@@ -408,11 +435,40 @@ namespace StockRoom11net.Controls
 
                     if (OrphansNodes.Count > 0)
                     {
+                        var orphanIds = OrphansNodes.Where(n => n.Text_Name != "Stock Room")
+                                                    .Select(n => n.ID)
+                                                    .ToList();
+
+                        var orphanStockRoomNode = OrphansNodes.FirstOrDefault(n => n.Text_Name == "Stock Room");
+
+                        // Single batch UPDATE — no N+1, no .Wait() deadlock
+                        Task.Run(() => _unitOfWork.TableStockRoomTreeViewRepository
+                                                  .FixOrphansParentIdAsync(orphanIds, rootKeyValueToDelete))
+                                                  .GetAwaiter().GetResult();
+
+                        // If the "Stock Room" node is present, fix it separately to move it to the master root (0)
+                        // This ensures that the "Stock Room" node is not lost and is correctly re-homed to the master root.
+                        // It is important to handle this case separately because the "Stock Room" node is the master root of
+                        // the tree and should not be moved to the delete bucket (75).
+                        if (orphanStockRoomNode != null)
+                        {
+                            Task.Run(() => _unitOfWork.TableStockRoomTreeViewRepository
+                                                      .FixOrphansParentIdAsync(new List<int> { orphanStockRoomNode.ID }, rootKeyValueToMaster))
+                                                      .GetAwaiter().GetResult();
+                        }
+
+                        // Update in-memory state to match
                         foreach (var item in OrphansNodes)
                         {
-                            item.Parent_ID = rootKeyValueToDelete; // Move OrphansNodes to a "Deleted" root to prevent them
-                                                                   // from being lost and to make them visible for correction
+                            if (item.Text_Name == "Stock Room")
+                            {
+                                item.Parent_ID = rootKeyValueToMaster;
+                                Debug.WriteLine($"Orphan fix: node ID={item.ID} ('{item.Text_Name}') " +
+                                            $"was orphaned. Moved to Parent_ID={item.Parent_ID}.");
+                                continue;
+                            }
 
+                            item.Parent_ID = rootKeyValueToDelete;
                             Debug.WriteLine($"Orphan fix: node ID={item.ID} ('{item.Text_Name}') " +
                                             $"was orphaned. Moved to Parent_ID={item.Parent_ID}.");
                         }
@@ -459,69 +515,7 @@ namespace StockRoom11net.Controls
                         MessageBox.Show($"Tree data invalid!\nRoots: {roots.Count}\nDuplicate IDs: {string.Join(",", dupIDs)}\nOrphans: {OrphansNodes.Count}\nCycle nodes: {cycleNodes.Count}",
                             "DataSource Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
-
-                    /*
-
-                    OrphansNodes = ItemsList.Where(n => n.Parent_ID == null   // ← null = unattached node, no parent reference at all
-                                                 || n.Parent_ID is > 0 
-                                                 && !validIDs.Contains(n.Parent_ID.Value)).ToList();
-
-                    if(OrphansNodes.Count > 0)
-                    {
-                        foreach( var item in OrphansNodes)
-                        {
-                            item.Parent_ID = rootKeyValueToDelete; // Move OrphansNodes to a "Deleted" root to prevent them
-                                                                   // from being lost and to make them visible for correction
-                        }
-                                               
-                    }
-
-                    // ── Cycle detection ──────────────────────────────────────────────────────
-                    // A circular parent chain (e.g. A→B→A, or A→A) causes
-                    // Branch.Visible.get in ObjectListView to recurse infinitely when the
-                    // tree is expanded, resulting in a StackOverflowException.
-                    // Walk every node's ancestor chain; if an ID is visited twice the chain
-                    // contains a cycle. Re-home the offending node to the delete bucket so
-                    // the data remains visible for correction rather than being silently lost.
-                    var idLookup = ItemsList.Where(n => n.ID > 0).ToDictionary(n => n.ID);
-                    var cycleNodes = ItemsList
-                        .Where(n => n.Parent_ID.HasValue && n.Parent_ID.Value > 0)
-                        .Where(n =>
-                        {
-                            var visited = new HashSet<int> { n.ID };
-                            int? current = n.Parent_ID;
-                            while (current.HasValue && current.Value > 0)
-                            {
-                                if (!visited.Add(current.Value))
-                                    return true; // cycle detected
-                                if (!idLookup.TryGetValue(current.Value, out var parentNode))
-                                    break;
-                                current = parentNode.Parent_ID;
-                            }
-                            return false;
-                        }).ToList();
-
-                    if (cycleNodes.Count != 0)
-                    {
-                        foreach (var node in cycleNodes)
-                        {
-                            node.Parent_ID = rootKeyValueToDelete;
-                            Debug.WriteLine($"Cycle fix: node ID={node.ID} ('{node.Text_Name}') " +
-                                            $"was in a circular parent chain. Moved to delete bucket.");
-                        }
-                    }
-                    // ─────────────────────────────────────────────────────────────────────────
-
-                    Debug.WriteLine($"Total: {ItemsList.Count} | Roots (Parent_ID==0): {roots.Count} | DupIDs: {string.Join(",", dupIDs)} | Orphans: {OrphansNodes.Count}");
-
-                    if (roots.Count == 0 || dupIDs.Count != 0)
-                    {
-                        MessageBox.Show($"Tree data invalid!\nRoots: {roots.Count}\nDuplicate IDs: {string.Join(",", dupIDs)}\nOrphans: {OrphansNodes.Count}",
-                            "DataSource Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        //return; // ← prevents the freeze
-                    }
-                    */
-
+                    
                     if (InvokeRequired)
                     {
                         Invoke(() => olvDataTreeMaster.DataSource = _bindingSourceTreeView);
@@ -534,8 +528,7 @@ namespace StockRoom11net.Controls
                     olvDataTree_ToAdd.DataSource = _bindingSourceTreeView;
                     olvDataTree_ToCancel.DataSource = _bindingSourceTreeView;
                     olvDataTree_ToDelete.DataSource = _bindingSourceTreeView;
-
-                    InitializedLastID();
+                                        
                     InitializeImageList();
                     _ = SetupRowsToAddAsync();
 
@@ -550,8 +543,10 @@ namespace StockRoom11net.Controls
                     if (firstRoot != null)
                         olvDataTreeMaster.Expand(firstRoot);         // expand first root node to trigger render
 
-                    if (_bindingSourceTreeView.Count > 1)
-                        _bindingSourceTreeView.Position = 1;         // move position to trigger PositionChanged → repaint
+                    // ❌ REMOVE THIS — triggers TreeDataSourceAdapter.CalculateParent 
+                    //    for the entire dataset synchronously, freezing the UI thread.
+                    // if (_bindingSourceTreeView.Count > 1)
+                    //     _bindingSourceTreeView.Position = 1;
 
                     if (olvDataTreeMaster.GetItemCount() > 0)
                         olvDataTreeMaster.EnsureVisible(0);          // scroll back to top
@@ -560,6 +555,68 @@ namespace StockRoom11net.Controls
                 {
                     MessageBox.Show($"Error setting data source: {ex.Message}", "Data Source Error",
                         MessageBoxButtons.OK, MessageBoxIcon.Error); return;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Updates the ID of a given tree view node and reassigns its children to the new ID.
+        /// It also updates the corresponding entity in the database using the unit of work pattern.
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        async Task UpDateID(Table_Base_TreeView model)
+        {
+            int oldID = model.ID;
+            int newID = NextID;          // increments _lastID and returns the new value
+
+            // Work against a snapshot of the full list so re-keying one node cannot
+            // disturb iteration over the others.
+            var allNodes = _bindingSourceTreeView.List.Cast<Table_Base_TreeView>().ToList();
+
+            string typeName = _bindingSourceTreeView.TableName;
+            if (typeName == nameof(Table_StockRoom_TreeView))
+            {
+                Table_StockRoom_TreeView? itemEF = await _unitOfWork.TableStockRoomTreeViewRepository.GetByIdAsync(model.ID);
+                if (itemEF != null)
+                {
+                    // 1. Re-key the node itself.
+                    model.ID = newID;
+                    itemEF.ID = model.ID;
+                    await _unitOfWork.TableStockRoomTreeViewRepository.UpdateAsync(itemEF, CancellationToken.None);
+
+                    // 2. Re-point every child that referenced the old reserved ID.
+                    foreach (var child in allNodes.Where(n => n.Parent_ID == oldID))
+                    {
+                        child.Parent_ID = model.ID;
+                        Table_StockRoom_TreeView? childEF = await _unitOfWork.TableStockRoomTreeViewRepository.GetByIdAsync(child.ID);
+                        if (childEF != null)
+                        {
+                            childEF.Parent_ID = model.ID;
+                            await _unitOfWork.TableStockRoomTreeViewRepository.UpdateAsync(childEF, CancellationToken.None);
+                        }
+                    }
+
+                    return;
+                }
+            }
+        }
+
+
+        async Task UpDateParent_ID(Table_Base_TreeView model, int parent_ID)
+        {            
+            string typeName = _bindingSourceTreeView.TableName;
+            if (typeName == nameof(Table_StockRoom_TreeView))
+            {
+                Table_StockRoom_TreeView? itemEF = await _unitOfWork.TableStockRoomTreeViewRepository.GetByIdAsync(model.ID);
+                if (itemEF != null)
+                {
+                    // 1. Re-key the node itself.
+                    model.Parent_ID = parent_ID;
+                    itemEF.Parent_ID = parent_ID;
+                    await _unitOfWork.TableStockRoomTreeViewRepository.UpdateAsync(itemEF, CancellationToken.None);
+                                        
+                    return;
                 }
             }
         }
@@ -757,8 +814,12 @@ namespace StockRoom11net.Controls
 
         HotItemStyle hotItemStyle = new();
         RowBorderDecoration rowBorderDec = new();
-        Color foreColor = Color.White;
-        Color backColor = Color.White;
+
+        // Fix 1: Initialize foreColor/backColor from actual OLV defaults, not White.
+        // Replace the field initializers:
+        Color foreColor = SystemColors.WindowText;   // was Color.White
+        Color backColor = SystemColors.Window;       // was Color.White
+
         bool keyPressDataTreeList = false;
         /// <summary>
         /// An empty node item used as a placeholder when there are no matching tasks to display in the tree view.
@@ -879,6 +940,11 @@ namespace StockRoom11net.Controls
 
             // ✅ Load images AFTER SmallImageList is assigned
             InitializeImageList();
+
+            // Seed the hot-item restore colors from the actual control colors
+            // so toggling "Text Color" off never produces invisible text.
+            foreColor = olvDataTreeMaster.ForeColor;
+            backColor = olvDataTreeMaster.BackColor;
         }
 
         void OlvDataTreeMaster_GotFocus(object? sender, EventArgs e)
@@ -1301,8 +1367,8 @@ namespace StockRoom11net.Controls
 
                 var typedItem = new Table_StockRoom_TreeView
                 {
-                    Index = LastID,  // Incrementing the index for each new node to ensure uniqueness
-                    ID    = _lastID, // Use the same ID as Index for simplicity, but in a real application
+                    Index = NextID,  // Incrementing the index for each new node to ensure uniqueness
+                    ID    = NextID,  // Use the same ID as Index for simplicity, but in a real application
                                      // you might want to use a different strategy for generating unique IDs
                     Parent_ID = ((Table_Base_TreeView)args.TargetModel)?.ID ?? rootKeyValueToMaster,
                     Text_Name = model.Text_Name,
@@ -1337,8 +1403,8 @@ namespace StockRoom11net.Controls
 
                 var typedItem = new Table_TimeLine_TreeView
                 {
-                    Index = LastID,  // Incrementing the index for each new node to ensure uniqueness
-                    ID    = _lastID, // Use the same ID as Index for simplicity, but in a real application
+                    Index = NextID,  // Incrementing the index for each new node to ensure uniqueness
+                    ID    = NextID, // Use the same ID as Index for simplicity, but in a real application
                                      // you might want to use a different strategy for generating unique IDs
                     Parent_ID = ((Table_Base_TreeView)args.TargetModel)?.ID ?? rootKeyValueToMaster,
                     Text_Name = model.Text_Name,
@@ -1395,11 +1461,12 @@ namespace StockRoom11net.Controls
             }
         }
 
+        // Fix 2: Reset internalResizeEvent in OlvDataTreeMaster_Resize after the column width is set.
         void OlvDataTreeMaster_Resize(object? sender, EventArgs e)
         {
             internalResizeEvent = true;
             olvDataTreeMaster.Columns[0].Width = (int)(olvDataTreeMaster.Width * 0.60);
-         // olvColumn_Description (Columns[1]) fills the remaining 40% via FillsFreeSpace = true
+            internalResizeEvent = false;   // ← add this line
         }
 
         int expandingRootNode_ID = 0;
@@ -1781,6 +1848,11 @@ namespace StockRoom11net.Controls
         #region"olvDataTree_toAdd"
 
         bool mouseLeave = false;
+
+        /// <summary>
+        /// A list of new node names to be added to the tree view. These names
+        /// are used when setting up rows to add in the SetupRowsToAddAsync method.
+        /// </summary>
         readonly List<string> _newNodeNames = new List<string>()
         {
             "I'm ready, pick me",
@@ -1819,8 +1891,8 @@ namespace StockRoom11net.Controls
 
                         var newEntity = new Table_StockRoom_TreeView
                         {
-                            Index = LastID,  // Incrementing the index for each new node to ensure uniqueness
-                            ID    = _lastID, // Use the same ID as Index for simplicity, but in a real application
+                            Index = NextID,  // Incrementing the index for each new node to ensure uniqueness
+                            ID    = NextID,  // Use the same ID as Index for simplicity, but in a real application
                                              // you might want to use a different strategy for generating unique IDs
                             Parent_ID = rootKeyValueToAdd,
                             Text_Name = nodeName,
@@ -1856,8 +1928,8 @@ namespace StockRoom11net.Controls
 
                         var newEntity = new Table_TimeLine_TreeView
                         {
-                            Index = LastID,  // Incrementing the index for each new node to ensure uniqueness
-                            ID    = _lastID, // Use the same ID as Index for simplicity, but in a real application
+                            Index = NextID,  // Incrementing the index for each new node to ensure uniqueness
+                            ID    = NextID, // Use the same ID as Index for simplicity, but in a real application
                                              // you might want to use a different strategy for generating unique IDs
                             Parent_ID = rootKeyValueToAdd,
                             Text_Name = nodeName,
@@ -2128,7 +2200,7 @@ namespace StockRoom11net.Controls
                     {
                         var typedItem = new Table_StockRoom_TreeView
                         {
-                            ID = LastID,
+                            ID = NextID,
                             Parent_ID = ((Table_Base_TreeView)args.TargetModel).ID,
                             Text_Name = model.Text_Name,
                             Description_Short = model.Description_Short,
@@ -2146,7 +2218,7 @@ namespace StockRoom11net.Controls
                     {
                         var typedItem = new Table_TimeLine_TreeView
                         {
-                            ID = LastID,
+                            ID = NextID,
                             Parent_ID = ((Table_Base_TreeView)args.TargetModel).ID,
                             Text_Name = model.Text_Name,
                             Description_Short = model.Description_Short,

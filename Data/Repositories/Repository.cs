@@ -53,7 +53,7 @@ public partial class Repository<T> : IRepository<T> where T : class
 
     public virtual async Task<T?> FirstOrDefaultAsync(Expression<Func<T, bool>> predicate)
     {
-        return await _dbSet.FirstOrDefaultAsync(predicate);
+        return await _dbSet.AsNoTracking().FirstOrDefaultAsync(predicate);
     }
 
     public virtual async Task<T> AddAsync(T entity)
