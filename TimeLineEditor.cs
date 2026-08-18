@@ -22,6 +22,7 @@ using System.Diagnostics;
 using System.Reflection.Metadata;
 using System.Security.Cryptography.Xml;
 using System.Text.Json;
+using WinFormsUI.Docking;
 using static StockRoom11net.Controls.Custom_Events_Args;
 using static StockRoom11net.Controls.Utilities;
 using static System.Net.Mime.MediaTypeNames;
@@ -37,11 +38,12 @@ using StatusBarMessage_EventArgs = StockRoom11net.Controls.Custom_Events_Args.St
 
 namespace StockRoom11net
 {
-    public partial class TimeLineEditor : BaseTemple
+    public partial class TimeLineEditor : DockContent
     {
         #region "Properties"
 
         // Injected EF Core services
+        private readonly IAppService _iappService;
         private readonly ITimeLineService _itimeLineService;
         private readonly ITableTimeLineService _itableTimeLineService;
         private readonly ITableTimeLineTreeViewService _itableTimeLineTreeViewService;
@@ -53,7 +55,26 @@ namespace StockRoom11net
         // Declare as extended type
         public BindingSourceValidating<Table_TimeLine> _bindingSourceTimeLineVal;
         public BindingSourceValidating<Table_Base_TreeView> _bindingSourceTimeLineTreeViewVal;
-        
+
+        /// <summary>
+        /// Gets or sets the debug message position.
+        /// </summary>
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public string MessageDebugPosition { get; set; } = string.Empty;
+
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public string Title
+        {
+            get
+            {
+                return Text;
+            }
+            set
+            {
+                Text = $"{value}";
+            }
+        }
+
         #endregion
 
         #region"CurrentUserBroadcast"
@@ -153,6 +174,7 @@ namespace StockRoom11net
 
         // ✅ Constructor with DI
         public TimeLineEditor(ITableEmployeeService employeesService,
+                              IAppService iappService,
                               ITimeLineService timeLineService,
                               ITableTimeLineService itableTimeLineService,
                               ITableTimeLineTreeViewService timeLineTreeViewService,
@@ -160,6 +182,11 @@ namespace StockRoom11net
         {
             InitializeComponent();
 
+            AutoScaleMode = AutoScaleMode.Dpi;
+            DockAreas = WinFormsUI.Docking.DockAreas.Document | WinFormsUI.Docking.DockAreas.Float;
+            Title = "TimeLine Editor";
+
+            _iappService = iappService ?? throw new ArgumentNullException(nameof(iappService));
             _itimeLineService = timeLineService ?? throw new ArgumentNullException(nameof(timeLineService));
             _itableTimeLineService = itableTimeLineService ?? throw new ArgumentNullException(nameof(itableTimeLineService));
             _itableTimeLineTreeViewService = timeLineTreeViewService ?? throw new ArgumentNullException(nameof(timeLineTreeViewService));
@@ -335,7 +362,7 @@ namespace StockRoom11net
             try
             {
                 Cursor = Cursors.WaitCursor;
-                StatusBarMessage(new StatusBarMessage_EventArgs("Loading TimeLine data..."));
+                _iappService.On_StatusBarMessage(new StatusBarMessage_EventArgs("Loading TimeLine data..."));
 
                 // ✅ Load DataTable convert to → DataView → BindingSource (supports .Filter)
                 var dataTable = await _itableTimeLineService.LoadTimeLinesDataTableAsync();
@@ -372,7 +399,7 @@ namespace StockRoom11net
                 };
                 dataTreeViewToAdd_Cancel_Delete.BindingSourceTreeView = _bindingSourceTimeLineTreeViewVal;
 
-                StatusBarMessage(new StatusBarMessage_EventArgs($"Loaded {_timeLineTreeViewBindingList.Count} TimeLine records"));
+                _iappService.On_StatusBarMessage(new StatusBarMessage_EventArgs($"Loaded {_timeLineTreeViewBindingList.Count} TimeLine records"));
             }
             catch (Exception ex)
             {
@@ -513,7 +540,7 @@ namespace StockRoom11net
 
             _nodeSettingIsDone = true;
 
-            _nodeSetting = new NodeSetting(_bindingSourceTimeLineTreeViewVal, ColumnsCollection, _employeesService)
+            _nodeSetting = new NodeSetting(_bindingSourceTimeLineTreeViewVal, _iappService.ColumnsCollection, _employeesService)
             {
                 DebugMode = false,
                 AutoScroll = true,
@@ -541,7 +568,7 @@ namespace StockRoom11net
 
         void NodeSetting_StatusBarMessage(object? sender, StatusBarMessage_EventArgs e)
         {
-            On_StatusBarMessage(e);
+            _iappService.On_StatusBarMessage(e);
         }
 
         async void NodeSetting_Save_Requested(object? sender, Save_Requested_EventArgs e)
@@ -558,9 +585,7 @@ namespace StockRoom11net
 
         Table_TimeLine _currentRowViewActive;
         private void Initialize_DataGridView()
-        {
-            InitializeDataGridViewBase(dataGridViewExtended);
-
+        {            
             dataGridViewExtended.SuspendLayout();
             
             dataGridViewExtended.CellBegingEditEvent    += DataGridViewExtendedInventoryCellBeggingEditEvent;
@@ -578,7 +603,7 @@ namespace StockRoom11net
             dataGridViewExtended.DataGridViewSort       += DataGridViewExtendedInventoryDataGridViewSort;
             dataGridViewExtended.BindingNavigatorAddNewItemEvent += DataGridViewExtended_Inventory_AddNewItemEvent;
 
-            dataGridViewExtended.StatusBarMessage       += DataGridViewExtendedInventoryStatusBarMessage;
+            dataGridViewExtended.StatusBarMessageEvent       += DataGridViewExtendedInventoryStatusBarMessage;
             dataGridViewExtended.LogFileMessage         += DataGridViewExtendedInventoryLogFileMessage;
 
             dataGridViewExtended.DataSource = _bindingSourceTimeLineVal;
@@ -688,7 +713,7 @@ namespace StockRoom11net
                     dataGridViewExtended._dataGridView.CurrentCell = row.Cells[0];
                 }
 
-                StatusBarMessage(new StatusBarMessage_EventArgs(
+                _iappService.On_StatusBarMessage(new StatusBarMessage_EventArgs(
                     $"New TimeLine itemEFtableTreeView created: {savedTimeLine.ItemText}"));
             }
             catch (Exception ex)
@@ -742,7 +767,7 @@ namespace StockRoom11net
 
         private void DataGridViewExtendedInventoryLogFileMessage(object? sender, LogFileMessageEventArgs e)
         {
-            On_LogFileMessage(e);
+            _iappService.On_LogFileMessage(e);
         }
 
         private void DataGridViewExtendedInventoryDataGridViewSort(object? sender, DataGridViewSort_EventArgs e)
@@ -753,7 +778,7 @@ namespace StockRoom11net
 
         private void DataGridViewExtendedInventoryStatusBarMessage(object? sender, StatusBarMessage_EventArgs e)
         {
-            On_StatusBarMessage(e);
+             _iappService.On_StatusBarMessage(e);
         }
 
         private void DataGridViewExtended_TimeLine_CellClick_Event(object? sender, CellClick_EventArgs e)
@@ -804,8 +829,7 @@ namespace StockRoom11net
             }
             catch (Exception ex)
             {
-                MessageBox.Show(@"Error al tratar de salvar la DataBase" + ex.Message, @"Error on DataBase. StockRoom Inventory.",
-                                MessageBoxButtons.RetryCancel, MessageBoxIcon.Error);
+                _iappService.On_StatusBarMessage(new StatusBarMessage_EventArgs(@"Error al tratar de salvar la DataBase" + ex.Message));
             }
         }
 
@@ -902,13 +926,13 @@ namespace StockRoom11net
         {
             if(e.Row.Cells[0].Value == null)
             {
-                On_StatusBarMessage(new StatusBarMessage_EventArgs("Error in row information."));
+                _iappService.On_StatusBarMessage(new StatusBarMessage_EventArgs("Error in row information."));
                 return;
             }
 
             if (!e.Row.Cells[0].Value.ToString().Contains('-'))
             {
-                On_StatusBarMessage(new StatusBarMessage_EventArgs("Error in row information."));
+                _iappService.On_StatusBarMessage(new StatusBarMessage_EventArgs("Error in row information."));
                 return;
             }
 
@@ -916,7 +940,7 @@ namespace StockRoom11net
 
             if (!File.Exists(filePath))
             {
-                On_StatusBarMessage(new StatusBarMessage_EventArgs("No Pictures file was found."));
+                _iappService.On_StatusBarMessage(new StatusBarMessage_EventArgs("No Pictures file was found."));
                 return;
             }
 
@@ -930,7 +954,7 @@ namespace StockRoom11net
             fo.SourceFiles = source;
 
             if (fo.DoOperation())
-                On_StatusBarMessage(new StatusBarMessage_EventArgs("Pictures file was found and deleted."));
+                _iappService.On_StatusBarMessage(new StatusBarMessage_EventArgs("Pictures file was found and deleted."));
             else
                 MessageBox.Show("Pictures file was found, but unable to be deleted.");
 
@@ -938,7 +962,7 @@ namespace StockRoom11net
 
             string description = "The component " + e.Row.Cells[0].Value.ToString() + " has been deleted.";
 
-            On_NotificationsToSends(new Notification(
+            _iappService.On_NotificationsToSends(new Notification(
                                                      "DataBase hass change.",                            //notification.Text
                                                      "Warning, DataBase change.",                        //notification.Title
                                                      description,                                        //notification.Description
@@ -958,7 +982,7 @@ namespace StockRoom11net
 
             string description = "The component " + "" + " has been removed.";
 
-            On_NotificationsToSends(new Notification(
+            _iappService.On_NotificationsToSends(new Notification(
                                                      "DataBase has been change.",                        //notification.Text
                                                      "Warning, DataBase change.",                        //notification.Title
                                                      description,                                        //notification.Description
@@ -1019,9 +1043,9 @@ namespace StockRoom11net
         {
             try
             {
-                On_Save_Requested(e);
+                //On_Save_Requested(e);
 
-                On_NotificationsToSends(new Notification(
+                _iappService.On_NotificationsToSends(new Notification(
                                                      "DataBase has been updated.",                       // 0 notification.Text
                                                      "Warning, DataBase updated.",                       // 1 notification.Title
                                                      "The database has been updated by an user.",        // 2 notification.Description
@@ -1298,5 +1322,35 @@ namespace StockRoom11net
         }
 
         #endregion"DataTreeViewToAdd_Cancel_Delete"    
+
+        /// <summary>
+        /// The action to execute.<br/>
+        /// <code>
+        /// var action = new Action(() => <br/>
+        /// { <br/>
+        ///     Call some method here, or execute some code, for example: <br/>
+        ///     SettingMode = !_settingMode; <br/>
+        /// }); <br/>
+        /// </code>
+        /// </summary>
+        public Action action;
+
+        /// <summary>
+        /// Executes the specified action on the appropriate thread, marshaling to the UI thread if necessary.
+        /// </summary>
+        /// <remarks>Ensures thread-safe execution by automatically marshaling the call to the UI thread
+        /// when invoked from a worker thread.</remarks>
+        /// <param name="action">The action to execute.</param>
+        public void ThreadSafeInvoke(Action action)
+        {
+            if (InvokeRequired)
+            {
+                Invoke(action);
+            }
+            else
+            {
+                action?.Invoke();
+            }
+        }
     }
 }

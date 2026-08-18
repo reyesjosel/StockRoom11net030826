@@ -2,6 +2,7 @@
 using StockRoom11net.Controls.EmployeeInformation;
 using StockRoom11net.Controls.RawInput;
 using StockRoom11net.Data.Entities;
+using StockRoom11net.Data.Services;
 using StockRoom11net.Properties;
 using System.Data;
 using System.Data.OleDb;
@@ -11,6 +12,7 @@ namespace StockRoom11net
 {
     public partial class SMT_Reel_Record : BaseTemple
     {
+        private readonly IAppService _iappService;
         static string DataBaseConnectionString = "";
         OleDbConnection ReelRecord_ConnectionString;
 
@@ -60,8 +62,10 @@ namespace StockRoom11net
         }
         #endregion
 
-        public SMT_Reel_Record(BindingSource bindingSource_Employees)
+        public SMT_Reel_Record(IAppService iappService, BindingSource bindingSource_Employees)
         {
+            _iappService = iappService ?? throw new ArgumentNullException(nameof(iappService));
+
             try
             {
                 InitializeComponent();
@@ -96,8 +100,7 @@ namespace StockRoom11net
 
         void SMT_Reel_Record_Load(object sender, EventArgs e)
         {
-            InitializeDataGridViewBase(dataGridViewExtended_ReelRecord);
-
+            dataGridViewExtended_ReelRecord.StatusBarMessageEvent += (s, e) => _iappService.On_StatusBarMessage(e);
             dataGridViewExtended_ReelRecord.BindingNavigatorAddNewItemEvent += DataGridViewExtended_ReelRecord_AddNewItemEvent;
             dataGridViewExtended_ReelRecord.SaveRequested += DataGridViewExtended_ReelRecord_SaveRequested;
             dataGridViewExtended_ReelRecord.CellEndEditEvent += DataGridViewExtended_ReelRecord_CellEndEditEvent;

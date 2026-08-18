@@ -84,9 +84,7 @@ namespace StockRoom11net
         }
 
         void Orders_Process_Load(object sender, EventArgs e)
-        {
-            InitializeDataGridViewBase(dataGridViewExtended_GPS);
-
+        {            
             dataGridViewExtended_GPS.SaveRequested += DataGridViewExtended_GPS_SaveRequested;
             dataGridViewExtended_GPS.CellEndEditEvent += DataGridViewExtended_GPS_CellEndEditEvent;
             dataGridViewExtended_GPS.PreviewKeyDownEvent += DataGridViewExtended_GPS_PreviewKeyDownEvent;

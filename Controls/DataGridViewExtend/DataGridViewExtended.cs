@@ -1217,7 +1217,8 @@ namespace StockRoom11net.Controls.DataGridViewExtend
         {
             get
             {
-                if (_dataGridView.CurrentRowActived.DataBoundItem != null && _dataGridView.CurrentRowActived.DataBoundItem.GetType() == typeof(GroupRow))
+                if (_dataGridView.CurrentRowActived.DataBoundItem != null &&
+                    _dataGridView.CurrentRowActived.DataBoundItem.GetType() == typeof(GroupRow))
                 {
                     GroupRow? groupRow = _dataGridView.CurrentRowActived.DataBoundItem as GroupRow;
                     if (groupRow != null)
@@ -1226,6 +1227,22 @@ namespace StockRoom11net.Controls.DataGridViewExtend
 
                 return _dataGridView.CurrentRowActived;
             }
+        }
+
+        /// <summary>
+        /// Current DataRowView active in the dataGridViewExtended_Inventory,
+        /// update on CurrentRowActive and MouseEnterEvent event.
+        /// </summary>
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public DataRowView? CurrentRowViewActive
+        {
+            get => (DataRowView?)_dataGridView.CurrentRowActived.DataBoundItem;
+        }
+
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public string CurrentPartNumber
+        {
+            get => CurrentRowViewActive == null ? "0" : CurrentRowViewActive["PartNumber"]?.ToString() ?? "0";
         }
 
         /// <summary>
@@ -2564,7 +2581,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
         // put some information to Properties Manager.
         [Category("Controls Events")]
         [Description("ActiveDataSheet has been changed")]
-        public event StatusBarMessageEventHandler StatusBarMessage;
+        public event StatusBarMessageEventHandler StatusBarMessageEvent;
 
         // # 2 ... ***** New Event Declaration. *****
         // Declare the delegates for this event:
@@ -2574,7 +2591,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
         // this events, in this procedure we calling the event itself.
         protected virtual void On_StatusBarMessage(StatusBarMessage_EventArgs e)
         {
-            StatusBarMessage?.Invoke(this, e);
+            StatusBarMessageEvent?.Invoke(this, e);
         }
 
         #endregion"StatusBarMessage"
@@ -3448,6 +3465,13 @@ namespace StockRoom11net.Controls.DataGridViewExtend
         string _owningColumnHeader = "";
         void DataGridViewCellBeginEdit(object? sender, DataGridViewCellCancelEventArgs e)
         {
+            // Skip if triggered by a double-click (handled separately).
+            if (_dataGridView._isDoubleClickEdit)
+            {
+                e.Cancel = true;
+                return;
+            }
+
             // If grouping is active, return.
             if (_dataGridView.CurrentRowActived.DataBoundItem.GetType() == typeof(GroupRow))
                 return;

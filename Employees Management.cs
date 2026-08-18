@@ -16,6 +16,8 @@ namespace StockRoom11net
     public partial class Employees_Management : BaseTemple
     {
         // Injected EF Core services
+
+        private readonly IAppService _iappService;
         private ITableEmployeeService _employeesService;
 
         #region"Properties"
@@ -88,11 +90,12 @@ namespace StockRoom11net
             InitializeComponent();
         }
 
-        public Employees_Management(ITableEmployeeService employeesService)
+        public Employees_Management(ITableEmployeeService employeesService, IAppService iappService)
         {
             InitializeComponent();
 
             _employeesService = employeesService ?? throw new ArgumentNullException(nameof(employeesService));
+            _iappService = iappService ?? throw new ArgumentNullException(nameof(iappService));
 
             AutoScaleMode = AutoScaleMode.Dpi;
             DockAreas = WinFormsUI.Docking.DockAreas.Document | WinFormsUI.Docking.DockAreas.Float;
@@ -504,9 +507,7 @@ namespace StockRoom11net
 
         #region"DataGridView"
         private void DataGridViewExtended_EmployeeInitialize()
-        {
-            InitializeDataGridViewBase(_dataGridViewExtended_Employee);
-                        
+        {                        
             _dataGridViewExtended_Employee.Name = "EmployeesDepartment";
 
             //_dataGridViewExtended_Employee.CellBegingEditEvent += _dataGridViewExtended_EmployeeInventoryCellBegingEditEvent;
@@ -521,6 +522,7 @@ namespace StockRoom11net
             //_dataGridViewExtended_Employee_Employees.MouseEnterEvent      += _dataGridViewExtended_EmployeeInventoryMouseEnterEvent;
             //_dataGridViewExtended_Employee_Employees.DataGridViewSort     += _dataGridViewExtended_EmployeeInventoryDataGridViewSort;
 
+            _dataGridViewExtended_Employee.StatusBarMessageEvent += (s, e) => _iappService.On_StatusBarMessage(e);
             //_dataGridViewExtended_Employee_Employees.LogFileMessage       += _dataGridViewExtended_Employee_EmployeesLogFileMessage;
             _dataGridViewExtended_Employee.ContextMenuStripOpening += DataGridViewExtended_Employee_ContextMenuStripOpening;
 

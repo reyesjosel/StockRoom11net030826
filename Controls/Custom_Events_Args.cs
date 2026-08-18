@@ -491,7 +491,7 @@ namespace StockRoom11net.Controls
         public class LogFileMessageEventArgs : EventArgs
         {
             /// <summary>
-            /// logFileMessage = new string[] { StatusBarMessage, StatusBarHelp, AnyMessage };
+            /// logFileMessage = new string[] { StatusBarMessageEvent, StatusBarHelp, AnyMessage };
             /// </summary>
             /// <param name="logFileMessage"></param>
             public LogFileMessageEventArgs(List<string> logFileMessage)

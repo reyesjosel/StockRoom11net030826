@@ -2,9 +2,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System.Diagnostics;
 using StockRoom11net.Data;
-using StockRoom11net.BlazorWebAssembly.Data;
 using StockRoom11net.Controls.DependencyInjection;
 using StockRoom11net.Controls.VisTimeLine;
+using StockRoom11net.Data.Services;
 
 namespace StockRoom11net
 {
@@ -23,7 +23,7 @@ namespace StockRoom11net
                     services.AddDataServices(); // Add EF Core repositories and services
 
                     // Legacy Services (can be removed gradually)
-                    services.AddSingleton<AppService, AppService>();
+                    services.AddSingleton<IAppService, AppService>();
                     services.AddSingleton<ITimeLineService, TimeLineService>();
 
                     // Forms

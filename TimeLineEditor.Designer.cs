@@ -41,8 +41,6 @@ namespace StockRoom11net
             tabPage1 = new TabPage();
             splitContainer_Horizontal = new SplitContainer();
             dataGridViewExtended = new DataGridViewExtended();
-            ((System.ComponentModel.ISupportInitialize)BindingSourceTreeViewBase).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)splitContainer_Vertical).BeginInit();
             splitContainer_Vertical.Panel1.SuspendLayout();
             splitContainer_Vertical.Panel2.SuspendLayout();
             splitContainer_Vertical.SuspendLayout();
@@ -79,7 +77,7 @@ namespace StockRoom11net
             dataTreeViewToAdd_Cancel_Delete.Name = "dataTreeViewToAdd_Cancel_Delete";
             dataTreeViewToAdd_Cancel_Delete.Size = new Size(478, 507);
             dataTreeViewToAdd_Cancel_Delete.TabIndex = 0;
-            dataTreeViewToAdd_Cancel_Delete.Save_Requested += DataTreeViewToAdd_Cancel_Delete_Save_Requested;
+          //  dataTreeViewToAdd_Cancel_Delete.Save_Requested += DataTreeViewToAdd_Cancel_Delete_Save_Requested;
             dataTreeViewToAdd_Cancel_Delete.SelectedIndexChanged += DataTreeViewToAdd_Cancel_Delete_SelectedIndexChanged;
             dataTreeViewToAdd_Cancel_Delete.ToolStripMenuItemClick += DataTreeViewToAdd_Cancel_Delete_ToolStripMenuItemClick;
             dataTreeViewToAdd_Cancel_Delete.Load += DataTreeViewToAdd_Cancel_Delete_Load;
@@ -199,7 +197,6 @@ namespace StockRoom11net
             Name = "TimeLineEditor";
             Text = "TimeLineEditor.";
             Load += TimeLineEditor_Load;
-            ((System.ComponentModel.ISupportInitialize)BindingSourceTreeViewBase).EndInit();
             splitContainer_Vertical.Panel1.ResumeLayout(false);
             splitContainer_Vertical.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)splitContainer_Vertical).EndInit();

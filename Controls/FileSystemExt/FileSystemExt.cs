@@ -13,7 +13,7 @@ namespace StockRoom11net.Controls.FileSystemExt
         // put some information to Properties Manager.
         [Category("Controls Events")]
         [Description("ActiveDataSheet has been changed")]
-     //   public static event StatusBarMessage_EventHandler StatusBarMessage;
+     //   public static event StatusBarMessage_EventHandler StatusBarMessageEvent;
 
         // # 2 ... ***** New Event Declaration. *****
         // Declare the delegates for this event:
@@ -29,7 +29,7 @@ namespace StockRoom11net.Controls.FileSystemExt
             // before calling the event itself.
 
             // Notify Subscribers
-     //       StatusBarMessage?.Invoke(new object(), e);
+     //       StatusBarMessageEvent?.Invoke(new object(), e);
      //   }
 
         #endregion"StatusBarMessage"
@@ -198,7 +198,7 @@ namespace StockRoom11net.Controls.FileSystemExt
 
         /// <summary>
         /// Performs the action and if this fails will try till 5 times,
-        /// in each failure sends a StatusBarMessage.
+        /// in each failure sends a StatusBarMessageEvent.
         /// </summary>
         /// <param name="toDo">Action to do, see CallExecuteWithFailOver()</param>
         /// <param name="fileName"></param>

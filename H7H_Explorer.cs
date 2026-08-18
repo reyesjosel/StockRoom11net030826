@@ -32,7 +32,7 @@ namespace StockRoom11net
             if (StatusBarMessage != null)
             {
                 // Notify Subscribers
-                StatusBarMessage(this, e);
+            //    StatusBarMessageEvent(e);
             }
         }
 

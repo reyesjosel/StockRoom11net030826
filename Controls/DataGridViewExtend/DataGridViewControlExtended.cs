@@ -560,7 +560,13 @@ namespace StockRoom11net.Controls.DataGridViewExtend
         public bool IsDragEvent;
         public Rectangle _dragBoxFromMouseDown;
         public int _currentCellClicksCount;
-        public bool isSingleClick;
+        public bool _isSingleClick;
+
+        /// <summary>
+        /// This variable is set to true when the user double click a cell, and is used
+        /// to avoid the single click action to be executed after the double click action.
+        /// </summary>
+        public bool _isDoubleClickEdit;
         public bool ShowColumnWhileDragging = true;
         public bool ShowColumnHeaderWhileDragging = true;
 
@@ -2113,19 +2119,23 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             MouseSingleClickDetectTimerStop();
         }
 
+        // Add this field near the other click-tracking fields
+        bool _cellWasAlreadyCurrentOnMouseDown = false;
+
         void DataGridViewControlExtended_CellMouseDown(object? sender, DataGridViewCellMouseEventArgs e)
         {
-            // Note: DataGridViewMouseDown is the first event handler and then is called DataGridViewCellMouseDown event handler,
-            // opposite to DataGridViewCellMouseUp/DataGridViewMouseUp event handler.
-
             if (e.Button != MouseButtons.Left)
                 return;
 
-            //		if (ReadOnly)
-            //			return;            
-
             if (HitTestData.ColumnIndex == -1 || Columns[HitTestData.ColumnIndex].ReadOnly)
                 return;
+
+            // Track whether this click landed on the cell that was ALREADY current.
+            // First click on a new cell → just selects it (no edit).
+            // Click on the already-current cell → qualifies for edit mode.
+            _cellWasAlreadyCurrentOnMouseDown = CurrentCell != null
+                && CurrentCell.ColumnIndex == HitTestData.ColumnIndex
+                && CurrentCell.RowIndex == HitTestData.RowIndex;
 
             if (_currentRowIndexMouseClicked == HitTestData.RowIndex)
             {
@@ -2231,13 +2241,26 @@ namespace StockRoom11net.Controls.DataGridViewExtend
 
         void DataGridViewControlExtended_CellDoubleClick(object? sender, DataGridViewCellEventArgs e)
         {
-            MouseTwoClickDetectorTimer.Change(Timeout.Infinite, Timeout.Infinite); //disable
-                                                                                   // Allow the MouseDown event handler to process clicks again.
-            isSingleClick = true;
+            // Stop the timer — double-click confirmed.
+            MouseTwoClickDetectorTimer.Change(Timeout.Infinite, Timeout.Infinite); // disable
+            _currentCellClicksCount = 0;
             millisecondsSecondClick = 0;
-            Cursor = Cursors.Default;
-        }
+            _isSingleClick = false;
 
+            // Flag MUST be set here — DataGridView calls BeginEditInternal internally
+            // as part of its own double-click handling, BEFORE CellDoubleClick returns.
+            // DataGridViewCellBeginEdit checks this flag and cancels the edit.
+            _isDoubleClickEdit = true;
+
+            if (IsCurrentCellInEditMode)
+                CancelEdit();
+
+            Cursor = Cursors.Default;
+
+            // Reset the flag after all double-click event handlers have finished
+            // so the next single-click can enter edit mode normally.
+            BeginInvoke(() => _isDoubleClickEdit = false);
+        }
 
         void DataGridViewControlExtended_ColumnHeaderMouseClick(object? sender, DataGridViewCellMouseEventArgs e)
         {
@@ -2993,29 +3016,34 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             MouseTwoClickDetectorTimer = new System.Threading.Timer(new TimerCallback(MouseTwoClickDetector_Tick), null, Timeout.Infinite, Timeout.Infinite);
         }
 
-        void MouseTwoClickDetector_Tick(object sender)
+        void MouseTwoClickDetector_Tick(object? sender)
         {
             millisecondsSecondClick += 25;
 
-            // The timer has reached the double click time limit. 
             if (millisecondsSecondClick >= SystemInformation.DoubleClickTime)
             {
-                MouseTwoClickDetectorTimer.Change(Timeout.Infinite, Timeout.Infinite); //disable
+                MouseTwoClickDetectorTimer.Change(Timeout.Infinite, Timeout.Infinite); // disable
 
-                Invoke(new EventHandler(delegate (object o, EventArgs e)
+                Invoke(new EventHandler(delegate (object? o, EventArgs e)
                 {
-                    //Do your work here.
                     Cursor = Cursors.Default;
 
-                    if (_currentCellClicksCount > 1 && HitTestData.RowIndex > -1)
+                    // Only enter edit mode if:
+                    //   - it was a single click (count == 1), AND
+                    //   - the click was on the cell that was ALREADY current/active
+                    //     (first click merely selects the cell, second single click edits it).
+                    if (_currentCellClicksCount == 1
+                        && HitTestData.RowIndex > -1
+                        && _cellWasAlreadyCurrentOnMouseDown)
                     {
                         BeginEdit(true);
                         InvalidateCell(HitTestData.ColumnIndex, HitTestData.RowIndex);
                     }
+
+                    _currentCellClicksCount = 0;
                 }));
 
-                // Allow the MouseDown event handler to process clicks again.
-                isSingleClick = true;
+                _isSingleClick = true;
                 millisecondsSecondClick = 0;
             }
         }
@@ -3041,7 +3069,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             MouseSingleClickDetectTimer.Tick += MouseSingleClickDetectTimer_Tick;
         }
 
-        void MouseSingleClickDetectTimer_Tick(object sender, EventArgs e)
+        void MouseSingleClickDetectTimer_Tick(object? sender, EventArgs e)
         {
             millisecondsSingleClick += 25;
 
@@ -3054,7 +3082,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
 
             Cursor = Cursors.Default;
             // Allow the MouseDown event handler to process clicks again.
-            isSingleClick = true;
+            _isSingleClick = true;
 
             // This is a click-and-hold — suppress the sort that ColumnHeaderMouseClick
             // would otherwise trigger (sort should only happen on a quick click).
