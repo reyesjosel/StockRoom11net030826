@@ -44,6 +44,7 @@ namespace StockRoom11net
     public partial class Solutions_TempleClass : Form
     {
         // Injected EF Core services
+        private readonly IAppService _iappService;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IServiceProvider _serviceProvider;
         private ITableEmployeeService _employeesService;
@@ -306,7 +307,6 @@ namespace StockRoom11net
             NeedSaveDataIni(e.ControlName + ":" + e.NeedSaveData);
         }
 
-
         bool _hasInternetConnectionAvailable = false;
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public bool HasInternetConnectionAvailable
@@ -366,8 +366,7 @@ namespace StockRoom11net
         public Employees_Management _employees_ManagementsForm;
         public LocationAndLayoutPlanning? _locationAndLayoutDesignForm;
         public TimeLineEditor? _timeLineEditorForm;
-               
-                      
+                              
         private static SqliteConnection? DataBaseSqliteConnection;
         private static string ApplicationDefaultHtmlPages = "";
 
@@ -399,10 +398,11 @@ namespace StockRoom11net
             }
         }
 
-        public Solutions_TempleClass(ITableEmployeeService employeesService, IServiceProvider serviceProvider)
+        public Solutions_TempleClass(ITableEmployeeService employeesService, IAppService iappService, IServiceProvider serviceProvider)
         {
             InitializeComponent();
 
+            _iappService = iappService ?? throw new ArgumentNullException(nameof(iappService), "IAppService service is not registered.");
             _unitOfWork = serviceProvider.GetRequiredService<IUnitOfWork>() ?? throw new ArgumentNullException(nameof(serviceProvider), "IUnitOfWork service is not registered.");
             _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider), "ServiceProvider cannot be null.");
             _employeesService = employeesService ?? throw new ArgumentNullException(nameof(employeesService), "EmployeesService cannot be null.");
@@ -427,6 +427,8 @@ namespace StockRoom11net
 
                 InitializeDocumentationBehaviorTimer(1);
                 ResumeLayout(false);
+
+                InitializeStatusBarProccess();
             }
             catch (Exception error)
             {
@@ -437,11 +439,8 @@ namespace StockRoom11net
                                           MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
-
-            InitializeStatusBarTimer();
         }
-
-        
+                
         public void SolutionsBaseLoad(object sender, EventArgs e)
         {           
             try
@@ -513,8 +512,8 @@ namespace StockRoom11net
             InitializeThreadTimerCheckStatusTable();
 
             // TODO: Remove this and use the event in Utilities.
-            // To use StatusBarMessage event from Utilities.
-            //        Utilities.StatusBarMessage += OnStatusBarMessage;
+            // To use StatusBarMessageEvent event from Utilities.
+            //        Utilities.StatusBarMessageEvent += OnStatusBarMessage;
             //        Utilities.LogFileMessage += LogFileMessage;
 
             // To initialized statusBar itemEFtableTreeView to the right. Alignment property.
@@ -1070,10 +1069,10 @@ namespace StockRoom11net
                 return;
             }
 
-            Write_LogFile(new object(), new Custom_Events_Args.LogFileMessageEventArgs(new List<string>
-                    {
-                        Tags.NewLine("Initialed StockRoom Projections application at " + DateTime.Now),
-                    }));
+         //   Write_LogFile(new Custom_Events_Args.LogFileMessageEventArgs(new List<string>
+        //            {
+        //                Tags.NewLine("Initialed StockRoom Projections application at " + DateTime.Now),
+        //            }));
 
             InitStockRoomAddNewComponent("Add a new component or BOM.");
         }
@@ -1125,7 +1124,7 @@ namespace StockRoom11net
                                            _bindingSource_Employees, _bindingSource_EmployeesTreeView,
                                            _bindingSourceComponents, _bindingSourcePlacements);
 
-            _importExcel.StatusBarMessage += StatusBarMessage;
+            _importExcel.StatusBarMessageEvent += StatusBarMessageEvent;
             _importExcel.DockStateChanged += ImportExcelDockStateChanged;
             _importExcel.SpeechSynthesizerBase += SpeechSynthesizerBaseSpeak;
             _importExcel.NotificationsToSends += StockRoomNotificationsToSends;
@@ -1168,12 +1167,12 @@ namespace StockRoom11net
                 Text = @"H7H Explorer."
             };
 
-            _h7h_ExplorerForm.StatusBarMessage += OnStatusBarMessage;
+        //    _h7h_ExplorerForm.StatusBarMessageEvent += OnStatusBarMessage;
 
-            Write_LogFile(new object(), new Custom_Events_Args.LogFileMessageEventArgs(new List<string>
-                    {
-                        Tags.NewLine("H7H Explorer application at " + DateTime.Now),
-                    }));
+       //     Write_LogFile(new Custom_Events_Args.LogFileMessageEventArgs(new List<string>
+       //             {
+       //                 Tags.NewLine("H7H Explorer application at " + DateTime.Now),
+       //             }));
 
             if (dockPanel.DocumentStyle == DocumentStyle.SystemMdi)
             {
@@ -1930,7 +1929,7 @@ namespace StockRoom11net
                 return; //An error has been found in the initialization.
 
             _LabelsPrintsSMT.LogFileMessage += Write_LogFile;
-            _LabelsPrintsSMT.StatusBarMessageEvent += OnStatusBarMessage;
+         //   _LabelsPrintsSMT.StatusBarMessageEvent += OnStatusBarMessage;
          //   _LabelsPrintsSMT.Save_Requested += LabelsSMT_ProcessSaveRequest;
             _LabelsPrintsSMT.SpeechSynthesizerBase += SpeechSynthesizerBaseSpeak;
 
@@ -1967,7 +1966,7 @@ namespace StockRoom11net
             }
 
             _SMT_Reel_Record.FormClosing += SMTReelRecord_FormClosing;
-            _SMT_Reel_Record.StatusBarMessageEvent += OnStatusBarMessage;
+         //   _SMT_Reel_Record.StatusBarMessageEvent += OnStatusBarMessage;
             _SMT_Reel_Record.SpeechSynthesizerBase += SpeechSynthesizerBaseSpeak;
 
             ScannedDataEvent += _SMT_Reel_Record.OnBarcodeScanned_EventHandler;
@@ -2006,7 +2005,7 @@ namespace StockRoom11net
             if (_ordersProcess.DialogResult == DialogResult.Cancel)//An error has been found in the initialization.
                 return;
 
-            _ordersProcess.StatusBarMessageEvent += OnStatusBarMessage;
+         //   _ordersProcess.StatusBarMessageEvent += OnStatusBarMessage;
             _ordersProcess.SpeechSynthesizerBase += SpeechSynthesizerBaseSpeak;
 
             ScannedDataEvent += _ordersProcess.OnBarcodeScanned_EventHandler;
@@ -2052,18 +2051,18 @@ namespace StockRoom11net
                 return;
                         
             _stockRoomForm.DockStateChanged += StockRoomDockStateChanged;
-            _stockRoomForm.LogFileMessage += Write_LogFile;
-            _stockRoomForm.StatusBarMessageEvent += OnStatusBarMessage;
+         //   _stockRoomForm.LogFileMessage += Write_LogFile;
+            //_stockRoomForm.StatusBarMessageEvent += OnStatusBarMessage;
           //  _stockRoomForm.Save_Requested += StockRoom_ProcessSaveRequest;
-            _stockRoomForm.CellDoubleClick_Event += StockRoomCellDoubleClick;
+          //  _stockRoomForm.CellDoubleClick_Event += StockRoomCellDoubleClick;
           //  _stockRoomForm.SaveTreeView_Requested += StockRoomSaveTreeViewRequested;
          //   _stockRoomForm.AddNewItemSaveTreeViewRequested += AddNewItemSaveTreeViewRequested;
         //    _stockRoomForm.Refresh_Requested += StockRoomRefreshRequested;
 
-            _stockRoomForm.Node_PDF += StockRoomNodePdf;
-            _stockRoomForm.ActiveDataSheet += DocumentationBehaviorProcessor;
-            _stockRoomForm.NotificationsToSends += NotificationsToSendsProcessor;
-            _stockRoomForm.SpeechSynthesizerBase += SpeechSynthesizerBaseSpeak;
+         //   _stockRoomForm.Node_PDF += StockRoomNodePdf;
+         //   _stockRoomForm.ActiveDataSheet += DocumentationBehaviorProcessor;
+         //   _stockRoomForm.NotificationsToSends += NotificationsToSendsProcessor;
+         //   _stockRoomForm.SpeechSynthesizerBase += SpeechSynthesizerBaseSpeak;
 
             //_stockRoomForm.CurrentUserBroadcast_EventHandler(new object(), LastCurrentDeptUserBroadcast_EventArgs);
 
@@ -2125,7 +2124,7 @@ namespace StockRoom11net
 
             _locationAndLayoutDesignForm.DockStateChanged += LocationLayoutDesingDockStateChanged;
             _locationAndLayoutDesignForm.LogFileMessage += Write_LogFile;
-            _locationAndLayoutDesignForm.StatusBarMessageEvent += OnStatusBarMessage;
+         //   _locationAndLayoutDesignForm.StatusBarMessageEvent += OnStatusBarMessage;
             _locationAndLayoutDesignForm.VisibleChanged += LocationLayoutDesignVisibleChanged;
          //   _locationAndLayoutDesignForm.Save_Requested += LocationAndLayoutDesignSaveRequested;
          //   _locationAndLayoutDesignForm.SaveTreeView_Requested += LocationAndLayoutDesignSaveTreeViewRequested;
@@ -2327,7 +2326,7 @@ namespace StockRoom11net
             _bom_ManagementsForm.DockStateChanged += BomManagementsDockStateChanged;
             _bom_ManagementsForm.Save_Requested += StockRoom_ProcessSaveRequest;
             _bom_ManagementsForm.SaveTreeView_Requested += StockRoomSaveTreeViewRequested;
-            _bom_ManagementsForm.StatusBarMessage += StatusBarMessage;
+            _bom_ManagementsForm.StatusBarMessageEvent += StatusBarMessageEvent;
             _bom_ManagementsForm.TreeViewUpdate += TreeViewUpdateMethod;
             _bom_ManagementsForm.SpeechSynthesizerBase += SpeechSynthesizerBaseSpeak;
 
@@ -2371,7 +2370,7 @@ namespace StockRoom11net
             //   _stockRoomAddNewComp.Need_SaveData      += StockRoom_NeedSaveData;
             _stockRoomAddNewCompForm.DockStateChanged += StockRoomAddNewCompDockStateChanged;
             //   _stockRoomAddNewComp.LogFileMessage     += Write_LogFile;
-            _stockRoomAddNewCompForm.StatusBarMessageEvent += OnStatusBarMessage;
+            //   _stockRoomAddNewCompForm.StatusBarMessageEvent += OnStatusBarMessage;
           //  _stockRoomAddNewCompForm.Save_Requested += StockRoom_ProcessSaveRequest;
 
          //   _stockRoomAddNewCompForm.SaveTreeView_Requested += StockRoomSaveTreeViewRequested;
@@ -2446,7 +2445,7 @@ namespace StockRoom11net
                         
             _timeLineEditorForm.DockStateChanged += TimeLineDockStateChanged;
             //_timeLineEditorForm.LogFileMessage += Write_LogFile;
-            _timeLineEditorForm.StatusBarMessageEvent += OnStatusBarMessage;
+            //_timeLineEditorForm.StatusBarMessageEvent += OnStatusBarMessage;
             //_timeLineEditorForm.Save_Requested += TimeLine_ProcessSaveRequest;
             // _timeLineEditorForm.CellDoubleClick_Event += StockRoomCellDoubleClick;
            // _timeLineEditorForm.SaveTreeView_Requested += TimeLineSaveTreeViewRequested;
@@ -2456,7 +2455,7 @@ namespace StockRoom11net
             //_timeLineEditorForm.Node_PDF += StockRoomNodePdf;
             //_timeLineEditorForm.ActiveDataSheet += DocumentationBehaviorProcessor;
             //_timeLineEditorForm.NotificationsToSends += StockRoomNotificationsToSends;
-            _timeLineEditorForm.SpeechSynthesizerBase += SpeechSynthesizerBaseSpeak;
+            //_timeLineEditorForm.SpeechSynthesizerBase += SpeechSynthesizerBaseSpeak;
 
            // _timeLineEditorForm.CurrentUserBroadcast_EventHandler(new object(), LastCurrentDeptUserBroadcast_EventArgs);
 
@@ -2638,7 +2637,7 @@ namespace StockRoom11net
 
                 _stockRoomForm.DockStateChanged -= StockRoomDockStateChanged;
              //   _stockRoomForm.Save_Requested -= StockRoom_ProcessSaveRequest;
-                _stockRoomForm.CellDoubleClick_Event -= StockRoomCellDoubleClick;
+              //  _stockRoomForm.CellDoubleClick_Event -= StockRoomCellDoubleClick;
              //   _stockRoomForm.SaveTreeView_Requested -= StockRoomSaveTreeViewRequested;
 
               //  _stockRoomForm = null;
@@ -2766,8 +2765,15 @@ namespace StockRoom11net
         System.Windows.Forms.Timer _statusBarTimerToClear;
         ObservableCollection<StatusBarMessage_EventArgs> _statusBarMessageCollection;
 
-        void InitializeStatusBarTimer()
+        /// <summary>
+        /// Initialize the status bar process, to display messages from any control in the status bar.
+        /// Wire up the StatusBarMessageEvent from the IAppService to the OnStatusBarMessage method.
+        /// Init and start the status bar timer to process the messages in the status bar message collection.
+        /// </summary>
+        void InitializeStatusBarProccess()
         {
+            _iappService.StatusBarMessageEvent += OnStatusBarMessage;
+
             toolStripStatusLabel_Spacer1.Text = "  ";
             toolStripStatusLabel_Spacer2.Text = "  ";
             toolStripStatusLabel_Spacer3.Text = "  ";
@@ -2853,7 +2859,7 @@ namespace StockRoom11net
                 _statusBarTimer.Start();
         }
 
-        public void OnStatusBarMessage(object sender, StatusBarMessage_EventArgs e)
+        public void OnStatusBarMessage(StatusBarMessage_EventArgs e)
         {
             if (e.StatusBarHelp != null)
                 StatusBarHelp(e.StatusBarHelp);
@@ -2873,12 +2879,12 @@ namespace StockRoom11net
         /// Write in the status bar, the message from any control.
         /// </summary>
         /// <param name="statusTex"></param>
-        /// <param name="statusText">todo: describe statusText parameter on StatusBarMessage</param>
+        /// <param name="statusText">todo: describe statusText parameter on StatusBarMessageEvent</param>
         public void StatusBarMessage(StatusBarMessage_EventArgs e)
         {
             if (e.Streaming)
             {
-                // statusStrip.Items[nameof(statusBarPanelMessage)].Text = e.StatusBarMessage;
+                // statusStrip.Items[nameof(statusBarPanelMessage)].Text = e.StatusBarMessageEvent;
                 //  return;
             }
 
@@ -3215,7 +3221,7 @@ namespace StockRoom11net
             {
                 if (!Directory.Exists(documentsAddressItem.DocumentsAddressValueDirectory))
                 {
-                    OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Not a valid Directory " +
+                    OnStatusBarMessage(new StatusBarMessage_EventArgs("Not a valid Directory " +
                                                                                   documentsAddressItem.DocumentsAddressValueDirectory,
                                                                                   Resources.ErrorIcon));
                     continue;
@@ -3304,7 +3310,7 @@ namespace StockRoom11net
                 }
 
                 if (_indexOpenedPdfDocuments > 0)
-                    OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Number of files founded " +
+                    OnStatusBarMessage(new StatusBarMessage_EventArgs("Number of files founded " +
                                                       (_indexOpenedPdfDocuments + 1) + ", " + pathRootFolder +
                                                       @"\" + fileNameToMatch + fileExtToMatch.Replace("*", ""),
                                                       Resources.OK));
@@ -3381,24 +3387,24 @@ namespace StockRoom11net
                         if (_indexOpenedPdfDocuments < openedPDF_Documents.Count)
                         {
                             openedPDF_Documents[_indexOpenedPdfDocuments].SetDataSheet = new ActiveDataSheet_EventArgs(e.PartNumber, e.DefaultPath, strFileName);
-                            StatusBarMessage(new object(), new StatusBarMessage_EventArgs("The specified file " + e.DataSheet + " was found...", MyStuff11net.Properties.Resources.OK));
+                            StatusBarMessageEvent(new StatusBarMessage_EventArgs("The specified file " + e.DataSheet + " was found...", MyStuff11net.Properties.Resources.OK));
                         }
                         else
                         {                            
-                            StatusBarMessage(new object(), new StatusBarMessage_EventArgs("Cannot open more documents, Setting Document Behavior", MyStuff11net.Properties.Resources.OK));
+                            StatusBarMessageEvent(new StatusBarMessage_EventArgs("Cannot open more documents, Setting Document Behavior", MyStuff11net.Properties.Resources.OK));
                         }
                     }
                     else
                     {
                         openedPDF_Documents[_indexOpenedPdfDocuments].SetDataSheet = new ActiveDataSheet_EventArgs("", e.DefaultPath, "No Empty Data Sheet.pdf");
-                        StatusBarMessage(new object(), new StatusBarMessage_EventArgs("The specified file " + e.DataSheet + " was not found...", MyStuff11net.Properties.Resources.ErrorIcon));
+                        StatusBarMessageEvent(new StatusBarMessage_EventArgs("The specified file " + e.DataSheet + " was not found...", MyStuff11net.Properties.Resources.ErrorIcon));
                     }
                     */
                 }
             }
             catch (Exception ex)
             {
-                OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("The file name " + e.DataSheet + " has an error " + ex.Message, Resources.ErrorIcon));
+                OnStatusBarMessage(new StatusBarMessage_EventArgs("The file name " + e.DataSheet + " has an error " + ex.Message, Resources.ErrorIcon));
             }
         }
 
@@ -3654,7 +3660,7 @@ namespace StockRoom11net
             {
                 StartThreadTimerEmergencyStatus();
 
-                OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Error loading Table_Status at" + messageLocation + " " + errors.Message));
+                OnStatusBarMessage(new StatusBarMessage_EventArgs("Error loading Table_Status at" + messageLocation + " " + errors.Message));
             }
 
             ProcessTableStatus();
@@ -4001,12 +4007,12 @@ namespace StockRoom11net
 
             _timerEmergencyStatus.Change(5000, Timeout.Infinite); //enable
 
-            OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Process notifications has been stoped."));
+            OnStatusBarMessage(new StatusBarMessage_EventArgs("Process notifications has been stoped."));
         }
         void EmergencyCheckStatus(object obj)
         {
             StartThreadTimerCheckStatusTable();
-            OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Process notification restarted."));
+            OnStatusBarMessage(new StatusBarMessage_EventArgs("Process notification restarted."));
         }
 
         #endregion"InitializeThreadTimer Check status table. Notifications"
@@ -4046,7 +4052,7 @@ namespace StockRoom11net
             }
             catch (Exception errors)
             {
-                OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Error loading Table_Status at" + errors.Message, Resources.ErrorIcon));
+                OnStatusBarMessage(new StatusBarMessage_EventArgs("Error loading Table_Status at" + errors.Message, Resources.ErrorIcon));
             }
         }
 

@@ -37,25 +37,7 @@ namespace StockRoom11net.Controls
         }
 
         #endregion
-
-        #region"Save_Requested"
-
-        // # 1 ... Declare the event in the control class
-        // put some information to Properties Manager.
-        [Category("Controls Events")]
-        [Description("The User request a Save action")]
-        public event Save_Requested_EventHandler? Save_Requested;
-
-        // # 4 ... Declare the public virtual methods for
-        // this events, in this procedure we calling the event itself.
-        public virtual void On_Save_Requested(Save_Requested_EventArgs e)
-        {
-            // Notify Subscribers
-            Save_Requested?.Invoke(this, e);
-        }
-
-        #endregion
-
+        
         #region"SelectedIndexChanged"
 
         // # 1 ... Declare the event in the control class
@@ -662,6 +644,10 @@ namespace StockRoom11net.Controls
                 _settingMode = value;
                 if (_settingMode)
                 {
+                    olvDataTreeMaster.AllowDrop = true;
+                    olvDataTreeMaster.IsSimpleDragSource = true;
+                    olvDataTreeMaster.IsSimpleDropSink = true;
+
                     splitContainer_DataTreeView.Panel2Collapsed = false;
                     splitContainer_DataTreeView.SplitterDistance = Settings.Default.SplitterDistance_DataTreeViewToAdd_Cancel_Delete;
 
@@ -674,6 +660,10 @@ namespace StockRoom11net.Controls
                 }
                 else
                 {
+                    olvDataTreeMaster.AllowDrop = false;
+                    olvDataTreeMaster.IsSimpleDragSource = false;
+                    olvDataTreeMaster.IsSimpleDropSink = false;
+
                     splitContainer_DataTreeView.Panel2Collapsed = true;
                 }
             }
@@ -746,18 +736,7 @@ namespace StockRoom11net.Controls
             olvDataTreeMaster.AutoResizeColumns();
             olvColumn_TextName.Width = 200;                       
         }
-
-        void DataTreeView_Save_Requested(object? sender, Save_Requested_EventArgs e)
-        {
-            Save_Requested_EventArgs save_Requested_EventArgs = new Save_Requested_EventArgs()
-            {
-                SaveEvent = NotificationEvents.DataBaseUpDated,
-                DataTableName = TableName,
-                Message = "DataTreeViewToAddCancelDelete, Save_Requested()"
-            };
-
-            On_Save_Requested(save_Requested_EventArgs);
-        }
+                
 
         #region"Timer SaveUserSetting if it's modifying the user interface."
 
@@ -767,6 +746,10 @@ namespace StockRoom11net.Controls
         /// </summary>
         void InitializeSaveUserSettingTimer()
         {
+            // DesignMode is unreliable for nested UserControls — use LicenseManager instead.
+            if (DesignMode || LicenseManager.UsageMode == LicenseUsageMode.Designtime)
+                return;
+
             SaveUserSettingTimer = new System.Windows.Forms.Timer
             {
                 Interval = 1000
@@ -774,7 +757,7 @@ namespace StockRoom11net.Controls
             SaveUserSettingTimer.Tick += async (sender, e) => await SaveUserSettingTickAsync(sender, e);
 
             // Add the timer to the components container to ensure it is disposed properly when the control is disposed.
-            // otherswise, the timer would continue to run and could cause memory leaks or unexpected behavior after the control is disposed.
+            // otherwise, the timer would continue to run and could cause memory leaks or unexpected behavior after the control is disposed.
             components.Add(SaveUserSettingTimer);
         }
 
@@ -785,7 +768,14 @@ namespace StockRoom11net.Controls
         System.Windows.Forms.Timer SaveUserSettingTimer;
 
         void SaveUserSetting()
-        {           
+        {
+            // DesignMode is unreliable for nested UserControls — use LicenseManager instead.
+            if (DesignMode || LicenseManager.UsageMode == LicenseUsageMode.Designtime)
+                return;
+
+            if (DesignMode || _employeesService == null || _currentEmployeeLogIn == null)
+                return;
+
             SaveUserSettingTimer.Start();
             _sec = 10;
 
@@ -794,6 +784,18 @@ namespace StockRoom11net.Controls
 
         async Task SaveUserSettingTickAsync(object? sender, EventArgs e)
         {
+            if (DesignMode || _employeesService == null || _currentEmployeeLogIn == null)
+                return;
+
+            // DesignMode is not reliable in a UserControl constructor — it only works
+            // correctly after the control has been sited (i.e., added to a parent).
+            // If you call InitializeSaveUserSettingTimer from the constructor, use 
+            if (LicenseManager.UsageMode == LicenseUsageMode.Designtime)
+                return;
+
+            if (_employeesService == null || string.IsNullOrEmpty(userSettingName))
+                return;
+
             _sec--;
 
             if (_sec > 0)
@@ -889,7 +891,6 @@ namespace StockRoom11net.Controls
             // If Parent_ID is int? (nullable int), set RootKeyValue explicitly as int
             //olvDataTreeMaster.RootKeyValue = (int?)0;  // match the nullable type
             olvDataTreeMaster.RootKeyValue = rootKeyValueToMaster;
-            olvDataTreeMaster.AllowDrop = true;
             olvDataTreeMaster.FullRowSelect = true;
             olvDataTreeMaster.ShowKeyColumns = false;
             olvDataTreeMaster.AutoGenerateColumns = false;
@@ -1029,13 +1030,12 @@ namespace StockRoom11net.Controls
         {
             // The RearrangingDropSink overwrites IsSimpleDropSink = true.
             //olvDataTreeMaster.IsSimpleDropSink = true;
+            olvDataTreeMaster.AllowDrop = false;
             olvDataTreeMaster.IsSimpleDragSource = false;
             olvDataTreeMaster.CanDrop += OlvDataTree_CanDrop;
             olvDataTreeMaster.Dropped += OlvDataTree_Dropped;
             olvDataTreeMaster.ModelDropped += OlvDataTree_ModelDropped;
-            ((SimpleDropSink)olvDataTreeMaster.DropSink).CanDropBetween = true;
-            ((SimpleDropSink)olvDataTreeMaster.DropSink).ModelCanDrop += OlvDataTree_ModelCanDrop;
-
+           
             // Make listView capable of dragging rows out
             SimpleDragSource simpleDragSourceMaster = new SimpleDragSource(true);
 
@@ -1122,16 +1122,7 @@ namespace StockRoom11net.Controls
 
             return renderer;
         }
-
-        void SendStatusBarMessage(string info)
-        {
-            if (DebugMode == false)
-                return;
-
-            CounterEvents++;
-            //   On_StatusBarMessage(new StatusBarMessage_EventArgs(info + " " + CounterEvents));
-        }
-
+               
         #region"Drag & Drop"
 
         void OlvDataTree_ModelCanDrop(object? sender, ModelDropEventArgs e)

@@ -449,7 +449,7 @@ namespace StockRoom11net
             dataGridViewExtended.DataGridViewSort += DataGridViewExtendedInventoryDataGridViewSort;
             dataGridViewExtended.BindingNavigatorAddNewItemEvent += dataGridViewExtended_Inventory_AddNewItemEvent;
 
-            dataGridViewExtended.StatusBarMessage += DataGridViewExtendedInventoryStatusBarMessage;
+            dataGridViewExtended.StatusBarMessageEvent += DataGridViewExtendedInventoryStatusBarMessage;
             dataGridViewExtended.LogFileMessage += DataGridViewExtendedInventoryLogFileMessage;
 
             dataGridViewExtended.DataSource = _bindingSourceLocations;

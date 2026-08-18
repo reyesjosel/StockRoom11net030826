@@ -95,7 +95,7 @@ namespace StockRoom11net
         public List<DepartmentInformation> ListDepartments = new List<DepartmentInformation>();
         public DataGridViewExtended dataGridViewExtendedBase = new DataGridViewExtended();
         public ThumbViewer thumbViewerBasePictures = new ThumbViewer();
-        public ThumbViewer thumbViewerBaseLocation = new ThumbViewer();
+        
         public BindingSource BindingSourceTreeViewBase = new BindingSource();
         public CurrentStatus CurrentStatusReference = new CurrentStatus();
 
@@ -266,11 +266,7 @@ namespace StockRoom11net
             // Notify Subscribers
             StatusBarMessageEvent?.Invoke(this, e);
         }
-
-        public void StatusBarMessage(StatusBarMessage_EventArgs e)
-        {
-            On_StatusBarMessage(e);
-        }
+              
 
         #endregion"StatusBarMessage"
 
@@ -460,26 +456,7 @@ namespace StockRoom11net
         #endregion
 
         #endregion"Custom Controls Events with custom Arg.*********************"      
-
-        #region"thumbViewerBase"
-        public void InitializeThumbViewerPicturesBase(ThumbViewer thumbViewer)
-        {
-            thumbViewerBasePictures = thumbViewer;
-            thumbViewerBasePictures.StatusBarMessage += ThumbViewerBase_StatusBarMessage;
-        }
-
-        public void InitializeThumbViewerLocationBase(ThumbViewer thumbViewer)
-        {
-            thumbViewerBaseLocation = thumbViewer;
-            thumbViewerBaseLocation.StatusBarMessage += ThumbViewerBase_StatusBarMessage;
-        }
-
-        void ThumbViewerBase_StatusBarMessage(object sender, StatusBarMessage_EventArgs e)
-        {
-            On_StatusBarMessage(e);
-        }
-
-        #endregion"thumbViewerBase"
+                
 
         #region"Properties"
                 
@@ -555,28 +532,7 @@ namespace StockRoom11net
         public ResourcesCache _cache = new ResourcesCache();
 
         #endregion"Properties"
-
-        #region"DataGridViewBase"
-        public void InitializeDataGridViewBase(DataGridViewExtended dataGridView)
-        {
-            dataGridViewExtendedBase = dataGridView;
-
-            //dataGridViewExtendedBase.SaveRequested += DataGridViewExtendedBase_SaveRequested;
-            dataGridViewExtendedBase.StatusBarMessage += DataGridViewExtendedBase_StatusBarMessage;
-        }
-
-        void DataGridViewExtendedBase_SaveRequested(object sender, Save_Requested_EventArgs e)
-        {
-            On_Save_Requested(e);
-        }
-
-        void DataGridViewExtendedBase_StatusBarMessage(object sender, StatusBarMessage_EventArgs e)
-        {
-            On_StatusBarMessage(e);
-        }
-
-        #endregion"DataGridViewBase"
-
+        
         public virtual void ProcessInput(CellDoubleClick_EventArgs cellDoubleClickEventArgs, MyCode.ProcessMode value) { }
 
         /// <summary>

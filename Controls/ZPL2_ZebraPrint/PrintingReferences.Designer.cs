@@ -64,7 +64,8 @@
             grouper_PrintingReferences.GroupImage = null;
             grouper_PrintingReferences.GroupTitle = "Printing References";
             grouper_PrintingReferences.Location = new Point(0, 0);
-            grouper_PrintingReferences.MinimumSize = new Size(0, 150);
+            grouper_PrintingReferences.Margin = new Padding(3, 2, 3, 2);
+            grouper_PrintingReferences.MinimumSize = new Size(0, 114);
             grouper_PrintingReferences.Name = "grouper_PrintingReferences";
             grouper_PrintingReferences.Padding = new Padding(1, 0, 0, 1);
             grouper_PrintingReferences.PaintGroupBox = false;
@@ -72,7 +73,7 @@
             grouper_PrintingReferences.ShadowColor = Color.DarkGray;
             grouper_PrintingReferences.ShadowControl = false;
             grouper_PrintingReferences.ShadowThickness = 3;
-            grouper_PrintingReferences.Size = new Size(500, 175);
+            grouper_PrintingReferences.Size = new Size(457, 135);
             grouper_PrintingReferences.TabIndex = 20;
             // 
             // checkBox_printLabels
@@ -80,10 +81,10 @@
             checkBox_printLabels.AutoSize = true;
             checkBox_printLabels.Checked = true;
             checkBox_printLabels.CheckState = CheckState.Checked;
-            checkBox_printLabels.Location = new Point(15, 48);
-            checkBox_printLabels.Margin = new Padding(4, 5, 4, 5);
+            checkBox_printLabels.Location = new Point(13, 37);
+            checkBox_printLabels.Margin = new Padding(4, 4, 4, 4);
             checkBox_printLabels.Name = "checkBox_printLabels";
-            checkBox_printLabels.Size = new Size(121, 25);
+            checkBox_printLabels.Size = new Size(114, 21);
             checkBox_printLabels.TabIndex = 51;
             checkBox_printLabels.Text = "Print Labels ?";
             checkBox_printLabels.UseVisualStyleBackColor = true;
@@ -96,7 +97,7 @@
             panel_EnablePrints.Location = new Point(1, 0);
             panel_EnablePrints.Margin = new Padding(0);
             panel_EnablePrints.Name = "panel_EnablePrints";
-            panel_EnablePrints.Size = new Size(499, 174);
+            panel_EnablePrints.Size = new Size(456, 134);
             panel_EnablePrints.TabIndex = 58;
             // 
             // panel_Reels
@@ -106,8 +107,8 @@
             panel_Reels.Location = new Point(0, 0);
             panel_Reels.Margin = new Padding(0);
             panel_Reels.Name = "panel_Reels";
-            panel_Reels.Padding = new Padding(5);
-            panel_Reels.Size = new Size(184, 174);
+            panel_Reels.Padding = new Padding(4, 4, 4, 4);
+            panel_Reels.Size = new Size(176, 134);
             panel_Reels.TabIndex = 57;
             // 
             // panel1
@@ -115,11 +116,11 @@
             panel1.Controls.Add(label_DescriptionToPrint);
             panel1.Controls.Add(textBox_DescriptionToPrint);
             panel1.Dock = DockStyle.Bottom;
-            panel1.Location = new Point(5, 97);
+            panel1.Location = new Point(4, 64);
             panel1.Margin = new Padding(0);
             panel1.Name = "panel1";
-            panel1.Padding = new Padding(10);
-            panel1.Size = new Size(174, 72);
+            panel1.Padding = new Padding(9, 8, 9, 8);
+            panel1.Size = new Size(168, 66);
             panel1.TabIndex = 55;
             // 
             // label_DescriptionToPrint
@@ -127,7 +128,7 @@
             label_DescriptionToPrint.AutoSize = true;
             label_DescriptionToPrint.Dock = DockStyle.Top;
             label_DescriptionToPrint.Font = new Font("Microsoft Sans Serif", 10F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label_DescriptionToPrint.Location = new Point(10, 10);
+            label_DescriptionToPrint.Location = new Point(9, 8);
             label_DescriptionToPrint.Margin = new Padding(0);
             label_DescriptionToPrint.Name = "label_DescriptionToPrint";
             label_DescriptionToPrint.Size = new Size(139, 17);
@@ -138,10 +139,10 @@
             // 
             textBox_DescriptionToPrint.Dock = DockStyle.Bottom;
             textBox_DescriptionToPrint.Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            textBox_DescriptionToPrint.Location = new Point(10, 36);
-            textBox_DescriptionToPrint.Margin = new Padding(4, 5, 4, 5);
+            textBox_DescriptionToPrint.Location = new Point(9, 32);
+            textBox_DescriptionToPrint.Margin = new Padding(4, 4, 4, 4);
             textBox_DescriptionToPrint.Name = "textBox_DescriptionToPrint";
-            textBox_DescriptionToPrint.Size = new Size(154, 26);
+            textBox_DescriptionToPrint.Size = new Size(150, 26);
             textBox_DescriptionToPrint.TabIndex = 54;
             // 
             // grouper_BarCodeRegion
@@ -157,24 +158,24 @@
             grouper_BarCodeRegion.Dock = DockStyle.Right;
             grouper_BarCodeRegion.GroupImage = null;
             grouper_BarCodeRegion.GroupTitle = "";
-            grouper_BarCodeRegion.Location = new Point(184, 0);
+            grouper_BarCodeRegion.Location = new Point(176, 0);
             grouper_BarCodeRegion.Margin = new Padding(0);
-            grouper_BarCodeRegion.MinimumSize = new Size(250, 125);
+            grouper_BarCodeRegion.MinimumSize = new Size(222, 95);
             grouper_BarCodeRegion.Name = "grouper_BarCodeRegion";
-            grouper_BarCodeRegion.Padding = new Padding(8);
+            grouper_BarCodeRegion.Padding = new Padding(7, 6, 7, 6);
             grouper_BarCodeRegion.PaintGroupBox = false;
             grouper_BarCodeRegion.RoundCorners = 10;
             grouper_BarCodeRegion.ShadowColor = Color.DarkGray;
             grouper_BarCodeRegion.ShadowControl = false;
             grouper_BarCodeRegion.ShadowThickness = 3;
-            grouper_BarCodeRegion.Size = new Size(315, 174);
+            grouper_BarCodeRegion.Size = new Size(280, 134);
             grouper_BarCodeRegion.TabIndex = 55;
             // 
             // label_LabelInformation
             // 
             label_LabelInformation.AutoSize = true;
             label_LabelInformation.Font = new Font("Microsoft Sans Serif", 7F, FontStyle.Italic, GraphicsUnit.Point, 0);
-            label_LabelInformation.Location = new Point(65, 151);
+            label_LabelInformation.Location = new Point(58, 115);
             label_LabelInformation.Margin = new Padding(4, 0, 4, 0);
             label_LabelInformation.Name = "label_LabelInformation";
             label_LabelInformation.Size = new Size(163, 13);
@@ -195,25 +196,25 @@
             grouper_LabelBarCode.Dock = DockStyle.Top;
             grouper_LabelBarCode.GroupImage = null;
             grouper_LabelBarCode.GroupTitle = "";
-            grouper_LabelBarCode.Location = new Point(8, 8);
-            grouper_LabelBarCode.Margin = new Padding(4, 5, 4, 5);
+            grouper_LabelBarCode.Location = new Point(7, 6);
+            grouper_LabelBarCode.Margin = new Padding(4, 4, 4, 4);
             grouper_LabelBarCode.Name = "grouper_LabelBarCode";
-            grouper_LabelBarCode.Padding = new Padding(30, 32, 30, 32);
+            grouper_LabelBarCode.Padding = new Padding(27, 24, 27, 24);
             grouper_LabelBarCode.PaintGroupBox = false;
             grouper_LabelBarCode.RoundCorners = 10;
             grouper_LabelBarCode.ShadowColor = Color.DarkGray;
             grouper_LabelBarCode.ShadowControl = false;
             grouper_LabelBarCode.ShadowThickness = 3;
-            grouper_LabelBarCode.Size = new Size(299, 136);
+            grouper_LabelBarCode.Size = new Size(266, 104);
             grouper_LabelBarCode.TabIndex = 19;
             // 
             // label_Description
             // 
             label_Description.Font = new Font("Microsoft Sans Serif", 11F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label_Description.Location = new Point(4, 97);
+            label_Description.Location = new Point(4, 74);
             label_Description.Margin = new Padding(0);
             label_Description.Name = "label_Description";
-            label_Description.Size = new Size(304, 29);
+            label_Description.Size = new Size(270, 22);
             label_Description.TabIndex = 21;
             label_Description.Text = "Description field.";
             label_Description.TextAlign = ContentAlignment.MiddleCenter;
@@ -222,10 +223,10 @@
             // 
             label_HumanReadableInformation.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             label_HumanReadableInformation.Font = new Font("Microsoft Sans Serif", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label_HumanReadableInformation.Location = new Point(21, 69);
+            label_HumanReadableInformation.Location = new Point(19, 53);
             label_HumanReadableInformation.Margin = new Padding(4, 0, 4, 0);
             label_HumanReadableInformation.Name = "label_HumanReadableInformation";
-            label_HumanReadableInformation.Size = new Size(243, 24);
+            label_HumanReadableInformation.Size = new Size(216, 18);
             label_HumanReadableInformation.TabIndex = 20;
             label_HumanReadableInformation.Text = "Human Readable Information.";
             label_HumanReadableInformation.TextAlign = ContentAlignment.MiddleCenter;
@@ -233,24 +234,24 @@
             // pictureBox_BarCode_Image
             // 
             pictureBox_BarCode_Image.BackColor = Color.White;
-            pictureBox_BarCode_Image.Location = new Point(4, 23);
-            pictureBox_BarCode_Image.Margin = new Padding(4, 5, 4, 5);
+            pictureBox_BarCode_Image.Location = new Point(4, 18);
+            pictureBox_BarCode_Image.Margin = new Padding(4, 4, 4, 4);
             pictureBox_BarCode_Image.Name = "pictureBox_BarCode_Image";
-            pictureBox_BarCode_Image.Size = new Size(291, 42);
+            pictureBox_BarCode_Image.Size = new Size(259, 32);
             pictureBox_BarCode_Image.SizeMode = PictureBoxSizeMode.CenterImage;
             pictureBox_BarCode_Image.TabIndex = 14;
             pictureBox_BarCode_Image.TabStop = false;
             // 
             // PrintingReferences
             // 
-            AutoScaleDimensions = new SizeF(9F, 21F);
+            AutoScaleDimensions = new SizeF(8F, 16F);
             AutoScaleMode = AutoScaleMode.Font;
             Controls.Add(grouper_PrintingReferences);
             DoubleBuffered = true;
             Margin = new Padding(0);
-            MinimumSize = new Size(500, 175);
+            MinimumSize = new Size(444, 135);
             Name = "PrintingReferences";
-            Size = new Size(500, 175);
+            Size = new Size(457, 135);
             grouper_PrintingReferences.ResumeLayout(false);
             grouper_PrintingReferences.PerformLayout();
             panel_EnablePrints.ResumeLayout(false);

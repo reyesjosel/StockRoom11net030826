@@ -43,15 +43,8 @@ namespace StockRoom11net.Controls.UpDateModifComponentValue
             panel7 = new Panel();
             label_Model_Number = new Label();
             comboBox_Manufacturer = new ComboBox();
-            flowLayoutPanel = new FlowLayoutPanel();
-            button_Add = new Button();
-            button_Adjustment = new Button();
-            button_Save = new Button();
-            button_Cancel = new Button();
-            button_Edit = new Button();
-            button_Add_Other = new Button();
-            panel_ComponentControl = new Panel();
-            panel6 = new Panel();
+            wrapperpanel_ComponentControl = new Panel();
+            customPanelDoubleBuffered1 = new StockRoom11net.Controls.CustomPanelDoubleBuffered.CustomPanelDoubleBuffered();
             printingReferences = new PrintingReferences();
             grouper_ComponentProperties = new CodeVendor.Controls.Grouper();
             panel3 = new Panel();
@@ -67,35 +60,34 @@ namespace StockRoom11net.Controls.UpDateModifComponentValue
             panel2 = new Panel();
             dateTimePicker = new DateTimePicker();
             label_Received_Date = new Label();
-            customPanelDoubleBuffered1 = new StockRoom11net.Controls.CustomPanelDoubleBuffered.CustomPanelDoubleBuffered();
+            wrapperPanelManufacturerProperties = new StockRoom11net.Controls.CustomPanelDoubleBuffered.CustomPanelDoubleBuffered();
             panel_ContainerUpDateModifValue.SuspendLayout();
             grouper_ManufacturerProperties.SuspendLayout();
             panel_LabelsManufacturerProperties.SuspendLayout();
             panel9.SuspendLayout();
             panel8.SuspendLayout();
             panel7.SuspendLayout();
-            flowLayoutPanel.SuspendLayout();
-            panel_ComponentControl.SuspendLayout();
+            wrapperpanel_ComponentControl.SuspendLayout();
             grouper_ComponentProperties.SuspendLayout();
             panel3.SuspendLayout();
             panel5.SuspendLayout();
             panel4.SuspendLayout();
             panel_LabelsComponentsProperties.SuspendLayout();
             panel2.SuspendLayout();
+            wrapperPanelManufacturerProperties.SuspendLayout();
             SuspendLayout();
             // 
             // panel_ContainerUpDateModifValue
             // 
-            panel_ContainerUpDateModifValue.Controls.Add(grouper_ManufacturerProperties);
-            panel_ContainerUpDateModifValue.Controls.Add(flowLayoutPanel);
-            panel_ContainerUpDateModifValue.Controls.Add(panel_ComponentControl);
+            panel_ContainerUpDateModifValue.Controls.Add(wrapperPanelManufacturerProperties);
+            panel_ContainerUpDateModifValue.Controls.Add(wrapperpanel_ComponentControl);
             panel_ContainerUpDateModifValue.Controls.Add(grouper_ComponentProperties);
             panel_ContainerUpDateModifValue.Dock = DockStyle.Fill;
             panel_ContainerUpDateModifValue.Location = new Point(0, 0);
             panel_ContainerUpDateModifValue.Margin = new Padding(0);
             panel_ContainerUpDateModifValue.Name = "panel_ContainerUpDateModifValue";
             panel_ContainerUpDateModifValue.Padding = new Padding(2);
-            panel_ContainerUpDateModifValue.Size = new Size(1053, 537);
+            panel_ContainerUpDateModifValue.Size = new Size(1053, 496);
             panel_ContainerUpDateModifValue.TabIndex = 24;
             // 
             // grouper_ManufacturerProperties
@@ -108,10 +100,10 @@ namespace StockRoom11net.Controls.UpDateModifComponentValue
             grouper_ManufacturerProperties.BorderThickness = 1F;
             grouper_ManufacturerProperties.Controls.Add(panel_LabelsManufacturerProperties);
             grouper_ManufacturerProperties.CustomGroupBoxColor = Color.White;
-            grouper_ManufacturerProperties.Dock = DockStyle.Top;
+            grouper_ManufacturerProperties.Dock = DockStyle.Fill;
             grouper_ManufacturerProperties.GroupImage = null;
             grouper_ManufacturerProperties.GroupTitle = "Manufacturer Properties";
-            grouper_ManufacturerProperties.Location = new Point(2, 290);
+            grouper_ManufacturerProperties.Location = new Point(0, 10);
             grouper_ManufacturerProperties.Margin = new Padding(0);
             grouper_ManufacturerProperties.MinimumSize = new Size(0, 100);
             grouper_ManufacturerProperties.Name = "grouper_ManufacturerProperties";
@@ -121,7 +113,7 @@ namespace StockRoom11net.Controls.UpDateModifComponentValue
             grouper_ManufacturerProperties.ShadowColor = Color.DarkGray;
             grouper_ManufacturerProperties.ShadowControl = false;
             grouper_ManufacturerProperties.ShadowThickness = 3;
-            grouper_ManufacturerProperties.Size = new Size(1049, 100);
+            grouper_ManufacturerProperties.Size = new Size(1049, 128);
             grouper_ManufacturerProperties.TabIndex = 20;
             // 
             // panel_LabelsManufacturerProperties
@@ -253,118 +245,34 @@ namespace StockRoom11net.Controls.UpDateModifComponentValue
             comboBox_Manufacturer.Size = new Size(259, 26);
             comboBox_Manufacturer.TabIndex = 3;
             // 
-            // flowLayoutPanel
+            // wrapperpanel_ComponentControl
             // 
-            flowLayoutPanel.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            flowLayoutPanel.Controls.Add(button_Add);
-            flowLayoutPanel.Controls.Add(button_Adjustment);
-            flowLayoutPanel.Controls.Add(button_Save);
-            flowLayoutPanel.Controls.Add(button_Cancel);
-            flowLayoutPanel.Controls.Add(button_Edit);
-            flowLayoutPanel.Controls.Add(button_Add_Other);
-            flowLayoutPanel.Dock = DockStyle.Bottom;
-            flowLayoutPanel.Location = new Point(2, 475);
-            flowLayoutPanel.Margin = new Padding(0);
-            flowLayoutPanel.Name = "flowLayoutPanel";
-            flowLayoutPanel.Size = new Size(1049, 60);
-            flowLayoutPanel.TabIndex = 12;
+            wrapperpanel_ComponentControl.Controls.Add(customPanelDoubleBuffered1);
+            wrapperpanel_ComponentControl.Controls.Add(printingReferences);
+            wrapperpanel_ComponentControl.Dock = DockStyle.Top;
+            wrapperpanel_ComponentControl.Location = new Point(2, 107);
+            wrapperpanel_ComponentControl.Margin = new Padding(0);
+            wrapperpanel_ComponentControl.Name = "wrapperpanel_ComponentControl";
+            wrapperpanel_ComponentControl.Padding = new Padding(5, 10, 5, 5);
+            wrapperpanel_ComponentControl.Size = new Size(1049, 188);
+            wrapperpanel_ComponentControl.TabIndex = 21;
             // 
-            // button_Add
+            // customPanelDoubleBuffered1
             // 
-            button_Add.Font = new Font("Arial", 10F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            button_Add.Location = new Point(10, 10);
-            button_Add.Margin = new Padding(10);
-            button_Add.Name = "button_Add";
-            button_Add.Size = new Size(100, 40);
-            button_Add.TabIndex = 5;
-            button_Add.Text = "Add New";
-            button_Add.UseVisualStyleBackColor = true;
-            // 
-            // button_Adjustment
-            // 
-            button_Adjustment.Font = new Font("Arial", 10F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            button_Adjustment.Location = new Point(130, 10);
-            button_Adjustment.Margin = new Padding(10);
-            button_Adjustment.Name = "button_Adjustment";
-            button_Adjustment.Size = new Size(100, 40);
-            button_Adjustment.TabIndex = 1;
-            button_Adjustment.Text = "Adjustment";
-            button_Adjustment.UseVisualStyleBackColor = true;
-            // 
-            // button_Save
-            // 
-            button_Save.Font = new Font("Arial", 10F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            button_Save.Location = new Point(250, 10);
-            button_Save.Margin = new Padding(10);
-            button_Save.Name = "button_Save";
-            button_Save.Size = new Size(100, 40);
-            button_Save.TabIndex = 2;
-            button_Save.Text = "Save";
-            button_Save.UseVisualStyleBackColor = true;
-            // 
-            // button_Cancel
-            // 
-            button_Cancel.Font = new Font("Arial", 10F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            button_Cancel.Location = new Point(370, 10);
-            button_Cancel.Margin = new Padding(10);
-            button_Cancel.Name = "button_Cancel";
-            button_Cancel.Size = new Size(100, 40);
-            button_Cancel.TabIndex = 3;
-            button_Cancel.Text = "Cancel";
-            button_Cancel.UseVisualStyleBackColor = true;
-            // 
-            // button_Edit
-            // 
-            button_Edit.Font = new Font("Arial", 10F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            button_Edit.Location = new Point(490, 10);
-            button_Edit.Margin = new Padding(10);
-            button_Edit.Name = "button_Edit";
-            button_Edit.Size = new Size(100, 40);
-            button_Edit.TabIndex = 4;
-            button_Edit.Text = "Edit";
-            button_Edit.UseVisualStyleBackColor = true;
-            // 
-            // button_Add_Other
-            // 
-            button_Add_Other.Font = new Font("Arial", 8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            button_Add_Other.Location = new Point(610, 10);
-            button_Add_Other.Margin = new Padding(10);
-            button_Add_Other.Name = "button_Add_Other";
-            button_Add_Other.Size = new Size(106, 40);
-            button_Add_Other.TabIndex = 8;
-            button_Add_Other.Text = "Add Other";
-            button_Add_Other.UseVisualStyleBackColor = true;
-            // 
-            // panel_ComponentControl
-            // 
-            panel_ComponentControl.Controls.Add(customPanelDoubleBuffered1);
-            panel_ComponentControl.Controls.Add(panel6);
-            panel_ComponentControl.Controls.Add(printingReferences);
-            panel_ComponentControl.Dock = DockStyle.Top;
-            panel_ComponentControl.Location = new Point(2, 102);
-            panel_ComponentControl.Margin = new Padding(0);
-            panel_ComponentControl.Name = "panel_ComponentControl";
-            panel_ComponentControl.Padding = new Padding(5);
-            panel_ComponentControl.Size = new Size(1049, 188);
-            panel_ComponentControl.TabIndex = 21;
-            // 
-            // panel6
-            // 
-            panel6.Dock = DockStyle.Right;
-            panel6.Location = new Point(529, 5);
-            panel6.Margin = new Padding(0);
-            panel6.Name = "panel6";
-            panel6.Size = new Size(5, 178);
-            panel6.TabIndex = 23;
+            customPanelDoubleBuffered1.Dock = DockStyle.Left;
+            customPanelDoubleBuffered1.Location = new Point(5, 10);
+            customPanelDoubleBuffered1.Name = "customPanelDoubleBuffered1";
+            customPanelDoubleBuffered1.Size = new Size(524, 173);
+            customPanelDoubleBuffered1.TabIndex = 24;
             // 
             // printingReferences
             // 
             printingReferences.Dock = DockStyle.Right;
-            printingReferences.Location = new Point(534, 5);
+            printingReferences.Location = new Point(534, 10);
             printingReferences.Margin = new Padding(0);
             printingReferences.MinimumSize = new Size(444, 133);
             printingReferences.Name = "printingReferences";
-            printingReferences.Size = new Size(510, 178);
+            printingReferences.Size = new Size(510, 173);
             printingReferences.TabIndex = 14;
             // 
             // grouper_ComponentProperties
@@ -392,7 +300,7 @@ namespace StockRoom11net.Controls.UpDateModifComponentValue
             grouper_ComponentProperties.ShadowColor = Color.DarkGray;
             grouper_ComponentProperties.ShadowControl = false;
             grouper_ComponentProperties.ShadowThickness = 3;
-            grouper_ComponentProperties.Size = new Size(1049, 100);
+            grouper_ComponentProperties.Size = new Size(1049, 105);
             grouper_ComponentProperties.TabIndex = 20;
             // 
             // panel3
@@ -403,7 +311,7 @@ namespace StockRoom11net.Controls.UpDateModifComponentValue
             panel3.Location = new Point(310, 25);
             panel3.Margin = new Padding(0);
             panel3.Name = "panel3";
-            panel3.Size = new Size(433, 65);
+            panel3.Size = new Size(433, 70);
             panel3.TabIndex = 24;
             // 
             // panel5
@@ -415,7 +323,7 @@ namespace StockRoom11net.Controls.UpDateModifComponentValue
             panel5.Margin = new Padding(0);
             panel5.Name = "panel5";
             panel5.Padding = new Padding(5);
-            panel5.Size = new Size(253, 65);
+            panel5.Size = new Size(253, 70);
             panel5.TabIndex = 24;
             // 
             // comboBox2
@@ -423,7 +331,7 @@ namespace StockRoom11net.Controls.UpDateModifComponentValue
             comboBox2.Dock = DockStyle.Bottom;
             comboBox2.Font = new Font("Microsoft Sans Serif", 11F, FontStyle.Regular, GraphicsUnit.Point, 0);
             comboBox2.FormattingEnabled = true;
-            comboBox2.Location = new Point(5, 34);
+            comboBox2.Location = new Point(5, 39);
             comboBox2.Margin = new Padding(10);
             comboBox2.MinimumSize = new Size(200, 0);
             comboBox2.Name = "comboBox2";
@@ -451,7 +359,7 @@ namespace StockRoom11net.Controls.UpDateModifComponentValue
             panel4.Margin = new Padding(0);
             panel4.Name = "panel4";
             panel4.Padding = new Padding(5);
-            panel4.Size = new Size(180, 65);
+            panel4.Size = new Size(180, 70);
             panel4.TabIndex = 23;
             // 
             // comboBox1
@@ -459,7 +367,7 @@ namespace StockRoom11net.Controls.UpDateModifComponentValue
             comboBox1.Dock = DockStyle.Bottom;
             comboBox1.Font = new Font("Microsoft Sans Serif", 11F, FontStyle.Regular, GraphicsUnit.Point, 0);
             comboBox1.FormattingEnabled = true;
-            comboBox1.Location = new Point(5, 34);
+            comboBox1.Location = new Point(5, 39);
             comboBox1.Margin = new Padding(10);
             comboBox1.MinimumSize = new Size(150, 0);
             comboBox1.Name = "comboBox1";
@@ -490,7 +398,7 @@ namespace StockRoom11net.Controls.UpDateModifComponentValue
             panel_LabelsComponentsProperties.MinimumSize = new Size(300, 0);
             panel_LabelsComponentsProperties.Name = "panel_LabelsComponentsProperties";
             panel_LabelsComponentsProperties.Padding = new Padding(5);
-            panel_LabelsComponentsProperties.Size = new Size(300, 65);
+            panel_LabelsComponentsProperties.Size = new Size(300, 70);
             panel_LabelsComponentsProperties.TabIndex = 6;
             // 
             // label_PartNumber
@@ -510,7 +418,7 @@ namespace StockRoom11net.Controls.UpDateModifComponentValue
             comboBox_PartNumber.Dock = DockStyle.Bottom;
             comboBox_PartNumber.Font = new Font("Microsoft Sans Serif", 11F, FontStyle.Regular, GraphicsUnit.Point, 0);
             comboBox_PartNumber.FormattingEnabled = true;
-            comboBox_PartNumber.Location = new Point(5, 34);
+            comboBox_PartNumber.Location = new Point(5, 39);
             comboBox_PartNumber.Margin = new Padding(10);
             comboBox_PartNumber.MinimumSize = new Size(200, 0);
             comboBox_PartNumber.Name = "comboBox_PartNumber";
@@ -526,14 +434,14 @@ namespace StockRoom11net.Controls.UpDateModifComponentValue
             panel2.Margin = new Padding(0);
             panel2.Name = "panel2";
             panel2.Padding = new Padding(5);
-            panel2.Size = new Size(296, 65);
+            panel2.Size = new Size(296, 70);
             panel2.TabIndex = 23;
             // 
             // dateTimePicker
             // 
             dateTimePicker.Dock = DockStyle.Bottom;
             dateTimePicker.Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            dateTimePicker.Location = new Point(5, 34);
+            dateTimePicker.Location = new Point(5, 39);
             dateTimePicker.Margin = new Padding(10);
             dateTimePicker.Name = "dateTimePicker";
             dateTimePicker.Size = new Size(286, 26);
@@ -551,19 +459,21 @@ namespace StockRoom11net.Controls.UpDateModifComponentValue
             label_Received_Date.TabIndex = 5;
             label_Received_Date.Text = "Recived Date";
             // 
-            // customPanelDoubleBuffered1
+            // wrapperPanelManufacturerProperties
             // 
-            customPanelDoubleBuffered1.Dock = DockStyle.Top;
-            customPanelDoubleBuffered1.Location = new Point(5, 5);
-            customPanelDoubleBuffered1.Name = "customPanelDoubleBuffered1";
-            customPanelDoubleBuffered1.Size = new Size(524, 139);
-            customPanelDoubleBuffered1.TabIndex = 24;
+            wrapperPanelManufacturerProperties.Controls.Add(grouper_ManufacturerProperties);
+            wrapperPanelManufacturerProperties.Dock = DockStyle.Top;
+            wrapperPanelManufacturerProperties.Location = new Point(2, 295);
+            wrapperPanelManufacturerProperties.Name = "wrapperPanelManufacturerProperties";
+            wrapperPanelManufacturerProperties.Padding = new Padding(0, 10, 0, 0);
+            wrapperPanelManufacturerProperties.Size = new Size(1049, 138);
+            wrapperPanelManufacturerProperties.TabIndex = 25;
             // 
             // UpDateModifComponentValue
             // 
             Controls.Add(panel_ContainerUpDateModifValue);
             Name = "UpDateModifComponentValue";
-            Size = new Size(1053, 537);
+            Size = new Size(1053, 496);
             Load += UpDateModifComponentValue_Load;
             panel_ContainerUpDateModifValue.ResumeLayout(false);
             grouper_ManufacturerProperties.ResumeLayout(false);
@@ -574,8 +484,7 @@ namespace StockRoom11net.Controls.UpDateModifComponentValue
             panel8.PerformLayout();
             panel7.ResumeLayout(false);
             panel7.PerformLayout();
-            flowLayoutPanel.ResumeLayout(false);
-            panel_ComponentControl.ResumeLayout(false);
+            wrapperpanel_ComponentControl.ResumeLayout(false);
             grouper_ComponentProperties.ResumeLayout(false);
             grouper_ComponentProperties.PerformLayout();
             panel3.ResumeLayout(false);
@@ -587,6 +496,7 @@ namespace StockRoom11net.Controls.UpDateModifComponentValue
             panel_LabelsComponentsProperties.PerformLayout();
             panel2.ResumeLayout(false);
             panel2.PerformLayout();
+            wrapperPanelManufacturerProperties.ResumeLayout(false);
             ResumeLayout(false);
         }
 
@@ -605,16 +515,8 @@ namespace StockRoom11net.Controls.UpDateModifComponentValue
         private Panel panel7;
         private Label label_Model_Number;
         private ComboBox comboBox_Manufacturer;
-        private FlowLayoutPanel flowLayoutPanel;
-        private Button button_Add;
-        private Button button_Adjustment;
-        private Button button_Save;
-        private Button button_Cancel;
-        private Button button_Edit;
-        private Button button_Add_Other;
-        private Panel panel_ComponentControl;
+        private Panel wrapperpanel_ComponentControl;
         private PrintingReferences printingReferences;
-        private Panel panel6;
         private CodeVendor.Controls.Grouper grouper_ComponentProperties;
         private Panel panel3;
         private Panel panel5;
@@ -630,5 +532,6 @@ namespace StockRoom11net.Controls.UpDateModifComponentValue
         private DateTimePicker dateTimePicker;
         private Label label_Received_Date;
         private CustomPanelDoubleBuffered.CustomPanelDoubleBuffered customPanelDoubleBuffered1;
+        private CustomPanelDoubleBuffered.CustomPanelDoubleBuffered wrapperPanelManufacturerProperties;
     }
 }

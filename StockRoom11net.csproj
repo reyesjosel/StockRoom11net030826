@@ -130,13 +130,13 @@
     <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="11.0.0-preview.6.26359.118" />
     <PackageReference Include="Microsoft.Extensions.Primitives" Version="11.0.0-preview.6.26359.118" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="11.0.0-preview.6.26359.118" />
-    <PackageReference Include="Microsoft.IdentityModel.JsonWebTokens" Version="8.21.0" />
+    <PackageReference Include="Microsoft.IdentityModel.JsonWebTokens" Version="8.22.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.5-beta1" />
-    <PackageReference Include="SQLite3MC.PCLRaw.bundle" Version="2.3.6" />
-    <PackageReference Include="SQLite3MC.PCLRaw.lib" Version="2.3.6" />
-    <PackageReference Include="SQLite3MC.PCLRaw.provider" Version="2.3.6" />
+    <PackageReference Include="SQLite3MC.PCLRaw.bundle" Version="2.4.0" />
+    <PackageReference Include="SQLite3MC.PCLRaw.lib" Version="2.4.0" />
+    <PackageReference Include="SQLite3MC.PCLRaw.provider" Version="2.4.0" />
     <PackageReference Include="System.Data.OleDb" Version="11.0.0-preview.6.26359.118" />
-    <PackageReference Include="System.Data.SQLite" Version="2.0.3" />
+    <PackageReference Include="System.Data.SQLite" Version="2.0.4" />
     <PackageReference Include="System.Management" Version="11.0.0-preview.6.26359.118" />
     <PackageReference Include="System.Memory.Data" Version="11.0.0-preview.6.26359.118" />
     <PackageReference Include="System.Speech" Version="11.0.0-preview.6.26359.118" />

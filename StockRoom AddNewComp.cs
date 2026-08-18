@@ -1,5 +1,7 @@
 ﻿using StockRoom11net.Controls;
 using StockRoom11net.Controls.ComboBoxExtended;
+using StockRoom11net.Controls.DataGridViewExtend;
+using StockRoom11net.Data.Services;
 using System.Data;
 using Save_Requested_EventArgs = StockRoom11net.Controls.Custom_Events_Args.Save_Requested_EventArgs;
 using SpeechSynthesizerBase_EventArgs = StockRoom11net.Controls.Custom_Events_Args.SpeechSynthesizerBase_EventArgs;
@@ -8,6 +10,8 @@ namespace StockRoom11net
 {
     public partial class StockRoom_AddNewComp : BaseTemple
     {
+        private readonly IAppService _iappService;
+
         readonly BindingSource _bindingSource_StockRoomInventory;
         /// <summary>
         /// Reference to table of Code and Range used to defined the database content.
@@ -18,9 +22,10 @@ namespace StockRoom11net
 
 
 
-        public StockRoom_AddNewComp(BindingSource bindingSourceStockRoomInventory,
+        public StockRoom_AddNewComp(IAppService iappService, BindingSource bindingSourceStockRoomInventory,
                                     BindingSource bindingSource_CodeTreeView, List<string> departList)
         {
+            _iappService = iappService ?? throw new ArgumentNullException(nameof(iappService));
             try
             {
                 InitializeComponent();
@@ -123,12 +128,12 @@ namespace StockRoom11net
         #region"DataGridView_AddNewComp"
 
         void Initialize_DataGridView_AddNewComp()
-        {
-            InitializeDataGridViewBase(dataGridViewExtended_AddNewComp);
-
+        {            
             dataGridViewExtended_AddNewComp.DataSource = _bindingSource_StockRoomInventory;
 
             dataGridViewExtended_AddNewComp.CustomEdit = Utilities.EditMode.View;
+
+            dataGridViewExtended_AddNewComp.StatusBarMessageEvent += (s, e) => _iappService.On_StatusBarMessage(e);
         }
 
         #endregion"DataGridView_AddNewComp"
