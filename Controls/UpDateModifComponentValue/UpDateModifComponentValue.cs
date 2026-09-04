@@ -12,5 +12,10 @@ namespace StockRoom11net.Controls.UpDateModifComponentValue
         {
 
         }
+
+        private void ComboBox_Manufacturer_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
     }
 }

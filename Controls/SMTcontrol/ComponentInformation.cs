@@ -113,8 +113,7 @@ namespace StockRoom11net.Controls.SMTcontrol
         BaseComponent currentComp;
         public BaseComponent SeletedComponent;
 
-        public void ProcessNewCompInformation(Table_StockRoom componentRow,
-                                              CustomPanelDoubleBuffered.CustomPanelDoubleBuffered container)
+        public void ProcessNewCompInformation(Table_StockRoom componentRow, CustomPanelDoubleBuffered.CustomPanelDoubleBuffered container)
         {
             //ComponentRow = componentRow;
             containerCompInfo = container;            

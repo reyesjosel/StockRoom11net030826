@@ -2926,7 +2926,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
         }
 
         #endregion"PrintCompLabel"
-
+        
         #endregion "Events, Custom Controls Events with custom Arg.*********************"
 
         #region"CurrentUserBroadcast"
@@ -3019,7 +3019,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
 
                 _dataGridView.Set_DefaultCellStyle_SelectedCellStyle(userSetting.DgvFont);
                 _dataGridView.Set_ColumnHeaderCellStyle(userSetting.HeaderFont);
-                Set_BindingNavegatorFont(userSetting.BindingNaFont);
+                Set_BindingNavigatorFont(userSetting.BindingNaFont);
                 _bindingNavigator.ImageScalingSize = userSetting.ImageSize;
             }
         }
@@ -3060,7 +3060,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
                 MessageDebugPosition = "ColumnFilterIndicator..";
                 //_dataGridView.ColumnFilterIndicator = Resources.Filtering;
                 //_dataGridView.ColumnClearFilterIndicator = Resources.FilterClearing;
-                _dataGridView.DataSourceChanged += _dataGridView_DataSourceChanged;
+                _dataGridView.DataSourceChanged += DataGridView_DataSourceChanged;
 
                 MessageDebugPosition = "toolStripMenuItem..";
                 toolStripMenuItemExportToCSV.Click += new EventHandler(ToolStripMenuItemExportToCSV_Click);
@@ -3124,7 +3124,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             }
         }
 
-        void _dataGridView_DataSourceChanged(object? sender, EventArgs e)
+        void DataGridView_DataSourceChanged(object? sender, EventArgs e)
         {
             if (_dataGridView.DataSource == null)
                 return;
@@ -5503,7 +5503,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
 
             if (fontDialog.ShowDialog() == DialogResult.OK)
             {
-                Set_BindingNavegatorFont(fontDialog.Font);
+                Set_BindingNavigatorFont(fontDialog.Font);
                 IsMouseDrivenEvent = true;
                 SaveUserSetting();
             }
@@ -5918,7 +5918,8 @@ namespace StockRoom11net.Controls.DataGridViewExtend
 
                     Font newFont = new Font(_bindingNavigator.Font!.FontFamily, newSize, _bindingNavigator.Font.Style);
 
-                    Set_BindingNavegatorFont(newFont);
+                    Set_BindingNavigatorFont(newFont);
+                    On_StatusBarMessage(new StatusBarMessage_EventArgs("BindingNavigator font size changed to " + newFont.Size, ""));
 
                     Size imageSize = _bindingNavigator.ImageScalingSize;
                     Size newImageSize = e.Delta > 0 ? new Size(imageSize.Width + 1, imageSize.Height + 1) :
@@ -5929,6 +5930,8 @@ namespace StockRoom11net.Controls.DataGridViewExtend
                 }
 
                 ((HandledMouseEventArgs)e).Handled = true;
+                IsMouseDrivenEvent = true;
+                SaveUserSetting();
             }
         }
 
@@ -5942,7 +5945,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             _isMouseOverBindingNavigator = false;
         }
 
-        void Set_BindingNavegatorFont(Font newFont)
+        void Set_BindingNavigatorFont(Font newFont)
         {
             _bindingNavigator.Font = newFont;
 

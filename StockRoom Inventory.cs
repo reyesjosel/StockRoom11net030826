@@ -296,7 +296,7 @@ namespace StockRoom11net
         /// setting at this moment, because it is not a user action, it is just the application of the user setting.
         /// </summary>
         bool internalResizeEvent = false;
-                
+
         // ⚠️ To catch missing registrations early, you can also mark the parameterless
         // constructor with[Obsolete] so it shows a compiler warning whenever it's accidentally used:
         [Browsable(false)]
@@ -313,7 +313,7 @@ namespace StockRoom11net
                                     ITableStockRoomTreeViewService tableStockRoomTreeViewService,
                                     IUnitOfWork unitOfWork)
         {
-            
+
             InitializeComponent();
 
             this.Disposed += (s, e) =>
@@ -429,47 +429,47 @@ namespace StockRoom11net
             }
         }
 
-      /*  void InitializeBlazorWebView()
-        {
-            #region"BlazorWebView"
+        /*  void InitializeBlazorWebView()
+          {
+              #region"BlazorWebView"
 
-            var serviceCollection = new ServiceCollection();
-            serviceCollection.AddWindowsFormsBlazorWebView();
-            serviceCollection.AddSingleton<ITimeLineService>(_itimeLineService);
-            serviceCollection.AddLogging(builder =>             // Add logging services and configure them
-            {
-                builder.SetMinimumLevel(LogLevel.Information);  // Set a minimum log level
-                builder.AddConsole();                           // Add the Console logging provider
-                builder.AddDebug();                             // Add the Debug logging provider
-            });
+              var serviceCollection = new ServiceCollection();
+              serviceCollection.AddWindowsFormsBlazorWebView();
+              serviceCollection.AddSingleton<ITimeLineService>(_itimeLineService);
+              serviceCollection.AddLogging(builder =>             // Add logging services and configure them
+              {
+                  builder.SetMinimumLevel(LogLevel.Information);  // Set a minimum log level
+                  builder.AddConsole();                           // Add the Console logging provider
+                  builder.AddDebug();                             // Add the Debug logging provider
+              });
 
-            // Build the service provider
-            var serviceProvider = serviceCollection.BuildServiceProvider();
+              // Build the service provider
+              var serviceProvider = serviceCollection.BuildServiceProvider();
 
-            // Get an ILogger instance
-            var logger = serviceProvider.GetRequiredService<ILogger<StockRoom_Inventory>>();
-            // Log a message
-            logger.LogInformation("Application started.");
+              // Get an ILogger instance
+              var logger = serviceProvider.GetRequiredService<ILogger<StockRoom_Inventory>>();
+              // Log a message
+              logger.LogInformation("Application started.");
 
-            blazorWebView1.HostPage = "wwwroot\\index.html";
-            blazorWebView1.Services = serviceProvider;
-            blazorWebView1.RootComponents.Add<Counter>("#app");
+              blazorWebView1.HostPage = "wwwroot\\index.html";
+              blazorWebView1.Services = serviceProvider;
+              blazorWebView1.RootComponents.Add<Counter>("#app");
 
-            blazorWebView2.HostPage = "wwwroot\\index.html";
-            blazorWebView2.Services = serviceProvider;
-            blazorWebView2.RootComponents.Add<App>("#app");
+              blazorWebView2.HostPage = "wwwroot\\index.html";
+              blazorWebView2.Services = serviceProvider;
+              blazorWebView2.RootComponents.Add<App>("#app");
 
-            AppDomain.CurrentDomain.UnhandledException += (sender, error) =>
-            {
-#if DEBUG
-                MessageBox.Show(text: error.ExceptionObject.ToString(), caption: "Error");
-#else
-                        MessageBox.Show(text: "An error has occurred.", caption: "Error");
-#endif
-            };
+              AppDomain.CurrentDomain.UnhandledException += (sender, error) =>
+              {
+  #if DEBUG
+                  MessageBox.Show(text: error.ExceptionObject.ToString(), caption: "Error");
+  #else
+                          MessageBox.Show(text: "An error has occurred.", caption: "Error");
+  #endif
+              };
 
-            #endregion"BlazorWebView"                
-        }*/
+              #endregion"BlazorWebView"                
+          }*/
 
         /// <summary>
         /// Since we are using EF Core, we will load data in the LoadDataEF() method.
@@ -728,7 +728,7 @@ namespace StockRoom11net
                 MessageBox.Show(error.Message, "Error updating timeline", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-              
+
 
         int GetNextId(DataView dataView)
         {
@@ -820,6 +820,16 @@ namespace StockRoom11net
 
         #region "StockRoomInventory Load, Shown, FormClosing"
 
+        protected override void ScaleControl(SizeF factor, BoundsSpecified specified)
+        {
+            if (factor.Width != 1.0f || factor.Height != 1.0f)
+            {
+                Debug.WriteLine($"[ScaleControl] Control: {this.Name} | Factor: {factor} | Specified: {specified}");
+                Debug.WriteLine(new StackTrace().ToString());
+            }
+            base.ScaleControl(factor, specified);
+        }
+
         void StockRoomInventoryLoad(object? sender, EventArgs e)
         {
             MessageDebugPosition = "Starting Try/Catch procedure.";
@@ -873,10 +883,23 @@ namespace StockRoom11net
         {
             try
             {
+                // Run this ONCE to find the correct value for your machine:
+                using var g = CreateGraphics();
+                var size = g.MeasureString("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz", Font);
+                Debug.WriteLine($"Correct AutoScaleDimensions: {size.Width / 52F}F, {size.Height}F");
+                //Correct AutoScaleDimensions: 9.723657F, 20.109371F
+
                 MessageDebugPosition = "InitializeTab_AddNewItem";
                 InitializeTab_AddNewItem();
 
                 splitContainerHorizontal.SplitterDistance = (int)(Height * 0.65);
+
+                // Track a metric
+                Program.Telemetry.TrackEvent("StockRoomInventory shown at", new Dictionary<string, string>
+                {
+                    { "Date", DateTime.Now.ToShortDateString() },
+                    { "Time", DateTime.Now.ToShortTimeString() }
+                });
             }
             catch (Exception error)
             {
@@ -963,7 +986,7 @@ namespace StockRoom11net
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-        
+
         void DataTreeViewToAdd_Cancel_Delete_Switch_DataTable(object? sender, Switch_DataTable_EventArgs e)
         {
             if (dataGridViewExtended.DataSource == _bindingSourceStockRoomVal)
@@ -984,7 +1007,7 @@ namespace StockRoom11net
         bool FaultColumnPartNumber;
 
         void Initialize_DataGridView()
-        {            
+        {
             dataGridViewExtended.SuspendLayout();
 
             dataGridViewExtended.CellBegingEditEvent += DataGridViewExtendedInventoryCellBeggingEditEvent;
@@ -1271,10 +1294,10 @@ namespace StockRoom11net
 
             InitializeTab_AddNewItem();
         }
-        
+
         void DataGridViewExtendedInventoryCellEndEditEvent(object? sender, DataGridViewCellEventArgs e)
         {
-            if ( dataGridViewExtended.CurrentRowViewActive?["LastAccessTime"] != null)
+            if (dataGridViewExtended.CurrentRowViewActive?["LastAccessTime"] != null)
             {
                 dataGridViewExtended.CurrentRowViewActive["LastAccessTime"] = DateTime.Now;
                 dataGridViewExtended.CurrentRowViewActive["ModifiedBy"] = Table_Employee.FullName;
@@ -1324,18 +1347,18 @@ namespace StockRoom11net
 
                 var description = "The information of " + dataGridViewExtended.CurrentPartNumber + " is being edited." + Environment.NewLine;
 
-                 _iappService.On_NotificationsToSends(new Notification(
-                                                         "Row information is being edited.",                //notification.Text
-                                                         "Warning, Row information is being edited.",       //notification.Title
-                                                         description,                                        //notification.Description
-                                                         (int)ToolTipIcon.Info,                              //notification.MessageIcon
-                                                         (int)Utilities.NotificationEvents.Warning,             //notifycation.NotifycationEvents
-                                                         Settings.Default.DepartmentName,                   //notification.DepartmentName
-                                                         DateTime.Now,                                       //notification.DateCreated
-                                                         Table_Employee.FullName,                     //notification.Created_by
-                                                         "Properties",                                       //notification.Properties
-                                                         "Status"                                            //notification.Status
-                                                        ));
+                _iappService.On_NotificationsToSends(new Notification(
+                                                        "Row information is being edited.",                //notification.Text
+                                                        "Warning, Row information is being edited.",       //notification.Title
+                                                        description,                                        //notification.Description
+                                                        (int)ToolTipIcon.Info,                              //notification.MessageIcon
+                                                        (int)Utilities.NotificationEvents.Warning,             //notifycation.NotifycationEvents
+                                                        Settings.Default.DepartmentName,                   //notification.DepartmentName
+                                                        DateTime.Now,                                       //notification.DateCreated
+                                                        Table_Employee.FullName,                     //notification.Created_by
+                                                        "Properties",                                       //notification.Properties
+                                                        "Status"                                            //notification.Status
+                                                       ));
             }
             catch (Exception ex)
             {
@@ -1351,12 +1374,12 @@ namespace StockRoom11net
 
         void DataGridViewExtendedInventoryLogFileMessage(object? sender, LogFileMessageEventArgs e)
         {
-             _iappService.On_LogFileMessage(e);
+            _iappService.On_LogFileMessage(e);
         }
 
         void DataGridViewExtendedInventoryDataGridViewSort(object? sender, DataGridViewSort_EventArgs e)
         {
-            
+
         }
 
         void DataGridViewExtended_CellMouseEnter(object? sender, DataGridViewCellEventArgs e)
@@ -1386,7 +1409,7 @@ namespace StockRoom11net
                     TabControl_Inventory.SelectTab(nameof(tabPage_Pictures));
                     TabControl_Inventory.HideTab(nameof(tabPage_NoteEditor));
                 }
-                             
+
                 thumbViewer_Pictures.PathFromPartNumber = dataGridViewExtended.CurrentPartNumber;
 
                 MessageDebugPosition = "DataSheetProcess()";
@@ -1429,7 +1452,7 @@ namespace StockRoom11net
                 return;
 
             #region"DataSheet Input"
-           
+
             if (e.ColumnName.Contains("DataSheet_File"))
             {
                 var listFileNames = dataGridViewExtended.CurrentRowViewActive["DataSheet_File"];
@@ -1476,7 +1499,7 @@ namespace StockRoom11net
             if (e.ColumnName.Contains("PartNumber"))
             {
                 var currentRowIndex = dataGridViewExtended.CurrentRowViewActive.Row[0];
-            }                
+            }
         }
 
         void DataGridViewExtended_Inventory_Find_Replace(object? sender, DataGridViewExtended.FindRemplaceEventArgs e)
@@ -1593,7 +1616,7 @@ namespace StockRoom11net
 
             if (e.CurrentRowActive.Cells["PartNumber"].Value == null)
                 return;
-                        
+
             Update_Description(dataGridViewExtended.CurrentRowViewActive);
             thumbViewer_Pictures.PathFromPartNumber = dataGridViewExtended.CurrentPartNumber;
         }
@@ -1978,8 +2001,8 @@ namespace StockRoom11net
         void InitializeTabPage_UpDateModifCompValue()
         {
             currentComp = new Resistor();
-            customPanel_ContainerComp.Controls.Clear();
-            customPanel_ContainerComp.Controls.Add(currentComp);
+            //    customPanel_ContainerComp.Controls.Clear();
+            //    customPanel_ContainerComp.Controls.Add(currentComp);
             currentCompInformation = new("NewComp-xxxx");
         }
 
@@ -1991,15 +2014,17 @@ namespace StockRoom11net
             if (dataGridViewExtended.CurrentRowViewActive == null)
                 return;
 
-            textBoxUpDateModifPartNumber.Text = dataGridViewExtended.CurrentPartNumber;
+            textBox_PartNumber.Text = dataGridViewExtended.CurrentPartNumber;
+            textBox_ModelNumber.Text = dataGridViewExtended.CurrentRowViewActive["ModelNumber"]?.ToString();
+            textBox_Manufacturer.Text = dataGridViewExtended.CurrentRowViewActive["Manufacturer"]?.ToString();
+            textBox_Supplier.Text = dataGridViewExtended.CurrentRowViewActive["Supplier"]?.ToString();
 
+            //currentCompInformation.ProcessNewCompInformation(dataGridViewExtended.CurrentRowViewActive, customPanelDoubleBuffered);
 
-            //    currentCompInformation.ProcessNewCompInformation(CurrentRowViewActive, customPanel_ContainerComp);
+            //currentCompInformation = new ComponentInformation(dataGridViewExtended.CurrentRowViewActive, customPanelDoubleBuffered);
 
-            //currentCompInformation = new ComponentInformation(CurrentRowViewActive, customPanel_ContainerComp);
-
-            //customPanel_ContainerComp.Controls.Clear();
-            //customPanel_ContainerComp.Controls.Add(currentCompInformation.SeletedComponent);
+            customPanelDoubleBuffered.Controls.Clear();
+            customPanelDoubleBuffered.Controls.Add(currentCompInformation.SeletedComponent);
 
 
 
@@ -2078,6 +2103,7 @@ namespace StockRoom11net
         }
 
         #endregion"Timer SaveUserSetting if it's modifying the user interface."   
+
         
     }
 }

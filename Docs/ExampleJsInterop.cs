@@ -1,6 +1,4 @@
 using Microsoft.JSInterop;
-using System;
-using System.Threading.Tasks;
 
 namespace StockRoom11net.Docs
 {
@@ -11,7 +9,7 @@ namespace StockRoom11net.Docs
     // This class can be registered as scoped DI service and then injected into Blazor
     // components for use.
 
-    public class ExampleJsInterop : IAsyncDisposable
+    internal class ExampleJsInterop : IAsyncDisposable
     {
         private readonly Lazy<Task<IJSObjectReference>> moduleTask;
 

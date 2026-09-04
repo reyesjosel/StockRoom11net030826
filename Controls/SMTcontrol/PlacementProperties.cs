@@ -1,8 +1,6 @@
-﻿using StockRoom11net.Controls;
-using StockRoom11net.Controls.SMTcontrol;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 
-namespace MyStuff11net
+namespace StockRoom11net.Controls.SMTcontrol
 {
     public class PlacementInformation
     {

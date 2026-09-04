@@ -1,5 +1,4 @@
-﻿using MyStuff11net;
-using StockRoom11net.Controls;
+﻿using StockRoom11net.Controls;
 using StockRoom11net.Controls.ComponentInformations;
 using StockRoom11net.Controls.DataGridViewExtend;
 using StockRoom11net.Controls.ResourcesCache;

@@ -34,13 +34,14 @@ namespace StockRoom11net.Controls.ZPL2_ZebraPrint
         /// <summary>
         /// Counter of reel quantity in stockroom.
         /// </summary>
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
         public int ReelsCounter;
 
         /// <summary>
         /// Count the number of reels received till now,
         /// Reserved 4 digits for this counter from 0001-9999.
         /// </summary>
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
         public string ReelsCounterToString
         {
             get
@@ -67,7 +68,7 @@ namespace StockRoom11net.Controls.ZPL2_ZebraPrint
         public string PartNumber = "014-0000";
 
         string descriptionToPrint;
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
         public string DescriptionToPrint
         {
             get
@@ -89,7 +90,7 @@ namespace StockRoom11net.Controls.ZPL2_ZebraPrint
         /// <summary>
         /// On Received Process, Quantity received.
         /// </summary>
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
         public int QuantityReceived
         {
             get
@@ -107,12 +108,13 @@ namespace StockRoom11net.Controls.ZPL2_ZebraPrint
         /// <summary>
         /// On Received Process, Numbers of Reels after validation.
         /// </summary>
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
         public int NumberOfReels;
 
         /// <summary>
         /// Enable or disable the print properties menu.
         /// </summary>
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
         public bool EnablePrintsProperties
         {
             get
@@ -134,9 +136,9 @@ namespace StockRoom11net.Controls.ZPL2_ZebraPrint
 
             //     comboBox_Quantityper_Reels.KeyUp += comboBox_Quantityper_Reels_KeyUp;
             //     comboBox_Numberof_Reels.KeyUp += comboBox_Numberof_Reels_KeyUp;
-            textBox_DescriptionToPrint.KeyUp += textBox_DescriptionToPrint_KeyUp;
+            textBox_DescriptionToPrint.KeyUp += TextBox_DescriptionToPrint_KeyUp;
 
-            checkBox_printLabels.CheckedChanged += checkBox_printLabels_CheckedChanged;
+            checkBox_printLabels.CheckedChanged += CheckBox_printLabels_CheckedChanged;
 
             ShowBarCodeImage("014-0023");
         }
@@ -150,9 +152,9 @@ namespace StockRoom11net.Controls.ZPL2_ZebraPrint
 
             //    comboBox_Quantityper_Reels.KeyUp += comboBox_Quantityper_Reels_KeyUp;
             //    comboBox_Numberof_Reels.KeyUp += comboBox_Numberof_Reels_KeyUp;
-            textBox_DescriptionToPrint.KeyUp += textBox_DescriptionToPrint_KeyUp;
+            textBox_DescriptionToPrint.KeyUp += TextBox_DescriptionToPrint_KeyUp;
 
-            checkBox_printLabels.CheckedChanged += checkBox_printLabels_CheckedChanged;
+            checkBox_printLabels.CheckedChanged += CheckBox_printLabels_CheckedChanged;
 
             DescriptionToPrint = textBox_DescriptionToPrint.Text = description;
 
@@ -171,7 +173,7 @@ namespace StockRoom11net.Controls.ZPL2_ZebraPrint
             */
         }
 
-        void comboBox_Quantityper_Reels_KeyUp(object sender, KeyEventArgs e)
+        void ComboBox_Quantityper_Reels_KeyUp(object sender, KeyEventArgs e)
         {
             if (e.KeyData != Keys.Enter)
                 return;
@@ -179,7 +181,7 @@ namespace StockRoom11net.Controls.ZPL2_ZebraPrint
             //   QuantityPerReels = MyCode.IntParseFast(comboBox_Quantityper_Reels.Text);
         }
 
-        void comboBox_Numberof_Reels_KeyUp(object sender, KeyEventArgs e)
+        void ComboBox_Numberof_Reels_KeyUp(object sender, KeyEventArgs e)
         {
             if (e.KeyData != Keys.Enter)
                 return;
@@ -193,7 +195,7 @@ namespace StockRoom11net.Controls.ZPL2_ZebraPrint
             On_PrintsLabelsReady(new Custom_Events_Args.PrintsLabelsReady_EventArgs(AuthenticateReceived()));
         }
 
-        void textBox_DescriptionToPrint_KeyUp(object sender, KeyEventArgs e)
+        void TextBox_DescriptionToPrint_KeyUp(object sender, KeyEventArgs e)
         {
             int quedan = 25 - textBox_DescriptionToPrint.Text.Length;
 
@@ -214,9 +216,9 @@ namespace StockRoom11net.Controls.ZPL2_ZebraPrint
 
         }
 
-        void checkBox_printLabels_CheckedChanged(object sender, EventArgs e)
+        void CheckBox_printLabels_CheckedChanged(object sender, EventArgs e)
         {
-            panel_EnablePrints.Enabled = checkBox_printLabels.Checked;
+            panel_Description.Enabled = grouper_BarCodeRegion.Enabled = checkBox_printLabels.Checked;
         }
 
         bool AuthenticateReceived()

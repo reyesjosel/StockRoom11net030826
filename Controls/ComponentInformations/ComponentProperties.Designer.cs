@@ -1,4 +1,4 @@
-﻿namespace MyStuff11net.Received_Components
+﻿namespace StockRoom11net.Controls.ComponentInformations
 {
     partial class ComponentProperties
     {

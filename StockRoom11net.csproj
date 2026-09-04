@@ -20,7 +20,7 @@
     <ApplicationVisualStyles>true</ApplicationVisualStyles>
     <ApplicationUseCompatibleTextRendering>false</ApplicationUseCompatibleTextRendering>
     <ApplicationHighDpiMode>SystemAware</ApplicationHighDpiMode>
-    <ApplicationDefaultFont>Microsoft Sans Serif, 10pt</ApplicationDefaultFont>
+    <ApplicationDefaultFont>Microsoft Sans Serif, 12pt</ApplicationDefaultFont>
     <StartupObject>StockRoom11net.Program</StartupObject>
     <PlatformTarget>x64</PlatformTarget>
     <SupportedOSPlatformVersion>7.0</SupportedOSPlatformVersion>
@@ -108,6 +108,7 @@
     <PackageReference Include="Be.Windows.Forms.HexBox.Net5" Version="1.8.0" />
     <PackageReference Include="Blazor.Extensions.Canvas" Version="1.1.1" />
     <PackageReference Include="GenCode128" Version="2.0.0" />
+    <PackageReference Include="Microsoft.ApplicationInsights" Version="2.22.0" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebView" Version="11.0.0-preview.6.26359.118" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebView.WindowsForms" Version="11.0.0-preview.6.26360.8" />
     <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="11.0.100-preview.6.26359.118">
@@ -143,7 +144,7 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="CodeVendor.Controls">
-      <HintPath>D:\My_C#_Example\CodeVendor Grouper\Grouper\bin\Release\net7.0-windows\CodeVendor.Controls.dll</HintPath>
+      <HintPath>D:\My_C#_Example\CodeVendor Grouper\Grouper\bin\Release\net11.0-windows\CodeVendor.Controls.dll</HintPath>
     </Reference>
     <Reference Include="ObjectListView">
       <HintPath>D:\My_C#_Example\ObjectListView\ObjectListView-main2022\ObjectListView-main2022\Demo\bin\Release\net8.0-windows\ObjectListView.dll</HintPath>

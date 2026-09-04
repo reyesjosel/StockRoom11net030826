@@ -29,10 +29,10 @@
         private void InitializeComponent()
         {
             grouper_PrintingReferences = new CodeVendor.Controls.Grouper();
-            checkBox_printLabels = new CheckBox();
             panel_EnablePrints = new Panel();
             panel_Reels = new Panel();
-            panel1 = new Panel();
+            checkBox_printLabels = new CheckBox();
+            panel_Description = new Panel();
             label_DescriptionToPrint = new Label();
             textBox_DescriptionToPrint = new TextBox();
             grouper_BarCodeRegion = new CodeVendor.Controls.Grouper();
@@ -44,7 +44,7 @@
             grouper_PrintingReferences.SuspendLayout();
             panel_EnablePrints.SuspendLayout();
             panel_Reels.SuspendLayout();
-            panel1.SuspendLayout();
+            panel_Description.SuspendLayout();
             grouper_BarCodeRegion.SuspendLayout();
             grouper_LabelBarCode.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox_BarCode_Image).BeginInit();
@@ -57,13 +57,11 @@
             grouper_PrintingReferences.BackgroundGradientMode = CodeVendor.Controls.Grouper.GroupBoxGradientMode.Vertical;
             grouper_PrintingReferences.BorderColor = Color.Black;
             grouper_PrintingReferences.BorderThickness = 1F;
-            grouper_PrintingReferences.Controls.Add(checkBox_printLabels);
             grouper_PrintingReferences.Controls.Add(panel_EnablePrints);
             grouper_PrintingReferences.CustomGroupBoxColor = Color.White;
             grouper_PrintingReferences.Dock = DockStyle.Fill;
-            grouper_PrintingReferences.GroupImage = null;
             grouper_PrintingReferences.GroupTitle = "Printing References";
-            grouper_PrintingReferences.Location = new Point(0, 0);
+            grouper_PrintingReferences.Location = new Point(2, 2);
             grouper_PrintingReferences.Margin = new Padding(3, 2, 3, 2);
             grouper_PrintingReferences.MinimumSize = new Size(0, 114);
             grouper_PrintingReferences.Name = "grouper_PrintingReferences";
@@ -73,21 +71,8 @@
             grouper_PrintingReferences.ShadowColor = Color.DarkGray;
             grouper_PrintingReferences.ShadowControl = false;
             grouper_PrintingReferences.ShadowThickness = 3;
-            grouper_PrintingReferences.Size = new Size(457, 135);
+            grouper_PrintingReferences.Size = new Size(521, 131);
             grouper_PrintingReferences.TabIndex = 20;
-            // 
-            // checkBox_printLabels
-            // 
-            checkBox_printLabels.AutoSize = true;
-            checkBox_printLabels.Checked = true;
-            checkBox_printLabels.CheckState = CheckState.Checked;
-            checkBox_printLabels.Location = new Point(13, 37);
-            checkBox_printLabels.Margin = new Padding(4, 4, 4, 4);
-            checkBox_printLabels.Name = "checkBox_printLabels";
-            checkBox_printLabels.Size = new Size(114, 21);
-            checkBox_printLabels.TabIndex = 51;
-            checkBox_printLabels.Text = "Print Labels ?";
-            checkBox_printLabels.UseVisualStyleBackColor = true;
             // 
             // panel_EnablePrints
             // 
@@ -97,31 +82,45 @@
             panel_EnablePrints.Location = new Point(1, 0);
             panel_EnablePrints.Margin = new Padding(0);
             panel_EnablePrints.Name = "panel_EnablePrints";
-            panel_EnablePrints.Size = new Size(456, 134);
+            panel_EnablePrints.Size = new Size(520, 130);
             panel_EnablePrints.TabIndex = 58;
             // 
             // panel_Reels
             // 
-            panel_Reels.Controls.Add(panel1);
+            panel_Reels.Controls.Add(checkBox_printLabels);
+            panel_Reels.Controls.Add(panel_Description);
             panel_Reels.Dock = DockStyle.Fill;
             panel_Reels.Location = new Point(0, 0);
             panel_Reels.Margin = new Padding(0);
             panel_Reels.Name = "panel_Reels";
-            panel_Reels.Padding = new Padding(4, 4, 4, 4);
-            panel_Reels.Size = new Size(176, 134);
+            panel_Reels.Padding = new Padding(4);
+            panel_Reels.Size = new Size(240, 130);
             panel_Reels.TabIndex = 57;
             // 
-            // panel1
+            // checkBox_printLabels
             // 
-            panel1.Controls.Add(label_DescriptionToPrint);
-            panel1.Controls.Add(textBox_DescriptionToPrint);
-            panel1.Dock = DockStyle.Bottom;
-            panel1.Location = new Point(4, 64);
-            panel1.Margin = new Padding(0);
-            panel1.Name = "panel1";
-            panel1.Padding = new Padding(9, 8, 9, 8);
-            panel1.Size = new Size(168, 66);
-            panel1.TabIndex = 55;
+            checkBox_printLabels.AutoSize = true;
+            checkBox_printLabels.Checked = true;
+            checkBox_printLabels.CheckState = CheckState.Checked;
+            checkBox_printLabels.Location = new Point(8, 32);
+            checkBox_printLabels.Margin = new Padding(4);
+            checkBox_printLabels.Name = "checkBox_printLabels";
+            checkBox_printLabels.Size = new Size(124, 24);
+            checkBox_printLabels.TabIndex = 51;
+            checkBox_printLabels.Text = "Print Labels ?";
+            checkBox_printLabels.UseVisualStyleBackColor = true;
+            // 
+            // panel_Description
+            // 
+            panel_Description.Controls.Add(label_DescriptionToPrint);
+            panel_Description.Controls.Add(textBox_DescriptionToPrint);
+            panel_Description.Dock = DockStyle.Bottom;
+            panel_Description.Location = new Point(4, 60);
+            panel_Description.Margin = new Padding(0);
+            panel_Description.Name = "panel_Description";
+            panel_Description.Padding = new Padding(9, 8, 9, 8);
+            panel_Description.Size = new Size(232, 66);
+            panel_Description.TabIndex = 55;
             // 
             // label_DescriptionToPrint
             // 
@@ -140,9 +139,9 @@
             textBox_DescriptionToPrint.Dock = DockStyle.Bottom;
             textBox_DescriptionToPrint.Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             textBox_DescriptionToPrint.Location = new Point(9, 32);
-            textBox_DescriptionToPrint.Margin = new Padding(4, 4, 4, 4);
+            textBox_DescriptionToPrint.Margin = new Padding(4);
             textBox_DescriptionToPrint.Name = "textBox_DescriptionToPrint";
-            textBox_DescriptionToPrint.Size = new Size(150, 26);
+            textBox_DescriptionToPrint.Size = new Size(214, 26);
             textBox_DescriptionToPrint.TabIndex = 54;
             // 
             // grouper_BarCodeRegion
@@ -156,11 +155,11 @@
             grouper_BarCodeRegion.Controls.Add(grouper_LabelBarCode);
             grouper_BarCodeRegion.CustomGroupBoxColor = Color.White;
             grouper_BarCodeRegion.Dock = DockStyle.Right;
-            grouper_BarCodeRegion.GroupImage = null;
             grouper_BarCodeRegion.GroupTitle = "";
-            grouper_BarCodeRegion.Location = new Point(176, 0);
+            grouper_BarCodeRegion.Location = new Point(240, 0);
             grouper_BarCodeRegion.Margin = new Padding(0);
-            grouper_BarCodeRegion.MinimumSize = new Size(222, 95);
+            grouper_BarCodeRegion.MaximumSize = new Size(290, 0);
+            grouper_BarCodeRegion.MinimumSize = new Size(280, 0);
             grouper_BarCodeRegion.Name = "grouper_BarCodeRegion";
             grouper_BarCodeRegion.Padding = new Padding(7, 6, 7, 6);
             grouper_BarCodeRegion.PaintGroupBox = false;
@@ -168,7 +167,7 @@
             grouper_BarCodeRegion.ShadowColor = Color.DarkGray;
             grouper_BarCodeRegion.ShadowControl = false;
             grouper_BarCodeRegion.ShadowThickness = 3;
-            grouper_BarCodeRegion.Size = new Size(280, 134);
+            grouper_BarCodeRegion.Size = new Size(280, 130);
             grouper_BarCodeRegion.TabIndex = 55;
             // 
             // label_LabelInformation
@@ -194,10 +193,9 @@
             grouper_LabelBarCode.Controls.Add(pictureBox_BarCode_Image);
             grouper_LabelBarCode.CustomGroupBoxColor = Color.White;
             grouper_LabelBarCode.Dock = DockStyle.Top;
-            grouper_LabelBarCode.GroupImage = null;
             grouper_LabelBarCode.GroupTitle = "";
             grouper_LabelBarCode.Location = new Point(7, 6);
-            grouper_LabelBarCode.Margin = new Padding(4, 4, 4, 4);
+            grouper_LabelBarCode.Margin = new Padding(4);
             grouper_LabelBarCode.Name = "grouper_LabelBarCode";
             grouper_LabelBarCode.Padding = new Padding(27, 24, 27, 24);
             grouper_LabelBarCode.PaintGroupBox = false;
@@ -223,7 +221,7 @@
             // 
             label_HumanReadableInformation.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             label_HumanReadableInformation.Font = new Font("Microsoft Sans Serif", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label_HumanReadableInformation.Location = new Point(19, 53);
+            label_HumanReadableInformation.Location = new Point(19, 52);
             label_HumanReadableInformation.Margin = new Padding(4, 0, 4, 0);
             label_HumanReadableInformation.Name = "label_HumanReadableInformation";
             label_HumanReadableInformation.Size = new Size(216, 18);
@@ -235,7 +233,7 @@
             // 
             pictureBox_BarCode_Image.BackColor = Color.White;
             pictureBox_BarCode_Image.Location = new Point(4, 18);
-            pictureBox_BarCode_Image.Margin = new Padding(4, 4, 4, 4);
+            pictureBox_BarCode_Image.Margin = new Padding(4);
             pictureBox_BarCode_Image.Name = "pictureBox_BarCode_Image";
             pictureBox_BarCode_Image.Size = new Size(259, 32);
             pictureBox_BarCode_Image.SizeMode = PictureBoxSizeMode.CenterImage;
@@ -244,20 +242,21 @@
             // 
             // PrintingReferences
             // 
-            AutoScaleDimensions = new SizeF(8F, 16F);
+            AutoScaleDimensions = new SizeF(9F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             Controls.Add(grouper_PrintingReferences);
             DoubleBuffered = true;
             Margin = new Padding(0);
-            MinimumSize = new Size(444, 135);
+            MinimumSize = new Size(525, 135);
             Name = "PrintingReferences";
-            Size = new Size(457, 135);
+            Padding = new Padding(2);
+            Size = new Size(525, 135);
             grouper_PrintingReferences.ResumeLayout(false);
-            grouper_PrintingReferences.PerformLayout();
             panel_EnablePrints.ResumeLayout(false);
             panel_Reels.ResumeLayout(false);
-            panel1.ResumeLayout(false);
-            panel1.PerformLayout();
+            panel_Reels.PerformLayout();
+            panel_Description.ResumeLayout(false);
+            panel_Description.PerformLayout();
             grouper_BarCodeRegion.ResumeLayout(false);
             grouper_BarCodeRegion.PerformLayout();
             grouper_LabelBarCode.ResumeLayout(false);
@@ -280,6 +279,6 @@
         private System.Windows.Forms.Panel panel_Reels;
         private System.Windows.Forms.Panel panel_EnablePrints;
         protected System.Windows.Forms.CheckBox checkBox_printLabels;
-        private Panel panel1;
+        private Panel panel_Description;
     }
 }
