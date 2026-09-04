@@ -1,4 +1,3 @@
-using MyStuff11net;
 using StockRoom11net.Controls.TabControl.BaseClasses;
 using StockRoom11net.Controls.TabControl.Design;
 using System.ComponentModel;

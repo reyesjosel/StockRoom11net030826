@@ -1,5 +1,4 @@
-﻿using MyStuff11net;
-using StockRoom11net.Controls.ComponentInformations;
+﻿using StockRoom11net.Controls.ComponentInformations;
 using StockRoom11net.Controls.TabControl.Control;
 
 namespace StockRoom11net

@@ -45,7 +45,7 @@ namespace StockRoom11net
     {
         // Injected EF Core services
         private readonly IAppService _iappService;
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly IUnitOfWork _unitOfWork; 
         private readonly IServiceProvider _serviceProvider;
         private ITableEmployeeService _employeesService;
 
@@ -440,7 +440,7 @@ namespace StockRoom11net
                 }
             }
         }
-                
+
         public void SolutionsBaseLoad(object sender, EventArgs e)
         {           
             try
@@ -481,7 +481,9 @@ namespace StockRoom11net
 
                 toolStripTextBox_Log_User.Visible = false;
 
-            //    CurrentDeptUserBroadcast_Requested += 123Solutions_TempleClass_CurrentDeptUserBroadcast_Requested;
+                
+
+                //    CurrentDeptUserBroadcast_Requested += 123Solutions_TempleClass_CurrentDeptUserBroadcast_Requested;
                 ScannedDataEvent += Solutions_TempleClass_ScannedDataEvent;
 
                 var configFile = Path.Combine(Path.GetDirectoryName(Application.ExecutablePath), "DockPanel.config");
@@ -2869,7 +2871,7 @@ namespace StockRoom11net
                 StatusBarMessage(e);
                 InvokeOnUiThreadIfRequired(this, () =>
                 {
-                    if (e.StatusBarHelp != null)
+                    if (e.StatusBarHelp != null && e.StatusBarHelp != "")
                         toolStripStatusLabel_Message.Image = e.StatusBarIcon.ToBitmap();
                 });
             }

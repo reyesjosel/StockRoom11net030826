@@ -70,6 +70,18 @@ namespace StockRoom11net
             splitContainerHorizontal = new SplitContainer();
             splitContainerVertical = new SplitContainer();
             TabControl_Inventory = new CustomTabControl();
+            tabPage_AddNewItem = new TabPage();
+            grouper_NewItemButtons = new CodeVendor.Controls.Grouper();
+            flowLayoutPanel_Buttons = new FlowLayoutPanel();
+            button_AddNew = new Button();
+            button_Save = new Button();
+            button_Delete = new Button();
+            grouper_ItemProperties = new CodeVendor.Controls.Grouper();
+            flowLayoutPanel_ItemsProperties = new FlowLayoutPanel();
+            comboBoxExtended_Status = new StockRoom11net.Controls.ComboBoxExtended.ComboBoxExtended();
+            comboBoxExtended1 = new StockRoom11net.Controls.ComboBoxExtended.ComboBoxExtended();
+            comboBoxExtended_Description = new StockRoom11net.Controls.ComboBoxExtended.ComboBoxExtended();
+            comboBoxExtended_PartNumber = new StockRoom11net.Controls.ComboBoxExtended.ComboBoxExtended();
             tabPage_Pictures = new TabPage();
             thumbViewer_Pictures = new ThumbViewer();
             tabPage_Location = new TabPage();
@@ -79,51 +91,52 @@ namespace StockRoom11net
             tabPage_NoteEditor = new TabPage();
             blazorWebView1 = new BlazorWebView();
             tabPage_TreeViewSetting = new TabPage();
-            tabPage_AddNewItem = new TabPage();
-            grouper_NewItemButtons = new CodeVendor.Controls.Grouper();
-            flowLayoutPanel_Buttons = new FlowLayoutPanel();
-            button_AddNew = new Button();
-            button_Save = new Button();
-            button_Delete = new Button();
-            grouper_ItemProperties = new CodeVendor.Controls.Grouper();
-            flowLayoutPanel_ItemsProperties = new FlowLayoutPanel();
-            comboBoxExtended_Description = new StockRoom11net.Controls.ComboBoxExtended.ComboBoxExtended();
-            comboBoxExtended_Status = new StockRoom11net.Controls.ComboBoxExtended.ComboBoxExtended();
-            comboBoxExtended1 = new StockRoom11net.Controls.ComboBoxExtended.ComboBoxExtended();
-            comboBoxExtended_PartNumber = new StockRoom11net.Controls.ComboBoxExtended.ComboBoxExtended();
             tabPage_Test = new TabPage();
             tabPage_UpDateModifCompValue = new TabPage();
             panel_ContainerUpDateModifValue = new Panel();
-            wrapperPanelManufacturerProperties = new CustomPanelDoubleBuffered();
-            grouper_ManufacturerProperties = new CodeVendor.Controls.Grouper();
-            panel_LabelsManufacturerProperties = new Panel();
-            panel1 = new Panel();
-            panel9 = new Panel();
-            label_Supplier = new Label();
-            comboBox_Model_Number = new ComboBox();
-            panel8 = new Panel();
-            label_Manufacturer = new Label();
-            comboBox_Supplier = new ComboBox();
-            panel7 = new Panel();
-            label_Model_Number = new Label();
-            comboBox_Manufacturer = new ComboBox();
+            grouper_PrintingLabels = new CodeVendor.Controls.Grouper();
             wrapperpanel_ComponentControl = new Panel();
-            customPanelDoubleBuffered1 = new CustomPanelDoubleBuffered();
-            printingReferences = new PrintingReferences();
+            grouper_PrintingReferences = new CodeVendor.Controls.Grouper();
+            panel_EnablePrints = new Panel();
+            panel_Reels = new Panel();
+            checkBox_printLabels = new CheckBox();
+            panel_Description = new Panel();
+            label_DescriptionToPrint = new Label();
+            textBox_DescriptionToPrint = new TextBox();
+            grouper_BarCodeRegion = new CodeVendor.Controls.Grouper();
+            label_LabelInformation = new Label();
+            grouper_LabelBarCode = new CodeVendor.Controls.Grouper();
+            label_Description = new Label();
+            label_HumanReadableInformation = new Label();
+            pictureBox_BarCode_Image = new PictureBox();
+            customPanelDoubleBuffered = new CustomPanelDoubleBuffered();
+            grouper_ManufacturerProperties = new CodeVendor.Controls.Grouper();
+            wrapperpanel_ManufacturerProperties = new Panel();
+            panel1 = new Panel();
+            textBox4 = new TextBox();
+            panel_Supplier = new Panel();
+            textBox_Supplier = new TextBox();
+            label_Supplier = new Label();
+            panel_Manufacturer = new Panel();
+            textBox_Manufacturer = new TextBox();
+            label_Manufacturer = new Label();
+            panel_ModelNumber = new Panel();
+            textBox_ModelNumber = new TextBox();
+            label_ModelNumber = new Label();
             grouper_ComponentProperties = new CodeVendor.Controls.Grouper();
-            panel3 = new Panel();
-            panel5 = new Panel();
-            comboBox2 = new ComboBox();
+            wrapperpanel_ComponentProperties = new Panel();
+            panel_NumberofReelsOrBoxes = new Panel();
             label_NumberofReelsOrBoxes = new Label();
-            panel4 = new Panel();
-            comboBox1 = new ComboBox();
-            label_Received_Quantity = new Label();
-            panel_LabelsComponentsProperties = new Panel();
-            label_PartNumber = new Label();
-            comboBox_PartNumber = new ComboBox();
-            panel2 = new Panel();
-            dateTimePicker = new DateTimePicker();
+            textBox_NumberofReelsOrBoxes = new TextBox();
+            panel_ReceivedDate = new Panel();
             label_Received_Date = new Label();
+            dateTimePicker_ReceivedDate = new DateTimePicker();
+            panel4_ReceivedQuantity = new Panel();
+            label_ReceivedQuantity = new Label();
+            textBox_ReceivedQuantity = new TextBox();
+            panel_PartNumber = new Panel();
+            label_PartNumber = new Label();
+            textBox_PartNumber = new TextBox();
             dataGridViewExtended = new DataGridViewExtended();
             ToolStripMenuItem_PrintCompLabel = new ToolStripMenuItem();
             ToolStripMenuItem_GroupByThisColumn = new ToolStripMenuItem();
@@ -142,30 +155,38 @@ namespace StockRoom11net
             splitContainerVertical.Panel2.SuspendLayout();
             splitContainerVertical.SuspendLayout();
             TabControl_Inventory.SuspendLayout();
-            tabPage_Pictures.SuspendLayout();
-            tabPage_Location.SuspendLayout();
-            tabPage_TimeLine.SuspendLayout();
-            tabPage_NoteEditor.SuspendLayout();
             tabPage_AddNewItem.SuspendLayout();
             grouper_NewItemButtons.SuspendLayout();
             flowLayoutPanel_Buttons.SuspendLayout();
             grouper_ItemProperties.SuspendLayout();
             flowLayoutPanel_ItemsProperties.SuspendLayout();
+            tabPage_Pictures.SuspendLayout();
+            tabPage_Location.SuspendLayout();
+            tabPage_TimeLine.SuspendLayout();
+            tabPage_NoteEditor.SuspendLayout();
             tabPage_UpDateModifCompValue.SuspendLayout();
             panel_ContainerUpDateModifValue.SuspendLayout();
-            wrapperPanelManufacturerProperties.SuspendLayout();
-            grouper_ManufacturerProperties.SuspendLayout();
-            panel_LabelsManufacturerProperties.SuspendLayout();
-            panel9.SuspendLayout();
-            panel8.SuspendLayout();
-            panel7.SuspendLayout();
+            grouper_PrintingLabels.SuspendLayout();
             wrapperpanel_ComponentControl.SuspendLayout();
+            grouper_PrintingReferences.SuspendLayout();
+            panel_EnablePrints.SuspendLayout();
+            panel_Reels.SuspendLayout();
+            panel_Description.SuspendLayout();
+            grouper_BarCodeRegion.SuspendLayout();
+            grouper_LabelBarCode.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)pictureBox_BarCode_Image).BeginInit();
+            grouper_ManufacturerProperties.SuspendLayout();
+            wrapperpanel_ManufacturerProperties.SuspendLayout();
+            panel1.SuspendLayout();
+            panel_Supplier.SuspendLayout();
+            panel_Manufacturer.SuspendLayout();
+            panel_ModelNumber.SuspendLayout();
             grouper_ComponentProperties.SuspendLayout();
-            panel3.SuspendLayout();
-            panel5.SuspendLayout();
-            panel4.SuspendLayout();
-            panel_LabelsComponentsProperties.SuspendLayout();
-            panel2.SuspendLayout();
+            wrapperpanel_ComponentProperties.SuspendLayout();
+            panel_NumberofReelsOrBoxes.SuspendLayout();
+            panel_ReceivedDate.SuspendLayout();
+            panel4_ReceivedQuantity.SuspendLayout();
+            panel_PartNumber.SuspendLayout();
             SuspendLayout();
             // 
             // _contextMenuStripTreeView
@@ -400,12 +421,12 @@ namespace StockRoom11net
             // 
             // TabControl_Inventory
             // 
+            TabControl_Inventory.Controls.Add(tabPage_AddNewItem);
             TabControl_Inventory.Controls.Add(tabPage_Pictures);
             TabControl_Inventory.Controls.Add(tabPage_Location);
             TabControl_Inventory.Controls.Add(tabPage_TimeLine);
             TabControl_Inventory.Controls.Add(tabPage_NoteEditor);
             TabControl_Inventory.Controls.Add(tabPage_TreeViewSetting);
-            TabControl_Inventory.Controls.Add(tabPage_AddNewItem);
             TabControl_Inventory.Controls.Add(tabPage_Test);
             TabControl_Inventory.Controls.Add(tabPage_UpDateModifCompValue);
             TabControl_Inventory.DisplayStyle = TabStyle.VisualStudio;
@@ -427,6 +448,195 @@ namespace StockRoom11net
             TabControl_Inventory.Size = new Size(1156, 510);
             TabControl_Inventory.TabIndex = 0;
             // 
+            // tabPage_AddNewItem
+            // 
+            tabPage_AddNewItem.Controls.Add(grouper_NewItemButtons);
+            tabPage_AddNewItem.Controls.Add(grouper_ItemProperties);
+            tabPage_AddNewItem.Location = new Point(4, 4);
+            tabPage_AddNewItem.Margin = new Padding(1);
+            tabPage_AddNewItem.Name = "tabPage_AddNewItem";
+            tabPage_AddNewItem.Padding = new Padding(1);
+            tabPage_AddNewItem.Size = new Size(1148, 478);
+            tabPage_AddNewItem.TabIndex = 5;
+            tabPage_AddNewItem.Text = "Add New Item";
+            tabPage_AddNewItem.UseVisualStyleBackColor = true;
+            // 
+            // grouper_NewItemButtons
+            // 
+            grouper_NewItemButtons.AutoSize = true;
+            grouper_NewItemButtons.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            grouper_NewItemButtons.BackgroundColor = Color.LightGray;
+            grouper_NewItemButtons.BackgroundGradientColor = Color.DarkGray;
+            grouper_NewItemButtons.BackgroundGradientMode = CodeVendor.Controls.Grouper.GroupBoxGradientMode.Vertical;
+            grouper_NewItemButtons.BackgroundImageLayout = ImageLayout.None;
+            grouper_NewItemButtons.BorderColor = Color.Black;
+            grouper_NewItemButtons.BorderThickness = 1F;
+            grouper_NewItemButtons.Controls.Add(flowLayoutPanel_Buttons);
+            grouper_NewItemButtons.CustomGroupBoxColor = Color.White;
+            grouper_NewItemButtons.Dock = DockStyle.Bottom;
+            grouper_NewItemButtons.GroupTitle = "";
+            grouper_NewItemButtons.Location = new Point(1, 352);
+            grouper_NewItemButtons.Margin = new Padding(0);
+            grouper_NewItemButtons.MinimumSize = new Size(3, 125);
+            grouper_NewItemButtons.Name = "grouper_NewItemButtons";
+            grouper_NewItemButtons.Padding = new Padding(25);
+            grouper_NewItemButtons.PaintGroupBox = false;
+            grouper_NewItemButtons.RoundCorners = 10;
+            grouper_NewItemButtons.ShadowColor = Color.DarkGray;
+            grouper_NewItemButtons.ShadowControl = false;
+            grouper_NewItemButtons.ShadowThickness = 3;
+            grouper_NewItemButtons.Size = new Size(1146, 125);
+            grouper_NewItemButtons.TabIndex = 21;
+            // 
+            // flowLayoutPanel_Buttons
+            // 
+            flowLayoutPanel_Buttons.AutoSize = true;
+            flowLayoutPanel_Buttons.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            flowLayoutPanel_Buttons.BackgroundImageLayout = ImageLayout.None;
+            flowLayoutPanel_Buttons.Controls.Add(button_AddNew);
+            flowLayoutPanel_Buttons.Controls.Add(button_Save);
+            flowLayoutPanel_Buttons.Controls.Add(button_Delete);
+            flowLayoutPanel_Buttons.Dock = DockStyle.Top;
+            flowLayoutPanel_Buttons.Location = new Point(25, 25);
+            flowLayoutPanel_Buttons.Margin = new Padding(0);
+            flowLayoutPanel_Buttons.MinimumSize = new Size(0, 7);
+            flowLayoutPanel_Buttons.Name = "flowLayoutPanel_Buttons";
+            flowLayoutPanel_Buttons.Size = new Size(1096, 28);
+            flowLayoutPanel_Buttons.TabIndex = 13;
+            // 
+            // button_AddNew
+            // 
+            button_AddNew.AutoSize = true;
+            button_AddNew.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            button_AddNew.Font = new Font("Arial", 10F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            button_AddNew.Location = new Point(1, 1);
+            button_AddNew.Margin = new Padding(1);
+            button_AddNew.MinimumSize = new Size(70, 26);
+            button_AddNew.Name = "button_AddNew";
+            button_AddNew.Size = new Size(78, 26);
+            button_AddNew.TabIndex = 5;
+            button_AddNew.Text = "Add New";
+            button_AddNew.UseVisualStyleBackColor = true;
+            // 
+            // button_Save
+            // 
+            button_Save.AutoSize = true;
+            button_Save.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            button_Save.Font = new Font("Arial", 10F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            button_Save.Location = new Point(81, 1);
+            button_Save.Margin = new Padding(1);
+            button_Save.MinimumSize = new Size(70, 26);
+            button_Save.Name = "button_Save";
+            button_Save.Size = new Size(70, 26);
+            button_Save.TabIndex = 2;
+            button_Save.Text = "Save";
+            button_Save.UseVisualStyleBackColor = true;
+            // 
+            // button_Delete
+            // 
+            button_Delete.AutoSize = true;
+            button_Delete.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            button_Delete.Font = new Font("Arial", 10F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            button_Delete.Location = new Point(153, 1);
+            button_Delete.Margin = new Padding(1);
+            button_Delete.MinimumSize = new Size(70, 26);
+            button_Delete.Name = "button_Delete";
+            button_Delete.Size = new Size(70, 26);
+            button_Delete.TabIndex = 3;
+            button_Delete.Text = "Delete";
+            button_Delete.UseVisualStyleBackColor = true;
+            // 
+            // grouper_ItemProperties
+            // 
+            grouper_ItemProperties.AutoSize = true;
+            grouper_ItemProperties.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            grouper_ItemProperties.BackgroundColor = Color.LightGray;
+            grouper_ItemProperties.BackgroundGradientColor = Color.DarkGray;
+            grouper_ItemProperties.BackgroundGradientMode = CodeVendor.Controls.Grouper.GroupBoxGradientMode.Vertical;
+            grouper_ItemProperties.BackgroundImageLayout = ImageLayout.None;
+            grouper_ItemProperties.BorderColor = Color.Black;
+            grouper_ItemProperties.BorderThickness = 1F;
+            grouper_ItemProperties.Controls.Add(flowLayoutPanel_ItemsProperties);
+            grouper_ItemProperties.CustomGroupBoxColor = Color.White;
+            grouper_ItemProperties.Dock = DockStyle.Top;
+            grouper_ItemProperties.GroupTitle = "";
+            grouper_ItemProperties.Location = new Point(1, 1);
+            grouper_ItemProperties.Margin = new Padding(0);
+            grouper_ItemProperties.MinimumSize = new Size(1, 125);
+            grouper_ItemProperties.Name = "grouper_ItemProperties";
+            grouper_ItemProperties.Padding = new Padding(5, 25, 5, 5);
+            grouper_ItemProperties.PaintGroupBox = false;
+            grouper_ItemProperties.RoundCorners = 10;
+            grouper_ItemProperties.ShadowColor = Color.DarkGray;
+            grouper_ItemProperties.ShadowControl = false;
+            grouper_ItemProperties.ShadowThickness = 3;
+            grouper_ItemProperties.Size = new Size(1146, 130);
+            grouper_ItemProperties.TabIndex = 20;
+            // 
+            // flowLayoutPanel_ItemsProperties
+            // 
+            flowLayoutPanel_ItemsProperties.AutoSize = true;
+            flowLayoutPanel_ItemsProperties.Controls.Add(comboBoxExtended_Status);
+            flowLayoutPanel_ItemsProperties.Controls.Add(comboBoxExtended1);
+            flowLayoutPanel_ItemsProperties.Controls.Add(comboBoxExtended_Description);
+            flowLayoutPanel_ItemsProperties.Controls.Add(comboBoxExtended_PartNumber);
+            flowLayoutPanel_ItemsProperties.Dock = DockStyle.Top;
+            flowLayoutPanel_ItemsProperties.Location = new Point(5, 25);
+            flowLayoutPanel_ItemsProperties.Margin = new Padding(0);
+            flowLayoutPanel_ItemsProperties.MinimumSize = new Size(0, 100);
+            flowLayoutPanel_ItemsProperties.Name = "flowLayoutPanel_ItemsProperties";
+            flowLayoutPanel_ItemsProperties.Padding = new Padding(1, 0, 0, 0);
+            flowLayoutPanel_ItemsProperties.Size = new Size(1136, 100);
+            flowLayoutPanel_ItemsProperties.TabIndex = 13;
+            // 
+            // comboBoxExtended_Status
+            // 
+            comboBoxExtended_Status.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            comboBoxExtended_Status.Dock = DockStyle.Top;
+            comboBoxExtended_Status.Location = new Point(4, 2);
+            comboBoxExtended_Status.Margin = new Padding(3, 2, 3, 2);
+            comboBoxExtended_Status.MinimumSize = new Size(62, 41);
+            comboBoxExtended_Status.Name = "comboBoxExtended_Status";
+            comboBoxExtended_Status.Size = new Size(200, 60);
+            comboBoxExtended_Status.TabIndex = 6;
+            comboBoxExtended_Status.Tag = "20";
+            // 
+            // comboBoxExtended1
+            // 
+            comboBoxExtended1.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            comboBoxExtended1.Dock = DockStyle.Top;
+            comboBoxExtended1.Location = new Point(210, 2);
+            comboBoxExtended1.Margin = new Padding(3, 2, 3, 2);
+            comboBoxExtended1.MinimumSize = new Size(62, 41);
+            comboBoxExtended1.Name = "comboBoxExtended1";
+            comboBoxExtended1.Size = new Size(200, 60);
+            comboBoxExtended1.TabIndex = 9;
+            comboBoxExtended1.Tag = "15";
+            // 
+            // comboBoxExtended_Description
+            // 
+            comboBoxExtended_Description.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            comboBoxExtended_Description.Dock = DockStyle.Top;
+            comboBoxExtended_Description.Location = new Point(416, 2);
+            comboBoxExtended_Description.Margin = new Padding(3, 2, 3, 2);
+            comboBoxExtended_Description.MinimumSize = new Size(62, 41);
+            comboBoxExtended_Description.Name = "comboBoxExtended_Description";
+            comboBoxExtended_Description.Size = new Size(200, 60);
+            comboBoxExtended_Description.TabIndex = 8;
+            comboBoxExtended_Description.Tag = "40";
+            // 
+            // comboBoxExtended_PartNumber
+            // 
+            comboBoxExtended_PartNumber.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            comboBoxExtended_PartNumber.Dock = DockStyle.Top;
+            comboBoxExtended_PartNumber.Location = new Point(622, 2);
+            comboBoxExtended_PartNumber.Margin = new Padding(3, 2, 3, 2);
+            comboBoxExtended_PartNumber.MinimumSize = new Size(70, 50);
+            comboBoxExtended_PartNumber.Name = "comboBoxExtended_PartNumber";
+            comboBoxExtended_PartNumber.Size = new Size(200, 60);
+            comboBoxExtended_PartNumber.TabIndex = 7;
+            comboBoxExtended_PartNumber.Tag = "25";
+            // 
             // tabPage_Pictures
             // 
             tabPage_Pictures.Controls.Add(thumbViewer_Pictures);
@@ -435,7 +645,7 @@ namespace StockRoom11net
             tabPage_Pictures.Margin = new Padding(1);
             tabPage_Pictures.Name = "tabPage_Pictures";
             tabPage_Pictures.Padding = new Padding(1);
-            tabPage_Pictures.Size = new Size(1148, 478);
+            tabPage_Pictures.Size = new Size(1148, 482);
             tabPage_Pictures.TabIndex = 0;
             tabPage_Pictures.Text = " Pictures";
             tabPage_Pictures.UseVisualStyleBackColor = true;
@@ -448,7 +658,7 @@ namespace StockRoom11net
             thumbViewer_Pictures.Margin = new Padding(1);
             thumbViewer_Pictures.Name = "thumbViewer_Pictures";
             thumbViewer_Pictures.PathFromPartNumber = null;
-            thumbViewer_Pictures.Size = new Size(1146, 476);
+            thumbViewer_Pictures.Size = new Size(1146, 480);
             thumbViewer_Pictures.SplitterDistance = 88;
             thumbViewer_Pictures.TabIndex = 0;
             thumbViewer_Pictures.ThumbNailHeight = 70;
@@ -461,7 +671,7 @@ namespace StockRoom11net
             tabPage_Location.Margin = new Padding(1);
             tabPage_Location.Name = "tabPage_Location";
             tabPage_Location.Padding = new Padding(1);
-            tabPage_Location.Size = new Size(1018, 372);
+            tabPage_Location.Size = new Size(1148, 482);
             tabPage_Location.TabIndex = 2;
             tabPage_Location.Text = " Location";
             tabPage_Location.UseVisualStyleBackColor = true;
@@ -474,7 +684,7 @@ namespace StockRoom11net
             thumbViewer_Location.Margin = new Padding(1);
             thumbViewer_Location.Name = "thumbViewer_Location";
             thumbViewer_Location.PathFromPartNumber = null;
-            thumbViewer_Location.Size = new Size(1016, 370);
+            thumbViewer_Location.Size = new Size(1146, 480);
             thumbViewer_Location.SplitterDistance = 88;
             thumbViewer_Location.TabIndex = 1;
             thumbViewer_Location.ThumbNailHeight = 70;
@@ -487,7 +697,7 @@ namespace StockRoom11net
             tabPage_TimeLine.Margin = new Padding(1);
             tabPage_TimeLine.Name = "tabPage_TimeLine";
             tabPage_TimeLine.Padding = new Padding(1);
-            tabPage_TimeLine.Size = new Size(1018, 372);
+            tabPage_TimeLine.Size = new Size(1148, 482);
             tabPage_TimeLine.TabIndex = 1;
             tabPage_TimeLine.Text = "TimeLine";
             tabPage_TimeLine.UseVisualStyleBackColor = true;
@@ -498,7 +708,7 @@ namespace StockRoom11net
             blazorWebView_TimeLine.Location = new Point(1, 1);
             blazorWebView_TimeLine.Margin = new Padding(1);
             blazorWebView_TimeLine.Name = "blazorWebView_TimeLine";
-            blazorWebView_TimeLine.Size = new Size(1016, 370);
+            blazorWebView_TimeLine.Size = new Size(1146, 480);
             blazorWebView_TimeLine.TabIndex = 21;
             // 
             // tabPage_NoteEditor
@@ -507,7 +717,7 @@ namespace StockRoom11net
             tabPage_NoteEditor.Location = new Point(4, 4);
             tabPage_NoteEditor.Margin = new Padding(1);
             tabPage_NoteEditor.Name = "tabPage_NoteEditor";
-            tabPage_NoteEditor.Size = new Size(1018, 372);
+            tabPage_NoteEditor.Size = new Size(1148, 482);
             tabPage_NoteEditor.TabIndex = 3;
             tabPage_NoteEditor.Text = "Note Editor";
             // 
@@ -517,7 +727,7 @@ namespace StockRoom11net
             blazorWebView1.Location = new Point(0, 0);
             blazorWebView1.Margin = new Padding(1);
             blazorWebView1.Name = "blazorWebView1";
-            blazorWebView1.Size = new Size(1018, 372);
+            blazorWebView1.Size = new Size(1148, 482);
             blazorWebView1.TabIndex = 20;
             // 
             // tabPage_TreeViewSetting
@@ -526,194 +736,17 @@ namespace StockRoom11net
             tabPage_TreeViewSetting.Margin = new Padding(1);
             tabPage_TreeViewSetting.Name = "tabPage_TreeViewSetting";
             tabPage_TreeViewSetting.Padding = new Padding(0, 2, 0, 0);
-            tabPage_TreeViewSetting.Size = new Size(1018, 372);
+            tabPage_TreeViewSetting.Size = new Size(1148, 482);
             tabPage_TreeViewSetting.TabIndex = 4;
             tabPage_TreeViewSetting.Text = "TreeViewSetting";
             tabPage_TreeViewSetting.UseVisualStyleBackColor = true;
-            // 
-            // tabPage_AddNewItem
-            // 
-            tabPage_AddNewItem.Controls.Add(grouper_NewItemButtons);
-            tabPage_AddNewItem.Controls.Add(grouper_ItemProperties);
-            tabPage_AddNewItem.Location = new Point(4, 4);
-            tabPage_AddNewItem.Margin = new Padding(1);
-            tabPage_AddNewItem.Name = "tabPage_AddNewItem";
-            tabPage_AddNewItem.Padding = new Padding(1);
-            tabPage_AddNewItem.Size = new Size(1018, 372);
-            tabPage_AddNewItem.TabIndex = 5;
-            tabPage_AddNewItem.Text = "Add New Item";
-            tabPage_AddNewItem.UseVisualStyleBackColor = true;
-            // 
-            // grouper_NewItemButtons
-            // 
-            grouper_NewItemButtons.BackgroundColor = Color.LightGray;
-            grouper_NewItemButtons.BackgroundGradientColor = Color.DarkGray;
-            grouper_NewItemButtons.BackgroundGradientMode = CodeVendor.Controls.Grouper.GroupBoxGradientMode.Vertical;
-            grouper_NewItemButtons.BackgroundImageLayout = ImageLayout.None;
-            grouper_NewItemButtons.BorderColor = Color.Black;
-            grouper_NewItemButtons.BorderThickness = 1F;
-            grouper_NewItemButtons.Controls.Add(flowLayoutPanel_Buttons);
-            grouper_NewItemButtons.CustomGroupBoxColor = Color.White;
-            grouper_NewItemButtons.Dock = DockStyle.Bottom;
-            grouper_NewItemButtons.GroupImage = null;
-            grouper_NewItemButtons.GroupTitle = "";
-            grouper_NewItemButtons.Location = new Point(1, 370);
-            grouper_NewItemButtons.Margin = new Padding(0);
-            grouper_NewItemButtons.MinimumSize = new Size(4, 1);
-            grouper_NewItemButtons.Name = "grouper_NewItemButtons";
-            grouper_NewItemButtons.Padding = new Padding(1);
-            grouper_NewItemButtons.PaintGroupBox = false;
-            grouper_NewItemButtons.RoundCorners = 10;
-            grouper_NewItemButtons.ShadowColor = Color.DarkGray;
-            grouper_NewItemButtons.ShadowControl = false;
-            grouper_NewItemButtons.ShadowThickness = 3;
-            grouper_NewItemButtons.Size = new Size(1016, 1);
-            grouper_NewItemButtons.TabIndex = 21;
-            // 
-            // flowLayoutPanel_Buttons
-            // 
-            flowLayoutPanel_Buttons.AutoSize = true;
-            flowLayoutPanel_Buttons.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            flowLayoutPanel_Buttons.BackgroundImageLayout = ImageLayout.None;
-            flowLayoutPanel_Buttons.Controls.Add(button_AddNew);
-            flowLayoutPanel_Buttons.Controls.Add(button_Save);
-            flowLayoutPanel_Buttons.Controls.Add(button_Delete);
-            flowLayoutPanel_Buttons.Dock = DockStyle.Fill;
-            flowLayoutPanel_Buttons.Location = new Point(1, 1);
-            flowLayoutPanel_Buttons.Margin = new Padding(0);
-            flowLayoutPanel_Buttons.MinimumSize = new Size(0, 1);
-            flowLayoutPanel_Buttons.Name = "flowLayoutPanel_Buttons";
-            flowLayoutPanel_Buttons.Padding = new Padding(1);
-            flowLayoutPanel_Buttons.Size = new Size(1014, 1);
-            flowLayoutPanel_Buttons.TabIndex = 13;
-            // 
-            // button_AddNew
-            // 
-            button_AddNew.Font = new Font("Arial", 10F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            button_AddNew.Location = new Point(2, 2);
-            button_AddNew.Margin = new Padding(1);
-            button_AddNew.MinimumSize = new Size(2, 1);
-            button_AddNew.Name = "button_AddNew";
-            button_AddNew.Size = new Size(2, 1);
-            button_AddNew.TabIndex = 5;
-            button_AddNew.Text = "Add New";
-            button_AddNew.UseVisualStyleBackColor = true;
-            // 
-            // button_Save
-            // 
-            button_Save.Font = new Font("Arial", 10F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            button_Save.Location = new Point(6, 2);
-            button_Save.Margin = new Padding(1);
-            button_Save.MinimumSize = new Size(2, 1);
-            button_Save.Name = "button_Save";
-            button_Save.Size = new Size(2, 1);
-            button_Save.TabIndex = 2;
-            button_Save.Text = "Save";
-            button_Save.UseVisualStyleBackColor = true;
-            // 
-            // button_Delete
-            // 
-            button_Delete.Font = new Font("Arial", 10F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            button_Delete.Location = new Point(10, 2);
-            button_Delete.Margin = new Padding(1);
-            button_Delete.MinimumSize = new Size(2, 1);
-            button_Delete.Name = "button_Delete";
-            button_Delete.Size = new Size(2, 1);
-            button_Delete.TabIndex = 3;
-            button_Delete.Text = "Delete";
-            button_Delete.UseVisualStyleBackColor = true;
-            // 
-            // grouper_ItemProperties
-            // 
-            grouper_ItemProperties.BackgroundColor = Color.LightGray;
-            grouper_ItemProperties.BackgroundGradientColor = Color.DarkGray;
-            grouper_ItemProperties.BackgroundGradientMode = CodeVendor.Controls.Grouper.GroupBoxGradientMode.Vertical;
-            grouper_ItemProperties.BackgroundImageLayout = ImageLayout.None;
-            grouper_ItemProperties.BorderColor = Color.Black;
-            grouper_ItemProperties.BorderThickness = 1F;
-            grouper_ItemProperties.Controls.Add(flowLayoutPanel_ItemsProperties);
-            grouper_ItemProperties.CustomGroupBoxColor = Color.White;
-            grouper_ItemProperties.Dock = DockStyle.Top;
-            grouper_ItemProperties.GroupImage = null;
-            grouper_ItemProperties.GroupTitle = "";
-            grouper_ItemProperties.Location = new Point(1, 1);
-            grouper_ItemProperties.Margin = new Padding(0);
-            grouper_ItemProperties.MinimumSize = new Size(1, 1);
-            grouper_ItemProperties.Name = "grouper_ItemProperties";
-            grouper_ItemProperties.Padding = new Padding(1);
-            grouper_ItemProperties.PaintGroupBox = false;
-            grouper_ItemProperties.RoundCorners = 10;
-            grouper_ItemProperties.ShadowColor = Color.DarkGray;
-            grouper_ItemProperties.ShadowControl = false;
-            grouper_ItemProperties.ShadowThickness = 3;
-            grouper_ItemProperties.Size = new Size(1016, 1);
-            grouper_ItemProperties.TabIndex = 20;
-            // 
-            // flowLayoutPanel_ItemsProperties
-            // 
-            flowLayoutPanel_ItemsProperties.Controls.Add(comboBoxExtended_Description);
-            flowLayoutPanel_ItemsProperties.Controls.Add(comboBoxExtended_Status);
-            flowLayoutPanel_ItemsProperties.Controls.Add(comboBoxExtended1);
-            flowLayoutPanel_ItemsProperties.Controls.Add(comboBoxExtended_PartNumber);
-            flowLayoutPanel_ItemsProperties.Dock = DockStyle.Fill;
-            flowLayoutPanel_ItemsProperties.Location = new Point(1, 1);
-            flowLayoutPanel_ItemsProperties.Margin = new Padding(0);
-            flowLayoutPanel_ItemsProperties.MinimumSize = new Size(4, 1);
-            flowLayoutPanel_ItemsProperties.Name = "flowLayoutPanel_ItemsProperties";
-            flowLayoutPanel_ItemsProperties.Padding = new Padding(1, 0, 0, 0);
-            flowLayoutPanel_ItemsProperties.Size = new Size(1014, 1);
-            flowLayoutPanel_ItemsProperties.TabIndex = 13;
-            // 
-            // comboBoxExtended_Description
-            // 
-            comboBoxExtended_Description.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            comboBoxExtended_Description.Location = new Point(5, 2);
-            comboBoxExtended_Description.Margin = new Padding(4, 2, 4, 2);
-            comboBoxExtended_Description.MinimumSize = new Size(2, 1);
-            comboBoxExtended_Description.Name = "comboBoxExtended_Description";
-            comboBoxExtended_Description.Size = new Size(2, 1);
-            comboBoxExtended_Description.TabIndex = 8;
-            comboBoxExtended_Description.Tag = "40";
-            // 
-            // comboBoxExtended_Status
-            // 
-            comboBoxExtended_Status.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            comboBoxExtended_Status.Location = new Point(15, 2);
-            comboBoxExtended_Status.Margin = new Padding(4, 2, 4, 2);
-            comboBoxExtended_Status.MinimumSize = new Size(2, 1);
-            comboBoxExtended_Status.Name = "comboBoxExtended_Status";
-            comboBoxExtended_Status.Size = new Size(2, 1);
-            comboBoxExtended_Status.TabIndex = 6;
-            comboBoxExtended_Status.Tag = "20";
-            // 
-            // comboBoxExtended1
-            // 
-            comboBoxExtended1.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            comboBoxExtended1.Location = new Point(25, 2);
-            comboBoxExtended1.Margin = new Padding(4, 2, 4, 2);
-            comboBoxExtended1.MinimumSize = new Size(2, 1);
-            comboBoxExtended1.Name = "comboBoxExtended1";
-            comboBoxExtended1.Size = new Size(2, 1);
-            comboBoxExtended1.TabIndex = 9;
-            comboBoxExtended1.Tag = "15";
-            // 
-            // comboBoxExtended_PartNumber
-            // 
-            comboBoxExtended_PartNumber.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            comboBoxExtended_PartNumber.Location = new Point(35, 2);
-            comboBoxExtended_PartNumber.Margin = new Padding(4, 2, 4, 2);
-            comboBoxExtended_PartNumber.MinimumSize = new Size(2, 1);
-            comboBoxExtended_PartNumber.Name = "comboBoxExtended_PartNumber";
-            comboBoxExtended_PartNumber.Size = new Size(2, 1);
-            comboBoxExtended_PartNumber.TabIndex = 7;
-            comboBoxExtended_PartNumber.Tag = "25";
             // 
             // tabPage_Test
             // 
             tabPage_Test.Location = new Point(4, 4);
             tabPage_Test.Margin = new Padding(1);
             tabPage_Test.Name = "tabPage_Test";
-            tabPage_Test.Size = new Size(1018, 372);
+            tabPage_Test.Size = new Size(1148, 482);
             tabPage_Test.TabIndex = 6;
             tabPage_Test.Text = "tabPage_Test";
             tabPage_Test.UseVisualStyleBackColor = true;
@@ -726,6 +759,7 @@ namespace StockRoom11net
             tabPage_UpDateModifCompValue.Location = new Point(4, 4);
             tabPage_UpDateModifCompValue.Margin = new Padding(0);
             tabPage_UpDateModifCompValue.Name = "tabPage_UpDateModifCompValue";
+            tabPage_UpDateModifCompValue.Padding = new Padding(11, 5, 11, 5);
             tabPage_UpDateModifCompValue.Size = new Size(1148, 478);
             tabPage_UpDateModifCompValue.TabIndex = 7;
             tabPage_UpDateModifCompValue.Tag = "";
@@ -733,402 +767,606 @@ namespace StockRoom11net
             // 
             // panel_ContainerUpDateModifValue
             // 
-            panel_ContainerUpDateModifValue.Controls.Add(wrapperPanelManufacturerProperties);
-            panel_ContainerUpDateModifValue.Controls.Add(wrapperpanel_ComponentControl);
+            panel_ContainerUpDateModifValue.Controls.Add(grouper_PrintingLabels);
+            panel_ContainerUpDateModifValue.Controls.Add(grouper_ManufacturerProperties);
             panel_ContainerUpDateModifValue.Controls.Add(grouper_ComponentProperties);
             panel_ContainerUpDateModifValue.Dock = DockStyle.Fill;
-            panel_ContainerUpDateModifValue.Location = new Point(0, 0);
+            panel_ContainerUpDateModifValue.Location = new Point(11, 5);
             panel_ContainerUpDateModifValue.Margin = new Padding(0);
             panel_ContainerUpDateModifValue.Name = "panel_ContainerUpDateModifValue";
-            panel_ContainerUpDateModifValue.Padding = new Padding(2);
-            panel_ContainerUpDateModifValue.Size = new Size(1144, 474);
-            panel_ContainerUpDateModifValue.TabIndex = 25;
+            panel_ContainerUpDateModifValue.Padding = new Padding(4, 2, 4, 2);
+            panel_ContainerUpDateModifValue.Size = new Size(1122, 464);
+            panel_ContainerUpDateModifValue.TabIndex = 27;
             // 
-            // wrapperPanelManufacturerProperties
+            // grouper_PrintingLabels
             // 
-            wrapperPanelManufacturerProperties.Controls.Add(grouper_ManufacturerProperties);
-            wrapperPanelManufacturerProperties.Dock = DockStyle.Top;
-            wrapperPanelManufacturerProperties.Location = new Point(2, 290);
-            wrapperPanelManufacturerProperties.Margin = new Padding(3, 2, 3, 2);
-            wrapperPanelManufacturerProperties.Name = "wrapperPanelManufacturerProperties";
-            wrapperPanelManufacturerProperties.Padding = new Padding(0, 8, 0, 0);
-            wrapperPanelManufacturerProperties.Size = new Size(1140, 110);
-            wrapperPanelManufacturerProperties.TabIndex = 25;
+            grouper_PrintingLabels.BackgroundColor = SystemColors.ButtonHighlight;
+            grouper_PrintingLabels.BackgroundGradientColor = Color.LightGray;
+            grouper_PrintingLabels.BackgroundGradientMode = CodeVendor.Controls.Grouper.GroupBoxGradientMode.Vertical;
+            grouper_PrintingLabels.BackgroundImageLayout = ImageLayout.None;
+            grouper_PrintingLabels.BorderColor = Color.Black;
+            grouper_PrintingLabels.BorderThickness = 1F;
+            grouper_PrintingLabels.Controls.Add(wrapperpanel_ComponentControl);
+            grouper_PrintingLabels.CustomGroupBoxColor = Color.White;
+            grouper_PrintingLabels.Dock = DockStyle.Top;
+            grouper_PrintingLabels.GroupTitle = "";
+            grouper_PrintingLabels.Location = new Point(4, 92);
+            grouper_PrintingLabels.Margin = new Padding(0);
+            grouper_PrintingLabels.MinimumSize = new Size(0, 180);
+            grouper_PrintingLabels.Name = "grouper_PrintingLabels";
+            grouper_PrintingLabels.Padding = new Padding(5, 25, 5, 5);
+            grouper_PrintingLabels.PaintGroupBox = false;
+            grouper_PrintingLabels.RoundCorners = 10;
+            grouper_PrintingLabels.ShadowColor = Color.DarkGray;
+            grouper_PrintingLabels.ShadowControl = false;
+            grouper_PrintingLabels.ShadowThickness = 3;
+            grouper_PrintingLabels.Size = new Size(1114, 180);
+            grouper_PrintingLabels.TabIndex = 27;
+            // 
+            // wrapperpanel_ComponentControl
+            // 
+            wrapperpanel_ComponentControl.BackColor = Color.Transparent;
+            wrapperpanel_ComponentControl.Controls.Add(grouper_PrintingReferences);
+            wrapperpanel_ComponentControl.Controls.Add(customPanelDoubleBuffered);
+            wrapperpanel_ComponentControl.Dock = DockStyle.Fill;
+            wrapperpanel_ComponentControl.Location = new Point(5, 25);
+            wrapperpanel_ComponentControl.Margin = new Padding(0);
+            wrapperpanel_ComponentControl.Name = "wrapperpanel_ComponentControl";
+            wrapperpanel_ComponentControl.Size = new Size(1104, 150);
+            wrapperpanel_ComponentControl.TabIndex = 21;
+            // 
+            // grouper_PrintingReferences
+            // 
+            grouper_PrintingReferences.BackgroundColor = Color.WhiteSmoke;
+            grouper_PrintingReferences.BackgroundGradientColor = SystemColors.Control;
+            grouper_PrintingReferences.BackgroundGradientMode = CodeVendor.Controls.Grouper.GroupBoxGradientMode.Vertical;
+            grouper_PrintingReferences.BorderColor = Color.Black;
+            grouper_PrintingReferences.BorderThickness = 1F;
+            grouper_PrintingReferences.Controls.Add(panel_EnablePrints);
+            grouper_PrintingReferences.CustomGroupBoxColor = Color.White;
+            grouper_PrintingReferences.Dock = DockStyle.Right;
+            grouper_PrintingReferences.GroupTitle = "Printing References";
+            grouper_PrintingReferences.Location = new Point(537, 0);
+            grouper_PrintingReferences.Margin = new Padding(3, 2, 3, 2);
+            grouper_PrintingReferences.MinimumSize = new Size(0, 114);
+            grouper_PrintingReferences.Name = "grouper_PrintingReferences";
+            grouper_PrintingReferences.Padding = new Padding(1, 0, 0, 1);
+            grouper_PrintingReferences.PaintGroupBox = false;
+            grouper_PrintingReferences.RoundCorners = 10;
+            grouper_PrintingReferences.ShadowColor = Color.DarkGray;
+            grouper_PrintingReferences.ShadowControl = false;
+            grouper_PrintingReferences.ShadowThickness = 3;
+            grouper_PrintingReferences.Size = new Size(567, 150);
+            grouper_PrintingReferences.TabIndex = 25;
+            // 
+            // panel_EnablePrints
+            // 
+            panel_EnablePrints.Controls.Add(panel_Reels);
+            panel_EnablePrints.Controls.Add(grouper_BarCodeRegion);
+            panel_EnablePrints.Dock = DockStyle.Fill;
+            panel_EnablePrints.Location = new Point(1, 0);
+            panel_EnablePrints.Margin = new Padding(0);
+            panel_EnablePrints.Name = "panel_EnablePrints";
+            panel_EnablePrints.Size = new Size(566, 149);
+            panel_EnablePrints.TabIndex = 58;
+            // 
+            // panel_Reels
+            // 
+            panel_Reels.Controls.Add(checkBox_printLabels);
+            panel_Reels.Controls.Add(panel_Description);
+            panel_Reels.Dock = DockStyle.Fill;
+            panel_Reels.Location = new Point(0, 0);
+            panel_Reels.Margin = new Padding(0);
+            panel_Reels.Name = "panel_Reels";
+            panel_Reels.Padding = new Padding(4);
+            panel_Reels.Size = new Size(286, 149);
+            panel_Reels.TabIndex = 57;
+            // 
+            // checkBox_printLabels
+            // 
+            checkBox_printLabels.AutoSize = true;
+            checkBox_printLabels.Checked = true;
+            checkBox_printLabels.CheckState = CheckState.Checked;
+            checkBox_printLabels.Location = new Point(12, 36);
+            checkBox_printLabels.Margin = new Padding(4);
+            checkBox_printLabels.Name = "checkBox_printLabels";
+            checkBox_printLabels.Size = new Size(124, 24);
+            checkBox_printLabels.TabIndex = 51;
+            checkBox_printLabels.Text = "Print Labels ?";
+            checkBox_printLabels.UseVisualStyleBackColor = true;
+            // 
+            // panel_Description
+            // 
+            panel_Description.Controls.Add(label_DescriptionToPrint);
+            panel_Description.Controls.Add(textBox_DescriptionToPrint);
+            panel_Description.Dock = DockStyle.Bottom;
+            panel_Description.Location = new Point(4, 79);
+            panel_Description.Margin = new Padding(0);
+            panel_Description.Name = "panel_Description";
+            panel_Description.Padding = new Padding(9, 8, 9, 8);
+            panel_Description.Size = new Size(278, 66);
+            panel_Description.TabIndex = 55;
+            // 
+            // label_DescriptionToPrint
+            // 
+            label_DescriptionToPrint.AutoSize = true;
+            label_DescriptionToPrint.Dock = DockStyle.Top;
+            label_DescriptionToPrint.Font = new Font("Microsoft Sans Serif", 10F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            label_DescriptionToPrint.Location = new Point(9, 8);
+            label_DescriptionToPrint.Margin = new Padding(0);
+            label_DescriptionToPrint.Name = "label_DescriptionToPrint";
+            label_DescriptionToPrint.Size = new Size(139, 17);
+            label_DescriptionToPrint.TabIndex = 53;
+            label_DescriptionToPrint.Text = "Description to print...";
+            // 
+            // textBox_DescriptionToPrint
+            // 
+            textBox_DescriptionToPrint.Dock = DockStyle.Bottom;
+            textBox_DescriptionToPrint.Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            textBox_DescriptionToPrint.Location = new Point(9, 32);
+            textBox_DescriptionToPrint.Margin = new Padding(4);
+            textBox_DescriptionToPrint.Name = "textBox_DescriptionToPrint";
+            textBox_DescriptionToPrint.Size = new Size(260, 26);
+            textBox_DescriptionToPrint.TabIndex = 54;
+            // 
+            // grouper_BarCodeRegion
+            // 
+            grouper_BarCodeRegion.BackgroundColor = Color.WhiteSmoke;
+            grouper_BarCodeRegion.BackgroundGradientColor = Color.LightGray;
+            grouper_BarCodeRegion.BackgroundGradientMode = CodeVendor.Controls.Grouper.GroupBoxGradientMode.Vertical;
+            grouper_BarCodeRegion.BorderColor = Color.Black;
+            grouper_BarCodeRegion.BorderThickness = 1F;
+            grouper_BarCodeRegion.Controls.Add(label_LabelInformation);
+            grouper_BarCodeRegion.Controls.Add(grouper_LabelBarCode);
+            grouper_BarCodeRegion.CustomGroupBoxColor = Color.White;
+            grouper_BarCodeRegion.Dock = DockStyle.Right;
+            grouper_BarCodeRegion.GroupTitle = "";
+            grouper_BarCodeRegion.Location = new Point(286, 0);
+            grouper_BarCodeRegion.Margin = new Padding(0);
+            grouper_BarCodeRegion.MaximumSize = new Size(290, 0);
+            grouper_BarCodeRegion.MinimumSize = new Size(280, 0);
+            grouper_BarCodeRegion.Name = "grouper_BarCodeRegion";
+            grouper_BarCodeRegion.Padding = new Padding(7, 6, 7, 6);
+            grouper_BarCodeRegion.PaintGroupBox = false;
+            grouper_BarCodeRegion.RoundCorners = 10;
+            grouper_BarCodeRegion.ShadowColor = Color.DarkGray;
+            grouper_BarCodeRegion.ShadowControl = false;
+            grouper_BarCodeRegion.ShadowThickness = 3;
+            grouper_BarCodeRegion.Size = new Size(280, 149);
+            grouper_BarCodeRegion.TabIndex = 55;
+            // 
+            // label_LabelInformation
+            // 
+            label_LabelInformation.AutoSize = true;
+            label_LabelInformation.Font = new Font("Microsoft Sans Serif", 9F, FontStyle.Italic, GraphicsUnit.Point, 0);
+            label_LabelInformation.Location = new Point(52, 123);
+            label_LabelInformation.Margin = new Padding(4, 0, 4, 0);
+            label_LabelInformation.Name = "label_LabelInformation";
+            label_LabelInformation.Size = new Size(190, 15);
+            label_LabelInformation.TabIndex = 21;
+            label_LabelInformation.Text = "Label type: Brady, THT-37-483-10";
+            // 
+            // grouper_LabelBarCode
+            // 
+            grouper_LabelBarCode.BackgroundColor = Color.White;
+            grouper_LabelBarCode.BackgroundGradientColor = Color.White;
+            grouper_LabelBarCode.BackgroundGradientMode = CodeVendor.Controls.Grouper.GroupBoxGradientMode.None;
+            grouper_LabelBarCode.BorderColor = Color.Black;
+            grouper_LabelBarCode.BorderThickness = 1F;
+            grouper_LabelBarCode.Controls.Add(label_Description);
+            grouper_LabelBarCode.Controls.Add(label_HumanReadableInformation);
+            grouper_LabelBarCode.Controls.Add(pictureBox_BarCode_Image);
+            grouper_LabelBarCode.CustomGroupBoxColor = Color.White;
+            grouper_LabelBarCode.Dock = DockStyle.Top;
+            grouper_LabelBarCode.GroupTitle = "";
+            grouper_LabelBarCode.Location = new Point(7, 6);
+            grouper_LabelBarCode.Margin = new Padding(4);
+            grouper_LabelBarCode.Name = "grouper_LabelBarCode";
+            grouper_LabelBarCode.Padding = new Padding(27, 24, 27, 24);
+            grouper_LabelBarCode.PaintGroupBox = false;
+            grouper_LabelBarCode.RoundCorners = 10;
+            grouper_LabelBarCode.ShadowColor = Color.DarkGray;
+            grouper_LabelBarCode.ShadowControl = false;
+            grouper_LabelBarCode.ShadowThickness = 3;
+            grouper_LabelBarCode.Size = new Size(266, 104);
+            grouper_LabelBarCode.TabIndex = 19;
+            // 
+            // label_Description
+            // 
+            label_Description.Font = new Font("Microsoft Sans Serif", 11F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            label_Description.Location = new Point(4, 74);
+            label_Description.Margin = new Padding(0);
+            label_Description.Name = "label_Description";
+            label_Description.Size = new Size(270, 22);
+            label_Description.TabIndex = 21;
+            label_Description.Text = "Description field.";
+            label_Description.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // label_HumanReadableInformation
+            // 
+            label_HumanReadableInformation.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            label_HumanReadableInformation.Font = new Font("Microsoft Sans Serif", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            label_HumanReadableInformation.Location = new Point(46, 76);
+            label_HumanReadableInformation.Margin = new Padding(4, 0, 4, 0);
+            label_HumanReadableInformation.Name = "label_HumanReadableInformation";
+            label_HumanReadableInformation.Size = new Size(60, 18);
+            label_HumanReadableInformation.TabIndex = 20;
+            label_HumanReadableInformation.Text = "Human Readable Information.";
+            label_HumanReadableInformation.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // pictureBox_BarCode_Image
+            // 
+            pictureBox_BarCode_Image.BackColor = Color.White;
+            pictureBox_BarCode_Image.Location = new Point(4, 18);
+            pictureBox_BarCode_Image.Margin = new Padding(4);
+            pictureBox_BarCode_Image.Name = "pictureBox_BarCode_Image";
+            pictureBox_BarCode_Image.Size = new Size(259, 52);
+            pictureBox_BarCode_Image.SizeMode = PictureBoxSizeMode.CenterImage;
+            pictureBox_BarCode_Image.TabIndex = 14;
+            pictureBox_BarCode_Image.TabStop = false;
+            // 
+            // customPanelDoubleBuffered
+            // 
+            customPanelDoubleBuffered.Dock = DockStyle.Left;
+            customPanelDoubleBuffered.Location = new Point(0, 0);
+            customPanelDoubleBuffered.Margin = new Padding(3, 2, 3, 2);
+            customPanelDoubleBuffered.Name = "customPanelDoubleBuffered";
+            customPanelDoubleBuffered.Size = new Size(509, 150);
+            customPanelDoubleBuffered.TabIndex = 24;
             // 
             // grouper_ManufacturerProperties
             // 
+            grouper_ManufacturerProperties.AutoSize = true;
             grouper_ManufacturerProperties.AutoSizeMode = AutoSizeMode.GrowAndShrink;
             grouper_ManufacturerProperties.BackgroundColor = SystemColors.ButtonHighlight;
             grouper_ManufacturerProperties.BackgroundGradientColor = Color.LightGray;
             grouper_ManufacturerProperties.BackgroundGradientMode = CodeVendor.Controls.Grouper.GroupBoxGradientMode.Vertical;
             grouper_ManufacturerProperties.BorderColor = Color.Black;
             grouper_ManufacturerProperties.BorderThickness = 1F;
-            grouper_ManufacturerProperties.Controls.Add(panel_LabelsManufacturerProperties);
+            grouper_ManufacturerProperties.Controls.Add(wrapperpanel_ManufacturerProperties);
             grouper_ManufacturerProperties.CustomGroupBoxColor = Color.White;
-            grouper_ManufacturerProperties.Dock = DockStyle.Fill;
-            grouper_ManufacturerProperties.GroupImage = null;
+            grouper_ManufacturerProperties.Dock = DockStyle.Bottom;
             grouper_ManufacturerProperties.GroupTitle = "Manufacturer Properties";
-            grouper_ManufacturerProperties.Location = new Point(0, 8);
+            grouper_ManufacturerProperties.Location = new Point(4, 352);
             grouper_ManufacturerProperties.Margin = new Padding(0);
-            grouper_ManufacturerProperties.MinimumSize = new Size(0, 80);
+            grouper_ManufacturerProperties.MinimumSize = new Size(0, 110);
             grouper_ManufacturerProperties.Name = "grouper_ManufacturerProperties";
-            grouper_ManufacturerProperties.Padding = new Padding(10, 25, 10, 10);
+            grouper_ManufacturerProperties.Padding = new Padding(5, 25, 5, 5);
             grouper_ManufacturerProperties.PaintGroupBox = false;
             grouper_ManufacturerProperties.RoundCorners = 10;
             grouper_ManufacturerProperties.ShadowColor = Color.DarkGray;
             grouper_ManufacturerProperties.ShadowControl = false;
             grouper_ManufacturerProperties.ShadowThickness = 3;
-            grouper_ManufacturerProperties.Size = new Size(1140, 102);
-            grouper_ManufacturerProperties.TabIndex = 20;
+            grouper_ManufacturerProperties.Size = new Size(1114, 110);
+            grouper_ManufacturerProperties.TabIndex = 26;
             // 
-            // panel_LabelsManufacturerProperties
+            // wrapperpanel_ManufacturerProperties
             // 
-            panel_LabelsManufacturerProperties.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            panel_LabelsManufacturerProperties.Controls.Add(panel1);
-            panel_LabelsManufacturerProperties.Controls.Add(panel9);
-            panel_LabelsManufacturerProperties.Controls.Add(panel8);
-            panel_LabelsManufacturerProperties.Controls.Add(panel7);
-            panel_LabelsManufacturerProperties.Dock = DockStyle.Top;
-            panel_LabelsManufacturerProperties.Location = new Point(10, 25);
-            panel_LabelsManufacturerProperties.Margin = new Padding(0);
-            panel_LabelsManufacturerProperties.Name = "panel_LabelsManufacturerProperties";
-            panel_LabelsManufacturerProperties.Size = new Size(1120, 60);
-            panel_LabelsManufacturerProperties.TabIndex = 9;
+            wrapperpanel_ManufacturerProperties.AutoSize = true;
+            wrapperpanel_ManufacturerProperties.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            wrapperpanel_ManufacturerProperties.Controls.Add(panel1);
+            wrapperpanel_ManufacturerProperties.Controls.Add(panel_Supplier);
+            wrapperpanel_ManufacturerProperties.Controls.Add(panel_Manufacturer);
+            wrapperpanel_ManufacturerProperties.Controls.Add(panel_ModelNumber);
+            wrapperpanel_ManufacturerProperties.Dock = DockStyle.Fill;
+            wrapperpanel_ManufacturerProperties.Location = new Point(5, 25);
+            wrapperpanel_ManufacturerProperties.Margin = new Padding(0);
+            wrapperpanel_ManufacturerProperties.MinimumSize = new Size(0, 18);
+            wrapperpanel_ManufacturerProperties.Name = "wrapperpanel_ManufacturerProperties";
+            wrapperpanel_ManufacturerProperties.Size = new Size(1104, 80);
+            wrapperpanel_ManufacturerProperties.TabIndex = 9;
             // 
             // panel1
             // 
+            panel1.AutoSize = true;
+            panel1.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            panel1.Controls.Add(textBox4);
             panel1.Dock = DockStyle.Fill;
-            panel1.Location = new Point(713, 0);
+            panel1.Location = new Point(837, 0);
             panel1.Margin = new Padding(0);
             panel1.Name = "panel1";
-            panel1.Padding = new Padding(2);
-            panel1.Size = new Size(407, 60);
+            panel1.Padding = new Padding(5, 8, 5, 8);
+            panel1.Size = new Size(267, 80);
             panel1.TabIndex = 22;
             // 
-            // panel9
+            // textBox4
             // 
-            panel9.Controls.Add(label_Supplier);
-            panel9.Controls.Add(comboBox_Model_Number);
-            panel9.Dock = DockStyle.Left;
-            panel9.Location = new Point(434, 0);
-            panel9.Margin = new Padding(0);
-            panel9.Name = "panel9";
-            panel9.Padding = new Padding(2);
-            panel9.Size = new Size(279, 60);
-            panel9.TabIndex = 23;
+            textBox4.Dock = DockStyle.Bottom;
+            textBox4.Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Bold);
+            textBox4.Location = new Point(5, 46);
+            textBox4.Margin = new Padding(4, 5, 4, 5);
+            textBox4.Name = "textBox4";
+            textBox4.Size = new Size(257, 26);
+            textBox4.TabIndex = 14;
+            // 
+            // panel_Supplier
+            // 
+            panel_Supplier.AutoSize = true;
+            panel_Supplier.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            panel_Supplier.Controls.Add(textBox_Supplier);
+            panel_Supplier.Controls.Add(label_Supplier);
+            panel_Supplier.Dock = DockStyle.Left;
+            panel_Supplier.Location = new Point(537, 0);
+            panel_Supplier.Margin = new Padding(0);
+            panel_Supplier.MinimumSize = new Size(300, 38);
+            panel_Supplier.Name = "panel_Supplier";
+            panel_Supplier.Padding = new Padding(5, 8, 5, 8);
+            panel_Supplier.Size = new Size(300, 80);
+            panel_Supplier.TabIndex = 23;
+            // 
+            // textBox_Supplier
+            // 
+            textBox_Supplier.Dock = DockStyle.Bottom;
+            textBox_Supplier.Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Bold);
+            textBox_Supplier.Location = new Point(5, 46);
+            textBox_Supplier.Margin = new Padding(4, 5, 4, 5);
+            textBox_Supplier.Name = "textBox_Supplier";
+            textBox_Supplier.Size = new Size(290, 26);
+            textBox_Supplier.TabIndex = 14;
             // 
             // label_Supplier
             // 
             label_Supplier.AutoSize = true;
             label_Supplier.Dock = DockStyle.Top;
-            label_Supplier.Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Bold);
-            label_Supplier.Location = new Point(2, 2);
-            label_Supplier.Margin = new Padding(9, 8, 9, 8);
+            label_Supplier.Font = new Font("Microsoft Sans Serif", 12F);
+            label_Supplier.Location = new Point(5, 8);
+            label_Supplier.Margin = new Padding(4, 2, 4, 2);
             label_Supplier.Name = "label_Supplier";
-            label_Supplier.Size = new Size(75, 20);
+            label_Supplier.Size = new Size(67, 20);
             label_Supplier.TabIndex = 6;
             label_Supplier.Text = "Supplier";
             // 
-            // comboBox_Model_Number
+            // panel_Manufacturer
             // 
-            comboBox_Model_Number.Dock = DockStyle.Bottom;
-            comboBox_Model_Number.Font = new Font("Microsoft Sans Serif", 11F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            comboBox_Model_Number.FormattingEnabled = true;
-            comboBox_Model_Number.Location = new Point(2, 32);
-            comboBox_Model_Number.Margin = new Padding(9, 8, 9, 8);
-            comboBox_Model_Number.Name = "comboBox_Model_Number";
-            comboBox_Model_Number.Size = new Size(275, 26);
-            comboBox_Model_Number.TabIndex = 5;
+            panel_Manufacturer.AutoSize = true;
+            panel_Manufacturer.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            panel_Manufacturer.Controls.Add(textBox_Manufacturer);
+            panel_Manufacturer.Controls.Add(label_Manufacturer);
+            panel_Manufacturer.Dock = DockStyle.Left;
+            panel_Manufacturer.Location = new Point(237, 0);
+            panel_Manufacturer.Margin = new Padding(0);
+            panel_Manufacturer.MinimumSize = new Size(300, 38);
+            panel_Manufacturer.Name = "panel_Manufacturer";
+            panel_Manufacturer.Padding = new Padding(5, 8, 5, 8);
+            panel_Manufacturer.Size = new Size(300, 80);
+            panel_Manufacturer.TabIndex = 24;
             // 
-            // panel8
+            // textBox_Manufacturer
             // 
-            panel8.Controls.Add(label_Manufacturer);
-            panel8.Controls.Add(comboBox_Supplier);
-            panel8.Dock = DockStyle.Left;
-            panel8.Location = new Point(200, 0);
-            panel8.Margin = new Padding(0);
-            panel8.MinimumSize = new Size(200, 60);
-            panel8.Name = "panel8";
-            panel8.Padding = new Padding(2);
-            panel8.Size = new Size(234, 60);
-            panel8.TabIndex = 24;
+            textBox_Manufacturer.Dock = DockStyle.Bottom;
+            textBox_Manufacturer.Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Bold);
+            textBox_Manufacturer.Location = new Point(5, 46);
+            textBox_Manufacturer.Margin = new Padding(4, 5, 4, 5);
+            textBox_Manufacturer.Name = "textBox_Manufacturer";
+            textBox_Manufacturer.Size = new Size(290, 26);
+            textBox_Manufacturer.TabIndex = 14;
             // 
             // label_Manufacturer
             // 
             label_Manufacturer.AutoSize = true;
             label_Manufacturer.Dock = DockStyle.Top;
-            label_Manufacturer.Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Bold);
-            label_Manufacturer.Location = new Point(2, 2);
-            label_Manufacturer.Margin = new Padding(9, 8, 9, 8);
+            label_Manufacturer.Font = new Font("Microsoft Sans Serif", 12F);
+            label_Manufacturer.Location = new Point(5, 8);
+            label_Manufacturer.Margin = new Padding(4, 2, 4, 2);
             label_Manufacturer.Name = "label_Manufacturer";
-            label_Manufacturer.Size = new Size(116, 20);
+            label_Manufacturer.Size = new Size(104, 20);
             label_Manufacturer.TabIndex = 2;
             label_Manufacturer.Text = "Manufacturer";
             // 
-            // comboBox_Supplier
+            // panel_ModelNumber
             // 
-            comboBox_Supplier.Dock = DockStyle.Bottom;
-            comboBox_Supplier.Font = new Font("Microsoft Sans Serif", 11F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            comboBox_Supplier.FormattingEnabled = true;
-            comboBox_Supplier.Location = new Point(2, 32);
-            comboBox_Supplier.Margin = new Padding(9, 8, 9, 8);
-            comboBox_Supplier.Name = "comboBox_Supplier";
-            comboBox_Supplier.Size = new Size(230, 26);
-            comboBox_Supplier.TabIndex = 7;
+            panel_ModelNumber.AutoSize = true;
+            panel_ModelNumber.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            panel_ModelNumber.Controls.Add(textBox_ModelNumber);
+            panel_ModelNumber.Controls.Add(label_ModelNumber);
+            panel_ModelNumber.Dock = DockStyle.Left;
+            panel_ModelNumber.Location = new Point(0, 0);
+            panel_ModelNumber.Margin = new Padding(0);
+            panel_ModelNumber.MinimumSize = new Size(237, 38);
+            panel_ModelNumber.Name = "panel_ModelNumber";
+            panel_ModelNumber.Padding = new Padding(5, 8, 5, 8);
+            panel_ModelNumber.Size = new Size(237, 80);
+            panel_ModelNumber.TabIndex = 23;
             // 
-            // panel7
+            // textBox_ModelNumber
             // 
-            panel7.Controls.Add(label_Model_Number);
-            panel7.Controls.Add(comboBox_Manufacturer);
-            panel7.Dock = DockStyle.Left;
-            panel7.Location = new Point(0, 0);
-            panel7.Margin = new Padding(0);
-            panel7.MinimumSize = new Size(200, 60);
-            panel7.Name = "panel7";
-            panel7.Padding = new Padding(2);
-            panel7.Size = new Size(200, 60);
-            panel7.TabIndex = 23;
+            textBox_ModelNumber.Dock = DockStyle.Bottom;
+            textBox_ModelNumber.Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Bold);
+            textBox_ModelNumber.Location = new Point(5, 46);
+            textBox_ModelNumber.Margin = new Padding(4, 5, 4, 5);
+            textBox_ModelNumber.Name = "textBox_ModelNumber";
+            textBox_ModelNumber.Size = new Size(227, 26);
+            textBox_ModelNumber.TabIndex = 14;
             // 
-            // label_Model_Number
+            // label_ModelNumber
             // 
-            label_Model_Number.AutoSize = true;
-            label_Model_Number.Dock = DockStyle.Top;
-            label_Model_Number.Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Bold);
-            label_Model_Number.Location = new Point(2, 2);
-            label_Model_Number.Margin = new Padding(9, 8, 9, 8);
-            label_Model_Number.Name = "label_Model_Number";
-            label_Model_Number.Size = new Size(124, 20);
-            label_Model_Number.TabIndex = 4;
-            label_Model_Number.Text = "Model Number";
-            // 
-            // comboBox_Manufacturer
-            // 
-            comboBox_Manufacturer.Dock = DockStyle.Bottom;
-            comboBox_Manufacturer.Font = new Font("Microsoft Sans Serif", 11F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            comboBox_Manufacturer.FormattingEnabled = true;
-            comboBox_Manufacturer.Location = new Point(2, 32);
-            comboBox_Manufacturer.Margin = new Padding(9, 8, 9, 8);
-            comboBox_Manufacturer.Name = "comboBox_Manufacturer";
-            comboBox_Manufacturer.Size = new Size(196, 26);
-            comboBox_Manufacturer.TabIndex = 3;
-            // 
-            // wrapperpanel_ComponentControl
-            // 
-            wrapperpanel_ComponentControl.Controls.Add(customPanelDoubleBuffered1);
-            wrapperpanel_ComponentControl.Controls.Add(printingReferences);
-            wrapperpanel_ComponentControl.Dock = DockStyle.Top;
-            wrapperpanel_ComponentControl.Location = new Point(2, 97);
-            wrapperpanel_ComponentControl.Margin = new Padding(0);
-            wrapperpanel_ComponentControl.MinimumSize = new Size(0, 193);
-            wrapperpanel_ComponentControl.Name = "wrapperpanel_ComponentControl";
-            wrapperpanel_ComponentControl.Padding = new Padding(4, 8, 8, 8);
-            wrapperpanel_ComponentControl.Size = new Size(1140, 193);
-            wrapperpanel_ComponentControl.TabIndex = 21;
-            // 
-            // customPanelDoubleBuffered1
-            // 
-            customPanelDoubleBuffered1.Dock = DockStyle.Left;
-            customPanelDoubleBuffered1.Location = new Point(4, 8);
-            customPanelDoubleBuffered1.Margin = new Padding(3, 2, 3, 2);
-            customPanelDoubleBuffered1.Name = "customPanelDoubleBuffered1";
-            customPanelDoubleBuffered1.Size = new Size(466, 177);
-            customPanelDoubleBuffered1.TabIndex = 24;
-            // 
-            // printingReferences
-            // 
-            printingReferences.Dock = DockStyle.Right;
-            printingReferences.Location = new Point(582, 8);
-            printingReferences.Margin = new Padding(0);
-            printingReferences.MinimumSize = new Size(550, 175);
-            printingReferences.Name = "printingReferences";
-            printingReferences.Size = new Size(550, 177);
-            printingReferences.TabIndex = 14;
+            label_ModelNumber.AutoSize = true;
+            label_ModelNumber.Dock = DockStyle.Top;
+            label_ModelNumber.Font = new Font("Microsoft Sans Serif", 12F);
+            label_ModelNumber.Location = new Point(5, 8);
+            label_ModelNumber.Margin = new Padding(4, 2, 4, 2);
+            label_ModelNumber.Name = "label_ModelNumber";
+            label_ModelNumber.Size = new Size(112, 20);
+            label_ModelNumber.TabIndex = 4;
+            label_ModelNumber.Text = "Model Number";
             // 
             // grouper_ComponentProperties
             // 
+            grouper_ComponentProperties.AutoSize = true;
             grouper_ComponentProperties.AutoSizeMode = AutoSizeMode.GrowAndShrink;
             grouper_ComponentProperties.BackgroundColor = SystemColors.ButtonHighlight;
             grouper_ComponentProperties.BackgroundGradientColor = Color.LightGray;
             grouper_ComponentProperties.BackgroundGradientMode = CodeVendor.Controls.Grouper.GroupBoxGradientMode.Vertical;
             grouper_ComponentProperties.BorderColor = Color.Black;
             grouper_ComponentProperties.BorderThickness = 1F;
-            grouper_ComponentProperties.Controls.Add(panel3);
-            grouper_ComponentProperties.Controls.Add(panel_LabelsComponentsProperties);
-            grouper_ComponentProperties.Controls.Add(panel2);
+            grouper_ComponentProperties.Controls.Add(wrapperpanel_ComponentProperties);
             grouper_ComponentProperties.CustomGroupBoxColor = Color.White;
             grouper_ComponentProperties.Dock = DockStyle.Top;
-            grouper_ComponentProperties.GroupImage = null;
             grouper_ComponentProperties.GroupTitle = "Component Properties";
-            grouper_ComponentProperties.Location = new Point(2, 2);
+            grouper_ComponentProperties.Location = new Point(4, 2);
             grouper_ComponentProperties.Margin = new Padding(0);
-            grouper_ComponentProperties.MinimumSize = new Size(444, 95);
+            grouper_ComponentProperties.MinimumSize = new Size(139, 90);
             grouper_ComponentProperties.Name = "grouper_ComponentProperties";
-            grouper_ComponentProperties.Padding = new Padding(10, 25, 10, 10);
+            grouper_ComponentProperties.Padding = new Padding(5, 25, 5, 5);
             grouper_ComponentProperties.PaintGroupBox = false;
             grouper_ComponentProperties.RoundCorners = 10;
             grouper_ComponentProperties.ShadowColor = Color.DarkGray;
             grouper_ComponentProperties.ShadowControl = false;
             grouper_ComponentProperties.ShadowThickness = 3;
-            grouper_ComponentProperties.Size = new Size(1140, 95);
+            grouper_ComponentProperties.Size = new Size(1114, 90);
             grouper_ComponentProperties.TabIndex = 20;
             // 
-            // panel3
+            // wrapperpanel_ComponentProperties
             // 
-            panel3.Controls.Add(panel5);
-            panel3.Controls.Add(panel4);
-            panel3.Dock = DockStyle.Fill;
-            panel3.Location = new Point(210, 25);
-            panel3.Margin = new Padding(0);
-            panel3.Name = "panel3";
-            panel3.Size = new Size(645, 60);
-            panel3.TabIndex = 24;
+            wrapperpanel_ComponentProperties.Controls.Add(panel_NumberofReelsOrBoxes);
+            wrapperpanel_ComponentProperties.Controls.Add(panel_ReceivedDate);
+            wrapperpanel_ComponentProperties.Controls.Add(panel4_ReceivedQuantity);
+            wrapperpanel_ComponentProperties.Controls.Add(panel_PartNumber);
+            wrapperpanel_ComponentProperties.Dock = DockStyle.Fill;
+            wrapperpanel_ComponentProperties.Location = new Point(5, 25);
+            wrapperpanel_ComponentProperties.Margin = new Padding(0);
+            wrapperpanel_ComponentProperties.Name = "wrapperpanel_ComponentProperties";
+            wrapperpanel_ComponentProperties.Size = new Size(1104, 60);
+            wrapperpanel_ComponentProperties.TabIndex = 24;
             // 
-            // panel5
+            // panel_NumberofReelsOrBoxes
             // 
-            panel5.Controls.Add(comboBox2);
-            panel5.Controls.Add(label_NumberofReelsOrBoxes);
-            panel5.Dock = DockStyle.Fill;
-            panel5.Location = new Point(200, 0);
-            panel5.Margin = new Padding(0);
-            panel5.Name = "panel5";
-            panel5.Padding = new Padding(4, 4, 4, 4);
-            panel5.Size = new Size(445, 60);
-            panel5.TabIndex = 24;
-            // 
-            // comboBox2
-            // 
-            comboBox2.Dock = DockStyle.Bottom;
-            comboBox2.Font = new Font("Microsoft Sans Serif", 11F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            comboBox2.FormattingEnabled = true;
-            comboBox2.Location = new Point(4, 30);
-            comboBox2.Margin = new Padding(9, 8, 9, 8);
-            comboBox2.MinimumSize = new Size(178, 0);
-            comboBox2.Name = "comboBox2";
-            comboBox2.Size = new Size(437, 26);
-            comboBox2.TabIndex = 3;
+            panel_NumberofReelsOrBoxes.Controls.Add(label_NumberofReelsOrBoxes);
+            panel_NumberofReelsOrBoxes.Controls.Add(textBox_NumberofReelsOrBoxes);
+            panel_NumberofReelsOrBoxes.Dock = DockStyle.Fill;
+            panel_NumberofReelsOrBoxes.Location = new Point(442, 0);
+            panel_NumberofReelsOrBoxes.Margin = new Padding(0);
+            panel_NumberofReelsOrBoxes.Name = "panel_NumberofReelsOrBoxes";
+            panel_NumberofReelsOrBoxes.Padding = new Padding(5);
+            panel_NumberofReelsOrBoxes.Size = new Size(337, 60);
+            panel_NumberofReelsOrBoxes.TabIndex = 24;
             // 
             // label_NumberofReelsOrBoxes
             // 
             label_NumberofReelsOrBoxes.AutoSize = true;
             label_NumberofReelsOrBoxes.Dock = DockStyle.Top;
-            label_NumberofReelsOrBoxes.Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Bold);
-            label_NumberofReelsOrBoxes.Location = new Point(4, 4);
-            label_NumberofReelsOrBoxes.Margin = new Padding(43, 18, 43, 18);
+            label_NumberofReelsOrBoxes.Font = new Font("Microsoft Sans Serif", 12F);
+            label_NumberofReelsOrBoxes.Location = new Point(5, 5);
+            label_NumberofReelsOrBoxes.Margin = new Padding(10, 2, 10, 2);
             label_NumberofReelsOrBoxes.Name = "label_NumberofReelsOrBoxes";
-            label_NumberofReelsOrBoxes.Size = new Size(221, 20);
+            label_NumberofReelsOrBoxes.Size = new Size(197, 20);
             label_NumberofReelsOrBoxes.TabIndex = 2;
             label_NumberofReelsOrBoxes.Text = "Number of Reels Or Boxes";
             // 
-            // panel4
+            // textBox_NumberofReelsOrBoxes
             // 
-            panel4.Controls.Add(comboBox1);
-            panel4.Controls.Add(label_Received_Quantity);
-            panel4.Dock = DockStyle.Left;
-            panel4.Location = new Point(0, 0);
-            panel4.Margin = new Padding(0);
-            panel4.MinimumSize = new Size(200, 0);
-            panel4.Name = "panel4";
-            panel4.Padding = new Padding(4, 4, 4, 4);
-            panel4.Size = new Size(200, 60);
-            panel4.TabIndex = 23;
+            textBox_NumberofReelsOrBoxes.Dock = DockStyle.Bottom;
+            textBox_NumberofReelsOrBoxes.Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Bold);
+            textBox_NumberofReelsOrBoxes.Location = new Point(5, 29);
+            textBox_NumberofReelsOrBoxes.Margin = new Padding(4, 5, 4, 5);
+            textBox_NumberofReelsOrBoxes.Name = "textBox_NumberofReelsOrBoxes";
+            textBox_NumberofReelsOrBoxes.Size = new Size(327, 26);
+            textBox_NumberofReelsOrBoxes.TabIndex = 14;
             // 
-            // comboBox1
+            // panel_ReceivedDate
             // 
-            comboBox1.Dock = DockStyle.Bottom;
-            comboBox1.Font = new Font("Microsoft Sans Serif", 11F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            comboBox1.FormattingEnabled = true;
-            comboBox1.Location = new Point(4, 30);
-            comboBox1.Margin = new Padding(9, 8, 9, 8);
-            comboBox1.MinimumSize = new Size(134, 0);
-            comboBox1.Name = "comboBox1";
-            comboBox1.Size = new Size(192, 26);
-            comboBox1.TabIndex = 3;
-            // 
-            // label_Received_Quantity
-            // 
-            label_Received_Quantity.AutoSize = true;
-            label_Received_Quantity.Dock = DockStyle.Top;
-            label_Received_Quantity.Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Bold);
-            label_Received_Quantity.Location = new Point(4, 4);
-            label_Received_Quantity.Margin = new Padding(43, 18, 43, 18);
-            label_Received_Quantity.Name = "label_Received_Quantity";
-            label_Received_Quantity.Size = new Size(159, 20);
-            label_Received_Quantity.TabIndex = 2;
-            label_Received_Quantity.Text = "Amounts Received";
-            // 
-            // panel_LabelsComponentsProperties
-            // 
-            panel_LabelsComponentsProperties.AutoSize = true;
-            panel_LabelsComponentsProperties.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            panel_LabelsComponentsProperties.Controls.Add(label_PartNumber);
-            panel_LabelsComponentsProperties.Controls.Add(comboBox_PartNumber);
-            panel_LabelsComponentsProperties.Dock = DockStyle.Left;
-            panel_LabelsComponentsProperties.Location = new Point(10, 25);
-            panel_LabelsComponentsProperties.Margin = new Padding(0);
-            panel_LabelsComponentsProperties.MinimumSize = new Size(200, 0);
-            panel_LabelsComponentsProperties.Name = "panel_LabelsComponentsProperties";
-            panel_LabelsComponentsProperties.Padding = new Padding(4, 4, 4, 4);
-            panel_LabelsComponentsProperties.Size = new Size(200, 60);
-            panel_LabelsComponentsProperties.TabIndex = 6;
-            // 
-            // label_PartNumber
-            // 
-            label_PartNumber.AutoSize = true;
-            label_PartNumber.Dock = DockStyle.Top;
-            label_PartNumber.Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Bold);
-            label_PartNumber.Location = new Point(4, 4);
-            label_PartNumber.Margin = new Padding(43, 18, 43, 18);
-            label_PartNumber.Name = "label_PartNumber";
-            label_PartNumber.Size = new Size(109, 20);
-            label_PartNumber.TabIndex = 0;
-            label_PartNumber.Text = "Part Number";
-            // 
-            // comboBox_PartNumber
-            // 
-            comboBox_PartNumber.Dock = DockStyle.Bottom;
-            comboBox_PartNumber.Font = new Font("Microsoft Sans Serif", 11F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            comboBox_PartNumber.FormattingEnabled = true;
-            comboBox_PartNumber.Location = new Point(4, 30);
-            comboBox_PartNumber.Margin = new Padding(9, 8, 9, 8);
-            comboBox_PartNumber.MinimumSize = new Size(178, 0);
-            comboBox_PartNumber.Name = "comboBox_PartNumber";
-            comboBox_PartNumber.Size = new Size(192, 26);
-            comboBox_PartNumber.TabIndex = 1;
-            // 
-            // panel2
-            // 
-            panel2.Controls.Add(dateTimePicker);
-            panel2.Controls.Add(label_Received_Date);
-            panel2.Dock = DockStyle.Right;
-            panel2.Location = new Point(855, 25);
-            panel2.Margin = new Padding(0);
-            panel2.MinimumSize = new Size(275, 0);
-            panel2.Name = "panel2";
-            panel2.Padding = new Padding(4, 4, 4, 4);
-            panel2.Size = new Size(275, 60);
-            panel2.TabIndex = 23;
-            // 
-            // dateTimePicker
-            // 
-            dateTimePicker.Dock = DockStyle.Bottom;
-            dateTimePicker.Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            dateTimePicker.Location = new Point(4, 30);
-            dateTimePicker.Margin = new Padding(9, 8, 9, 8);
-            dateTimePicker.Name = "dateTimePicker";
-            dateTimePicker.Size = new Size(267, 26);
-            dateTimePicker.TabIndex = 4;
+            panel_ReceivedDate.Controls.Add(label_Received_Date);
+            panel_ReceivedDate.Controls.Add(dateTimePicker_ReceivedDate);
+            panel_ReceivedDate.Dock = DockStyle.Right;
+            panel_ReceivedDate.Location = new Point(779, 0);
+            panel_ReceivedDate.Margin = new Padding(0);
+            panel_ReceivedDate.Name = "panel_ReceivedDate";
+            panel_ReceivedDate.Padding = new Padding(5);
+            panel_ReceivedDate.Size = new Size(325, 60);
+            panel_ReceivedDate.TabIndex = 23;
             // 
             // label_Received_Date
             // 
             label_Received_Date.AutoSize = true;
             label_Received_Date.Dock = DockStyle.Top;
-            label_Received_Date.Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Bold);
-            label_Received_Date.Location = new Point(4, 4);
+            label_Received_Date.Font = new Font("Microsoft Sans Serif", 12F);
+            label_Received_Date.Location = new Point(5, 5);
             label_Received_Date.Margin = new Padding(0);
             label_Received_Date.Name = "label_Received_Date";
-            label_Received_Date.Size = new Size(117, 20);
+            label_Received_Date.Size = new Size(105, 20);
             label_Received_Date.TabIndex = 5;
             label_Received_Date.Text = "Recived Date";
+            // 
+            // dateTimePicker_ReceivedDate
+            // 
+            dateTimePicker_ReceivedDate.Dock = DockStyle.Bottom;
+            dateTimePicker_ReceivedDate.Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            dateTimePicker_ReceivedDate.Location = new Point(5, 29);
+            dateTimePicker_ReceivedDate.Margin = new Padding(4, 2, 4, 2);
+            dateTimePicker_ReceivedDate.Name = "dateTimePicker_ReceivedDate";
+            dateTimePicker_ReceivedDate.Size = new Size(315, 26);
+            dateTimePicker_ReceivedDate.TabIndex = 4;
+            // 
+            // panel4_ReceivedQuantity
+            // 
+            panel4_ReceivedQuantity.Controls.Add(label_ReceivedQuantity);
+            panel4_ReceivedQuantity.Controls.Add(textBox_ReceivedQuantity);
+            panel4_ReceivedQuantity.Dock = DockStyle.Left;
+            panel4_ReceivedQuantity.Location = new Point(213, 0);
+            panel4_ReceivedQuantity.Margin = new Padding(0);
+            panel4_ReceivedQuantity.MinimumSize = new Size(42, 0);
+            panel4_ReceivedQuantity.Name = "panel4_ReceivedQuantity";
+            panel4_ReceivedQuantity.Padding = new Padding(5);
+            panel4_ReceivedQuantity.Size = new Size(229, 60);
+            panel4_ReceivedQuantity.TabIndex = 23;
+            // 
+            // label_ReceivedQuantity
+            // 
+            label_ReceivedQuantity.AutoSize = true;
+            label_ReceivedQuantity.Dock = DockStyle.Top;
+            label_ReceivedQuantity.Font = new Font("Microsoft Sans Serif", 12F);
+            label_ReceivedQuantity.Location = new Point(5, 5);
+            label_ReceivedQuantity.Margin = new Padding(10, 2, 10, 2);
+            label_ReceivedQuantity.Name = "label_ReceivedQuantity";
+            label_ReceivedQuantity.Size = new Size(143, 20);
+            label_ReceivedQuantity.TabIndex = 2;
+            label_ReceivedQuantity.Text = "Amounts Received";
+            // 
+            // textBox_ReceivedQuantity
+            // 
+            textBox_ReceivedQuantity.Dock = DockStyle.Bottom;
+            textBox_ReceivedQuantity.Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Bold);
+            textBox_ReceivedQuantity.Location = new Point(5, 29);
+            textBox_ReceivedQuantity.Margin = new Padding(4, 5, 4, 5);
+            textBox_ReceivedQuantity.Name = "textBox_ReceivedQuantity";
+            textBox_ReceivedQuantity.Size = new Size(219, 26);
+            textBox_ReceivedQuantity.TabIndex = 14;
+            // 
+            // panel_PartNumber
+            // 
+            panel_PartNumber.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            panel_PartNumber.Controls.Add(label_PartNumber);
+            panel_PartNumber.Controls.Add(textBox_PartNumber);
+            panel_PartNumber.Dock = DockStyle.Left;
+            panel_PartNumber.Location = new Point(0, 0);
+            panel_PartNumber.Margin = new Padding(0);
+            panel_PartNumber.MinimumSize = new Size(110, 0);
+            panel_PartNumber.Name = "panel_PartNumber";
+            panel_PartNumber.Padding = new Padding(5);
+            panel_PartNumber.Size = new Size(213, 60);
+            panel_PartNumber.TabIndex = 6;
+            // 
+            // label_PartNumber
+            // 
+            label_PartNumber.AutoSize = true;
+            label_PartNumber.Dock = DockStyle.Top;
+            label_PartNumber.Font = new Font("Microsoft Sans Serif", 12F);
+            label_PartNumber.Location = new Point(5, 5);
+            label_PartNumber.Margin = new Padding(10, 2, 10, 2);
+            label_PartNumber.Name = "label_PartNumber";
+            label_PartNumber.Size = new Size(98, 20);
+            label_PartNumber.TabIndex = 0;
+            label_PartNumber.Text = "Part Number";
+            // 
+            // textBox_PartNumber
+            // 
+            textBox_PartNumber.Dock = DockStyle.Bottom;
+            textBox_PartNumber.Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Bold);
+            textBox_PartNumber.Location = new Point(5, 29);
+            textBox_PartNumber.Margin = new Padding(4, 5, 4, 5);
+            textBox_PartNumber.Name = "textBox_PartNumber";
+            textBox_PartNumber.Size = new Size(203, 26);
+            textBox_PartNumber.TabIndex = 13;
             // 
             // dataGridViewExtended
             // 
@@ -1142,7 +1380,7 @@ namespace StockRoom11net
             dataGridViewExtended.Dock = DockStyle.Fill;
             dataGridViewExtended.FirstDisplayedRow = null;
             dataGridViewExtended.Location = new Point(0, 0);
-            dataGridViewExtended.Margin = new Padding(4, 5, 4, 5);
+            dataGridViewExtended.Margin = new Padding(4, 2, 4, 2);
             dataGridViewExtended.Name = "dataGridViewExtended";
             dataGridViewExtended.NeedSaveData = false;
             dataGridViewExtended.SelectionBorderWidth = 3;
@@ -1189,39 +1427,56 @@ namespace StockRoom11net
             ((System.ComponentModel.ISupportInitialize)splitContainerVertical).EndInit();
             splitContainerVertical.ResumeLayout(false);
             TabControl_Inventory.ResumeLayout(false);
+            tabPage_AddNewItem.ResumeLayout(false);
+            tabPage_AddNewItem.PerformLayout();
+            grouper_NewItemButtons.ResumeLayout(false);
+            grouper_NewItemButtons.PerformLayout();
+            flowLayoutPanel_Buttons.ResumeLayout(false);
+            flowLayoutPanel_Buttons.PerformLayout();
+            grouper_ItemProperties.ResumeLayout(false);
+            grouper_ItemProperties.PerformLayout();
+            flowLayoutPanel_ItemsProperties.ResumeLayout(false);
             tabPage_Pictures.ResumeLayout(false);
             tabPage_Location.ResumeLayout(false);
             tabPage_TimeLine.ResumeLayout(false);
             tabPage_NoteEditor.ResumeLayout(false);
-            tabPage_AddNewItem.ResumeLayout(false);
-            grouper_NewItemButtons.ResumeLayout(false);
-            grouper_NewItemButtons.PerformLayout();
-            flowLayoutPanel_Buttons.ResumeLayout(false);
-            grouper_ItemProperties.ResumeLayout(false);
-            flowLayoutPanel_ItemsProperties.ResumeLayout(false);
             tabPage_UpDateModifCompValue.ResumeLayout(false);
             panel_ContainerUpDateModifValue.ResumeLayout(false);
-            wrapperPanelManufacturerProperties.ResumeLayout(false);
-            grouper_ManufacturerProperties.ResumeLayout(false);
-            panel_LabelsManufacturerProperties.ResumeLayout(false);
-            panel9.ResumeLayout(false);
-            panel9.PerformLayout();
-            panel8.ResumeLayout(false);
-            panel8.PerformLayout();
-            panel7.ResumeLayout(false);
-            panel7.PerformLayout();
+            panel_ContainerUpDateModifValue.PerformLayout();
+            grouper_PrintingLabels.ResumeLayout(false);
             wrapperpanel_ComponentControl.ResumeLayout(false);
+            grouper_PrintingReferences.ResumeLayout(false);
+            panel_EnablePrints.ResumeLayout(false);
+            panel_Reels.ResumeLayout(false);
+            panel_Reels.PerformLayout();
+            panel_Description.ResumeLayout(false);
+            panel_Description.PerformLayout();
+            grouper_BarCodeRegion.ResumeLayout(false);
+            grouper_BarCodeRegion.PerformLayout();
+            grouper_LabelBarCode.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)pictureBox_BarCode_Image).EndInit();
+            grouper_ManufacturerProperties.ResumeLayout(false);
+            grouper_ManufacturerProperties.PerformLayout();
+            wrapperpanel_ManufacturerProperties.ResumeLayout(false);
+            wrapperpanel_ManufacturerProperties.PerformLayout();
+            panel1.ResumeLayout(false);
+            panel1.PerformLayout();
+            panel_Supplier.ResumeLayout(false);
+            panel_Supplier.PerformLayout();
+            panel_Manufacturer.ResumeLayout(false);
+            panel_Manufacturer.PerformLayout();
+            panel_ModelNumber.ResumeLayout(false);
+            panel_ModelNumber.PerformLayout();
             grouper_ComponentProperties.ResumeLayout(false);
-            grouper_ComponentProperties.PerformLayout();
-            panel3.ResumeLayout(false);
-            panel5.ResumeLayout(false);
-            panel5.PerformLayout();
-            panel4.ResumeLayout(false);
-            panel4.PerformLayout();
-            panel_LabelsComponentsProperties.ResumeLayout(false);
-            panel_LabelsComponentsProperties.PerformLayout();
-            panel2.ResumeLayout(false);
-            panel2.PerformLayout();
+            wrapperpanel_ComponentProperties.ResumeLayout(false);
+            panel_NumberofReelsOrBoxes.ResumeLayout(false);
+            panel_NumberofReelsOrBoxes.PerformLayout();
+            panel_ReceivedDate.ResumeLayout(false);
+            panel_ReceivedDate.PerformLayout();
+            panel4_ReceivedQuantity.ResumeLayout(false);
+            panel4_ReceivedQuantity.PerformLayout();
+            panel_PartNumber.ResumeLayout(false);
+            panel_PartNumber.PerformLayout();
             ResumeLayout(false);
         }
 
@@ -1290,35 +1545,48 @@ namespace StockRoom11net
         private TabPage tabPage_Test;
         private BlazorWebView blazorWebView_TimeLine;
         private Panel panel_ContainerUpDateModifValue;
-        private CustomPanelDoubleBuffered wrapperPanelManufacturerProperties;
         private CodeVendor.Controls.Grouper grouper_ManufacturerProperties;
-        private Panel panel_LabelsManufacturerProperties;
+        private Panel wrapperpanel_ManufacturerProperties;
         private Panel panel1;
-        private Panel panel9;
+        private Panel panel_Supplier;
         private Label label_Supplier;
-        private ComboBox comboBox_Model_Number;
-        private Panel panel8;
+        private Panel panel_Manufacturer;
         private Label label_Manufacturer;
-        private ComboBox comboBox_Supplier;
-        private Panel panel7;
-        private Label label_Model_Number;
-        private ComboBox comboBox_Manufacturer;
+        private Panel panel_ModelNumber;
+        private Label label_ModelNumber;
         private Panel wrapperpanel_ComponentControl;
-        private CustomPanelDoubleBuffered customPanelDoubleBuffered1;
-        private PrintingReferences printingReferences;
+        private CustomPanelDoubleBuffered customPanelDoubleBuffered;
         private CodeVendor.Controls.Grouper grouper_ComponentProperties;
-        private Panel panel3;
-        private Panel panel5;
-        private ComboBox comboBox2;
+        private Panel wrapperpanel_ComponentProperties;
+        private Panel panel_NumberofReelsOrBoxes;
         private Label label_NumberofReelsOrBoxes;
-        private Panel panel4;
-        private ComboBox comboBox1;
-        private Label label_Received_Quantity;
-        private Panel panel_LabelsComponentsProperties;
+        private Panel panel4_ReceivedQuantity;
+        private Label label_ReceivedQuantity;
+        private Panel panel_PartNumber;
         private Label label_PartNumber;
-        private ComboBox comboBox_PartNumber;
-        private Panel panel2;
-        private DateTimePicker dateTimePicker;
+        private Panel panel_ReceivedDate;
         private Label label_Received_Date;
+        private DateTimePicker dateTimePicker_ReceivedDate;
+        private TextBox textBox_PartNumber;
+        private TextBox textBox_NumberofReelsOrBoxes;
+        private TextBox textBox_ReceivedQuantity;
+        private TextBox textBox4;
+        private TextBox textBox_Supplier;
+        private TextBox textBox_Manufacturer;
+        private TextBox textBox_ModelNumber;
+        private CodeVendor.Controls.Grouper grouper_PrintingLabels;
+        private CodeVendor.Controls.Grouper grouper_PrintingReferences;
+        private Panel panel_EnablePrints;
+        private Panel panel_Reels;
+        protected CheckBox checkBox_printLabels;
+        private Panel panel_Description;
+        private Label label_DescriptionToPrint;
+        private TextBox textBox_DescriptionToPrint;
+        private CodeVendor.Controls.Grouper grouper_BarCodeRegion;
+        private Label label_LabelInformation;
+        private CodeVendor.Controls.Grouper grouper_LabelBarCode;
+        private Label label_Description;
+        private Label label_HumanReadableInformation;
+        private PictureBox pictureBox_BarCode_Image;
     }
 }

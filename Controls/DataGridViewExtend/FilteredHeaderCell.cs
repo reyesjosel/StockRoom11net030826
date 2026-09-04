@@ -1,5 +1,4 @@
-﻿using MyStuff11net;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using HitTestInfo = System.Windows.Forms.DataGridView.HitTestInfo;
 
 namespace StockRoom11net.Controls.DataGridViewExtend

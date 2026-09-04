@@ -1198,7 +1198,7 @@ namespace StockRoom11net
             // 
             // Solutions_TempleClass
             // 
-            AutoScaleDimensions = new SizeF(8F, 16F);
+            AutoScaleDimensions = new SizeF(9.723657F, 20.109371F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1491, 763);
             Controls.Add(dockPanel);

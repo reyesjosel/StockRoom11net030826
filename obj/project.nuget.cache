@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "bWSLyFMA87c=",
+  "dgSpecHash": "a91QYcQ8H8Q=",
   "success": true,
   "projectFilePath": "C:\\Users\\reyes\\Source\\Repos\\StockRoom11net080226\\StockRoom11net.csproj",
   "expectedPackageFiles": [
@@ -8,6 +8,7 @@
     "C:\\Users\\reyes\\.nuget\\packages\\blazor.extensions.canvas\\1.1.1\\blazor.extensions.canvas.1.1.1.nupkg.sha512",
     "C:\\Users\\reyes\\.nuget\\packages\\gencode128\\2.0.0\\gencode128.2.0.0.nupkg.sha512",
     "C:\\Users\\reyes\\.nuget\\packages\\humanizer.core\\3.0.10\\humanizer.core.3.0.10.nupkg.sha512",
+    "C:\\Users\\reyes\\.nuget\\packages\\microsoft.applicationinsights\\2.22.0\\microsoft.applicationinsights.2.22.0.nupkg.sha512",
     "C:\\Users\\reyes\\.nuget\\packages\\microsoft.aspnetcore.authorization\\11.0.0-preview.6.26359.118\\microsoft.aspnetcore.authorization.11.0.0-preview.6.26359.118.nupkg.sha512",
     "C:\\Users\\reyes\\.nuget\\packages\\microsoft.aspnetcore.components\\11.0.0-preview.6.26359.118\\microsoft.aspnetcore.components.11.0.0-preview.6.26359.118.nupkg.sha512",
     "C:\\Users\\reyes\\.nuget\\packages\\microsoft.aspnetcore.components.analyzers\\11.0.0-preview.6.26359.118\\microsoft.aspnetcore.components.analyzers.11.0.0-preview.6.26359.118.nupkg.sha512",

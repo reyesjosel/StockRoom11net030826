@@ -1,4 +1,3 @@
-using MyStuff11net;
 using System.Runtime.InteropServices;
 
 namespace StockRoom11net.Controls.ShellBasics

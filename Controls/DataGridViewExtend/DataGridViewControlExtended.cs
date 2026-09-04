@@ -617,7 +617,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
 
         // # 4 ... Declare the protected virtual methods for
         // this events, in this procedure we calling the event itself.
-        protected virtual void OnSettingChanged(SettingChangedEventArgs e)
+        protected virtual void On_SettingChanged(SettingChangedEventArgs e)
         {
             SettingChanged?.Invoke(this, e);
         }
@@ -1754,6 +1754,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
                     Font newFont = new Font(_dataGridViewCellStyle.Font!.FontFamily, newSize, _dataGridViewCellStyle.Font.Style);
 
                     Set_DefaultCellStyle_SelectedCellStyle(newFont);
+                    On_StatusBarMessage(new StatusBarMessage_EventArgs("DefaultCellStyle font size changed to " + newFont.Size, ""));
                 }
 
                 if (IsMouseOverColumnHeaderCell)
@@ -1767,11 +1768,12 @@ namespace StockRoom11net.Controls.DataGridViewExtend
                                                       ColumnHeadersDefaultCellStyle.Font.Style);
 
                         Set_ColumnHeaderCellStyle(colHeaderFont);
+                        On_StatusBarMessage(new StatusBarMessage_EventArgs("ColumnHeaderCellStyle font size changed to " + colHeaderFont.Size, ""));
                     }
                 }
 
                 ((HandledMouseEventArgs)e).Handled = true;
-                OnSettingChanged(new SettingChangedEventArgs(true));
+                On_SettingChanged(new SettingChangedEventArgs(true));
             }
         }
 
