@@ -19,6 +19,12 @@ namespace StockRoom11net.Controls.ThumbViewer
 {
     public partial class ThumbViewer : UserControl
     {
+        private readonly object _cacheLock = new();
+        private readonly System.Collections.Concurrent.ConcurrentDictionary<string, Image> _thumbnailCache = new();
+        private CancellationTokenSource _loadCts;
+        private readonly SemaphoreSlim _concurrency = new(4);
+        private bool _isDisposed;
+
         [DllImport("shlwapi.dll", CharSet = CharSet.Unicode)]
         [return: MarshalAs(UnmanagedType.Bool)]
         [ResourceExposure(ResourceScope.None)]
@@ -106,9 +112,7 @@ namespace StockRoom11net.Controls.ThumbViewer
         DialogResult DialogResult = new DialogResult();
 
         ResourcesCache.ResourcesCache _cache = new ResourcesCache.ResourcesCache();
-
-        System.Windows.Forms.Timer PathFromPartNumberTimer;
-
+               
         bool ReportEvents;
         int lastMouseMove;
         Panel toInsert;
@@ -202,9 +206,7 @@ namespace StockRoom11net.Controls.ThumbViewer
                         return;
                     }
 
-
-
-                    PathFromPartNumberProcess();
+                    //PathFromPartNumberProcess();
                 }
             }
             get
@@ -338,8 +340,7 @@ namespace StockRoom11net.Controls.ThumbViewer
 
                         if (".txt.TXT".Contains(Path.GetExtension(strFilePath)))
                         {
-                            splitContainer_ThumbViewer.Panel2Collapsed = true;
-                            splitContainer_ThumbViewer_Panel2Collapsed_Changed = true;
+                            ClearFlowLayoutPanelThumbNails();
                             pictureBox_Image.Image = ThumbsNail_Ejp.CreateBitmapImage("Test the Image.");
                             return;
                         }
@@ -371,14 +372,13 @@ namespace StockRoom11net.Controls.ThumbViewer
             }
             set
             {
-                //if (_pathFromPartNumber == value)
-                //    return;
+                if (_pathFromPartNumber == value)
+                    return;
 
-                foreach (object imageBox in flowLayoutPanel.Controls)
-                {
-                    var imageNail = (ThumbNail)imageBox;
-                    imageNail.Dispose();
-                }
+                _pathFromPartNumber = value;
+                IsFromPartNumber = true;                
+
+                ClearFlowLayoutPanelThumbNails();
 
                 // If the information is incorrect, show "No_Picture_Found.jpg"
                 if (string.IsNullOrEmpty(value) || string.IsNullOrWhiteSpace(value))
@@ -388,10 +388,8 @@ namespace StockRoom11net.Controls.ThumbViewer
                     return;
                 }
 
-                _pathFromPartNumber = value;
-                IsFromPartNumber = true;
-
-                PathFromPartNumberTimer.Start();
+                //PathFromPartNumberTimer.Start();
+                PathFromPartNumberProcess();
             }
         }
 
@@ -425,14 +423,7 @@ namespace StockRoom11net.Controls.ThumbViewer
                 InitializedPictureBox();
                 InitializeToDropPanel();
 
-                PathFromPartNumberTimer = new System.Windows.Forms.Timer
-                {
-                    Interval = 250
-                };
-
-                PathFromPartNumberTimer.Tick += PathFromPartNumberTimer_Tick;
-
-
+                InitializeTimerPathFromPartNumber();
             }
             catch (Exception error)
             {
@@ -443,6 +434,29 @@ namespace StockRoom11net.Controls.ThumbViewer
                 }
             }
         }
+
+
+
+        System.Windows.Forms.Timer PathFromPartNumberTimer;
+
+        void InitializeTimerPathFromPartNumber()
+        {
+            PathFromPartNumberTimer = new System.Windows.Forms.Timer
+            {
+                Interval = 5 //250
+            };
+
+            PathFromPartNumberTimer.Tick += PathFromPartNumberTimer_Tick;
+        }
+
+        void PathFromPartNumberTimer_Tick(object? sender, EventArgs e)
+        {
+            PathFromPartNumberTimer.Stop();
+
+            PathFromPartNumberProcess();
+        }
+
+
 
         bool _mouseLeftButtonDown;
         void SplitContainer_ThumbViewer_MouseUp(object sender, MouseEventArgs e)
@@ -457,17 +471,12 @@ namespace StockRoom11net.Controls.ThumbViewer
                 _mouseLeftButtonDown = true;
         }
 
-        void PathFromPartNumberTimer_Tick(object sender, EventArgs e)
-        {
-            PathFromPartNumberTimer.Stop();
-
-            PathFromPartNumberProcess();
-        }
+        
 
         void PathFromPartNumberProcess()
         {
             _informationStatus = 0;
-            ClearFlowLayoutPanelThumbNails();
+            //ClearFlowLayoutPanelThumbNails();
 
             if (_pathFromPartNumber == null)
                 return;
@@ -706,10 +715,8 @@ namespace StockRoom11net.Controls.ThumbViewer
 
             if (e.Delta > 0 && flowLayoutPanel.VerticalScroll.Value > 30)
                 flowLayoutPanel.VerticalScroll.Value += 40;
-
-            int pageSize = AccessPrivatePropertiesFiels.GetPrivateProperty<int>(flowLayoutPanel.VerticalScroll, "PageSize");
-
-            if (e.Delta < 0 && flowLayoutPanel.VerticalScroll.Value < (flowLayoutPanel.VerticalScroll.Maximum - pageSize))
+                            
+            if (e.Delta < 0)
                 if (flowLayoutPanel.VerticalScroll.Value > 41)
                     flowLayoutPanel.VerticalScroll.Value -= 40;
         }
@@ -853,7 +860,6 @@ namespace StockRoom11net.Controls.ThumbViewer
                 //flowLayoutPanel.Controls.Clear();
                 //Task.Factory.StartNew(() => LoadPicturesInDirectory(strFiles, directoryPathString));
             }
-
         }
 
         void ProcessDirectory(string pathDirectory)
@@ -1066,7 +1072,7 @@ namespace StockRoom11net.Controls.ThumbViewer
         }
 
         /// <summary>
-        /// Remove all thumbNail present in flowLayoutPanel.
+        /// Remove all thumbNail present in flowLayoutPanel and collapse the splitContainer_ThumbViewer.Panel2.
         /// </summary>
         void ClearFlowLayoutPanelThumbNails()
         {
@@ -1077,9 +1083,10 @@ namespace StockRoom11net.Controls.ThumbViewer
             {
                 thumbnail.Dispose();
             }
-
-            //  flowLayoutPanel.BackgroundImage = null;
+            
             flowLayoutPanel.Controls.Clear();
+            splitContainer_ThumbViewer.Panel2Collapsed = true;
+            splitContainer_ThumbViewer_Panel2Collapsed_Changed = true;
         }
 
         void ShellNotificationRefresh(string pathFolder)
