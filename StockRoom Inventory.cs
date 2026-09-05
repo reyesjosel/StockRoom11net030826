@@ -1394,6 +1394,10 @@ namespace StockRoom11net
         {
             try
             {
+                // Trim whitespace for accurate comparison, we use spaces in the tab text for alignment, so we need to ignore them.
+                // TODO: We need improve this logic to avoid relying on tab text, maybe use a Tag property or a dedicated state variable.
+                string currentTabText = TabControl_Inventory.SelectedTab.Text.Trim();
+
                 MessageDebugPosition = "DataGridViewExtendedInventoryCurrentRowActive try...";
                 if (e.CurrentRowActive.Index == -1)
                 {
@@ -1403,8 +1407,9 @@ namespace StockRoom11net
                     return;
                 }
 
+                // On each row change, if we are on the Note Editor tab, switch to Pictures tab and hide Note Editor tab to avoid confusion.
                 MessageDebugPosition = "TabControl_Inventory.SelectedTab.Name";
-                if (TabControl_Inventory.SelectedTab.Name.Contains("tabPage_NoteEditor"))
+                if (currentTabText.Contains("Note Editor"))
                 {
                     TabControl_Inventory.SelectTab(nameof(tabPage_Pictures));
                     TabControl_Inventory.HideTab(nameof(tabPage_NoteEditor));
@@ -1420,8 +1425,9 @@ namespace StockRoom11net
                 else
                     GetLocationProcess("NoLocationDef");
 
-                MessageDebugPosition = "FocusTabPage_UpDateModifCompValue().";
-                FocusTabPage_UpDateModifCompValue();
+                MessageDebugPosition = "FocusTabPage_UpDateModifCompValue().";                
+                if (currentTabText.Contains("UpDate/Modif"))
+                    FocusTabPage_UpDateModifCompValue();
 
             }
             catch (Exception error)
@@ -2008,9 +2014,6 @@ namespace StockRoom11net
 
         void FocusTabPage_UpDateModifCompValue()
         {
-            if (TabControl_Inventory.SelectedTab != tabPage_UpDateModifCompValue)
-                return;
-
             if (dataGridViewExtended.CurrentRowViewActive == null)
                 return;
 

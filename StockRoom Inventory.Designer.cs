@@ -645,7 +645,7 @@ namespace StockRoom11net
             tabPage_Pictures.Margin = new Padding(1);
             tabPage_Pictures.Name = "tabPage_Pictures";
             tabPage_Pictures.Padding = new Padding(1);
-            tabPage_Pictures.Size = new Size(1148, 482);
+            tabPage_Pictures.Size = new Size(1148, 478);
             tabPage_Pictures.TabIndex = 0;
             tabPage_Pictures.Text = " Pictures";
             tabPage_Pictures.UseVisualStyleBackColor = true;
@@ -658,7 +658,7 @@ namespace StockRoom11net
             thumbViewer_Pictures.Margin = new Padding(1);
             thumbViewer_Pictures.Name = "thumbViewer_Pictures";
             thumbViewer_Pictures.PathFromPartNumber = null;
-            thumbViewer_Pictures.Size = new Size(1146, 480);
+            thumbViewer_Pictures.Size = new Size(1146, 476);
             thumbViewer_Pictures.SplitterDistance = 88;
             thumbViewer_Pictures.TabIndex = 0;
             thumbViewer_Pictures.ThumbNailHeight = 70;
@@ -760,7 +760,7 @@ namespace StockRoom11net
             tabPage_UpDateModifCompValue.Margin = new Padding(0);
             tabPage_UpDateModifCompValue.Name = "tabPage_UpDateModifCompValue";
             tabPage_UpDateModifCompValue.Padding = new Padding(11, 5, 11, 5);
-            tabPage_UpDateModifCompValue.Size = new Size(1148, 478);
+            tabPage_UpDateModifCompValue.Size = new Size(1148, 482);
             tabPage_UpDateModifCompValue.TabIndex = 7;
             tabPage_UpDateModifCompValue.Tag = "";
             tabPage_UpDateModifCompValue.Text = "   UpDate/Modif";
@@ -775,7 +775,7 @@ namespace StockRoom11net
             panel_ContainerUpDateModifValue.Margin = new Padding(0);
             panel_ContainerUpDateModifValue.Name = "panel_ContainerUpDateModifValue";
             panel_ContainerUpDateModifValue.Padding = new Padding(4, 2, 4, 2);
-            panel_ContainerUpDateModifValue.Size = new Size(1122, 464);
+            panel_ContainerUpDateModifValue.Size = new Size(1122, 468);
             panel_ContainerUpDateModifValue.TabIndex = 27;
             // 
             // grouper_PrintingLabels
@@ -870,7 +870,7 @@ namespace StockRoom11net
             checkBox_printLabels.Location = new Point(12, 36);
             checkBox_printLabels.Margin = new Padding(4);
             checkBox_printLabels.Name = "checkBox_printLabels";
-            checkBox_printLabels.Size = new Size(124, 24);
+            checkBox_printLabels.Size = new Size(121, 25);
             checkBox_printLabels.TabIndex = 51;
             checkBox_printLabels.Text = "Print Labels ?";
             checkBox_printLabels.UseVisualStyleBackColor = true;
@@ -1027,7 +1027,7 @@ namespace StockRoom11net
             grouper_ManufacturerProperties.CustomGroupBoxColor = Color.White;
             grouper_ManufacturerProperties.Dock = DockStyle.Bottom;
             grouper_ManufacturerProperties.GroupTitle = "Manufacturer Properties";
-            grouper_ManufacturerProperties.Location = new Point(4, 352);
+            grouper_ManufacturerProperties.Location = new Point(4, 356);
             grouper_ManufacturerProperties.Margin = new Padding(0);
             grouper_ManufacturerProperties.MinimumSize = new Size(0, 110);
             grouper_ManufacturerProperties.Name = "grouper_ManufacturerProperties";
