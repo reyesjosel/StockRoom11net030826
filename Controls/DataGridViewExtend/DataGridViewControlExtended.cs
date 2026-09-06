@@ -1353,7 +1353,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
                     return;
 
                 IsDragEvent = true;
-                if (_isMouseOverColumnHeaderCell)
+                if (_isMouseOverColumnHeaderCell && _currentColumnMouseOverIndex >= 0 && _currentColumnMouseOverIndex < Columns.Count)
                     _hitTestColumnDisplayIndex = Columns[_currentColumnMouseOverIndex].DisplayIndex;
             }
 
@@ -1363,6 +1363,11 @@ namespace StockRoom11net.Controls.DataGridViewExtend
                         
             if (_currentRowMouseOverIndex == -1 && _currentColumnMouseOverIndex == -1)
             {
+                // The mouse is no longer over a column header cell (it's over the
+                // top-left header cell instead), so clear the stale flag to avoid
+                // indexing Columns[-1] on a subsequent MouseMove.
+                _isMouseOverColumnHeaderCell = false;
+
                 IsMouseOverTopLeftHeaderCell = true;
 
                 Rectangle bounds = GetTopLeftHeaderCellBounds();

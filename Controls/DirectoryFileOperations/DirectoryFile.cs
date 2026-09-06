@@ -74,6 +74,18 @@ namespace StockRoom11net.Controls.DirectoryFileOperations
             }
         }
 
+        string _title;
+        public string Title
+        {
+            get
+            {
+                return _title;
+            }
+            set
+            {
+                _title = value;
+            }
+        }
 
         /// <summary>
         /// Initialize a new class DirectoryFile, no parameter.
@@ -272,11 +284,11 @@ namespace StockRoom11net.Controls.DirectoryFileOperations
         {
             using (var openfile = new OpenFileDialogExt.OpenFileDialogExt
             {
-                Title = @"Please select any Image",
+                Title = _title ?? @"Please select any Image",
                 FileName = "",
                 Multiselect = false,
-                Filter = @"*.jpg|*.jpg|*.png|*.png|*.gif|*.gif",
-                DefaultExt = "(*.jpg)|*.jpg",
+                Filter = @"Image Files|*.jpg;*.png;*.gif|JPEG|*.jpg|PNG|*.png|GIF|*.gif",
+                FilterIndex = 1,
                 InitialDirectory = Settings.Default.DataBaseAddress + "\\CAMERA WIFI PICTURES\\",
             }
                    )
@@ -327,11 +339,11 @@ namespace StockRoom11net.Controls.DirectoryFileOperations
         {
             using (var openfile = new OpenFileDialogExt.OpenFileDialogExt
             {
-                Title = @"Please select any Image",
+                Title = _title ?? @"Please select any Image",
                 FileName = "",
                 Multiselect = true,
-                Filter = @"*.jpg|*.jpg|*.png|*.png|*.gif|*.gif",
-                DefaultExt = "(*.jpg)|*.jpg",
+                Filter = @"Image Files|*.jpg;*.png;*.gif|JPEG|*.jpg|PNG|*.png|GIF|*.gif",
+                FilterIndex = 1,
                 InitialDirectory = Settings.Default.DataBaseAddress + "\\CAMERA WIFI PICTURES\\",
             }
                    )
@@ -351,11 +363,11 @@ namespace StockRoom11net.Controls.DirectoryFileOperations
         {
             using (var openfile = new OpenFileDialogExt.OpenFileDialogExt
             {
-                Title = @"Please select any Image",
+                Title = _title ?? @"Please select any Image",
                 FileName = "",
                 Multiselect = true,
-                Filter = @"*.jpg|*.jpg|*.png|*.png|*.gif|*.gif",
-                DefaultExt = "(*.jpg)|*.jpg",
+                Filter = @"Image Files|*.jpg;*.png;*.gif|JPEG|*.jpg|PNG|*.png|GIF|*.gif",
+                FilterIndex = 1,
                 InitialDirectory = Settings.Default.DataBaseAddress + "\\CAMERA WIFI PICTURES\\",
             }
                    )
@@ -395,11 +407,10 @@ namespace StockRoom11net.Controls.DirectoryFileOperations
         {
             using (var openfile = new OpenFileDialogExt.OpenFileDialogExt(OpenFileDialogExt.OpenFileDialogExt.DialogViewTypes.List)
             {
-                Title = @"Please select a pdf file for " + fileName + ".",
+                Title = _title ?? @"Please select a pdf file for " + fileName + ".",
                 FileName = "",
                 Multiselect = true,
                 Filter = @"*.pdf|*.pdf",
-                DefaultExt = "(*.pdf)|*.pdf",
                 InitialDirectory = Settings.Default.DataBaseAddress + "\\DataSheets\\",
             })
             {

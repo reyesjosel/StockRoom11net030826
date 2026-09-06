@@ -241,6 +241,8 @@ namespace StockRoom11net
 
                 _employeesService = value;
                 CurrentEmployeeLogIn = _employeesService.CurrentEmployeeLogIn;
+                thumbViewer_Pictures.CurrentEmployeesLogIn = CurrentEmployeeLogIn;
+                thumbViewer_Location.CurrentEmployeesLogIn = CurrentEmployeeLogIn;
                 _employeesService.CurrentEmployeeLogInChanged += EmployeesService_CurrentEmployeeLogInChanged;
             }
         }
@@ -248,6 +250,8 @@ namespace StockRoom11net
         void EmployeesService_CurrentEmployeeLogInChanged(object? sender, EmployeeInformation e)
         {
             CurrentEmployeeLogIn = e;
+            thumbViewer_Pictures.CurrentEmployeesLogIn = CurrentEmployeeLogIn;
+            thumbViewer_Location.CurrentEmployeesLogIn = CurrentEmployeeLogIn;
         }
 
         /// <summary>
@@ -1844,10 +1848,8 @@ namespace StockRoom11net
         readonly Font _informationStatusFalse = new Font(FontFamily.GenericSansSerif, 6, FontStyle.Italic);
 
         void InitializeThumbsViewerPicture()
-        {
-            thumbViewer_Pictures.SplitterDistance = 88;
+        {            
             thumbViewer_Pictures.DefaultAddress = Path.Combine(Settings.Default.DataBaseAddress, "Pictures");
-
             thumbViewer_Pictures.InformationStatus += ThumbViewer_Pictures_InformationStatus; ;
         }
 
@@ -1872,9 +1874,7 @@ namespace StockRoom11net
 
         void InitializeThumbsViewerLocation()
         {
-            thumbViewer_Location.SplitterDistance = 72;
             thumbViewer_Location.DefaultAddress = Path.Combine(Settings.Default.DataBaseAddress, "Pictures", "Location");
-
             thumbViewer_Location.InformationStatus += ThumbViewer_Location_InformationStatus;
         }
 
