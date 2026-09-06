@@ -1,7 +1,7 @@
-﻿using StockRoom11net.Properties;
-using StockRoom11net.Controls.DirectoryFileOperations;
-using StockRoom11net.Controls.EmployeeInformation;
-using StockRoom11net.Controls.ThumbViewer;
+﻿using StockRoom11net.Controls.DirectoryFileOperations;
+//using StockRoom11net.Controls.EmployeeInformation;
+//using StockRoom11net.Controls.ThumbViewer;
+using StockRoom11net.Properties;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Drawing.Imaging;
@@ -10,6 +10,9 @@ using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
 using System.Text;
 using static StockRoom11net.Controls.Custom_Events_Args;
+using static StockRoom11net.Controls.FileSystemEnumerator.UsingKernel32;
+
+//using static System.Net.Mime.MediaTypeNames;
 using StatusBarMessage_EventArgs = StockRoom11net.Controls.Custom_Events_Args.StatusBarMessage_EventArgs;
 using ThumbNailClick_EventArgs = StockRoom11net.Controls.Custom_Events_Args.ThumbNailClick_EventArgs;
 using ThumbNailMouseEnter_EventArgs = StockRoom11net.Controls.Custom_Events_Args.ThumbNailMouseEnter_EventArgs;
@@ -81,9 +84,10 @@ namespace StockRoom11net.Controls.ThumbViewer
 
         /// <summary>
         /// True if the given address result in a Directory ( A folder),
-        /// This partNumber have a name folder, are expect more than 1 picture.
+        /// This partNumber have a folder, are expect more than 1 picture.
         /// </summary>
         bool TheItem_HaveFolder;
+
         /// <summary>
         /// Full path of the actual directory...
         /// </summary>
@@ -112,12 +116,14 @@ namespace StockRoom11net.Controls.ThumbViewer
         DialogResult DialogResult = new DialogResult();
 
         ResourcesCache.ResourcesCache _cache = new ResourcesCache.ResourcesCache();
-               
+
         bool ReportEvents;
         int lastMouseMove;
-        Panel toInsert;
-        ThumbNail thumbnailChildAtPosition;
-        ThumbNail thumbnailDisplaced;
+        int lastDragDirection; // -1 = left, +1 = right, 0 = unknown/no horizontal movement yet
+        Panel? placeToInsert;
+        ThumbNail? thumbnailChildAtPosition;
+        ThumbNail? thumbnailDisplaced;
+
 
         /// <summary>
         /// Internal record of number of pictures founded.
@@ -161,110 +167,63 @@ namespace StockRoom11net.Controls.ThumbViewer
         // thumbNail size 92 x 70. Ratio 92/70 = 1.314
         int _thumbNailWidth = 92;
         int _thumbNailHeight = 70;
-        double _ratioImage = 1.314;
+        readonly double _ratioImage = 1.314;
 
         /// <summary>
-        /// A flag to warn ThumbNailHeight event is not front the user...
-        /// this change because the Panel2 was enabled.
+        /// Extra vertical space (paddings + slack) added to _thumbNailHeight to get the Panel2 height.
         /// </summary>
-        bool splitContainer_ThumbViewer_Panel2Collapsed_Changed = false;
-
-        bool isThumbNailHeightEvent = false;
+        int ThumbNailRowChrome => splitContainer_ThumbViewer.Panel2.Padding.Vertical
+                                  + flowLayoutPanel_ThumbNails.Padding.Vertical
+                                  + ThumbNailVerticalPadding;
 
         [Category("Control Properties"),
-        DefaultValue(true),
-        Description("Width of ThumbNail, default value is 92.")]
+        DefaultValue(92),
+        Description("Width of ThumbNail, default value is 92. Derived from ThumbNailHeight; setting it only takes effect if consistent with the ratio.")]
         public int ThumbNailWidth
         {
+            get => _thumbNailWidth;
             set
             {
-                if (value >= 10 && value <= (flowLayoutPanel.Width / 2))
+                if (value >= 10)
                     _thumbNailWidth = value;
             }
-            get
-            {
-                return _thumbNailWidth;
-            }
         }
 
         [Category("Control Properties"),
-        DefaultValue(true),
-        Description("Height of ThumbNail, default value is 70.")]
+        DefaultValue(70),
+        Description("Height of ThumbNail, default value is 70. Drives the initial splitter position.")]
         public int ThumbNailHeight
         {
+            get => _thumbNailHeight;
             set
             {
-                if (value >= 1 && value <= (flowLayoutPanel.Height + 10))
-                {
-                    _thumbNailHeight = value;
-                    isThumbNailHeightEvent = true;
-                    _thumbNailWidth = (int)(_thumbNailHeight * _ratioImage);
+                if (value < 1 || value == _thumbNailHeight)
+                    return;
 
-                    if (splitContainer_ThumbViewer_Panel2Collapsed_Changed)
-                    {
-                        splitContainer_ThumbViewer_Panel2Collapsed_Changed = false;
-                        return;
-                    }
+                _thumbNailHeight = value;
+                _thumbNailWidth = (int)(_thumbNailHeight * _ratioImage);
 
-                    //PathFromPartNumberProcess();
-                }
-            }
-            get
-            {
-                return _thumbNailHeight;
+                // Re-position the splitter (no-op until the container has a real size,
+                // or after the user has dragged the splitter).
+                ApplySplitterFromThumbNailHeight();
             }
         }
 
-
         /// <summary>
-        /// The splitterContainer.SplitterDistance will be splitContainer_ThumbViewer.Height - _splitterContainerDistance;
+        /// Height of the thumbnail row (Panel2). Kept for designer/host compatibility;
+        /// it is derived from ThumbNailHeight and setting it maps back to ThumbNailHeight.
         /// </summary>
-        int _splitterContainerDistance = 88;
-
         [Category("Control Properties"),
-        DefaultValue(true),
-        Description("Height of the Splitter container, default value is 88.")]
+        DefaultValue(88),
+        Description("Height of the thumbnail row (Panel2). Derived from ThumbNailHeight.")]
         public int SplitterDistance
         {
+            get => _thumbNailHeight + ThumbNailRowChrome;
             set
             {
-                try
-                {
-                    if (splitContainer_ThumbViewer.Height < value)
-                    {
-                        int _height = splitContainer_ThumbViewer.Height - 88;
-
-                        if (_height > 0)
-                            splitContainer_ThumbViewer.SplitterDistance = _height;
-
-                        return;
-                    }
-
-                    if (value > 0 && value < (splitContainer_ThumbViewer.Height * 2))
-                    {
-                        _splitterContainerDistance = value;
-                        int distance = splitContainer_ThumbViewer.Height - _splitterContainerDistance;
-
-                        if (distance > 0)
-                            splitContainer_ThumbViewer.SplitterDistance = distance;
-                        else
-                        {
-                            _splitterContainerDistance = 88;
-                            splitContainer_ThumbViewer.SplitterDistance = splitContainer_ThumbViewer.Height - 88;
-                        }
-                    }
-
-                }
-                catch (Exception error)
-                {
-                    MessageBox.Show(new Form() { TopMost = true }, @"Message related to this error is " + error.Message,
-                                 @"ThumbViewer has generated an error.", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-            }
-
-            get
-            {
-                return _splitterContainerDistance;
+                int height = value - ThumbNailRowChrome;
+                if (height >= 1)
+                    ThumbNailHeight = height;
             }
         }
 
@@ -387,8 +346,7 @@ namespace StockRoom11net.Controls.ThumbViewer
                     GetPictureProcess(directoryPathString, false);
                     return;
                 }
-
-                //PathFromPartNumberTimer.Start();
+                                
                 PathFromPartNumberProcess();
             }
         }
@@ -404,20 +362,27 @@ namespace StockRoom11net.Controls.ThumbViewer
 
                 ReportEvents = false;
 
-                flowLayoutPanel.AllowDrop = true;
-                flowLayoutPanel.HorizontalScroll.Enabled = false;
-                flowLayoutPanel.HorizontalScroll.Visible = false;
-                flowLayoutPanel.VerticalScroll.SmallChange = 2;
-                flowLayoutPanel.VerticalScroll.LargeChange = 80;
-                flowLayoutPanel.MouseEnter += new EventHandler(FlowLayoutPanel_MouseEnter);
-                flowLayoutPanel.MouseWheel += new MouseEventHandler(FlowLayoutPanel_MouseWheel);
-                flowLayoutPanel.DragEnter += new DragEventHandler(FlowLayoutPanel_DragEnter);
-                flowLayoutPanel.DragDrop += new DragEventHandler(FlowLayoutPanel_DragDrop);
-                flowLayoutPanel.GiveFeedback += new GiveFeedbackEventHandler(FlowLayoutPanel_GiveFeedback);
-                flowLayoutPanel.DragOver += new DragEventHandler(FlowLayoutPanel_DragOver);
+                flowLayoutPanel_ThumbNails.AllowDrop = true;
+                flowLayoutPanel_ThumbNails.HorizontalScroll.Enabled = false;
+                flowLayoutPanel_ThumbNails.HorizontalScroll.Visible = false;
+                flowLayoutPanel_ThumbNails.VerticalScroll.SmallChange = 2;
+                flowLayoutPanel_ThumbNails.VerticalScroll.LargeChange = 80;
+                flowLayoutPanel_ThumbNails.MouseEnter += new EventHandler(FlowLayoutPanel_MouseEnter);
+                flowLayoutPanel_ThumbNails.MouseWheel += new MouseEventHandler(FlowLayoutPanel_MouseWheel);
+                flowLayoutPanel_ThumbNails.DragEnter += new DragEventHandler(FlowLayoutPanel_DragEnter);
+                flowLayoutPanel_ThumbNails.DragDrop += new DragEventHandler(FlowLayoutPanel_DragDrop);
+                flowLayoutPanel_ThumbNails.GiveFeedback += new GiveFeedbackEventHandler(FlowLayoutPanel_GiveFeedback);
+                flowLayoutPanel_ThumbNails.DragOver += new DragEventHandler(FlowLayoutPanel_DragOver);
 
+                splitContainer_ThumbViewer.IsSplitterFixed = true;
                 splitContainer_ThumbViewer.MouseDown += SplitContainer_ThumbViewer_MouseDown;
+                splitContainer_ThumbViewer.MouseMove += SplitContainer_ThumbViewer_MouseMove;
                 splitContainer_ThumbViewer.MouseUp += SplitContainer_ThumbViewer_MouseUp;
+                splitContainer_ThumbViewer.MouseLeave += (_, _) => splitContainer_ThumbViewer.Cursor = Cursors.Default;
+
+                // Panel2 keeps its height when the container is resized; only the user's drag changes it.
+                splitContainer_ThumbViewer.FixedPanel = FixedPanel.Panel2;
+                splitContainer_ThumbViewer.SizeChanged += SplitContainer_ThumbViewer_SizeChanged;
 
                 InitializedFlowLayoutPanel();
                 InitializedPictureBox();
@@ -435,6 +400,48 @@ namespace StockRoom11net.Controls.ThumbViewer
             }
         }
 
+
+
+        /// <summary>Once the user drags the splitter, stop forcing Panel2 to _thumbNailHeight.</summary>
+        bool _splitterUserOverride;
+
+        protected override void OnLoad(EventArgs e)
+        {
+            base.OnLoad(e);
+            ApplySplitterFromThumbNailHeight();
+        }
+
+        void SplitContainer_ThumbViewer_SizeChanged(object sender, EventArgs e)
+        {
+            ApplySplitterFromThumbNailHeight();
+        }
+
+        /// <summary>
+        /// Positions the splitter so Panel2 is exactly tall enough for one row of
+        /// thumbnails of _thumbNailHeight. Re-applied on every resize until the user drags.
+        /// </summary>
+        void ApplySplitterFromThumbNailHeight()
+        {
+            if (_splitterUserOverride || _splitterDragging || !IsHorizontalSplit)
+                return;
+
+            int panel2Height = _thumbNailHeight + ThumbNailRowChrome;
+
+            int min = splitContainer_ThumbViewer.Panel1MinSize;
+            int max = splitContainer_ThumbViewer.Height
+                      - splitContainer_ThumbViewer.SplitterWidth
+                      - splitContainer_ThumbViewer.Panel2MinSize;
+
+            if (max <= min)
+                return;
+
+            int distance = Math.Clamp(
+                splitContainer_ThumbViewer.Height - splitContainer_ThumbViewer.SplitterWidth - panel2Height,
+                min, max);
+
+            if (distance != splitContainer_ThumbViewer.SplitterDistance)
+                splitContainer_ThumbViewer.SplitterDistance = distance;
+        }
 
 
         System.Windows.Forms.Timer PathFromPartNumberTimer;
@@ -456,54 +463,128 @@ namespace StockRoom11net.Controls.ThumbViewer
             PathFromPartNumberProcess();
         }
 
+        /// <summary>True while the user is dragging the splitter with the left button.</summary>
+        bool _splitterDragging;
 
+        /// <summary>Offset between the mouse and the top of the splitter bar at drag start.</summary>
+        int _splitterDragOffset;
 
-        bool _mouseLeftButtonDown;
-        void SplitContainer_ThumbViewer_MouseUp(object sender, MouseEventArgs e)
-        {
-            if (e.Button == MouseButtons.Right)
-                _mouseLeftButtonDown = false;
-        }
+        /// <summary>
+        /// Vertical space reserved so one row of thumbnails fits without a vertical scrollbar.
+        /// </summary>
+        const int ThumbNailVerticalPadding = 1;
+
+        bool IsHorizontalSplit => splitContainer_ThumbViewer.Orientation == Orientation.Horizontal;
 
         void SplitContainer_ThumbViewer_MouseDown(object sender, MouseEventArgs e)
         {
-            if (e.Button == MouseButtons.Left)
-                _mouseLeftButtonDown = true;
+            if (e.Button != MouseButtons.Left || splitContainer_ThumbViewer.Panel2Collapsed)
+                return;
+
+            if (!splitContainer_ThumbViewer.SplitterRectangle.Contains(e.Location))
+                return;
+
+            _splitterDragging = true;
+            _splitterUserOverride = true;
+            _splitterDragOffset = IsHorizontalSplit
+                ? e.Y - splitContainer_ThumbViewer.SplitterRectangle.Y
+                : e.X - splitContainer_ThumbViewer.SplitterRectangle.X;
         }
 
-        
+        void SplitContainer_ThumbViewer_MouseMove(object sender, MouseEventArgs e)
+        {
+            // Hover feedback (IsSplitterFixed suppresses the built-in cursor change).
+            if (!_splitterDragging)
+            {
+                bool mouseOverSplitterRectangle = splitContainer_ThumbViewer.SplitterRectangle.Contains(e.Location);
+                splitContainer_ThumbViewer.Cursor = mouseOverSplitterRectangle
+                    ? (IsHorizontalSplit ? Cursors.HSplit : Cursors.VSplit) : Cursors.Default;
+                return;
+            }
+
+            int proposed = (IsHorizontalSplit ? e.Y : e.X) - _splitterDragOffset;
+
+            int total = IsHorizontalSplit ? splitContainer_ThumbViewer.Height : splitContainer_ThumbViewer.Width;
+            int min = splitContainer_ThumbViewer.Panel1MinSize;
+            int max = total - splitContainer_ThumbViewer.SplitterWidth - splitContainer_ThumbViewer.Panel2MinSize;
+
+            if (max <= min)
+                return;
+
+            proposed = Math.Clamp(proposed, min, max);
+
+            if (proposed == splitContainer_ThumbViewer.SplitterDistance)
+                return;
+
+            splitContainer_ThumbViewer.SplitterDistance = proposed;
+            ResizeThumbNails(splitContainer_ThumbViewer.Panel2.ClientSize.Height);
+            splitContainer_ThumbViewer.Update();
+        }
+
+        void SplitContainer_ThumbViewer_MouseUp(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+                _splitterDragging = false;
+        }
+
+        /// <summary>
+        /// Recomputes the thumbnail size for the given Panel2 height and applies it
+        /// to every ThumbNail hosted in the flowLayoutPanel.
+        /// </summary>
+        void ResizeThumbNails(int panel2Height)
+        {
+            int availableHeight = panel2Height
+                                  - splitContainer_ThumbViewer.Panel2.Padding.Vertical
+                                  - flowLayoutPanel_ThumbNails.Padding.Vertical
+                                  - ThumbNailVerticalPadding;
+
+            if (availableHeight < 1 || availableHeight == _thumbNailHeight)
+                return;
+
+            // Update backing fields directly; the ThumbNailHeight setter has side effects.
+            _thumbNailHeight = availableHeight;
+            _thumbNailWidth = (int)(_thumbNailHeight * _ratioImage);
+
+            placeToInsert?.Height = _thumbNailHeight;
+
+            flowLayoutPanel_ThumbNails.SuspendLayout();
+            try
+            {
+                foreach (Control control in flowLayoutPanel_ThumbNails.Controls)
+                {
+                    if (control is ThumbNail thumb)
+                        thumb.Resize(_thumbNailWidth, _thumbNailHeight);
+                }
+            }
+            finally
+            {
+                flowLayoutPanel_ThumbNails.ResumeLayout(true);
+            }
+
+            // Force an immediate repaint so the change is visible while the mouse is captured.
+            flowLayoutPanel_ThumbNails.Update();
+        }
+
+
 
         void PathFromPartNumberProcess()
         {
             _informationStatus = 0;
-            //ClearFlowLayoutPanelThumbNails();
 
             if (_pathFromPartNumber == null)
                 return;
 
-            if (_pathFromPartNumber.Contains(";"))
+            if (_pathFromPartNumber.Contains(';'))
             {
-                string[] strings = _pathFromPartNumber.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+                string[] strings = _pathFromPartNumber.Split([';'], StringSplitOptions.RemoveEmptyEntries);
                 foreach (var item in strings)
                 {
-                    if (splitContainer_ThumbViewer.Panel2Collapsed)
-                    {
-                        splitContainer_ThumbViewer.Panel2Collapsed = false;
-
-                        if (!isThumbNailHeightEvent)
-                            splitContainer_ThumbViewer_Panel2Collapsed_Changed = true;
-                    }
-
-                    isThumbNailHeightEvent = false;
-
-                    var strTestDirectoryPath = Path.Combine(DefaultAddress, item.Trim());
-                    if (Directory.Exists(strTestDirectoryPath))
+                    DirectoryPath = Path.Combine(DefaultAddress, item.Trim());
+                    if (Directory.Exists(DirectoryPath))
                     {
                         #region"The path is a directory"
 
                         TheItem_HaveFolder = true;
-                        DirectoryPath = strTestDirectoryPath;
-
                         ProcessDirectory(DirectoryPath);
 
                         #endregion"The path is a directory"
@@ -513,19 +594,17 @@ namespace StockRoom11net.Controls.ThumbViewer
                         #region"The path is a file"
 
                         TheItem_HaveFolder = false;
-
                         string searchPattern = item.Trim();
 
-                        if (searchPattern.Contains("."))
-                            searchPattern = searchPattern.Remove(searchPattern.IndexOf("."));
+                        if (searchPattern.Contains('.'))
+                            searchPattern = searchPattern[..searchPattern.IndexOf('.')];
 
                         searchPattern += "*.*";
-
-                        string[] strFiles = Directory.EnumerateFiles(DefaultAddress, searchPattern).ToArray();
+                        string[] strFiles = [..Directory.EnumerateFiles(DefaultAddress, searchPattern)];
 
                         if (strFiles.Length == 1)
                         {
-                            LoadPicturesInDirectory(strFiles);
+                            ProcessFile(strFiles[0]);
                             _informationStatus += 1;
                         }
 
@@ -535,24 +614,13 @@ namespace StockRoom11net.Controls.ThumbViewer
             }
             else
             {
-                var strTestDirectoryPath = Path.Combine(DefaultAddress, _pathFromPartNumber);
-                if (Directory.Exists(strTestDirectoryPath))
+                DirectoryPath = Path.Combine(DefaultAddress, _pathFromPartNumber);
+                if (Directory.Exists(DirectoryPath))
                 {
                     #region"The path is a directory"
 
                     TheItem_HaveFolder = true;
 
-                    if (splitContainer_ThumbViewer.Panel2Collapsed)
-                    {
-                        splitContainer_ThumbViewer.Panel2Collapsed = false;
-
-                        if (!isThumbNailHeightEvent)
-                            splitContainer_ThumbViewer_Panel2Collapsed_Changed = true;
-                    }
-
-                    isThumbNailHeightEvent = false;
-
-                    DirectoryPath = strTestDirectoryPath;
                     ProcessDirectory(DirectoryPath);
 
                     #endregion"The path is a directory"
@@ -562,17 +630,7 @@ namespace StockRoom11net.Controls.ThumbViewer
                     #region"The path is a file"
 
                     TheItem_HaveFolder = false;
-
-                    if (!splitContainer_ThumbViewer.Panel2Collapsed)
-                    {
-                        splitContainer_ThumbViewer.Panel2Collapsed = true;
-
-                        if (!isThumbNailHeightEvent)
-                            splitContainer_ThumbViewer_Panel2Collapsed_Changed = true;
-                    }
-
-                    isThumbNailHeightEvent = false;
-
+                    splitContainer_ThumbViewer.Panel2Collapsed = true;                    
                     ProcessFile(_pathFromPartNumber);
 
                     #endregion"The path is a file"
@@ -585,67 +643,110 @@ namespace StockRoom11net.Controls.ThumbViewer
 
         void InitializeToDropPanel()
         {
-            toInsert = new Panel
+            placeToInsert = new Panel
             {
                 Width = 10,
                 Height = 70,
                 BackColor = Color.Beige,
                 BorderStyle = BorderStyle.FixedSingle
             };
-            toInsert.BringToFront();
+            placeToInsert.BringToFront();
+        }
+
+        void Thumbnail_ThumbNailDragStarting(object sender, MouseEventArgs e)
+        {
+            thumbNailSource = sender as ThumbNail;
+
+            using (Bitmap bmp = new Bitmap(thumbNailSource.Width, thumbNailSource.Height))
+            {
+                thumbNailSource.DrawToBitmap(bmp, new Rectangle(Point.Empty, new Size((thumbNailSource.Size.Width - 10), (thumbNailSource.Size.Height - 20))));
+                dragCursor = new Cursor(bmp.GetHicon());
+            }
+
+            lastMouseMove = e.X;
+            dragType = thumbNailSource.GetType();
+
+            try
+            {
+                flowLayoutPanel_ThumbNails.DoDragDrop(thumbNailSource, DragDropEffects.Move);
+            }
+            finally
+            {
+                // Guaranteed to run no matter where the drop landed
+                // (inside flowLayoutPanel_ThumbNails, on a foreign control, or cancelled).
+                Cursor = Cursors.Default;
+                flowLayoutPanel_ThumbNails.Controls.Remove(placeToInsert);
+                thumbnailDisplaced = null;
+
+                dragCursor?.Dispose();
+                dragCursor = null;
+            }
         }
 
         void FlowLayoutPanel_DragOver(object sender, DragEventArgs e)
         {
             try
             {
-                Point clientPoint = flowLayoutPanel.PointToClient(new Point(e.X, e.Y));
+                Point clientPoint = flowLayoutPanel_ThumbNails.PointToClient(new Point(e.X, e.Y));
 
-                if (flowLayoutPanel.GetChildAtPoint(clientPoint) == null)
+                Control? childAtPoint = flowLayoutPanel_ThumbNails.GetChildAtPoint(clientPoint);
+                if (childAtPoint == null)
                     return;
 
-                if (flowLayoutPanel.GetChildAtPoint(clientPoint).GetType() == typeof(Panel))
-                    return;
-
-                thumbnailChildAtPosition = (ThumbNail)flowLayoutPanel.GetChildAtPoint(clientPoint);
+                thumbnailChildAtPosition = childAtPoint as ThumbNail;
                 if (thumbnailChildAtPosition == null)
                 {
                     thumbnailDisplaced = new ThumbNail();
                     return;
                 }
 
-                // if the mouse is hovering over the original thumbNail, we do not want to
-                // paint anything, so we return.
-                if (thumbNailMouseDown.FileName.Contains(thumbnailChildAtPosition.FileName))
-                {
-                    thumbnailDisplaced = new ThumbNail();
-                    flowLayoutPanel.Controls.Remove(toInsert);
-                    return;
-                }
+                int currentDirection = e.X.CompareTo(lastMouseMove);
 
-                int index = flowLayoutPanel.Controls.GetChildIndex(thumbnailChildAtPosition, false);
-                On_StatusBarMessage(new StatusBarMessage_EventArgs("Mouse position over thumbnail index " + index + " position at " + thumbnailMousePosition, 1));
+                bool sameTarget = thumbnailDisplaced != null && thumbnailDisplaced.FileName == thumbnailChildAtPosition.FileName;
+                bool sameDirection = currentDirection == 0 || currentDirection == lastDragDirection;
 
-                if (!flowLayoutPanel.Controls.Contains(toInsert))
-                    flowLayoutPanel.Controls.Add(toInsert);
-
-                if (thumbnailDisplaced != null && thumbnailDisplaced.FileName.Contains(thumbnailChildAtPosition.FileName))
+                if (sameTarget && sameDirection)
                     return;
 
                 thumbnailDisplaced = thumbnailChildAtPosition;
 
-                // column is being dragged to the left.
-                if (lastMouseMove > e.X)
+                flowLayoutPanel_ThumbNails.SuspendLayout();
+                try
                 {
-                    lastMouseMove = lastMouseMove - 5;
-                    flowLayoutPanel.Controls.SetChildIndex(toInsert, (index - 1));
-                }
+                    // Compute the target's index as if the placeholder weren't in the collection at all,
+                    // without actually removing/re-adding it (which was causing the visible shift).
+                    int rawIndex = flowLayoutPanel_ThumbNails.Controls.GetChildIndex(thumbnailChildAtPosition, false);
+                    bool placeholderPresent = flowLayoutPanel_ThumbNails.Controls.Contains(placeToInsert);
+                    int placeholderIndex = placeholderPresent
+                        ? flowLayoutPanel_ThumbNails.Controls.GetChildIndex(placeToInsert, false)
+                        : -1;
 
-                // column is being dragged to the right.
-                if (lastMouseMove < e.X)
+                    int index = (placeholderPresent && placeholderIndex < rawIndex) ? rawIndex - 1 : rawIndex;
+
+                    On_StatusBarMessage(new StatusBarMessage_EventArgs("Mouse position mouseOverSplitterRectangle thumbnail index " + index + " position at " + thumbnailMousePosition, 1));
+
+                    if (!placeholderPresent)
+                        flowLayoutPanel_ThumbNails.Controls.Add(placeToInsert);
+
+                    if (currentDirection != 0)
+                    {
+                        lastDragDirection = currentDirection;
+                        lastMouseMove = e.X;
+                    }
+
+                    if (placeToInsert != null)
+                    {
+                        // thumbNail is being dragged to the left.
+                        if (lastDragDirection < 0)
+                            flowLayoutPanel_ThumbNails.Controls.SetChildIndex(placeToInsert, index);
+                        // thumbNail is being dragged to the right.
+                        else if (lastDragDirection > 0)
+                            flowLayoutPanel_ThumbNails.Controls.SetChildIndex(placeToInsert, index + 1);
+                    }
+                }
+                finally
                 {
-                    lastMouseMove = e.X + 5;
-                    flowLayoutPanel.Controls.SetChildIndex(toInsert, index);
+                    flowLayoutPanel_ThumbNails.ResumeLayout(true);
                 }
             }
             catch (Exception error)
@@ -666,8 +767,7 @@ namespace StockRoom11net.Controls.ThumbViewer
 
         void FlowLayoutPanel_DragDrop(object sender, DragEventArgs e)
         {
-            Cursor = Cursors.Default;
-            flowLayoutPanel.Controls.Remove(toInsert);
+            flowLayoutPanel_ThumbNails.Controls.Remove(placeToInsert);
 
             if (EmployeeAccessLevel < Utilities.AccessLevel.Administrator)
             {
@@ -677,14 +777,15 @@ namespace StockRoom11net.Controls.ThumbViewer
                 return;
             }
 
-            var source = (Control)e.Data.GetData(dragType);
-            var target = flowLayoutPanel.GetChildAtPoint(flowLayoutPanel.PointToClient(new Point(e.X, e.Y)));
+            ThumbNail? source = (ThumbNail?)e.Data.GetData(dragType)?? null;
+            ThumbNail? target = (ThumbNail?)flowLayoutPanel_ThumbNails.GetChildAtPoint(flowLayoutPanel_ThumbNails.PointToClient(new Point(e.X, e.Y)))?? null;
 
-            if (target != null)
-            {
-                int index = flowLayoutPanel.Controls.GetChildIndex(target);
-                flowLayoutPanel.Controls.SetChildIndex(source, index);
-            }
+            if (source == null) return;
+            if (target == null) return;
+            if (target.FileName == source.FileName) return;
+
+            int index = flowLayoutPanel_ThumbNails.Controls.GetChildIndex(target);
+            flowLayoutPanel_ThumbNails.Controls.SetChildIndex(source, index);
 
             UpDateFileNameIndex();
             ProcessPictureInDirectory(DirectoryPath);
@@ -700,25 +801,26 @@ namespace StockRoom11net.Controls.ThumbViewer
 
         void InitializedFlowLayoutPanel()
         {
-            flowLayoutPanel.DoubleClick += FlowLayoutPanel_DoubleClick;
+            flowLayoutPanel_ThumbNails.DoubleClick += FlowLayoutPanel_DoubleClick;
         }
 
-        void FlowLayoutPanel_DoubleClick(object sender, EventArgs e)
+        void FlowLayoutPanel_DoubleClick(object? sender, EventArgs e)
         {
             ReportEvents = !ReportEvents;
         }
 
+
         void FlowLayoutPanel_MouseWheel(object sender, MouseEventArgs e)
         {
-            if (!flowLayoutPanel.VerticalScroll.Visible)
+            if (!flowLayoutPanel_ThumbNails.VerticalScroll.Visible)
                 return;
 
-            if (e.Delta > 0 && flowLayoutPanel.VerticalScroll.Value > 30)
-                flowLayoutPanel.VerticalScroll.Value += 40;
+            if (e.Delta > 0 && flowLayoutPanel_ThumbNails.VerticalScroll.Value > 30)
+                flowLayoutPanel_ThumbNails.VerticalScroll.Value += 40;
                             
             if (e.Delta < 0)
-                if (flowLayoutPanel.VerticalScroll.Value > 41)
-                    flowLayoutPanel.VerticalScroll.Value -= 40;
+                if (flowLayoutPanel_ThumbNails.VerticalScroll.Value > 41)
+                    flowLayoutPanel_ThumbNails.VerticalScroll.Value -= 40;
         }
 
         void FlowLayoutPanel_MouseEnter(object sender, EventArgs e)
@@ -732,8 +834,8 @@ namespace StockRoom11net.Controls.ThumbViewer
 
             if (db != null)
             {
-                flowLayoutPanel.BackgroundImage = null;
-                flowLayoutPanel.Controls.Clear();
+                flowLayoutPanel_ThumbNails.BackgroundImage = null;
+                flowLayoutPanel_ThumbNails.Controls.Clear();
 
                 var strThumbsFiles = db.GetThumbfiles();
                 var strFiles = GetImageFiles(DirectoryPath);
@@ -763,8 +865,8 @@ namespace StockRoom11net.Controls.ThumbViewer
                     //directory before the loop finished, we need restart.
                     if (!strThumbFile.Contains(DirectoryPath))
                     {
-                        flowLayoutPanel.BackgroundImage = null;
-                        flowLayoutPanel.Controls.Clear();
+                        flowLayoutPanel_ThumbNails.BackgroundImage = null;
+                        flowLayoutPanel_ThumbNails.Controls.Clear();
                     }
 
                     if (strFileName.Equals(string.Empty))
@@ -808,12 +910,11 @@ namespace StockRoom11net.Controls.ThumbViewer
                         continue;
                     }
 
-                    flowLayoutPanel.Controls.Add(thumbnail);
+                    flowLayoutPanel_ThumbNails.Controls.Add(thumbnail);
 
-                    if (flowLayoutPanel.Controls.Count == 1)
+                    if (flowLayoutPanel_ThumbNails.Controls.Count == 1)
                     {
                         splitContainer_ThumbViewer.Panel2Collapsed = false;
-                        splitContainer_ThumbViewer_Panel2Collapsed_Changed = true;
                         Thumbnail_ThumbNailClicked(new object(), new ThumbNailClick_EventArgs(thumbnail.FileName,
                                                                                     thumbnail.FilePath, thumbnail));
                     }
@@ -879,18 +980,26 @@ namespace StockRoom11net.Controls.ThumbViewer
 
             if (strFiles.Length == 0)
             {
+                TryDeleteDirectory(pathDirectory);
                 GetPictureProcess(Settings.Default.DataBaseAddress + "\\Resources\\" + "No_Picture_Found.jpg", false);
+                splitContainer_ThumbViewer.Panel2Collapsed = true;
                 return;
             }
 
             if (strFiles.Length == 1)
             {
                 GetPictureProcess(Path.Combine(pathDirectory, strFiles[0]), true);
+                splitContainer_ThumbViewer.Panel2Collapsed = true;
                 _informationStatus += 1;
+                return;
             }
 
             if (strFiles.Length > 1)
+            {
+                splitContainer_ThumbViewer.Panel2Collapsed = false;
                 LoadPicturesInDirectory(strFiles);
+
+            }
         }
 
         /// <summary>
@@ -900,15 +1009,17 @@ namespace StockRoom11net.Controls.ThumbViewer
         /// <param name="directoryPath"></param>
         void LoadPicturesInDirectory(string[] strFiles)
         {
+            // If the user select a different directory before the loop finished, we need restart.
+            flowLayoutPanel_ThumbNails.Controls.Clear();
+
             foreach (ThumbNail thumb in GetThumbNailImage(strFiles))
             {
-                flowLayoutPanel.Controls.Add(thumb);
-                thumb.Index = flowLayoutPanel.Controls.Count;
+                flowLayoutPanel_ThumbNails.Controls.Add(thumb);
+                thumb.Index = flowLayoutPanel_ThumbNails.Controls.Count;
 
                 if (thumb.Index == 1)
                 {
                     Thumbnail_ThumbNailClicked(new object(), new ThumbNailClick_EventArgs(thumb.FileName, thumb.FilePath, thumb));
-                    //On_StatusBarMessage(new StatusBarMessage_EventArgs("ThumbNail height " + thumb.Height + " , width " + thumb.Width, 1));
                 }
             }
         }
@@ -1019,27 +1130,34 @@ namespace StockRoom11net.Controls.ThumbViewer
         }
 
 
-        Type dragType;
-        Cursor dragCursor;
-        ThumbNail thumbNailMouseDown;
-        int thumbnailMousePosition;
-
-        void Thumbnail_ThumbNailDragStarting(object sender, MouseEventArgs e)
+        private bool TryDeleteDirectory(string path)
         {
-            thumbNailMouseDown = sender as ThumbNail;
+            if (string.IsNullOrWhiteSpace(path) || !Directory.Exists(path))
+                return false;
 
-            using (Bitmap bmp = new Bitmap(thumbNailMouseDown.Width, thumbNailMouseDown.Height))
+            try
             {
-                thumbNailMouseDown.DrawToBitmap(bmp, new Rectangle(Point.Empty, new Size((thumbNailMouseDown.Size.Width - 10), (thumbNailMouseDown.Size.Height - 20))));
-                dragCursor = new Cursor(bmp.GetHicon());
-            }
+                // Clear read-only attributes so Delete doesn't fail on protected files
+                foreach (var file in Directory.EnumerateFiles(path, "*", SearchOption.AllDirectories))
+                    File.SetAttributes(file, FileAttributes.Normal);
 
-            lastMouseMove = e.X;
-            dragType = thumbNailMouseDown.GetType();
-            flowLayoutPanel.DoDragDrop(thumbNailMouseDown, DragDropEffects.Move);
-            dragCursor.Dispose();
+                Directory.Delete(path, recursive: true);
+
+                On_StatusBarMessage(new StatusBarMessage_EventArgs($"Deleted folder: {path}"));
+                return true;
+            }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+            {
+                On_StatusBarMessage(new StatusBarMessage_EventArgs($"Could not delete folder: {ex.Message}"));
+                return false;
+            }
         }
 
+        Type dragType;
+        Cursor? dragCursor;
+        ThumbNail thumbNailSource;
+        int thumbnailMousePosition;
+                
         void Thumbnail_ThumbNailClicked(object sender, ThumbNailClick_EventArgs e)
         {
             //if (!pictureBox_Image.Visible)
@@ -1062,7 +1180,7 @@ namespace StockRoom11net.Controls.ThumbViewer
 
         void Thumbnail_ThumbNailMouseEnter(object sender, ThumbNailMouseEnter_EventArgs e)
         {
-            int index = flowLayoutPanel.Controls.GetChildIndex(thumbnailChildAtPosition, false);
+            int index = flowLayoutPanel_ThumbNails.Controls.GetChildIndex(thumbnailChildAtPosition, false);
             On_StatusBarMessage(new StatusBarMessage_EventArgs("Mouse position enter at thumbnail index " + index + " position at " + thumbnailMousePosition, 1));
         }
 
@@ -1076,17 +1194,16 @@ namespace StockRoom11net.Controls.ThumbViewer
         /// </summary>
         void ClearFlowLayoutPanelThumbNails()
         {
-            if (flowLayoutPanel.Controls.Count == 0)
+            if (flowLayoutPanel_ThumbNails.Controls.Count == 0)
                 return;
 
-            foreach (ThumbNail thumbnail in flowLayoutPanel.Controls)
+            foreach (ThumbNail thumbnail in flowLayoutPanel_ThumbNails.Controls.OfType<ThumbNail>())
             {
                 thumbnail.Dispose();
             }
             
-            flowLayoutPanel.Controls.Clear();
+            flowLayoutPanel_ThumbNails.Controls.Clear();
             splitContainer_ThumbViewer.Panel2Collapsed = true;
-            splitContainer_ThumbViewer_Panel2Collapsed_Changed = true;
         }
 
         void ShellNotificationRefresh(string pathFolder)
@@ -1216,24 +1333,27 @@ namespace StockRoom11net.Controls.ThumbViewer
             contextMenuStripPictureBox.Opening += ContextMenuStripPictureBoxOpening;
             contextMenuStripPictureBox.MouseLeave += ContextMenuStripPictureBox_MouseLeave;
 
-            toolStripMenuItem_RemoveThisPicture.Click += ToolStripMenuItemRemoveThisPictureClick;
             toolStripMenuItem_AddANewPicture.Click += ToolStripMenuItemAddANewPictureClick;
-            toolStripMenuItemCopyToANewFile.Click += ToolStripMenuItemCopyToANewFile_Click;
-            toolStripMenuItemCopyFileToTheClickBoard.Click += ToolStripMenuItemCopyFileToTheClickBoard_Click;
-            toolStripMenuItemCopyImageToTheClipBoard.Click += ToolStripMenuItemCopyImageToTheClipBoard_Click;
-
-            toolStripMenuItemCopyToANewFile.MouseHover += ToolStripMenuItem_MouseHover;
-            toolStripMenuItemCopyToANewFile.MouseLeave += ToolStripMenuItem_MouseLeave;
-
-            toolStripMenuItemCopyFileToTheClickBoard.MouseHover += ToolStripMenuItem_MouseHover;
-            toolStripMenuItemCopyFileToTheClickBoard.MouseLeave += ToolStripMenuItem_MouseLeave;
-
-            toolStripMenuItemCopyImageToTheClipBoard.MouseHover += ToolStripMenuItem_MouseHover;
-            toolStripMenuItemCopyImageToTheClipBoard.MouseLeave += ToolStripMenuItem_MouseLeave;
-
             toolStripMenuItem_AddANewPicture.MouseHover += ToolStripMenuItem_MouseHover;
             toolStripMenuItem_AddANewPicture.MouseLeave += ToolStripMenuItem_MouseLeave;
 
+            toolStripMenuItemCopyToANewFile.Click += ToolStripMenuItemCopyToANewFile_Click;
+            toolStripMenuItemCopyToANewFile.MouseHover += ToolStripMenuItem_MouseHover;
+            toolStripMenuItemCopyToANewFile.MouseLeave += ToolStripMenuItem_MouseLeave;
+
+            toolStripMenuItemCopyFileToTheClickBoard.Click += ToolStripMenuItemCopyFileToTheClickBoard_Click;
+            toolStripMenuItemCopyFileToTheClickBoard.MouseHover += ToolStripMenuItem_MouseHover;
+            toolStripMenuItemCopyFileToTheClickBoard.MouseLeave += ToolStripMenuItem_MouseLeave;
+
+            toolStripMenuItemCopyImageToTheClipBoard.Click += ToolStripMenuItemCopyImageToTheClipBoard_Click;
+            toolStripMenuItemCopyImageToTheClipBoard.MouseHover += ToolStripMenuItem_MouseHover;
+            toolStripMenuItemCopyImageToTheClipBoard.MouseLeave += ToolStripMenuItem_MouseLeave;
+
+            toolStripMenuItemPasteImageFromClipBoard.Click += ToolStripMenuItemPasteImageFromClipBoard_Click;
+            toolStripMenuItemPasteImageFromClipBoard.MouseHover += ToolStripMenuItem_MouseHover;
+            toolStripMenuItemPasteImageFromClipBoard.MouseLeave += ToolStripMenuItem_MouseLeave;
+
+            toolStripMenuItem_RemoveThisPicture.Click += ToolStripMenuItemRemoveThisPictureClick;
             toolStripMenuItem_RemoveThisPicture.MouseHover += ToolStripMenuItem_MouseHover;
             toolStripMenuItem_RemoveThisPicture.MouseLeave += ToolStripMenuItem_MouseLeave;
         }
@@ -1292,7 +1412,7 @@ namespace StockRoom11net.Controls.ThumbViewer
         }
 
 
-        void ContextMenuStripPictureBoxOpening(object sender, CancelEventArgs e)
+        void ContextMenuStripPictureBoxOpening(object? sender, CancelEventArgs e)
         {
             contextMenuStripPictureBox.Items.Clear();
 
@@ -1300,7 +1420,8 @@ namespace StockRoom11net.Controls.ThumbViewer
                                                                       {
                                                                           toolStripMenuItemCopyToANewFile,
                                                                           toolStripMenuItemCopyFileToTheClickBoard,
-                                                                          toolStripMenuItemCopyImageToTheClipBoard
+                                                                          toolStripMenuItemCopyImageToTheClipBoard,
+                                                                          toolStripMenuItemPasteImageFromClipBoard
                                                                       });
             #region"IsManager or Administrator"
 
@@ -1309,10 +1430,11 @@ namespace StockRoom11net.Controls.ThumbViewer
             {
                 contextMenuStripPictureBox.Items.Add(toolStripMenuItem_AddANewPicture);
 
+                // If the picture is a default picture, we do not want to allow the user to remove it.
                 if (FilePathPictureBoxImage.Contains("No_"))
                     return;
-
-                contextMenuStripPictureBox.Items.Add(toolStripMenuItem_RemoveThisPicture);
+                else
+                    contextMenuStripPictureBox.Items.Add(toolStripMenuItem_RemoveThisPicture);
             }
 
             #endregion"IsManager or Administrator"
@@ -1328,7 +1450,7 @@ namespace StockRoom11net.Controls.ThumbViewer
             PictureBoxImageDoubleClick(new object(), new EventArgs());
         }
 
-        void ToolStripMenuItemRemoveThisPictureClick(object sender, EventArgs e)
+        void ToolStripMenuItemRemoveThisPictureClick(object? sender, EventArgs e)
         {
             if (TheItem_HaveFolder)
             {
@@ -1339,7 +1461,8 @@ namespace StockRoom11net.Controls.ThumbViewer
                     {
                         try
                         {
-                            DialogResult = MessageBox.Show(@"Do you want save this picture?", "Save picture.",
+                            DialogResult = MessageBox.Show(@"Do you want to save this photo with" + Environment.NewLine +
+                                                            "a new name so you can use it later?", "Save picture.",
                                                            MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
                             if (DialogResult == System.Windows.Forms.DialogResult.Cancel)
@@ -1354,7 +1477,7 @@ namespace StockRoom11net.Controls.ThumbViewer
 
                                 using (var openfile = new OpenFileDialogExt.OpenFileDialogExt
                                 {
-                                    Title = @"Please, name filename to save it picture.",
+                                    Title = @"Please name the picture to be saved.",
                                     FileName = "",
                                     Filter = @"*.jpg|*.jpg|*.png|*.png|*.gif|*.gif",
                                     DefaultExt = "(*.jpg)|*.jpg",
@@ -1439,7 +1562,7 @@ namespace StockRoom11net.Controls.ThumbViewer
         }
 
 
-        void ToolStripMenuItemCopyToANewFile_Click(object sender, EventArgs e)
+        void ToolStripMenuItemCopyToANewFile_Click(object? sender, EventArgs e)
         {
             string fileExt = Path.GetExtension(pictureBox_Image.ImageLocation);
 
@@ -1461,16 +1584,54 @@ namespace StockRoom11net.Controls.ThumbViewer
             }
         }
 
-        void ToolStripMenuItemCopyFileToTheClickBoard_Click(object sender, EventArgs e)
+        void ToolStripMenuItemCopyFileToTheClickBoard_Click(object? sender, EventArgs e)
         {
             StringCollection FileCollection = new StringCollection();
             FileCollection.Add(pictureBox_Image.ImageLocation);
             Clipboard.SetFileDropList(FileCollection);
         }
 
-        void ToolStripMenuItemCopyImageToTheClipBoard_Click(object sender, EventArgs e)
+        void ToolStripMenuItemCopyImageToTheClipBoard_Click(object? sender, EventArgs e)
         {
-            Clipboard.SetDataObject(pictureBox_Image.Image, true);
+            Clipboard.SetDataObject(data: pictureBox_Image.Image, copy: true);
+        }
+
+        void ToolStripMenuItemPasteImageFromClipBoard_Click(object? sender, EventArgs e)
+        {
+            if (Clipboard.ContainsImage())
+            {
+                Image? image = Clipboard.GetImage();
+                if (image == null)
+                {
+                    MessageBox.Show("Clipboard does not contain a valid image.", "Paste Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                pictureBox_Image.Image = image;
+
+                NameImageSave(image);
+            }
+        }
+
+        void NameImageSave(Image? image)
+        {
+            string fileName = $"Pasted_{DateTime.Now:yyyyMMdd_HHmmss}.png";
+            string fullPath = Path.Combine(DefaultAddress, fileName);
+
+            try
+            {
+                if (image != null)
+                {
+                    image.Save(fullPath, ImageFormat.Png);
+                    On_StatusBarMessage(new StatusBarMessage_EventArgs($"Image saved: {fullPath}"));
+                    ProcessAddANewPicture([fullPath]);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Failed to save image:{Environment.NewLine}{ex.Message}",
+                    "Save Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         void PictureBoxImageLoadProgressChanged(object sender, ProgressChangedEventArgs e)
@@ -1496,153 +1657,166 @@ namespace StockRoom11net.Controls.ThumbViewer
             {
                 using (var directoryFile = new DirectoryFile())
                 {
+                    directoryFile.Title = @"Select one or more picture to be added to this part number.";
+
+                    // Yes, directoryFile.CopyMultiFileToFolder() will return an array of strings containing
+                    // the full path and name of each file selected by the user to be copied into the folder.
                     string[] filesToCopy = directoryFile.CopyMultiFileToFolder();
+
+                    // If the user did not select any file, return.
                     if (filesToCopy.Length == 0)
                         return;
 
-                    int countFiles = 0;
-                    string filename = "";
-                    string distFileName = "";
-                    string fileCounterChar = "#";
+                    ProcessAddANewPicture(filesToCopy);                    
+                }
+            }
+        }
 
-                    if (TheItem_HaveFolder)
+        void ProcessAddANewPicture(string[] filesToCopy)
+        {
+            int countFiles = 0;
+            string filename = "";
+            string distFileName = "";
+            string fileCounterChar = "#";
+
+            if (TheItem_HaveFolder)
+            {
+                List<string> di = Directory.EnumerateFiles(DirectoryPath).ToList();
+
+                if (di.Count > 0)
+                {
+                    #region"Directory exist, but have some file...."
+
+                    di.Sort();
+                    string lastName = di.Last();
+                    int topValue = 50;
+
+                    if (lastName.Contains(fileCounterChar))
+                        topValue = int.Parse(lastName.Substring((lastName.IndexOf(fileCounterChar) + 1), 2));
+
+                    countFiles = topValue;
+
+                    #endregion"Directory exist, but have some file...."
+                }
+
+                #region"Directory"
+
+                foreach (string strfileName in filesToCopy)
+                {
+                    countFiles++;
+
+                    //Using FileInfo class copy the file.
+                    FileInfo fileInfo = new FileInfo(strfileName);
+                    if (!strfileName.Contains(fileCounterChar))
                     {
-                        List<string> di = Directory.EnumerateFiles(DirectoryPath).ToList();
+                        filename = Path.GetFileNameWithoutExtension(strfileName) + fileCounterChar + countFiles.ToString("00");
+                        filename += Path.GetExtension(strfileName);
+                    }
+                    else
+                        filename = Path.GetFileName(strfileName);
 
-                        if (di.Count > 0)
-                        {
-                            #region"Directory exist, but have some file...."
 
-                            di.Sort();
-                            string lastName = di.Last();
-                            int topValue = 50;
+                    distFileName = Path.Combine(DirectoryPath, Path.GetFileName(filename));
 
-                            if (lastName.Contains(fileCounterChar))
-                                topValue = int.Parse(lastName.Substring((lastName.IndexOf(fileCounterChar) + 1), 2));
+                    fileInfo.CopyTo(distFileName, true);
+                }
+                ReloadPicture();
+                return;
 
-                            countFiles = topValue;
+                #endregion"Directory"
+            }
+            else
+            {
+                if (FilePathPictureBoxImage.Contains("No_Picture_Found"))
+                {
+                    #region"Have no picture"
+                    if (filesToCopy.Length == 1)
+                    {
+                        countFiles++;
 
-                            #endregion"Directory exist, but have some file...."
-                        }
+                        //Using FileInfo class copy the file.
+                        FileInfo fileInfo = new FileInfo(filesToCopy[0]);
 
-                        #region"Directory"
+                        filename = PathFromPartNumber + fileCounterChar + countFiles.ToString("00");
+                        filename += Path.GetExtension(filesToCopy[0]);
+
+                        distFileName = Path.Combine(Settings.Default.DataBaseAddress, "Pictures", filename);
+
+                        fileInfo.CopyTo(distFileName, false);
+                        ReloadPicture();
+                        return;
+                    }
+
+                    if (filesToCopy.Length >= 2)
+                    {
+                        // The row have more picture, need make a new folder and move the picture in.
+                        // Try to create the directory.
+                        string directoryPathString = Path.Combine(Settings.Default.DataBaseAddress, "Pictures", PathFromPartNumber);
+                        DirectoryInfo di = Directory.CreateDirectory(directoryPathString);
+
                         foreach (string strfileName in filesToCopy)
                         {
                             countFiles++;
 
                             //Using FileInfo class copy the file.
                             FileInfo fileInfo = new FileInfo(strfileName);
-                            if (!strfileName.Contains(fileCounterChar))
-                            {
-                                filename = Path.GetFileNameWithoutExtension(strfileName) + fileCounterChar + countFiles.ToString("00");
-                                filename += Path.GetExtension(strfileName);
-                            }
-                            else
-                                filename = Path.GetFileName(strfileName);
 
+                            filename = PathFromPartNumber + fileCounterChar + countFiles.ToString("00");
+                            filename += Path.GetExtension(strfileName);
+                            distFileName = Path.Combine(directoryPathString, filename);
 
-                            distFileName = Path.Combine(DirectoryPath, Path.GetFileName(filename));
-
-                            fileInfo.CopyTo(distFileName, true);
+                            fileInfo.CopyTo(distFileName, false);
                         }
                         ReloadPicture();
-                        return;
-                        #endregion"Directory"
                     }
-                    else
+                    #endregion"Have no picture"
+                }
+                else
+                {
+                    #region"Have a picture"
+
+                    try
                     {
-                        if (FilePathPictureBoxImage.Contains("No_Picture_Found"))
+                        // The row have a picture, need make a new folder and move the picture in.
+                        // Try to create the directory.
+                        string directoryPathString = Path.Combine(Settings.Default.DataBaseAddress, "Pictures", PathFromPartNumber);
+                        DirectoryInfo di = Directory.CreateDirectory(directoryPathString);
+
+                        countFiles++;
+                        if (!FilePathPictureBoxImage.Contains("#"))
                         {
-                            #region"Have no picture"
-                            if (filesToCopy.Length == 1)
-                            {
-                                countFiles++;
-
-                                //Using FileInfo class copy the file.
-                                FileInfo fileInfo = new FileInfo(filesToCopy[0]);
-
-                                filename = PathFromPartNumber + fileCounterChar + countFiles.ToString("00");
-                                filename += Path.GetExtension(filesToCopy[0]);
-
-                                distFileName = Path.Combine(Settings.Default.DataBaseAddress, "Pictures", filename);
-
-                                fileInfo.CopyTo(distFileName, false);
-                                ReloadPicture();
-                                return;
-                            }
-
-                            if (filesToCopy.Length >= 2)
-                            {
-                                // The row have more picture, need make a new folder and move the picture in.
-                                // Try to create the directory.
-                                string directoryPathString = Path.Combine(Settings.Default.DataBaseAddress, "Pictures", PathFromPartNumber);
-                                DirectoryInfo di = Directory.CreateDirectory(directoryPathString);
-
-                                foreach (string strfileName in filesToCopy)
-                                {
-                                    countFiles++;
-
-                                    //Using FileInfo class copy the file.
-                                    FileInfo fileInfo = new FileInfo(strfileName);
-
-                                    filename = PathFromPartNumber + fileCounterChar + countFiles.ToString("00");
-                                    filename += Path.GetExtension(strfileName);
-                                    distFileName = Path.Combine(directoryPathString, filename);
-
-                                    fileInfo.CopyTo(distFileName, false);
-                                }
-                                ReloadPicture();
-                            }
-                            #endregion"Have no picture"
+                            filename = PathFromPartNumber + fileCounterChar + countFiles.ToString("00");
+                            filename += Path.GetExtension(FilePathPictureBoxImage);
                         }
                         else
+                            filename = Path.GetFileName(FilePathPictureBoxImage);
+
+
+                        FileInfo filetoMove = new FileInfo(FilePathPictureBoxImage);
+                        filetoMove.MoveTo(Path.Combine(directoryPathString, filename));
+
+                        foreach (string strfileName in filesToCopy)
                         {
-                            #region"Have a picture"
+                            countFiles++;
 
-                            try
-                            {
-                                // The row have a picture, need make a new folder and move the picture in.
-                                // Try to create the directory.
-                                string directoryPathString = Path.Combine(Settings.Default.DataBaseAddress, "Pictures", PathFromPartNumber);
-                                DirectoryInfo di = Directory.CreateDirectory(directoryPathString);
+                            //Using FileInfo class copy the file.
+                            FileInfo fileInfo = new FileInfo(strfileName);
+                            filename = PathFromPartNumber + fileCounterChar + countFiles.ToString("00");
+                            filename += Path.GetExtension(strfileName);
+                            distFileName = Path.Combine(directoryPathString, filename);
 
-                                countFiles++;
-                                if (!FilePathPictureBoxImage.Contains("#"))
-                                {
-                                    filename = PathFromPartNumber + fileCounterChar + countFiles.ToString("00");
-                                    filename += Path.GetExtension(FilePathPictureBoxImage);
-                                }
-                                else
-                                    filename = Path.GetFileName(FilePathPictureBoxImage);
-
-
-                                FileInfo filetoMove = new FileInfo(FilePathPictureBoxImage);
-                                filetoMove.MoveTo(Path.Combine(directoryPathString, filename));
-
-                                foreach (string strfileName in filesToCopy)
-                                {
-                                    countFiles++;
-
-                                    //Using FileInfo class copy the file.
-                                    FileInfo fileInfo = new FileInfo(strfileName);
-                                    filename = PathFromPartNumber + fileCounterChar + countFiles.ToString("00");
-                                    filename += Path.GetExtension(strfileName);
-                                    distFileName = Path.Combine(directoryPathString, filename);
-
-                                    fileInfo.CopyTo(distFileName, false);
-                                }
-
-                                ReloadPicture();
-                            }
-                            catch (Exception error)
-                            {
-                                MessageBox.Show(new Form() { TopMost = true }, @"Message related to this error is " + error.Message,
-                                                         @"ThumbViewer has generated an error.", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                            }
-
-                            #endregion"Have a picture"
+                            fileInfo.CopyTo(distFileName, false);
                         }
+
+                        ReloadPicture();
                     }
+                    catch (Exception error)
+                    {
+                        MessageBox.Show(new Form() { TopMost = true }, @"Message related to this error is " + error.Message,
+                                                 @"ThumbViewer has generated an error.", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+
+                    #endregion"Have a picture"
                 }
             }
         }
@@ -1703,34 +1877,16 @@ namespace StockRoom11net.Controls.ThumbViewer
 
         #endregion"PictureBox Initialized"
 
-        void SplitContainer_ThumbViewer_SplitterMoved(object sender, SplitterEventArgs e)
-        {
-            if (_mouseLeftButtonDown == false)
-                return;
-
-            int splitHeight = splitContainer_ThumbViewer.Height - splitContainer_ThumbViewer.SplitterDistance;
-
-            ThumbNailHeight = splitHeight - 8;
-            SplitterDistance = splitHeight;
-
-            if (splitHeight < 30)
-                while (splitHeight < 30)
-                {
-                    splitContainer_ThumbViewer.SplitterDistance -= 1;
-                    splitHeight = splitContainer_ThumbViewer.Height - splitContainer_ThumbViewer.SplitterDistance;
-                }
-        }
-
         void UpDateFileNameIndex()
         {
-            foreach (Control thumb in flowLayoutPanel.Controls)
+            foreach (Control thumb in flowLayoutPanel_ThumbNails.Controls)
             {
                 try
                 {
                     var thumbNail = (ThumbNail)thumb;
 
                     var newFileName = Path.Combine(DirectoryPath, PathFromPartNumber + "#temp" +
-                                         flowLayoutPanel.Controls.IndexOf(thumb).ToString("00") + thumbNail.FileExt);
+                                         flowLayoutPanel_ThumbNails.Controls.IndexOf(thumb).ToString("00") + thumbNail.FileExt);
 
                     FileSystemExt.FileSystemExt.FileRename(thumbNail.FileFullPath, newFileName);
                 }

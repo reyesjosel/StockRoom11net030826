@@ -32,12 +32,13 @@
             splitContainer_ThumbViewer = new SplitContainer();
             pictureBox_Image = new PictureBox();
             contextMenuStripPictureBox = new ContextMenuStrip(components);
-            toolStripMenuItem_RemoveThisPicture = new ToolStripMenuItem();
             toolStripMenuItem_AddANewPicture = new ToolStripMenuItem();
             toolStripMenuItemCopyToANewFile = new ToolStripMenuItem();
             toolStripMenuItemCopyFileToTheClickBoard = new ToolStripMenuItem();
             toolStripMenuItemCopyImageToTheClipBoard = new ToolStripMenuItem();
-            flowLayoutPanel = new FlowLayoutPanel();
+            toolStripMenuItemPasteImageFromClipBoard = new ToolStripMenuItem();
+            toolStripMenuItem_RemoveThisPicture = new ToolStripMenuItem();
+            flowLayoutPanel_ThumbNails = new FlowLayoutPanel();
             ((System.ComponentModel.ISupportInitialize)splitContainer_ThumbViewer).BeginInit();
             splitContainer_ThumbViewer.Panel1.SuspendLayout();
             splitContainer_ThumbViewer.Panel2.SuspendLayout();
@@ -61,13 +62,12 @@
             // 
             // splitContainer_ThumbViewer.Panel2
             // 
-            splitContainer_ThumbViewer.Panel2.Controls.Add(flowLayoutPanel);
+            splitContainer_ThumbViewer.Panel2.Controls.Add(flowLayoutPanel_ThumbNails);
             splitContainer_ThumbViewer.Panel2MinSize = 30;
             splitContainer_ThumbViewer.Size = new Size(768, 588);
             splitContainer_ThumbViewer.SplitterDistance = 464;
             splitContainer_ThumbViewer.SplitterWidth = 5;
             splitContainer_ThumbViewer.TabIndex = 2;
-            splitContainer_ThumbViewer.SplitterMoved += SplitContainer_ThumbViewer_SplitterMoved;
             // 
             // pictureBox_Image
             // 
@@ -85,18 +85,12 @@
             // 
             contextMenuStripPictureBox.BackColor = Color.LightGoldenrodYellow;
             contextMenuStripPictureBox.ImeMode = ImeMode.On;
-            contextMenuStripPictureBox.Items.AddRange(new ToolStripItem[] { toolStripMenuItem_RemoveThisPicture, toolStripMenuItem_AddANewPicture, toolStripMenuItemCopyToANewFile, toolStripMenuItemCopyFileToTheClickBoard, toolStripMenuItemCopyImageToTheClipBoard });
+            contextMenuStripPictureBox.Items.AddRange(new ToolStripItem[] { toolStripMenuItem_AddANewPicture, toolStripMenuItemCopyToANewFile, toolStripMenuItemCopyFileToTheClickBoard, toolStripMenuItemCopyImageToTheClipBoard, toolStripMenuItemPasteImageFromClipBoard, toolStripMenuItem_RemoveThisPicture });
             contextMenuStripPictureBox.LayoutStyle = ToolStripLayoutStyle.HorizontalStackWithOverflow;
             contextMenuStripPictureBox.Name = "PreviewDataGridViewContextMenuStrip";
             contextMenuStripPictureBox.RenderMode = ToolStripRenderMode.Professional;
             contextMenuStripPictureBox.ShowImageMargin = false;
-            contextMenuStripPictureBox.Size = new Size(258, 134);
-            // 
-            // toolStripMenuItem_RemoveThisPicture
-            // 
-            toolStripMenuItem_RemoveThisPicture.Name = "toolStripMenuItem_RemoveThisPicture";
-            toolStripMenuItem_RemoveThisPicture.Size = new Size(257, 26);
-            toolStripMenuItem_RemoveThisPicture.Text = "Remove this picture.";
+            contextMenuStripPictureBox.Size = new Size(258, 160);
             // 
             // toolStripMenuItem_AddANewPicture
             // 
@@ -122,16 +116,28 @@
             toolStripMenuItemCopyImageToTheClipBoard.Size = new Size(257, 26);
             toolStripMenuItemCopyImageToTheClipBoard.Text = "Copy image to the ClipBoard.";
             // 
-            // flowLayoutPanel
+            // toolStripMenuItemPasteImageFromClipBoard
             // 
-            flowLayoutPanel.AutoScroll = true;
-            flowLayoutPanel.BackColor = Color.WhiteSmoke;
-            flowLayoutPanel.Dock = DockStyle.Fill;
-            flowLayoutPanel.Location = new Point(0, 0);
-            flowLayoutPanel.Margin = new Padding(0);
-            flowLayoutPanel.Name = "flowLayoutPanel";
-            flowLayoutPanel.Size = new Size(764, 115);
-            flowLayoutPanel.TabIndex = 0;
+            toolStripMenuItemPasteImageFromClipBoard.Name = "toolStripMenuItemPasteImageFromClipBoard";
+            toolStripMenuItemPasteImageFromClipBoard.Size = new Size(257, 26);
+            toolStripMenuItemPasteImageFromClipBoard.Text = "Paste image from ClipBoard";
+            // 
+            // toolStripMenuItem_RemoveThisPicture
+            // 
+            toolStripMenuItem_RemoveThisPicture.Name = "toolStripMenuItem_RemoveThisPicture";
+            toolStripMenuItem_RemoveThisPicture.Size = new Size(257, 26);
+            toolStripMenuItem_RemoveThisPicture.Text = "Remove this picture.";
+            // 
+            // flowLayoutPanel_ThumbNails
+            // 
+            flowLayoutPanel_ThumbNails.AutoScroll = true;
+            flowLayoutPanel_ThumbNails.BackColor = Color.WhiteSmoke;
+            flowLayoutPanel_ThumbNails.Dock = DockStyle.Fill;
+            flowLayoutPanel_ThumbNails.Location = new Point(0, 0);
+            flowLayoutPanel_ThumbNails.Margin = new Padding(0);
+            flowLayoutPanel_ThumbNails.Name = "flowLayoutPanel_ThumbNails";
+            flowLayoutPanel_ThumbNails.Size = new Size(764, 115);
+            flowLayoutPanel_ThumbNails.TabIndex = 0;
             // 
             // ThumbViewer
             // 
@@ -153,7 +159,7 @@
         #endregion      
 
         private System.Windows.Forms.SplitContainer splitContainer_ThumbViewer;
-        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel;
+        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel_ThumbNails;
         private System.Windows.Forms.PictureBox pictureBox_Image;
         private System.Windows.Forms.ContextMenuStrip contextMenuStripPictureBox;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_RemoveThisPicture;
@@ -161,7 +167,6 @@
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemCopyToANewFile;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemCopyFileToTheClickBoard;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemCopyImageToTheClipBoard;
-
-
+        private ToolStripMenuItem toolStripMenuItemPasteImageFromClipBoard;
     }
 }

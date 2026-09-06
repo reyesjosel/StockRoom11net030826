@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "a91QYcQ8H8Q=",
+  "dgSpecHash": "OZAhvjOFuXI=",
   "success": true,
-  "projectFilePath": "C:\\Users\\reyes\\Source\\Repos\\StockRoom11net080226\\StockRoom11net.csproj",
+  "projectFilePath": "C:\\Users\\reyes\\Source\\Repos\\StockRoom11net090526\\StockRoom11net.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\reyes\\.nuget\\packages\\be.windows.forms.hexbox.net5\\1.8.0\\be.windows.forms.hexbox.net5.1.8.0.nupkg.sha512",
     "C:\\Users\\reyes\\.nuget\\packages\\blazor.extensions.canvas\\1.1.1\\blazor.extensions.canvas.1.1.1.nupkg.sha512",
@@ -101,9 +101,9 @@
       "code": "NU1510",
       "level": "Warning",
       "message": "PackageReference Microsoft.Extensions.Hosting.Abstractions will not be pruned. This package is automatically available and does not need to be referenced explicitly. Remove the PackageReference item.",
-      "projectPath": "C:\\Users\\reyes\\Source\\Repos\\StockRoom11net080226\\StockRoom11net.csproj",
+      "projectPath": "C:\\Users\\reyes\\Source\\Repos\\StockRoom11net090526\\StockRoom11net.csproj",
       "warningLevel": 1,
-      "filePath": "C:\\Users\\reyes\\Source\\Repos\\StockRoom11net080226\\StockRoom11net.csproj",
+      "filePath": "C:\\Users\\reyes\\Source\\Repos\\StockRoom11net090526\\StockRoom11net.csproj",
       "libraryId": "Microsoft.Extensions.Hosting.Abstractions",
       "targetGraphs": [
         "net11.0-windows7.0"
@@ -113,9 +113,9 @@
       "code": "NU1510",
       "level": "Warning",
       "message": "PackageReference Microsoft.Extensions.Logging.Abstractions will not be pruned. This package is automatically available and does not need to be referenced explicitly. Remove the PackageReference item.",
-      "projectPath": "C:\\Users\\reyes\\Source\\Repos\\StockRoom11net080226\\StockRoom11net.csproj",
+      "projectPath": "C:\\Users\\reyes\\Source\\Repos\\StockRoom11net090526\\StockRoom11net.csproj",
       "warningLevel": 1,
-      "filePath": "C:\\Users\\reyes\\Source\\Repos\\StockRoom11net080226\\StockRoom11net.csproj",
+      "filePath": "C:\\Users\\reyes\\Source\\Repos\\StockRoom11net090526\\StockRoom11net.csproj",
       "libraryId": "Microsoft.Extensions.Logging.Abstractions",
       "targetGraphs": [
         "net11.0-windows7.0"
@@ -125,9 +125,9 @@
       "code": "NU1510",
       "level": "Warning",
       "message": "PackageReference Microsoft.Extensions.Primitives will not be pruned. This package is automatically available and does not need to be referenced explicitly. Remove the PackageReference item.",
-      "projectPath": "C:\\Users\\reyes\\Source\\Repos\\StockRoom11net080226\\StockRoom11net.csproj",
+      "projectPath": "C:\\Users\\reyes\\Source\\Repos\\StockRoom11net090526\\StockRoom11net.csproj",
       "warningLevel": 1,
-      "filePath": "C:\\Users\\reyes\\Source\\Repos\\StockRoom11net080226\\StockRoom11net.csproj",
+      "filePath": "C:\\Users\\reyes\\Source\\Repos\\StockRoom11net090526\\StockRoom11net.csproj",
       "libraryId": "Microsoft.Extensions.Primitives",
       "targetGraphs": [
         "net11.0-windows7.0"

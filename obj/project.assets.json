@@ -4639,11 +4639,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\reyes\\Source\\Repos\\StockRoom11net080226\\StockRoom11net.csproj",
+      "projectUniqueName": "C:\\Users\\reyes\\Source\\Repos\\StockRoom11net090526\\StockRoom11net.csproj",
       "projectName": "StockRoom11net",
-      "projectPath": "C:\\Users\\reyes\\Source\\Repos\\StockRoom11net080226\\StockRoom11net.csproj",
+      "projectPath": "C:\\Users\\reyes\\Source\\Repos\\StockRoom11net090526\\StockRoom11net.csproj",
       "packagesPath": "C:\\Users\\reyes\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\reyes\\Source\\Repos\\StockRoom11net080226\\obj\\",
+      "outputPath": "C:\\Users\\reyes\\Source\\Repos\\StockRoom11net090526\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",

@@ -304,6 +304,21 @@ namespace StockRoom11net.Controls.ThumbViewer
         }
 
 
+        /// <summary>
+        /// Resizes the thumbnail control and lets the hosted image scale to fit,
+        /// clamped to the control's MinimumSize / MaximumSize.
+        /// </summary>
+        public void Resize(int width, int height)
+        {
+            _width = Math.Clamp(width, MinimumSize.Width, MaximumSize.Width);
+            _height = Math.Clamp(height, MinimumSize.Height, MaximumSize.Height);
+
+            // Zoom keeps aspect ratio and fills the available area; CenterImage
+            // would leave the cached thumbnail at its native size.
+            pictureBox.SizeMode = PictureBoxSizeMode.Zoom;
+            Size = new Size(_width, _height);
+        }
+
         /// <summary> 
         /// Required method for Designer support - do not modify 
         /// the contents of this method with the code editor.

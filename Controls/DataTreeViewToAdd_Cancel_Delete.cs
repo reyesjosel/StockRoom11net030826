@@ -644,9 +644,11 @@ namespace StockRoom11net.Controls
                 _settingMode = value;
                 if (_settingMode)
                 {
+                   // SetupDragAndDrop();
+
                     olvDataTreeMaster.AllowDrop = true;
-                    olvDataTreeMaster.IsSimpleDragSource = true;
-                    olvDataTreeMaster.IsSimpleDropSink = true;
+                 //   olvDataTreeMaster.IsSimpleDragSource = true;
+                  //  olvDataTreeMaster.IsSimpleDropSink = true;
 
                     splitContainer_DataTreeView.Panel2Collapsed = false;
                     splitContainer_DataTreeView.SplitterDistance = Settings.Default.SplitterDistance_DataTreeViewToAdd_Cancel_Delete;
@@ -661,8 +663,8 @@ namespace StockRoom11net.Controls
                 else
                 {
                     olvDataTreeMaster.AllowDrop = false;
-                    olvDataTreeMaster.IsSimpleDragSource = false;
-                    olvDataTreeMaster.IsSimpleDropSink = false;
+                   // olvDataTreeMaster.IsSimpleDragSource = false;
+                   // olvDataTreeMaster.IsSimpleDropSink = false;
 
                     splitContainer_DataTreeView.Panel2Collapsed = true;
                 }
@@ -931,6 +933,7 @@ namespace StockRoom11net.Controls
             olvDataTreeMaster.EmptyListMsg = "No tasks match the filter";
             olvDataTreeMaster.UseAlternatingBackColors = false;
             olvDataTreeMaster.UseHotItem = true;
+            olvDataTreeMaster.AllowDrop = false;
 
             toolStripMenuItem_FullRowSelect.Checked = true;
 
@@ -1030,12 +1033,11 @@ namespace StockRoom11net.Controls
         {
             // The RearrangingDropSink overwrites IsSimpleDropSink = true.
             //olvDataTreeMaster.IsSimpleDropSink = true;
-            olvDataTreeMaster.AllowDrop = false;
             olvDataTreeMaster.IsSimpleDragSource = false;
-            olvDataTreeMaster.CanDrop += OlvDataTree_CanDrop;
-            olvDataTreeMaster.Dropped += OlvDataTree_Dropped;
-            olvDataTreeMaster.ModelDropped += OlvDataTree_ModelDropped;
-           
+            olvDataTreeMaster.CanDrop += OlvDataTreeMaster_CanDrop;
+            olvDataTreeMaster.Dropped += OlvDataTreeMaster_Dropped;
+            olvDataTreeMaster.ModelDropped += OlvDataTreeMaster_ModelDropped;
+
             // Make listView capable of dragging rows out
             SimpleDragSource simpleDragSourceMaster = new SimpleDragSource(true);
 
@@ -1055,6 +1057,11 @@ namespace StockRoom11net.Controls
                 }
             };
 
+            // NOTE: Assigning DropSink implicitly sets AllowDrop = true internally
+            // (ObjectListView needs this so the OS delivers DragEnter/DragOver/DragDrop
+            // messages to the control at all). Actual acceptance/rejection of a given
+            // drop is controlled dynamically via the CanDrop event (OlvDataTree_CanDrop),
+            // not via the AllowDrop property, since DropSink would just re-enable it.
             olvDataTreeMaster.DropSink = rearrangingDropSinkToMaster;
         }
 
@@ -1125,7 +1132,7 @@ namespace StockRoom11net.Controls
                
         #region"Drag & Drop"
 
-        void OlvDataTree_ModelCanDrop(object? sender, ModelDropEventArgs e)
+        void OlvDataTreeMaster_ModelCanDrop(object? sender, ModelDropEventArgs e)
         {
             int targeId = e.TargetModel as Table_Base_TreeView != null ?
                               ((Table_Base_TreeView)e.TargetModel).ID : 0;
@@ -1158,19 +1165,53 @@ namespace StockRoom11net.Controls
                 e.InfoMessage = "   To root";
         }
 
-        async void OlvDataTree_ModelDropped(object? sender, ModelDropEventArgs e)
+        async void OlvDataTreeMaster_ModelDropped(object? sender, ModelDropEventArgs e)
         {
             e.Handled = true;
             e.Effect = DragDropEffects.Move;
             await RearrangeModels(e);
         }
 
-        void OlvDataTree_CanDrop(object? sender, OlvDropEventArgs e)
+        void OlvDataTreeMaster_CanDrop(object? sender, OlvDropEventArgs e)
         {
             try
             {
-                int sourceModel_ID = ((OLVDataObject)e.DataObject).ModelObjects[0] as Table_Base_TreeView != null ?
-                                     ((Table_Base_TreeView)((OLVDataObject)e.DataObject).ModelObjects[0]).ID : 0;
+                // Drag-and-drop rearranging is only allowed while the control
+                // is in SettingMode. This is the actual gate that used to
+                // be (incorrectly) implemented via "olvDataTreeMaster.AllowDrop = false;"
+                // in SetupDragAndDrop(), which had no effect because assigning a
+                // DropSink to an ObjectListView forces AllowDrop back to true.
+                if (!SettingMode)
+                {
+                    e.Handled = true;                    
+                    e.InfoMessage = "   Can't drop it here...";
+                    e.Effect = DragDropEffects.None;
+                    e.DropSink.Billboard.Font = new Font(FontFamily.GenericMonospace, 12, FontStyle.Bold);
+                    e.DropSink.Billboard.BackColor = Color.Yellow;
+                    e.DropSink.Billboard.CornerRounding = 5;
+                    e.DropSink.Billboard.BorderColor = Color.Black;
+                    e.DropSink.Billboard.BorderWidth = 1;
+                    e.DropSink.FeedbackColor = Color.Black;
+                    return;
+                }
+
+                if (e.DataObject is not OLVDataObject olvDataObject)
+                {
+                    e.Handled = true;
+                    e.InfoMessage = "   Can't drop it here...";
+                    e.Effect = DragDropEffects.None;
+                    e.DropSink.Billboard.Font = new Font(FontFamily.GenericMonospace, 12, FontStyle.Bold);
+                    e.DropSink.Billboard.BackColor = Color.Yellow;
+                    e.DropSink.Billboard.CornerRounding = 5;
+                    e.DropSink.Billboard.BorderColor = Color.Black;
+                    e.DropSink.Billboard.BorderWidth = 1;
+                    e.DropSink.FeedbackColor = Color.Black;
+                    return;
+                }
+
+                int sourceModel_ID = olvDataObject.ModelObjects.Count > 0 &&
+                                      olvDataObject.ModelObjects[0] is Table_Base_TreeView sourceModel
+                                      ? sourceModel.ID : 0;
 
                 int targeId = 0;
 
@@ -1208,7 +1249,7 @@ namespace StockRoom11net.Controls
             }
         }
 
-        void OlvDataTree_Dropped(object? sender, OlvDropEventArgs e)
+        void OlvDataTreeMaster_Dropped(object? sender, OlvDropEventArgs e)
         {
             e.Effect = DragDropEffects.Move;
             e.Handled = true;
@@ -2048,7 +2089,20 @@ namespace StockRoom11net.Controls
         {
             try
             {
-                var draggedObject = ((DataTreeListView)((OLVDataObject)e.DataObject).ListView);
+                if (e.DataObject is not OLVDataObject olvDataObject || olvDataObject.ListView is not DataTreeListView draggedObject)
+                {
+                    e.Handled = true;
+                    e.InfoMessage = "   You can't drop those items here.";
+                    e.Effect = DragDropEffects.None;
+                    e.DropSink.Billboard.Font = new Font(FontFamily.GenericMonospace, 12, FontStyle.Bold);
+                    e.DropSink.Billboard.BackColor = Color.Red;
+                    e.DropSink.Billboard.CornerRounding = 5;
+                    e.DropSink.Billboard.BorderColor = Color.Black;
+                    e.DropSink.Billboard.BorderWidth = 1;
+                    e.DropSink.FeedbackColor = Color.Black;
+                    return;
+                }
+
                 if (draggedObject.Name == "DataTreeListViewMaster")
                 {
                     e.Handled = true;
@@ -2078,8 +2132,8 @@ namespace StockRoom11net.Controls
                 }
 
                 int sourceModel_ID = 0;
-                sourceModel_ID = ((OLVDataObject)e.DataObject).ModelObjects[0] as Table_Base_TreeView != null ?
-                                    ((Table_Base_TreeView)((OLVDataObject)e.DataObject).ModelObjects[0]).ID : 0;
+                sourceModel_ID = olvDataObject.ModelObjects[0] as Table_Base_TreeView != null ?
+                                    ((Table_Base_TreeView)olvDataObject.ModelObjects[0]).ID : 0;
 
                 int targeId = 0;
                 if (e.DropTargetItem != null)
@@ -2311,8 +2365,20 @@ namespace StockRoom11net.Controls
         {
             try
             {
-
-
+                if (e.DataObject is not OLVDataObject olvDataObject || olvDataObject.ListView is not DataTreeListView draggedObject)
+                {
+                    e.Handled = true;
+                    e.InfoMessage = "   You can't drop those items here.";
+                    e.Effect = DragDropEffects.None;
+                    e.DropSink.Billboard.Font = new Font(FontFamily.GenericMonospace, 12, FontStyle.Bold);
+                    e.DropSink.Billboard.BackColor = Color.Red;
+                    e.DropSink.Billboard.CornerRounding = 5;
+                    e.DropSink.Billboard.BorderColor = Color.Black;
+                    e.DropSink.Billboard.BorderWidth = 1;
+                    e.DropSink.FeedbackColor = Color.Black;
+                    return;
+                }
+                
                 int sourceModel_ID = ((OLVDataObject)e.DataObject).ModelObjects[0] as Table_Base_TreeView != null ?
                                       ((Table_Base_TreeView)((OLVDataObject)e.DataObject).ModelObjects[0]).ID : 0;
 
@@ -2453,7 +2519,21 @@ namespace StockRoom11net.Controls
         {
             try
             {
-                var draggedObject = ((DataTreeListView)((OLVDataObject)e.DataObject).ListView);
+                if (e.DataObject is not OLVDataObject olvDataObject || olvDataObject.ListView is not DataTreeListView draggedObject)
+                {
+                    e.Handled = true;
+                    e.InfoMessage = "   You can't drop those items here.";
+                    e.Effect = DragDropEffects.None;
+                    e.DropSink.Billboard.Font = new Font(FontFamily.GenericMonospace, 12, FontStyle.Bold);
+                    e.DropSink.Billboard.BackColor = Color.Red;
+                    e.DropSink.Billboard.CornerRounding = 5;
+                    e.DropSink.Billboard.BorderColor = Color.Black;
+                    e.DropSink.Billboard.BorderWidth = 1;
+                    e.DropSink.FeedbackColor = Color.Black;
+                    return;
+                }
+
+                //var draggedObject = ((DataTreeListView)((OLVDataObject)e.DataObject).ListView);
                 if (draggedObject.Name == "DataTreeListViewtoAdd")
                 {
                     e.Handled = true;
