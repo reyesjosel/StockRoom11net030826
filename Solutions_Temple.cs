@@ -1369,7 +1369,7 @@ namespace StockRoom11net
 
         void ToolStripMenuItem_ShowTheDocumentsAddressSetting_Click(object? sender, EventArgs e)
         {
-            if (_employeesService.CurrentEmployeeLogIn.EmployeeAccessLevel < Utilities.AccessLevel.Manager)
+            if (_employeesService.CurrentEmployeeLogIn.AccessLevel < Utilities.AccessLevel.Manager)
                 using (DocumentsAddressViewer documentsItemsViewer = new DocumentsAddressViewer(_employeesService, false))
                 {
                     documentsItemsViewer.ShowDialog();
@@ -1547,6 +1547,11 @@ namespace StockRoom11net
 
         void ToolStripTextBox_Log_User_KeyUp(object sender, KeyEventArgs e)
         {
+            using var _ = ProcessToolStripTextBox_Log_User_KeyUp(sender, e);
+        }
+
+        async Task ProcessToolStripTextBox_Log_User_KeyUp(object sender, KeyEventArgs e)
+        {
             if (e.KeyCode != Keys.Enter)
                 return;
 
@@ -1558,7 +1563,7 @@ namespace StockRoom11net
 
             toolStripTextBox_Log_User.Text = "";
 
-            LogInProcessAsync(_password);
+            await LogInProcessAsync(_password);
         }
 
         void ToolStripButton_Log_out_Click(object sender, EventArgs e)
@@ -1584,9 +1589,7 @@ namespace StockRoom11net
                 #region"EmployeesInformation"
                 
                 last6DigitInt = int.TryParse(last6Digit, out last6DigitInt) ? last6DigitInt : 0;
-
-                //var userLogIn = await _unitOfWork.TableEmployeeRepository.FirstOrDefaultAsync(e => e.Last6Digit == last6DigitInt);
-
+                
                 bool employeeInitialized = await _employeesService.InitializeEmployeeAsync(last6DigitInt);
 
                 if (!employeeInitialized)
@@ -1730,7 +1733,7 @@ namespace StockRoom11net
         void Solutions_TempleClass_CurrentDeptUserBroadcast_Requested()
         {
             toolStripLabel_Log_User.Text = _employeesService.CurrentEmployeeLogIn.LastName + ", " +
-                                           _employeesService.CurrentEmployeeLogIn.EmployeeAccessLevel +
+                                           _employeesService.CurrentEmployeeLogIn.AccessLevel +
                                            ", Login at " + DateTime.Now;
 
             StatusBarHelp("User " + _employeesService.CurrentEmployeeLogIn.LastName + " LogIn at " + DateTime.Now + ".");
@@ -1739,7 +1742,7 @@ namespace StockRoom11net
                 {
                     Tags.NewLine(""),
                     Tags.NewLineBold(_employeesService.CurrentEmployeeLogIn.FullName),
-                    Tags.NewLineRed(_employeesService.CurrentEmployeeLogIn.EmployeeAccessLevel.ToString()),
+                    Tags.NewLineRed(_employeesService.CurrentEmployeeLogIn.AccessLevel.ToString()),
                     Tags.NewLine("A User LogIn at " + DateTime.Now),
                     Tags.StraigthLine
                 }));
@@ -2028,48 +2031,19 @@ namespace StockRoom11net
 
         public void InitStockRoom(string textTitle)
         {
-          //  if (!IsDoneInstallation)
-          //  {
-          //      WaitingTaskQueue.Enqueue(new Action(() => InitStockRoom(textTitle)));
-          //      return;
-          //  }
-
-            /*
-            _stockRoomForm = new StockRoom_Inventory(_bindingSourceStockRoomTreeView,
-                                                _bindingSource_StockRoom,
-                                                _bindingSource_CodeTreeView, DepartmentsList)
-            {
-                Text = textTitle
-            };*/
-
             _stockRoomForm = _serviceProvider.GetRequiredService<StockRoom_Inventory>();
             {
                 Text = textTitle;
             };
-
-
-            //An error has been found in the initialization.
-            if (_stockRoomForm == null || _stockRoomForm.DialogResult == DialogResult.Cancel)
-                return;
-                        
+                                                
             _stockRoomForm.DockStateChanged += StockRoomDockStateChanged;
          //   _stockRoomForm.LogFileMessage += Write_LogFile;
-            //_stockRoomForm.StatusBarMessageEvent += OnStatusBarMessage;
-          //  _stockRoomForm.Save_Requested += StockRoom_ProcessSaveRequest;
-          //  _stockRoomForm.CellDoubleClick_Event += StockRoomCellDoubleClick;
-          //  _stockRoomForm.SaveTreeView_Requested += StockRoomSaveTreeViewRequested;
-         //   _stockRoomForm.AddNewItemSaveTreeViewRequested += AddNewItemSaveTreeViewRequested;
-        //    _stockRoomForm.Refresh_Requested += StockRoomRefreshRequested;
-
-         //   _stockRoomForm.Node_PDF += StockRoomNodePdf;
+            
+          //  _stockRoomForm.Node_PDF += StockRoomNodePdf;
          //   _stockRoomForm.ActiveDataSheet += DocumentationBehaviorProcessor;
          //   _stockRoomForm.NotificationsToSends += NotificationsToSendsProcessor;
          //   _stockRoomForm.SpeechSynthesizerBase += SpeechSynthesizerBaseSpeak;
-
-            //_stockRoomForm.CurrentUserBroadcast_EventHandler(new object(), LastCurrentDeptUserBroadcast_EventArgs);
-
-       //     CurrentDeptUserBroadcast_Requested += _stockRoomForm.CurrentUserBroadcast_EventHandler;
-
+                   
             ScannedDataEvent += _stockRoomForm.OnBarcodeScanned_EventHandler;
 
             toolStripMenuItem_stockRoomInventory.Enabled = false;
@@ -2086,7 +2060,6 @@ namespace StockRoom11net
             }
             else
             {
-                //_stockRoomForm.Dock = DockStyle.Fill;
                 _stockRoomForm.Show(dockPanel);
             }
         }
@@ -2159,7 +2132,7 @@ namespace StockRoom11net
                 return;
             }
 
-            if (_employeesService.CurrentEmployeeLogIn.EmployeeAccessLevel < Utilities.AccessLevel.Administrator)
+            if (_employeesService.CurrentEmployeeLogIn.AccessLevel < Utilities.AccessLevel.Administrator)
             {
                 MessageBox.Show(@"The current User, does not have the right to perform this action.", @"Warning, access denied.",
                                                                                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -2205,7 +2178,7 @@ namespace StockRoom11net
                 return;
             }
 
-            if (_employeesService.CurrentEmployeeLogIn.EmployeeAccessLevel < Utilities.AccessLevel.Manager)
+            if (_employeesService.CurrentEmployeeLogIn.AccessLevel < Utilities.AccessLevel.Manager)
             {
                 MessageBox.Show(@"The current User, does not have the right to perform this action.", @"Warning, access denied.",
                                                                                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -2243,38 +2216,22 @@ namespace StockRoom11net
 
         public void InitEmployeesManagement(string textTitle)
         {
-            if (!IsDoneInstallation)
+            _employees_ManagementsForm = _serviceProvider.GetRequiredService<Employees_Management>();
             {
-                WaitingTaskQueue.Enqueue(new Action(() => InitEmployeesManagement(textTitle)));
-                return;
+                Text = textTitle;
             }
+            ;
 
-            if (_employeesService.CurrentEmployeeLogIn.EmployeeAccessLevel < Utilities.AccessLevel.Manager)
-            {
-                MessageBox.Show(@"The current User, does not have the right to perform this action.", @"Warning, access denied.",
-                                                                                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-
-      //      DataTable dataTableInventory = ((DataSet)_bindingSource_StockRoom.DataSource).Tables[_bindingSource_StockRoom.DataMember];
-            /*
-            _employees_ManagementsForm = new Employees_Management(_bindingSource_Employees, _bindingSource_EmployeesTreeView, DepartmentsList)
-            {
-                Text = textTitle,
-                ColumnsCollection_Inventory = dataTableInventory.Columns
-            };
-
-            if (_employees_ManagementsForm.DialogResult == DialogResult.Cancel)//An error has been found in the initialization.
-                return;
-
+            //      DataTable dataTableInventory = ((DataSet)_bindingSource_StockRoom.DataSource).Tables[_bindingSource_StockRoom.DataMember];
+           
             _employees_ManagementsForm.DockStateChanged += EmployeesManagementsDockStateChanged;
        //     _employees_ManagementsForm.Refresh_Requested += EmployeesManagementsRefreshRequested;
          //   _employees_ManagementsForm.Save_Requested += EmployeesManagements_ProcessSaveRequest;
          //   _employees_ManagementsForm.SaveTreeView_Requested += EmployeesManagementsSaveTreeViewRequested;
-            _employees_ManagementsForm.StatusBarMessageEvent += OnStatusBarMessage;
-            _employees_ManagementsForm.SpeechSynthesizerBase += SpeechSynthesizerBaseSpeak;
+        //    _employees_ManagementsForm.StatusBarMessageEvent += OnStatusBarMessage;
+        //    _employees_ManagementsForm.SpeechSynthesizerBase += SpeechSynthesizerBaseSpeak;
 
-            CurrentDeptUserBroadcast_Requested += _employees_ManagementsForm.CurrentUserBroadcast_EventHandler;
+      //      CurrentDeptUserBroadcast_Requested += _employees_ManagementsForm.CurrentUserBroadcast_EventHandler;
 
             toolStripMenuItem_Employees.Enabled = false;
 
@@ -2292,9 +2249,6 @@ namespace StockRoom11net
             }
             else
                 _employees_ManagementsForm.Show(dockPanel);
-
-            _employees_ManagementsForm.CurrentUserBroadcast_EventHandler(new object(), LastCurrentDeptUserBroadcast_EventArgs);
-            */
         }
 
         public void InitBomManagements(string textTitle)
@@ -2306,7 +2260,7 @@ namespace StockRoom11net
                 return;
             }
 
-            if (_employeesService.CurrentEmployeeLogIn.EmployeeAccessLevel < MyCode.AccessLevel.Administrator)
+            if (_employeesService.CurrentEmployeeLogIn.AccessLevel < MyCode.AccessLevel.Administrator)
             {
                 MessageBox.Show(@"The current User, does not have the right to perform this action.", @"Warning, access denied.",
                                                                                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -2366,7 +2320,7 @@ namespace StockRoom11net
     //            Text = textTitle
     //        };
 
-            if (_stockRoomAddNewCompForm.DialogResult == DialogResult.Cancel)//An error has been found in the initialization.
+         //   if (_stockRoomAddNewCompForm.DialogResult == DialogResult.Cancel)//An error has been found in the initialization.
                 return;
 
             //   _stockRoomAddNewComp.Need_SaveData      += StockRoom_NeedSaveData;
@@ -2408,7 +2362,7 @@ namespace StockRoom11net
 
         public void InitSolutionsProperties(string textTitle)
         {
-            if (_employeesService.CurrentEmployeeLogIn.EmployeeAccessLevel < Utilities.AccessLevel.Administrator)
+            if (_employeesService.CurrentEmployeeLogIn.AccessLevel < Utilities.AccessLevel.Administrator)
             {
                 MessageBox.Show(@"The current User, does not have the right to perform this action.", @"Warning, access denied.",
                                                                                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -2488,7 +2442,7 @@ namespace StockRoom11net
 
         void StockRoomCellDoubleClick(object sender, CellDoubleClick_EventArgs e)
         {
-            if (_employeesService.CurrentEmployeeLogIn.EmployeeAccessLevel == Utilities.AccessLevel.User)
+            if (_employeesService.CurrentEmployeeLogIn.AccessLevel == Utilities.AccessLevel.User)
             {
                 MessageBox.Show(@"The current User, does not have the right to perform this action.", @"Warning, access denied.",
                                                                                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -2984,7 +2938,7 @@ namespace StockRoom11net
         /// <summary>
         /// List of Pdf_explorer form opened by Documentation Behavior Process.
         /// </summary>
-   //     List<PDFjs_explorer> openedPDF_Documents = new List<PDFjs_explorer>();
+       // List<PDFjs_explorer> openedPDF_Documents = new List<PDFjs_explorer>();
 
         List<FileDirectoryModel> DocumentScanned = new List<FileDirectoryModel>();
 
@@ -3369,7 +3323,7 @@ namespace StockRoom11net
 
                 foreach (string strFileName in dataSheetFiles)
                 {
-                    //  _defaultDataSheetFile = new FileInfo(Path.Combine(e.DefaultPath, strFileName.Trim()));
+                    _defaultDataSheetFile = new FileInfo(Path.Combine(e.DefaultPath, strFileName.Trim()));
 
                     if (strFileName.Contains("#pag"))
                     {
@@ -3378,7 +3332,7 @@ namespace StockRoom11net
                         {
                             string pageToOpen = strFileName.Substring(indexOf);
                             string fileName = strFileName.Remove(indexOf);
-                            //         _defaultDataSheetFile = new FileInfo(Path.Combine(e.DefaultPath, fileName.Trim()));
+                            _defaultDataSheetFile = new FileInfo(Path.Combine(e.DefaultPath, fileName.Trim()));
                         }
                     }
                     /*
@@ -3389,18 +3343,18 @@ namespace StockRoom11net
                         if (_indexOpenedPdfDocuments < openedPDF_Documents.Count)
                         {
                             openedPDF_Documents[_indexOpenedPdfDocuments].SetDataSheet = new ActiveDataSheet_EventArgs(e.PartNumber, e.DefaultPath, strFileName);
-                            StatusBarMessageEvent(new StatusBarMessage_EventArgs("The specified file " + e.DataSheet + " was found...", MyStuff11net.Properties.Resources.OK));
+                            OnStatusBarMessage(new StatusBarMessage_EventArgs("The specified file " + e.DataSheet + " was found...", Resources.OK));
                         }
                         else
                         {                            
-                            StatusBarMessageEvent(new StatusBarMessage_EventArgs("Cannot open more documents, Setting Document Behavior", MyStuff11net.Properties.Resources.OK));
+                            OnStatusBarMessage(new StatusBarMessage_EventArgs("Cannot open more documents, Setting Document Behavior", Resources.OK));
                         }
                     }
                     else
                     {
                         openedPDF_Documents[_indexOpenedPdfDocuments].SetDataSheet = new ActiveDataSheet_EventArgs("", e.DefaultPath, "No Empty Data Sheet.pdf");
-                        StatusBarMessageEvent(new StatusBarMessage_EventArgs("The specified file " + e.DataSheet + " was not found...", MyStuff11net.Properties.Resources.ErrorIcon));
-                    }
+                        OnStatusBarMessage(new StatusBarMessage_EventArgs("The specified file " + e.DataSheet + " was not found...", Resources.ErrorIcon));
+                    }    
                     */
                 }
             }

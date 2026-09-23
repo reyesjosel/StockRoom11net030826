@@ -67,8 +67,8 @@ namespace StockRoom11net
             _bindingSource_table_StockroomTreeView = new BindingSource(components);
             dataView_TreeView = new System.Data.DataView();
             _bindingSource_StockRoom = new BindingSource(components);
-            splitContainerHorizontal = new SplitContainer();
-            splitContainerVertical = new SplitContainer();
+            splitContainer_Horizontal = new SplitContainer();
+            splitContainer_Vertical = new SplitContainer();
             TabControl_Inventory = new CustomTabControl();
             tabPage_AddNewItem = new TabPage();
             grouper_NewItemButtons = new CodeVendor.Controls.Grouper();
@@ -146,14 +146,14 @@ namespace StockRoom11net
             ((System.ComponentModel.ISupportInitialize)_bindingSource_table_StockroomTreeView).BeginInit();
             ((System.ComponentModel.ISupportInitialize)dataView_TreeView).BeginInit();
             ((System.ComponentModel.ISupportInitialize)_bindingSource_StockRoom).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)splitContainerHorizontal).BeginInit();
-            splitContainerHorizontal.Panel1.SuspendLayout();
-            splitContainerHorizontal.Panel2.SuspendLayout();
-            splitContainerHorizontal.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)splitContainerVertical).BeginInit();
-            splitContainerVertical.Panel1.SuspendLayout();
-            splitContainerVertical.Panel2.SuspendLayout();
-            splitContainerVertical.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)splitContainer_Horizontal).BeginInit();
+            splitContainer_Horizontal.Panel1.SuspendLayout();
+            splitContainer_Horizontal.Panel2.SuspendLayout();
+            splitContainer_Horizontal.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)splitContainer_Vertical).BeginInit();
+            splitContainer_Vertical.Panel1.SuspendLayout();
+            splitContainer_Vertical.Panel2.SuspendLayout();
+            splitContainer_Vertical.SuspendLayout();
             TabControl_Inventory.SuspendLayout();
             tabPage_AddNewItem.SuspendLayout();
             grouper_NewItemButtons.SuspendLayout();
@@ -311,6 +311,7 @@ namespace StockRoom11net
             // dataTreeViewToAdd_Cancel_Delete
             // 
             dataTreeViewToAdd_Cancel_Delete.Dock = DockStyle.Fill;
+            dataTreeViewToAdd_Cancel_Delete.Font = new Font("Microsoft Sans Serif", 12F);
             dataTreeViewToAdd_Cancel_Delete.Location = new Point(0, 0);
             dataTreeViewToAdd_Cancel_Delete.Margin = new Padding(1);
             dataTreeViewToAdd_Cancel_Delete.Name = "dataTreeViewToAdd_Cancel_Delete";
@@ -377,50 +378,52 @@ namespace StockRoom11net
             // 
             _bindingSource_StockRoom.DataSource = dataView_StockRoom;
             // 
-            // splitContainerHorizontal
+            // splitContainer_Horizontal
             // 
-            splitContainerHorizontal.BorderStyle = BorderStyle.Fixed3D;
-            splitContainerHorizontal.Dock = DockStyle.Fill;
-            splitContainerHorizontal.Location = new Point(0, 0);
-            splitContainerHorizontal.Margin = new Padding(0);
-            splitContainerHorizontal.Name = "splitContainerHorizontal";
-            splitContainerHorizontal.Orientation = Orientation.Horizontal;
+            splitContainer_Horizontal.BorderStyle = BorderStyle.Fixed3D;
+            splitContainer_Horizontal.Dock = DockStyle.Fill;
+            splitContainer_Horizontal.Location = new Point(0, 0);
+            splitContainer_Horizontal.Margin = new Padding(0);
+            splitContainer_Horizontal.Name = "splitContainer_Horizontal";
+            splitContainer_Horizontal.Orientation = Orientation.Horizontal;
             // 
-            // splitContainerHorizontal.Panel1
+            // splitContainer_Horizontal.Panel1
             // 
-            splitContainerHorizontal.Panel1.Controls.Add(splitContainerVertical);
+            splitContainer_Horizontal.Panel1.Controls.Add(splitContainer_Vertical);
             // 
-            // splitContainerHorizontal.Panel2
+            // splitContainer_Horizontal.Panel2
             // 
-            splitContainerHorizontal.Panel2.Controls.Add(dataGridViewExtended);
-            splitContainerHorizontal.Size = new Size(1678, 800);
-            splitContainerHorizontal.SplitterDistance = 514;
-            splitContainerHorizontal.SplitterWidth = 3;
-            splitContainerHorizontal.TabIndex = 0;
+            splitContainer_Horizontal.Panel2.Controls.Add(dataGridViewExtended);
+            splitContainer_Horizontal.Size = new Size(1678, 800);
+            splitContainer_Horizontal.SplitterDistance = 514;
+            splitContainer_Horizontal.SplitterWidth = 6;
+            splitContainer_Horizontal.TabIndex = 0;
             // 
-            // splitContainerVertical
+            // splitContainer_Vertical
             // 
-            splitContainerVertical.BorderStyle = BorderStyle.Fixed3D;
-            splitContainerVertical.Dock = DockStyle.Fill;
-            splitContainerVertical.Location = new Point(0, 0);
-            splitContainerVertical.Margin = new Padding(0);
-            splitContainerVertical.Name = "splitContainerVertical";
+            splitContainer_Vertical.BorderStyle = BorderStyle.Fixed3D;
+            splitContainer_Vertical.Dock = DockStyle.Fill;
+            splitContainer_Vertical.Location = new Point(0, 0);
+            splitContainer_Vertical.Margin = new Padding(0);
+            splitContainer_Vertical.Name = "splitContainer_Vertical";
             // 
-            // splitContainerVertical.Panel1
+            // splitContainer_Vertical.Panel1
             // 
-            splitContainerVertical.Panel1.Controls.Add(dataTreeViewToAdd_Cancel_Delete);
+            splitContainer_Vertical.Panel1.Controls.Add(dataTreeViewToAdd_Cancel_Delete);
             // 
-            // splitContainerVertical.Panel2
+            // splitContainer_Vertical.Panel2
             // 
-            splitContainerVertical.Panel2.Controls.Add(TabControl_Inventory);
-            splitContainerVertical.Size = new Size(1678, 514);
-            splitContainerVertical.SplitterDistance = 517;
-            splitContainerVertical.SplitterIncrement = 10;
-            splitContainerVertical.SplitterWidth = 1;
-            splitContainerVertical.TabIndex = 0;
+            splitContainer_Vertical.Panel2.Controls.Add(TabControl_Inventory);
+            splitContainer_Vertical.Size = new Size(1678, 514);
+            splitContainer_Vertical.SplitterDistance = 517;
+            splitContainer_Vertical.SplitterIncrement = 10;
+            splitContainer_Vertical.TabIndex = 0;
             // 
             // TabControl_Inventory
             // 
+            TabControl_Inventory.Alignment = TabAlignment.Bottom;
+            TabControl_Inventory.AlignmentExtended = TabAlignment.Bottom;
+            TabControl_Inventory.AppearanceExtended = TabAppearance.Normal;
             TabControl_Inventory.Controls.Add(tabPage_AddNewItem);
             TabControl_Inventory.Controls.Add(tabPage_Pictures);
             TabControl_Inventory.Controls.Add(tabPage_Location);
@@ -430,22 +433,17 @@ namespace StockRoom11net
             TabControl_Inventory.Controls.Add(tabPage_Test);
             TabControl_Inventory.Controls.Add(tabPage_UpDateModifCompValue);
             TabControl_Inventory.DisplayStyle = TabStyle.VisualStudio;
-            // 
-            // 
-            // 
-            TabControl_Inventory.DisplayStyleProvider.BorderColor = SystemColors.ControlDark;
-            TabControl_Inventory.DisplayStyleProvider.BorderColorHot = SystemColors.ControlDark;
-            TabControl_Inventory.DisplayStyleProvider.BorderColorSelected = Color.FromArgb(127, 157, 185);
-            TabControl_Inventory.DisplayStyleProvider.CloserColor = Color.DarkGray;
-            TabControl_Inventory.DisplayStyleProvider.TextColor = SystemColors.ControlText;
-            TabControl_Inventory.DisplayStyleProvider.TextColorDisabled = SystemColors.ControlDark;
-            TabControl_Inventory.DisplayStyleProvider.TextColorSelected = SystemColors.ControlText;
             TabControl_Inventory.Dock = DockStyle.Fill;
+            TabControl_Inventory.HotTrack = true;
+            TabControl_Inventory.HotTrackExtended = true;
             TabControl_Inventory.Location = new Point(0, 0);
             TabControl_Inventory.Margin = new Padding(1);
+            TabControl_Inventory.MultilineExtended = false;
             TabControl_Inventory.Name = "TabControl_Inventory";
+            TabControl_Inventory.Padding = new Point(13, 1);
+            TabControl_Inventory.PaddingExtended = new Point(14, 1);
             TabControl_Inventory.SelectedIndex = 0;
-            TabControl_Inventory.Size = new Size(1156, 510);
+            TabControl_Inventory.Size = new Size(1153, 510);
             TabControl_Inventory.TabIndex = 0;
             // 
             // tabPage_AddNewItem
@@ -456,7 +454,7 @@ namespace StockRoom11net
             tabPage_AddNewItem.Margin = new Padding(1);
             tabPage_AddNewItem.Name = "tabPage_AddNewItem";
             tabPage_AddNewItem.Padding = new Padding(1);
-            tabPage_AddNewItem.Size = new Size(1148, 478);
+            tabPage_AddNewItem.Size = new Size(1145, 478);
             tabPage_AddNewItem.TabIndex = 5;
             tabPage_AddNewItem.Text = "Add New Item";
             tabPage_AddNewItem.UseVisualStyleBackColor = true;
@@ -485,7 +483,7 @@ namespace StockRoom11net
             grouper_NewItemButtons.ShadowColor = Color.DarkGray;
             grouper_NewItemButtons.ShadowControl = false;
             grouper_NewItemButtons.ShadowThickness = 3;
-            grouper_NewItemButtons.Size = new Size(1146, 125);
+            grouper_NewItemButtons.Size = new Size(1143, 125);
             grouper_NewItemButtons.TabIndex = 21;
             // 
             // flowLayoutPanel_Buttons
@@ -501,7 +499,7 @@ namespace StockRoom11net
             flowLayoutPanel_Buttons.Margin = new Padding(0);
             flowLayoutPanel_Buttons.MinimumSize = new Size(0, 7);
             flowLayoutPanel_Buttons.Name = "flowLayoutPanel_Buttons";
-            flowLayoutPanel_Buttons.Size = new Size(1096, 28);
+            flowLayoutPanel_Buttons.Size = new Size(1093, 28);
             flowLayoutPanel_Buttons.TabIndex = 13;
             // 
             // button_AddNew
@@ -570,7 +568,7 @@ namespace StockRoom11net
             grouper_ItemProperties.ShadowColor = Color.DarkGray;
             grouper_ItemProperties.ShadowControl = false;
             grouper_ItemProperties.ShadowThickness = 3;
-            grouper_ItemProperties.Size = new Size(1146, 130);
+            grouper_ItemProperties.Size = new Size(1143, 130);
             grouper_ItemProperties.TabIndex = 20;
             // 
             // flowLayoutPanel_ItemsProperties
@@ -586,7 +584,7 @@ namespace StockRoom11net
             flowLayoutPanel_ItemsProperties.MinimumSize = new Size(0, 100);
             flowLayoutPanel_ItemsProperties.Name = "flowLayoutPanel_ItemsProperties";
             flowLayoutPanel_ItemsProperties.Padding = new Padding(1, 0, 0, 0);
-            flowLayoutPanel_ItemsProperties.Size = new Size(1136, 100);
+            flowLayoutPanel_ItemsProperties.Size = new Size(1133, 100);
             flowLayoutPanel_ItemsProperties.TabIndex = 13;
             // 
             // comboBoxExtended_Status
@@ -645,7 +643,7 @@ namespace StockRoom11net
             tabPage_Pictures.Margin = new Padding(1);
             tabPage_Pictures.Name = "tabPage_Pictures";
             tabPage_Pictures.Padding = new Padding(1);
-            tabPage_Pictures.Size = new Size(1148, 478);
+            tabPage_Pictures.Size = new Size(1145, 478);
             tabPage_Pictures.TabIndex = 0;
             tabPage_Pictures.Text = " Pictures";
             tabPage_Pictures.UseVisualStyleBackColor = true;
@@ -658,11 +656,9 @@ namespace StockRoom11net
             thumbViewer_Pictures.Margin = new Padding(1);
             thumbViewer_Pictures.Name = "thumbViewer_Pictures";
             thumbViewer_Pictures.PathFromPartNumber = null;
-            thumbViewer_Pictures.Size = new Size(1146, 476);
-            thumbViewer_Pictures.SplitterDistance = 88;
+            thumbViewer_Pictures.Size = new Size(1143, 476);
+            thumbViewer_Pictures.SplitterDistance = 71;
             thumbViewer_Pictures.TabIndex = 0;
-            thumbViewer_Pictures.ThumbNailHeight = 70;
-            thumbViewer_Pictures.ThumbNailWidth = 92;
             // 
             // tabPage_Location
             // 
@@ -671,7 +667,7 @@ namespace StockRoom11net
             tabPage_Location.Margin = new Padding(1);
             tabPage_Location.Name = "tabPage_Location";
             tabPage_Location.Padding = new Padding(1);
-            tabPage_Location.Size = new Size(1148, 482);
+            tabPage_Location.Size = new Size(1145, 478);
             tabPage_Location.TabIndex = 2;
             tabPage_Location.Text = " Location";
             tabPage_Location.UseVisualStyleBackColor = true;
@@ -684,11 +680,9 @@ namespace StockRoom11net
             thumbViewer_Location.Margin = new Padding(1);
             thumbViewer_Location.Name = "thumbViewer_Location";
             thumbViewer_Location.PathFromPartNumber = null;
-            thumbViewer_Location.Size = new Size(1146, 480);
-            thumbViewer_Location.SplitterDistance = 88;
+            thumbViewer_Location.Size = new Size(1143, 476);
+            thumbViewer_Location.SplitterDistance = 71;
             thumbViewer_Location.TabIndex = 1;
-            thumbViewer_Location.ThumbNailHeight = 70;
-            thumbViewer_Location.ThumbNailWidth = 92;
             // 
             // tabPage_TimeLine
             // 
@@ -697,7 +691,7 @@ namespace StockRoom11net
             tabPage_TimeLine.Margin = new Padding(1);
             tabPage_TimeLine.Name = "tabPage_TimeLine";
             tabPage_TimeLine.Padding = new Padding(1);
-            tabPage_TimeLine.Size = new Size(1148, 482);
+            tabPage_TimeLine.Size = new Size(1145, 478);
             tabPage_TimeLine.TabIndex = 1;
             tabPage_TimeLine.Text = "TimeLine";
             tabPage_TimeLine.UseVisualStyleBackColor = true;
@@ -708,7 +702,7 @@ namespace StockRoom11net
             blazorWebView_TimeLine.Location = new Point(1, 1);
             blazorWebView_TimeLine.Margin = new Padding(1);
             blazorWebView_TimeLine.Name = "blazorWebView_TimeLine";
-            blazorWebView_TimeLine.Size = new Size(1146, 480);
+            blazorWebView_TimeLine.Size = new Size(1143, 476);
             blazorWebView_TimeLine.TabIndex = 21;
             // 
             // tabPage_NoteEditor
@@ -717,7 +711,7 @@ namespace StockRoom11net
             tabPage_NoteEditor.Location = new Point(4, 4);
             tabPage_NoteEditor.Margin = new Padding(1);
             tabPage_NoteEditor.Name = "tabPage_NoteEditor";
-            tabPage_NoteEditor.Size = new Size(1148, 482);
+            tabPage_NoteEditor.Size = new Size(1145, 478);
             tabPage_NoteEditor.TabIndex = 3;
             tabPage_NoteEditor.Text = "Note Editor";
             // 
@@ -727,7 +721,7 @@ namespace StockRoom11net
             blazorWebView1.Location = new Point(0, 0);
             blazorWebView1.Margin = new Padding(1);
             blazorWebView1.Name = "blazorWebView1";
-            blazorWebView1.Size = new Size(1148, 482);
+            blazorWebView1.Size = new Size(1145, 478);
             blazorWebView1.TabIndex = 20;
             // 
             // tabPage_TreeViewSetting
@@ -736,7 +730,7 @@ namespace StockRoom11net
             tabPage_TreeViewSetting.Margin = new Padding(1);
             tabPage_TreeViewSetting.Name = "tabPage_TreeViewSetting";
             tabPage_TreeViewSetting.Padding = new Padding(0, 2, 0, 0);
-            tabPage_TreeViewSetting.Size = new Size(1148, 482);
+            tabPage_TreeViewSetting.Size = new Size(1145, 478);
             tabPage_TreeViewSetting.TabIndex = 4;
             tabPage_TreeViewSetting.Text = "TreeViewSetting";
             tabPage_TreeViewSetting.UseVisualStyleBackColor = true;
@@ -746,7 +740,7 @@ namespace StockRoom11net
             tabPage_Test.Location = new Point(4, 4);
             tabPage_Test.Margin = new Padding(1);
             tabPage_Test.Name = "tabPage_Test";
-            tabPage_Test.Size = new Size(1148, 482);
+            tabPage_Test.Size = new Size(1145, 478);
             tabPage_Test.TabIndex = 6;
             tabPage_Test.Text = "tabPage_Test";
             tabPage_Test.UseVisualStyleBackColor = true;
@@ -760,7 +754,7 @@ namespace StockRoom11net
             tabPage_UpDateModifCompValue.Margin = new Padding(0);
             tabPage_UpDateModifCompValue.Name = "tabPage_UpDateModifCompValue";
             tabPage_UpDateModifCompValue.Padding = new Padding(11, 5, 11, 5);
-            tabPage_UpDateModifCompValue.Size = new Size(1148, 482);
+            tabPage_UpDateModifCompValue.Size = new Size(1145, 478);
             tabPage_UpDateModifCompValue.TabIndex = 7;
             tabPage_UpDateModifCompValue.Tag = "";
             tabPage_UpDateModifCompValue.Text = "   UpDate/Modif";
@@ -775,7 +769,7 @@ namespace StockRoom11net
             panel_ContainerUpDateModifValue.Margin = new Padding(0);
             panel_ContainerUpDateModifValue.Name = "panel_ContainerUpDateModifValue";
             panel_ContainerUpDateModifValue.Padding = new Padding(4, 2, 4, 2);
-            panel_ContainerUpDateModifValue.Size = new Size(1122, 468);
+            panel_ContainerUpDateModifValue.Size = new Size(1119, 464);
             panel_ContainerUpDateModifValue.TabIndex = 27;
             // 
             // grouper_PrintingLabels
@@ -800,7 +794,7 @@ namespace StockRoom11net
             grouper_PrintingLabels.ShadowColor = Color.DarkGray;
             grouper_PrintingLabels.ShadowControl = false;
             grouper_PrintingLabels.ShadowThickness = 3;
-            grouper_PrintingLabels.Size = new Size(1114, 180);
+            grouper_PrintingLabels.Size = new Size(1111, 180);
             grouper_PrintingLabels.TabIndex = 27;
             // 
             // wrapperpanel_ComponentControl
@@ -812,7 +806,7 @@ namespace StockRoom11net
             wrapperpanel_ComponentControl.Location = new Point(5, 25);
             wrapperpanel_ComponentControl.Margin = new Padding(0);
             wrapperpanel_ComponentControl.Name = "wrapperpanel_ComponentControl";
-            wrapperpanel_ComponentControl.Size = new Size(1104, 150);
+            wrapperpanel_ComponentControl.Size = new Size(1101, 150);
             wrapperpanel_ComponentControl.TabIndex = 21;
             // 
             // grouper_PrintingReferences
@@ -826,7 +820,7 @@ namespace StockRoom11net
             grouper_PrintingReferences.CustomGroupBoxColor = Color.White;
             grouper_PrintingReferences.Dock = DockStyle.Right;
             grouper_PrintingReferences.GroupTitle = "Printing References";
-            grouper_PrintingReferences.Location = new Point(537, 0);
+            grouper_PrintingReferences.Location = new Point(534, 0);
             grouper_PrintingReferences.Margin = new Padding(3, 2, 3, 2);
             grouper_PrintingReferences.MinimumSize = new Size(0, 114);
             grouper_PrintingReferences.Name = "grouper_PrintingReferences";
@@ -1027,7 +1021,7 @@ namespace StockRoom11net
             grouper_ManufacturerProperties.CustomGroupBoxColor = Color.White;
             grouper_ManufacturerProperties.Dock = DockStyle.Bottom;
             grouper_ManufacturerProperties.GroupTitle = "Manufacturer Properties";
-            grouper_ManufacturerProperties.Location = new Point(4, 356);
+            grouper_ManufacturerProperties.Location = new Point(4, 352);
             grouper_ManufacturerProperties.Margin = new Padding(0);
             grouper_ManufacturerProperties.MinimumSize = new Size(0, 110);
             grouper_ManufacturerProperties.Name = "grouper_ManufacturerProperties";
@@ -1037,7 +1031,7 @@ namespace StockRoom11net
             grouper_ManufacturerProperties.ShadowColor = Color.DarkGray;
             grouper_ManufacturerProperties.ShadowControl = false;
             grouper_ManufacturerProperties.ShadowThickness = 3;
-            grouper_ManufacturerProperties.Size = new Size(1114, 110);
+            grouper_ManufacturerProperties.Size = new Size(1111, 110);
             grouper_ManufacturerProperties.TabIndex = 26;
             // 
             // wrapperpanel_ManufacturerProperties
@@ -1053,7 +1047,7 @@ namespace StockRoom11net
             wrapperpanel_ManufacturerProperties.Margin = new Padding(0);
             wrapperpanel_ManufacturerProperties.MinimumSize = new Size(0, 18);
             wrapperpanel_ManufacturerProperties.Name = "wrapperpanel_ManufacturerProperties";
-            wrapperpanel_ManufacturerProperties.Size = new Size(1104, 80);
+            wrapperpanel_ManufacturerProperties.Size = new Size(1101, 80);
             wrapperpanel_ManufacturerProperties.TabIndex = 9;
             // 
             // panel1
@@ -1066,7 +1060,7 @@ namespace StockRoom11net
             panel1.Margin = new Padding(0);
             panel1.Name = "panel1";
             panel1.Padding = new Padding(5, 8, 5, 8);
-            panel1.Size = new Size(267, 80);
+            panel1.Size = new Size(264, 80);
             panel1.TabIndex = 22;
             // 
             // textBox4
@@ -1076,7 +1070,7 @@ namespace StockRoom11net
             textBox4.Location = new Point(5, 46);
             textBox4.Margin = new Padding(4, 5, 4, 5);
             textBox4.Name = "textBox4";
-            textBox4.Size = new Size(257, 26);
+            textBox4.Size = new Size(254, 26);
             textBox4.TabIndex = 14;
             // 
             // panel_Supplier
@@ -1213,7 +1207,7 @@ namespace StockRoom11net
             grouper_ComponentProperties.ShadowColor = Color.DarkGray;
             grouper_ComponentProperties.ShadowControl = false;
             grouper_ComponentProperties.ShadowThickness = 3;
-            grouper_ComponentProperties.Size = new Size(1114, 90);
+            grouper_ComponentProperties.Size = new Size(1111, 90);
             grouper_ComponentProperties.TabIndex = 20;
             // 
             // wrapperpanel_ComponentProperties
@@ -1226,7 +1220,7 @@ namespace StockRoom11net
             wrapperpanel_ComponentProperties.Location = new Point(5, 25);
             wrapperpanel_ComponentProperties.Margin = new Padding(0);
             wrapperpanel_ComponentProperties.Name = "wrapperpanel_ComponentProperties";
-            wrapperpanel_ComponentProperties.Size = new Size(1104, 60);
+            wrapperpanel_ComponentProperties.Size = new Size(1101, 60);
             wrapperpanel_ComponentProperties.TabIndex = 24;
             // 
             // panel_NumberofReelsOrBoxes
@@ -1238,7 +1232,7 @@ namespace StockRoom11net
             panel_NumberofReelsOrBoxes.Margin = new Padding(0);
             panel_NumberofReelsOrBoxes.Name = "panel_NumberofReelsOrBoxes";
             panel_NumberofReelsOrBoxes.Padding = new Padding(5);
-            panel_NumberofReelsOrBoxes.Size = new Size(337, 60);
+            panel_NumberofReelsOrBoxes.Size = new Size(334, 60);
             panel_NumberofReelsOrBoxes.TabIndex = 24;
             // 
             // label_NumberofReelsOrBoxes
@@ -1260,7 +1254,7 @@ namespace StockRoom11net
             textBox_NumberofReelsOrBoxes.Location = new Point(5, 29);
             textBox_NumberofReelsOrBoxes.Margin = new Padding(4, 5, 4, 5);
             textBox_NumberofReelsOrBoxes.Name = "textBox_NumberofReelsOrBoxes";
-            textBox_NumberofReelsOrBoxes.Size = new Size(327, 26);
+            textBox_NumberofReelsOrBoxes.Size = new Size(324, 26);
             textBox_NumberofReelsOrBoxes.TabIndex = 14;
             // 
             // panel_ReceivedDate
@@ -1268,7 +1262,7 @@ namespace StockRoom11net
             panel_ReceivedDate.Controls.Add(label_Received_Date);
             panel_ReceivedDate.Controls.Add(dateTimePicker_ReceivedDate);
             panel_ReceivedDate.Dock = DockStyle.Right;
-            panel_ReceivedDate.Location = new Point(779, 0);
+            panel_ReceivedDate.Location = new Point(776, 0);
             panel_ReceivedDate.Margin = new Padding(0);
             panel_ReceivedDate.Name = "panel_ReceivedDate";
             panel_ReceivedDate.Padding = new Padding(5);
@@ -1386,7 +1380,7 @@ namespace StockRoom11net
             dataGridViewExtended.SelectionBorderWidth = 3;
             dataGridViewExtended.SelectionColor = Color.DeepSkyBlue;
             dataGridViewExtended.SetValueAt = null;
-            dataGridViewExtended.Size = new Size(1674, 279);
+            dataGridViewExtended.Size = new Size(1674, 276);
             dataGridViewExtended.TabIndex = 0;
             // 
             // ToolStripMenuItem_PrintCompLabel
@@ -1406,7 +1400,7 @@ namespace StockRoom11net
             AutoScaleDimensions = new SizeF(9F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1678, 800);
-            Controls.Add(splitContainerHorizontal);
+            Controls.Add(splitContainer_Horizontal);
             Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             Margin = new Padding(3, 2, 3, 2);
             Name = "StockRoom_Inventory";
@@ -1418,14 +1412,14 @@ namespace StockRoom11net
             ((System.ComponentModel.ISupportInitialize)_bindingSource_table_StockroomTreeView).EndInit();
             ((System.ComponentModel.ISupportInitialize)dataView_TreeView).EndInit();
             ((System.ComponentModel.ISupportInitialize)_bindingSource_StockRoom).EndInit();
-            splitContainerHorizontal.Panel1.ResumeLayout(false);
-            splitContainerHorizontal.Panel2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)splitContainerHorizontal).EndInit();
-            splitContainerHorizontal.ResumeLayout(false);
-            splitContainerVertical.Panel1.ResumeLayout(false);
-            splitContainerVertical.Panel2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)splitContainerVertical).EndInit();
-            splitContainerVertical.ResumeLayout(false);
+            splitContainer_Horizontal.Panel1.ResumeLayout(false);
+            splitContainer_Horizontal.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)splitContainer_Horizontal).EndInit();
+            splitContainer_Horizontal.ResumeLayout(false);
+            splitContainer_Vertical.Panel1.ResumeLayout(false);
+            splitContainer_Vertical.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)splitContainer_Vertical).EndInit();
+            splitContainer_Vertical.ResumeLayout(false);
             TabControl_Inventory.ResumeLayout(false);
             tabPage_AddNewItem.ResumeLayout(false);
             tabPage_AddNewItem.PerformLayout();
@@ -1483,8 +1477,8 @@ namespace StockRoom11net
 
         #endregion
 
-        private System.Windows.Forms.SplitContainer splitContainerHorizontal;
-        private System.Windows.Forms.SplitContainer splitContainerVertical;
+        private System.Windows.Forms.SplitContainer splitContainer_Horizontal;
+        private System.Windows.Forms.SplitContainer splitContainer_Vertical;
         private System.Data.DataView dataView_StockRoom;
         private System.Windows.Forms.ContextMenuStrip _contextMenuStripTreeView;
         private System.Windows.Forms.ToolStripMenuItem ToolStripMenuItem_CollapseAll;

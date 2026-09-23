@@ -1149,31 +1149,12 @@ namespace StockRoom11net.Controls
         // Declare the constructor and properties of custom Arg.
         public class StringFilterControl_EventArgs : EventArgs
         {
-            // Constructor accepts two integer: the old value and the new value.
-            //    public StringFilterControl_EventArgs(DataColumn columnData, string operation, string condition)
-            //    {
-            //        ColumnData = columnData;
-            //        Operation = operation;
-            //        Condition = condition;
-            //    }
-
             public StringFilterControl_EventArgs(string filter)
             {
                 StringFilterSql = filter;
             }
 
-
-            public StringFilterControl_EventArgs(DataColumn columnData, string filter, string controlText)
-            {
-                ColumnData = columnData;
-
-                StringFilterSql = filter;
-
-                ControlText = controlText;
-            }
-
-
-            public StringFilterControl_EventArgs(DataColumn columnData, string columnName, string operation, string condition, string controlText)
+            public StringFilterControl_EventArgs(PropertyDescriptor? columnData, string columnName, string operation, string condition, string controlText)
             {
                 ColumnData = columnData;
 
@@ -1183,23 +1164,23 @@ namespace StockRoom11net.Controls
                 ControlText = controlText;
             }
 
-            public DataColumn ColumnData;
+            public PropertyDescriptor? ColumnData;
 
             /// <summary>
             /// Column name used to be filtered.
             /// Example: PartNumber LIKE '014-02333'; Column name -> PartNumber.
             /// </summary>
-            public string ColumnName;
+            public string? ColumnName;
             /// <summary>
             /// Operation in this filter.
             /// Example: PartNumber LIKE '014-02333'; Operation -> LIKE.
             /// </summary>
-            public string Operation;
+            public string? Operation;
             /// <summary>
             /// Condition to filter the data.
             /// Example: PartNumber LIKE '014-02333'; Condition -> 014-02333.
             /// </summary>
-            public string Condition;
+            public string? Condition;
 
             /// <summary>
             /// String filter information SQL formated.
@@ -1243,7 +1224,7 @@ namespace StockRoom11net.Controls
                     var selectedColumnType = "";
 
                     if (ColumnData != null)
-                        selectedColumnType = ColumnData.DataType.Name;
+                        selectedColumnType = ColumnData.PropertyType.Name;
                     else
                         selectedColumnType = "Int64";
 
@@ -1270,7 +1251,7 @@ namespace StockRoom11net.Controls
                 }
             }
 
-            public string ControlText;
+            public string? ControlText;
 
             string Match_string(string operation, string condition)
             {

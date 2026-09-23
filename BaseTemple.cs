@@ -92,8 +92,7 @@ namespace StockRoom11net
         #region"Public Properties"
 
         public List<string> DepartList = new List<string>();
-        public List<DepartmentInformation> ListDepartments = new List<DepartmentInformation>();
-        public DataGridViewExtended dataGridViewExtendedBase = new DataGridViewExtended();
+        public List<DepartmentInformation> ListDepartments = new List<DepartmentInformation>();        
         public ThumbViewer thumbViewerBasePictures = new ThumbViewer();
         
         public BindingSource BindingSourceTreeViewBase = new BindingSource();
@@ -161,21 +160,7 @@ namespace StockRoom11net
                 }
             }
         }
-
-        [RefreshProperties(RefreshProperties.Repaint),
-         Category("Custom Properties"),
-         DefaultValue(false),
-         Description("Input event front bindingsource.bindingcompleted.")]
-        public BindingCompleteEventArgs BindingCompleted
-        {
-            set
-            {
-                if (value.BindingCompleteState == BindingCompleteState.Success)
-                    if (value.BindingCompleteContext == BindingCompleteContext.ControlUpdate)
-                        dataGridViewExtendedBase.BindingCompleted = true;
-            }
-        }
-
+                
         public bool _needSaveData;
         [Category("DataView Properties"),
          DefaultValue(true),

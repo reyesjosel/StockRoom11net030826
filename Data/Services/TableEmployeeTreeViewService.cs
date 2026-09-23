@@ -13,8 +13,8 @@ public partial interface ITableEmployeeTreeViewService
 {
     // Basic operations
     Task<BindingList<Table_Employees_TreeView>> LoadEmployeesTreeViewAsync();
-    Task<Table_Employees_TreeView?> GetByIdAsync(int id, CancellationToken cancellationToken = default);
-    Task<IEnumerable<Table_Employees_TreeView>> GetAllAsync(CancellationToken cancellationToken = default);
+    Task<BindingList<Table_Employees_TreeView>> LoadEmployeeTreeViewAsync(int? count = null);
+    Task<Table_Employees_TreeView?> GetByIdAsync(int id, CancellationToken cancellationToken = default);  
     Task<Table_Employees_TreeView> CreateAsync(Table_Employees_TreeView entity, CancellationToken cancellationToken = default);
     Task<Table_Employees_TreeView> UpdateAsync(Table_Employees_TreeView entity, CancellationToken cancellationToken = default);
     Task<bool> DeleteAsync(int id, CancellationToken cancellationToken = default);
@@ -49,7 +49,13 @@ public partial class TableEmployeeTreeViewService : ITableEmployeeTreeViewServic
     
     public async Task<BindingList<Table_Employees_TreeView>> LoadEmployeesTreeViewAsync()
     {
-        var items = await _unitOfWork.TableEmployeeTreeViewRepository.GetAllAsync();
+        var items = await _unitOfWork.TableEmployeesTreeViewRepository.GetAllAsync();
+        return new BindingList<Table_Employees_TreeView>(items.ToList());
+    }
+
+    public async Task<BindingList<Table_Employees_TreeView>> LoadEmployeeTreeViewAsync(int? count = null)
+    {
+        var items = await _unitOfWork.TableEmployeesTreeViewRepository.GetAllAsync(count: count);
         return new BindingList<Table_Employees_TreeView>(items.ToList());
     }
 
@@ -58,14 +64,9 @@ public partial class TableEmployeeTreeViewService : ITableEmployeeTreeViewServic
         if (id <= 0)
             throw new ArgumentException("Id must be greater than zero.", nameof(id));
 
-        return await _unitOfWork.TableEmployeeTreeViewRepository.GetByIDAsync(id, cancellationToken);
+        return await _unitOfWork.TableEmployeesTreeViewRepository.GetByIDAsync(id, cancellationToken);
     }
-
-    public async Task<IEnumerable<Table_Employees_TreeView>> GetAllAsync(CancellationToken cancellationToken = default)
-    {
-        return await _unitOfWork.TableEmployeeTreeViewRepository.GetAllAsync(cancellationToken);
-    }
-
+     
     public async Task<Table_Employees_TreeView> CreateAsync(Table_Employees_TreeView entity, CancellationToken cancellationToken = default)
     {
         if (entity == null)
@@ -74,12 +75,12 @@ public partial class TableEmployeeTreeViewService : ITableEmployeeTreeViewServic
         // Validate parent relationship if specified
         if (entity.Parent_ID > 0)
         {
-            var parent = await _unitOfWork.TableEmployeeTreeViewRepository.GetByIDAsync(entity.Parent_ID, cancellationToken);
+            var parent = await _unitOfWork.TableEmployeesTreeViewRepository.GetByIDAsync(entity.Parent_ID ?? 0, cancellationToken);
             if (parent == null)
                 throw new InvalidOperationException($"Parent node with Id {entity.Parent_ID} not found.");
         }
 
-        return await _unitOfWork.TableEmployeeTreeViewRepository.AddAsync(entity, cancellationToken);
+        return await _unitOfWork.TableEmployeesTreeViewRepository.AddAsync(entity, cancellationToken);
     }
 
     public async Task<Table_Employees_TreeView> UpdateAsync(Table_Employees_TreeView entity, CancellationToken cancellationToken = default)
@@ -87,7 +88,7 @@ public partial class TableEmployeeTreeViewService : ITableEmployeeTreeViewServic
         if (entity == null)
             throw new ArgumentNullException(nameof(entity));
 
-        var existing = await _unitOfWork.TableEmployeeTreeViewRepository.GetByIDAsync(entity.ID, cancellationToken);
+        var existing = await _unitOfWork.TableEmployeesTreeViewRepository.GetByIDAsync(entity.ID, cancellationToken);
         if (existing == null)
             throw new InvalidOperationException($"Entity with Id {entity.ID} not found.");
 
@@ -98,12 +99,12 @@ public partial class TableEmployeeTreeViewService : ITableEmployeeTreeViewServic
             if (entity.ID == entity.Parent_ID)
                 throw new InvalidOperationException("A node cannot be its own parent.");
 
-            var parent = await _unitOfWork.TableEmployeeTreeViewRepository.GetByIDAsync(entity.Parent_ID, cancellationToken);
+            var parent = await _unitOfWork.TableEmployeesTreeViewRepository.GetByIDAsync(entity.Parent_ID ?? 0, cancellationToken);
             if (parent == null)
                 throw new InvalidOperationException($"Parent node with Id {entity.Parent_ID} not found.");
         }
 
-        await _unitOfWork.TableEmployeeTreeViewRepository.UpdateAsync(entity, cancellationToken);
+        await _unitOfWork.TableEmployeesTreeViewRepository.UpdateAsync(entity, cancellationToken);
         return entity;
     }
 
@@ -112,16 +113,16 @@ public partial class TableEmployeeTreeViewService : ITableEmployeeTreeViewServic
         if (id <= 0)
             throw new ArgumentException("Id must be greater than zero.", nameof(id));
 
-        var entity = await _unitOfWork.TableEmployeeTreeViewRepository.GetByIDAsync(id, cancellationToken);
+        var entity = await _unitOfWork.TableEmployeesTreeViewRepository.GetByIDAsync(id, cancellationToken);
         if (entity == null)
             return false;
 
         // Check if node has children
-        var children = await _unitOfWork.TableEmployeeTreeViewRepository.GetChildrenAsync(id, cancellationToken);
+        var children = await _unitOfWork.TableEmployeesTreeViewRepository.GetChildrenAsync(id, cancellationToken);
         if (children.Any())
             throw new InvalidOperationException("Cannot delete a node that has children. Delete children first.");
 
-        await _unitOfWork.TableEmployeeTreeViewRepository.DeleteAsync(id, cancellationToken);
+        await _unitOfWork.TableEmployeesTreeViewRepository.DeleteAsync(id, cancellationToken);
         return true;
     }
 
@@ -131,7 +132,7 @@ public partial class TableEmployeeTreeViewService : ITableEmployeeTreeViewServic
 
     public async Task<IEnumerable<Table_Employees_TreeView>> GetRootNodesAsync(CancellationToken cancellationToken = default)
     {
-        return await _unitOfWork.TableEmployeeTreeViewRepository.GetRootNodesAsync(cancellationToken);
+        return await _unitOfWork.TableEmployeesTreeViewRepository.GetRootNodesAsync(cancellationToken);
     }
 
     public async Task<IEnumerable<Table_Employees_TreeView>> GetChildrenAsync(int parentId, CancellationToken cancellationToken = default)
@@ -139,12 +140,12 @@ public partial class TableEmployeeTreeViewService : ITableEmployeeTreeViewServic
         if (parentId <= 0)
             throw new ArgumentException("ParentId must be greater than zero.", nameof(parentId));
 
-        return await _unitOfWork.TableEmployeeTreeViewRepository.GetChildrenAsync(parentId, cancellationToken);
+        return await _unitOfWork.TableEmployeesTreeViewRepository.GetChildrenAsync(parentId, cancellationToken);
     }
 
     public async Task<IEnumerable<Table_Employees_TreeView>> GetFullTreeAsync(CancellationToken cancellationToken = default)
     {
-        return await _unitOfWork.TableEmployeeTreeViewRepository.GetTreeHierarchyAsync(null, cancellationToken);
+        return await _unitOfWork.TableEmployeesTreeViewRepository.GetTreeHierarchyAsync(null, cancellationToken);
     }
 
     public async Task<IEnumerable<Table_Employees_TreeView>> GetSubTreeAsync(int rootId, CancellationToken cancellationToken = default)
@@ -152,7 +153,7 @@ public partial class TableEmployeeTreeViewService : ITableEmployeeTreeViewServic
         if (rootId <= 0)
             throw new ArgumentException("RootId must be greater than zero.", nameof(rootId));
 
-        return await _unitOfWork.TableEmployeeTreeViewRepository.GetTreeHierarchyAsync(rootId, cancellationToken);
+        return await _unitOfWork.TableEmployeesTreeViewRepository.GetTreeHierarchyAsync(rootId, cancellationToken);
     }
 
     #endregion

@@ -15,24 +15,12 @@ namespace StockRoom11net
 {
     internal static class Program
     {
-        // Application Insights connection string
-        //InstrumentationKey=a2f8bfc5-5b9c-422e-9fd0-56488d07c17c;IngestionEndpoint=https://eastus-8.in.applicationinsights.azure.com/;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/;ApplicationId=67b98137-640e-4cac-a45b-31b64d5bbe8b
-        private const string AppInsightsConnectionString = "InstrumentationKey=a2f8bfc5-5b9c-422e-9fd0-56488d07c17c;IngestionEndpoint=https://eastus-8.in.applicationinsights.azure.com/;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/;ApplicationId=67b98137-640e-4cac-a45b-31b64d5bbe8b";
-
-        public static TelemetryClient Telemetry { get; private set; } = null!;
-
         /// <summary>
         ///  The main entry point for the application.
         /// </summary>
         [STAThread]
         static void Main()
         {
-            // Initialize Application Insights telemetry
-            var telemetryConfig = TelemetryConfiguration.CreateDefault();
-            telemetryConfig.ConnectionString = AppInsightsConnectionString;
-            Telemetry = new TelemetryClient(telemetryConfig);
-            Telemetry.TrackEvent("AppStarted");
-
             var _appHost = Host.CreateDefaultBuilder()
                 .ConfigureServices((context, services) =>
                 {
@@ -48,6 +36,7 @@ namespace StockRoom11net
                     services.AddTransient<TimeLineEditor>();
                     services.AddTransient<StockRoom_Inventory>();
                     services.AddTransient<SolutionsProperties> ();
+                    services.AddTransient<Employees_Management>();
                 })
                 .Build();
 
@@ -76,18 +65,7 @@ namespace StockRoom11net
 
             //Application.Run(new Solutions_TempleClass());
             // Start WinForms using DI
-            Application.Run(_appHost.Services.GetRequiredService<Solutions_TempleClass>());
-
-            if(Debugger.IsAttached)
-            {
-                Telemetry.TrackEvent("AppStoppedDebug");
-            }
-            else
-            {
-                Telemetry.TrackEvent("AppStopped");
-                Telemetry.Flush();
-                Task.Delay(1000).Wait(); // Give telemetry time to send
-            }
+            Application.Run(_appHost.Services.GetRequiredService<Solutions_TempleClass>());                        
         }
     }
 }

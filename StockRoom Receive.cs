@@ -1224,15 +1224,15 @@ namespace StockRoom11net
         Plexiglass ShowResizeRectangle;
         void InitTabControlExtend()
         {
-            // TabControl_Inventory.HideTab("tabPage_TreeViewSetting");
+            // customTabControl.HideTab("tabPage_TreeViewSetting");
 
             customTabControl_Received.MouseDownResizeGripEvent += TabControl_Inventory_MouseDownResizeGripEvent;
             customTabControl_Received.MouseUpResizeGripEvent += TabControl_Inventory_MouseUpResizeGripEvent;
             customTabControl_Received.ResizeGripEvent += TabControl_Inventory_ResizeGripEvent;
             customTabControl_Received.SelectedIndexChanged += TabControl_Inventory_SelectedIndexChanged;
 
-            //  TabControl_Inventory.HideTab(tabPage_NoteEditor);
-            //  TabControl_Inventory.HideTab(tabPage_TreeViewSetting);
+            //  customTabControl.HideTab(tabPage_NoteEditor);
+            //  customTabControl.HideTab(tabPage_TreeViewSetting);
             //customTabControl_Received.HideTab(tabPage_AddNewItem);
             //customTabControl_Received.ShowTab(tabPage_Pictures);
         }
@@ -1251,10 +1251,10 @@ namespace StockRoom11net
 
             customTabControl_Received.Visible = true;
 
-            //  StockRoomSetting.SplitterVertical = splitContainerVertical.SplitterDistance;
-            //  StockRoomSetting.SplitterHorizontal = splitContainerHorizontal.SplitterDistance;
+            //  StockRoomSetting.SplitterVertical = splitContainer_Vertical.SplitterDistance;
+            //  StockRoomSetting.SplitterHorizontal = splitContainer_Horizontal.SplitterDistance;
 
-            //  SaveUserSetting();
+            //  SaveUserSettings();
         }
 
         void TabControl_Inventory_MouseDownResizeGripEvent(object sender, MouseEventArgs e)

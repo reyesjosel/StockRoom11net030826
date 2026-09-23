@@ -37,6 +37,7 @@ public static class DependencyInjection
         services.AddScoped<ITableTimeLineService, TableTimeLineService>();
         services.AddScoped<ITableTimeLineTreeViewService, TableTimeLineTreeViewService>();
         services.AddScoped<ITableStockRoomTreeViewService, TableStockRoomTreeViewService>();
+        services.AddScoped<ITableEmployeeTreeViewService, TableEmployeeTreeViewService>();
 
         return services;
     }

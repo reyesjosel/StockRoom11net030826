@@ -108,43 +108,49 @@
     <PackageReference Include="Be.Windows.Forms.HexBox.Net5" Version="1.8.0" />
     <PackageReference Include="Blazor.Extensions.Canvas" Version="1.1.1" />
     <PackageReference Include="GenCode128" Version="2.0.0" />
-    <PackageReference Include="Microsoft.ApplicationInsights" Version="2.22.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebView" Version="11.0.0-preview.6.26359.118" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebView.WindowsForms" Version="11.0.0-preview.6.26360.8" />
-    <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="11.0.100-preview.6.26359.118">
+    <PackageReference Include="Microsoft.ApplicationInsights" Version="3.1.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebView" Version="11.0.0-preview.7.26381.103" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebView.WindowsForms" Version="11.0.0-preview.7.26406.9" />
+    <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="11.0.100-preview.7.26381.103">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="11.0.0-preview.6.26359.118" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="11.0.0-preview.6.26359.118" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="11.0.0-preview.6.26359.118">
+    <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="11.0.0-preview.7.26381.103" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="11.0.0-preview.7.26381.103" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="11.0.0-preview.7.26381.103">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="11.0.0-preview.6.26359.118" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="11.0.0-preview.6.26359.118" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="11.0.0-preview.6.26359.118">
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="11.0.0-preview.7.26381.103" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="11.0.0-preview.7.26381.103" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="11.0.0-preview.7.26381.103">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.Extensions.Hosting" Version="11.0.0-preview.6.26359.118" />
-    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="11.0.0-preview.6.26359.118" />
-    <PackageReference Include="Microsoft.Extensions.Primitives" Version="11.0.0-preview.6.26359.118" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="11.0.0-preview.6.26359.118" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="11.0.0-preview.7.26381.103" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="11.0.0-preview.7.26381.103" />
+    <PackageReference Include="Microsoft.Extensions.Primitives" Version="11.0.0-preview.7.26381.103" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="11.0.0-preview.7.26381.103" />
     <PackageReference Include="Microsoft.IdentityModel.JsonWebTokens" Version="8.22.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.5-beta1" />
     <PackageReference Include="SQLite3MC.PCLRaw.bundle" Version="2.4.0" />
     <PackageReference Include="SQLite3MC.PCLRaw.lib" Version="2.4.0" />
     <PackageReference Include="SQLite3MC.PCLRaw.provider" Version="2.4.0" />
+    <PackageReference Include="System.CodeDom" Version="11.0.0-preview.7.26381.103" />
     <PackageReference Include="System.Data.OleDb" Version="11.0.0-preview.6.26359.118" />
     <PackageReference Include="System.Data.SQLite" Version="2.0.4" />
-    <PackageReference Include="System.Management" Version="11.0.0-preview.6.26359.118" />
-    <PackageReference Include="System.Memory.Data" Version="11.0.0-preview.6.26359.118" />
-    <PackageReference Include="System.Speech" Version="11.0.0-preview.6.26359.118" />
+    <PackageReference Include="System.Diagnostics.EventLog" Version="11.0.0-preview.7.26381.103" />
+    <PackageReference Include="System.Management" Version="11.0.0-preview.7.26381.103" />
+    <PackageReference Include="System.Memory.Data" Version="11.0.0-preview.7.26381.103" />
+    <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="11.0.0-preview.7.26381.103" />
+    <PackageReference Include="System.Speech" Version="11.0.0-preview.7.26381.103" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="CodeVendor.Controls">
       <HintPath>D:\My_C#_Example\CodeVendor Grouper\Grouper\bin\Release\net11.0-windows\CodeVendor.Controls.dll</HintPath>
+    </Reference>
+    <Reference Include="Interop.PDFXCviewAxLib">
+      <HintPath>bin\Debug\net11.0-windows\Interop.PDFXCviewAxLib.dll</HintPath>
     </Reference>
     <Reference Include="ObjectListView">
       <HintPath>D:\My_C#_Example\ObjectListView\ObjectListView-main2022\ObjectListView-main2022\Demo\bin\Release\net8.0-windows\ObjectListView.dll</HintPath>

@@ -8,11 +8,12 @@ using System.ComponentModel;
 using StockRoom11net.Controls.EmployeeInformation;
 using StockRoom11net.Controls;
 
+
 namespace StockRoom11net
 {
     public partial class Pdf_explorer : DockContent
-    {
-        string MessagePositionString;
+    { 
+        string MessageDebugPosition;
         string _lastDataSheet;
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public int Index { get; set; }
@@ -81,7 +82,7 @@ namespace StockRoom11net
                     using (var form = new Form { TopMost = true })
                     {
                         MessageBox.Show(form, @"Message related to this error is " + error.Message +
-                                              @", Break code at position " + MessagePositionString,
+                                              @", Break code at position " + MessageDebugPosition,
                             @"Pdf_explorer, Pdf_explorer fail in SetDataSheet",
                             MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
@@ -91,7 +92,7 @@ namespace StockRoom11net
 
         void ProcessDataSheet()
         {
-            MessagePositionString = "Set_data_sheet();";
+            MessageDebugPosition = "Set_data_sheet();";
             string _ext = Path.GetExtension(_dataSheet?.DataSheet).ToLower();
 
             switch (_ext)
@@ -137,14 +138,14 @@ namespace StockRoom11net
         // And in the Form Load event, you need to call the SetWindowPos() function like this.
         // SetWindowPos(this.Handle, HWND_TOPMOST, 0, 0, 0, 0, TOPMOST_FLAGS);
 
-        //   AxPDFXCviewAxLib.AxCoPDFXCpreview axCoPDFXCpreview;
+        //AxPDFXCviewAxLib.AxCoPDFXCpreview axCoPDFXCpreview;
 
         public Pdf_explorer()
         {
             try
             {
                 InitializeComponent();
-                /*
+          /*      
                 MessageDebugPosition = "xCoPDFXCpreview = new AxPDFXCviewAxLib";
                 axCoPDFXCpreview = new AxPDFXCviewAxLib.AxCoPDFXCpreview();
                 
@@ -179,16 +180,16 @@ namespace StockRoom11net
                 };
                 */
 
-                MessagePositionString = "ClearPDF_Viewer()";
+                MessageDebugPosition = "ClearPDF_Viewer()";
                 ClearPDF_Viewer();
                 TabPageContextMenuStrip = contextMenuStripPdfViewer;
 
-                MessagePositionString = "_defaultDataSheetFile = new FileInfo";
+                MessageDebugPosition = "_defaultDataSheetFile = new FileInfo";
                 _defaultDataSheetFile = new FileInfo(Settings.Default.DataBaseAddress + "\\DataSheets\\" + "No Data Sheet Found.PDF");
             }
             catch (Exception error)
             {
-                string msg = MessagePositionString + error.Message;
+                string msg = MessageDebugPosition + error.Message;
                 DialogResult = DialogResult.Cancel;
                 return;
             }
@@ -272,7 +273,7 @@ namespace StockRoom11net
                 contextMenuStripPdfViewer.Items.Clear();
 
 
-                if (CurrentEmployeesLogIn.EmployeeAccessLevel < Utilities.AccessLevel.Manager)
+                if (CurrentEmployeesLogIn.AccessLevel < Utilities.AccessLevel.Manager)
                 {
                     contextMenuStripPdfViewer.Items.AddRange(new ToolStripItem[]
                                                              {
@@ -281,7 +282,7 @@ namespace StockRoom11net
                     return;
                 }
 
-                if (CurrentEmployeesLogIn.EmployeeAccessLevel == Utilities.AccessLevel.Manager)
+                if (CurrentEmployeesLogIn.AccessLevel == Utilities.AccessLevel.Manager)
                 {
                     contextMenuStripPdfViewer.Items.AddRange(new ToolStripItem[]
                                                              {
@@ -379,7 +380,7 @@ namespace StockRoom11net
                     }
                 }
 
-                MessagePositionString = "Set_data_sheet() -> if (dataSheetFile.Exists)";
+                MessageDebugPosition = "Set_data_sheet() -> if (dataSheetFile.Exists)";
                 if (_defaultDataSheetFile.Exists)
                 {
                     _lastDataSheet = _defaultDataSheetFile.Name;
@@ -400,7 +401,7 @@ namespace StockRoom11net
                 }
                 else
                 {
-                    MessagePositionString = @"Set_data_sheet() -> _lastDataSheet = ";
+                    MessageDebugPosition = @"Set_data_sheet() -> _lastDataSheet = ";
                     ToolTipText = "";
                     _lastDataSheet = "";
                     Icon = Resources.Empy_Icon;
@@ -416,7 +417,7 @@ namespace StockRoom11net
                 using (var form = new Form { TopMost = true })
                 {
                     MessageBox.Show(form, @"Message related to this error is " + error.Message +
-                                          @", Break code at position " + MessagePositionString,
+                                          @", Break code at position " + MessageDebugPosition,
                         @" Pdf_explorer,  Pdf_explorer fail in Set_data_sheet()",
                         MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
@@ -432,6 +433,7 @@ namespace StockRoom11net
 
         void ClearPDF_Viewer()
         {
+            MessageDebugPosition = "ClearPDF_Viewer()";
             Text = "";
             Icon = Resources.Empy_Icon;
             _dataSheet = null;

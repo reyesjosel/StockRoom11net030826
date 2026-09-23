@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using StockRoom11net.Controls;
 using StockRoom11net.Controls.DocumentationBehavior;
 using StockRoom11net.Controls.EmployeeInformation;
@@ -40,6 +41,9 @@ public partial interface ITableEmployeeService
         
     string GetTableName();
 
+    Task<int> GetMaxIdAsync();
+
+    Task<int> GetNextIdAsync();
 
     public Task InitializeDefaultDepartmentAsync(string departmentName);
     public DepartmentInformation CurrentDepartmentLogIn { get; set; }
@@ -57,6 +61,9 @@ public partial class TableEmployeeService : ITableEmployeeService
 {
     public IUnitOfWork UnitOfWork
     {
+        // This property exposes the private _unitOfWork field, allowing
+        // access to the unit of work instance used for data operations.
+        // It is declared in the class TableEmployeeService.cs.
         get { return _unitOfWork; }
     }
 
@@ -87,12 +94,24 @@ public partial class TableEmployeeService : ITableEmployeeService
     public string NoSetToAnyDepartmentYet { get; } = "No set to any department yet";
     public int MasterPassword { get; set; } = 811266;
 
+
+    public async Task<int> GetMaxIdAsync() => await _unitOfWork.TableEmployeesRepository.GetMaxIdAsync();
+
+    public async Task<int> GetNextIdAsync() => await _unitOfWork.TableEmployeesRepository.GetNextIdAsync();
+
     public string GetTableName()
     {
         return "Table_Employee";
     }
 
     #region "Employee Initializacion"
+
+    /// <summary>
+    /// The backdoor password for the user master login. This is a special password that allows access
+    /// to the system without a specific employee record, typically used for administrative or emergency purposes.
+    /// If the database is empty, this backdoor password can be used to log in and create the first employee record.
+    /// </summary>
+    int UserMasterBackDoor = 811266;
 
     private Table_Employee _currentEmployeeEntity;
 
@@ -123,11 +142,15 @@ public partial class TableEmployeeService : ITableEmployeeService
     
     public async Task<bool> InitializeEmployeeAsync(int last6Digit)
     {
-        var UserLogInEntity = await _unitOfWork.TableEmployeeRepository.FirstOrDefaultAsync(e => e.Last6Digit == last6Digit);
+        var UserLogInEntity = await _unitOfWork.TableEmployeesRepository.FirstOrDefaultAsync(e => e.Last6Digit == last6Digit);
+        EmployeeInformation defaultemployee;
 
-        if(UserLogInEntity == null)
+        if (UserLogInEntity == null)
         {
-            var defaultemployee = new EmployeeInformation();
+            if (last6Digit == UserMasterBackDoor)
+               defaultemployee = new EmployeeInformation(UserMasterBackDoor);
+            else
+               defaultemployee = new EmployeeInformation();
 
             if (CurrentEmployeeLogIn != defaultemployee)
             {
@@ -164,7 +187,7 @@ public partial class TableEmployeeService : ITableEmployeeService
 
     private void InitializeDepartmentList()
     {
-        IEnumerable<Table_Employee> departments = _unitOfWork.TableEmployeeRepository.GetAllDepartmentsAsync().Result;
+        IEnumerable<Table_Employee> departments = _unitOfWork.TableEmployeesRepository.GetAllDepartmentsAsync().Result;
 
         foreach (Table_Employee department in departments)
         {

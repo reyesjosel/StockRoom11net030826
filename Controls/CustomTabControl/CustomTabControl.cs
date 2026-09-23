@@ -29,7 +29,6 @@ namespace System.Windows.Forms
             _TabBufferGraphics = Graphics.FromImage(_TabBuffer);
 
             DisplayStyle = TabStyle.Default;
-            Alignment = TabAlignment.Bottom;
 
             MouseDown += CustomTabControl_MouseDown;
             MouseUp += CustomTabControl_MouseUp;
@@ -93,7 +92,7 @@ namespace System.Windows.Forms
 
         #region Public properties
 
-        [Category("Appearance"), DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
+        [Category("Appearance"), DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
         public TabStyleProvider DisplayStyleProvider
         {
             get
@@ -130,8 +129,8 @@ namespace System.Windows.Forms
         }
 
         [Category("Appearance"), RefreshProperties(RefreshProperties.All)]
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public new bool Multiline
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
+        public bool MultilineExtended
         {
             get
             {
@@ -147,8 +146,8 @@ namespace System.Windows.Forms
         //	Hide the Padding attribute so it can not be changed
         //	We are handling this on the Style Provider
         [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public new Point Padding
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
+        public Point PaddingExtended
         {
             get
             {
@@ -160,7 +159,7 @@ namespace System.Windows.Forms
             }
         }
 
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
         public override bool RightToLeftLayout
         {
             get
@@ -177,8 +176,8 @@ namespace System.Windows.Forms
         //	Hide the HotTrack attribute so it can not be changed
         //	We are handling this on the Style Provider
         [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public new bool HotTrack
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
+        public bool HotTrackExtended
         {
             get
             {
@@ -191,8 +190,8 @@ namespace System.Windows.Forms
         }
 
         [Category("Appearance")]
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public new TabAlignment Alignment
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
+        public TabAlignment AlignmentExtended
         {
             get
             {
@@ -219,8 +218,8 @@ namespace System.Windows.Forms
         //	Hide the Appearance attribute so it can not be changed
         //	We don't want it as we are doing all the painting.
         [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public new TabAppearance Appearance
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
+        public TabAppearance AppearanceExtended
         {
             get
             {
@@ -1086,6 +1085,11 @@ namespace System.Windows.Forms
                         {
                             for (int index = TabCount - 1; index >= 0; index--)
                             {
+                                //	TabCount may change concurrently (tabs added/removed during paint),
+                                //	so re-check the current bound before drawing each tab.
+                                if (index >= TabCount)
+                                    continue;
+
                                 if (index != SelectedIndex && (RowCount == 1 || GetTabRow(index) == row))
                                     DrawTabPage(index, _TabBufferGraphics);
                             }
@@ -1093,11 +1097,19 @@ namespace System.Windows.Forms
                     else
                         for (int index = TabCount - 1; index >= 0; index--)
                         {
+                            //	TabCount may change concurrently (tabs added/removed during paint),
+                            //	so re-check the current bound before drawing each tab.
+                            if (index >= TabCount)
+                                continue;
+
                             if (index != SelectedIndex)
                                 DrawTabPage(index, _TabBufferGraphics);
                         }
                     //	The selected tab must be drawn last so it appears on top.
-                    if (SelectedIndex > -1)
+                    //	Re-check SelectedIndex against the current TabCount in case tabs were
+                    //	removed during the loops above, which would otherwise cause GetTabRect
+                    //	to throw ArgumentOutOfRangeException.
+                    if (SelectedIndex > -1 && SelectedIndex < TabCount)
                         DrawTabPage(SelectedIndex, _TabBufferGraphics);
                 }
 

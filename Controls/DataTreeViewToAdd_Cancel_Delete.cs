@@ -1,4 +1,5 @@
 ﻿using BrightIdeasSoftware;
+using Microsoft.VisualBasic.ApplicationServices;
 using StockRoom11net.Controls.BindingSourceExt;
 using StockRoom11net.Controls.EmployeeInformation;
 using StockRoom11net.Data;
@@ -182,15 +183,25 @@ namespace StockRoom11net.Controls
 
                 _employeeName = _currentEmployeeLogIn.Name;
                 _employeeLastName = _currentEmployeeLogIn.LastName;
-                _employeeEditMode = _currentEmployeeLogIn.EmployeeEditMode;
-                _employeeAccessLevel = _currentEmployeeLogIn.EmployeeAccessLevel;
-                EmployeeEnableTreeViewSetting = _currentEmployeeLogIn.EmployeeEnableTreeViewSetting;
+                _employeeEditMode = _currentEmployeeLogIn.EditMode;
+                _employeeAccessLevel = _currentEmployeeLogIn.AccessLevel;
+                EmployeeEnableTreeViewSetting = _currentEmployeeLogIn.EnableTreeViewSetting;
 
                 UserSetting userSetting = _currentEmployeeLogIn.UserSettingEntity(userSettingName);
 
                 internalResizeEvent = true;
                 olvDataTreeMaster.Font = userSetting.DataTreeViewFont;
                 olvDataTreeMaster.Columns[0].Width = userSetting.DataTreeViewColumnTextNameWidth;
+                // Defer clearing the flag until after the control has settled from
+                // the programmatic Font/Width change (avoids the multiple ColumnWidthChanged
+                // notifications fired during layout recalculation).
+                // BeginInvoke requires the control's window handle to already exist; this setter can
+                // run during construction (before the handle is created), so fall back to clearing
+                // the flag synchronously in that case.
+                if (olvDataTreeMaster.IsHandleCreated)
+                    olvDataTreeMaster.BeginInvoke(new Action(() => internalResizeEvent = false));
+                else
+                    internalResizeEvent = false;
             }
         }
 
@@ -321,10 +332,11 @@ namespace StockRoom11net.Controls
                     _bindingSourceTreeView = value;
 
                     TableName = _bindingSourceTreeView.TableName;
+                    userSettingName = "DataTreeView" + "_" + TableName;
 
                     if (_bindingSourceTreeView.Count == 0)
                         return;
-
+                                            
                     // Initialize the last used ID for the tree view nodes based on the current data source.
                     // We need to ensure that the LastID is set correctly to avoid ID collisions when adding new nodes.
                     InitializedLastID();
@@ -584,7 +596,6 @@ namespace StockRoom11net.Controls
             }
         }
 
-
         async Task UpDateParent_ID(Table_Base_TreeView model, int parent_ID)
         {            
             string typeName = _bindingSourceTreeView.TableName;
@@ -644,10 +655,10 @@ namespace StockRoom11net.Controls
                 _settingMode = value;
                 if (_settingMode)
                 {
-                   // SetupDragAndDrop();
+                  //  SetupDragAndDrop();
 
-                    olvDataTreeMaster.AllowDrop = true;
-                 //   olvDataTreeMaster.IsSimpleDragSource = true;
+                  //  olvDataTreeMaster.AllowDrop = true;
+                  //  olvDataTreeMaster.IsSimpleDragSource = true;
                   //  olvDataTreeMaster.IsSimpleDropSink = true;
 
                     splitContainer_DataTreeView.Panel2Collapsed = false;
@@ -655,10 +666,10 @@ namespace StockRoom11net.Controls
 
                     On_SelectedIndexChanged(new TreeViewSelectedIndexChangedEventArgs()
                     {
-                        CurrentNode = _currentNodeItem
+                        CurrentNode = CurrentNodeItem
                     });
 
-                    OlvDataTreeMaster_SelectedIndexChanged(new CustomTabControl(), new EventArgs());
+                    UpDateCurrentSelectedIndex("ByProgram");
                 }
                 else
                 {
@@ -680,28 +691,14 @@ namespace StockRoom11net.Controls
         {
             SettingMode = state;
         }
-
-
-       // [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-       // public string CurrentDepartmentLogIn { get; set; }
+               
 
         private IUnitOfWork _unitOfWork;
-
-        public DataTreeViewToAddCancelDelete(IUnitOfWork unitOfWork)
-        {
-            _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
-            InitializeComponent();
-        }
-
+                
         public DataTreeViewToAddCancelDelete()
         {
-            InitializeComponent();
-        }
-
-        public DataTreeViewToAddCancelDelete(BindingSource bindingSourceDataTreeView)
-        {
-            InitializeComponent();
-            BindingSourceTreeView = new BindingSourceValidating<Table_Base_TreeView> { DataSource = bindingSourceDataTreeView };
+            this.Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Regular, GraphicsUnit.Point);
+            InitializeComponent();                
         }
 
         /// <summary>
@@ -735,10 +732,29 @@ namespace StockRoom11net.Controls
             olvColumn_TextName.ImageGetter = delegate (object? row) { return "user"; };
 
             // This does a better job of auto sizing the columns
-            olvDataTreeMaster.AutoResizeColumns();
-            olvColumn_TextName.Width = 200;                       
+            //olvDataTreeMaster.AutoResizeColumns();
+            // olvColumn_TextName.Width = 200;
+
+            RunOnceAfterDelay();
         }
-                
+
+        async void RunOnceAfterDelay()
+        {
+            await Task.Delay(500);
+            // Your one-time logic here (still on UI thread if called from UI context)
+       
+            olvDataTreeMaster.GotFocus += OlvDataTreeMaster_GotFocus;
+            olvDataTreeMaster.Resize += OlvDataTreeMaster_Resize;
+            olvDataTreeMaster.ItemDrag += OlvDataTreeMaster_ItemDrag;
+            olvDataTreeMaster.KeyDown += OlvDataTreeMaster_KeyDown;
+            olvDataTreeMaster.Expanding += OlvDataTreeMaster_Expanding;
+            olvDataTreeMaster.Expanded += OlvDataTreeMaster_Expanded;
+            olvDataTreeMaster.MouseDown += OlvDataTreeMaster_MouseDown;
+            olvDataTreeMaster.MouseClick += OlvDataTreeMaster_MouseClick;
+            olvDataTreeMaster.MouseWheel += OlvDataTreeMaster_MouseWheel;
+            olvDataTreeMaster.ColumnWidthChanged += OlvDataTreeMaster_ColumnWidthChanged;
+            olvDataTreeMaster.SelectedIndexChanged += OlvDataTreeMaster_SelectedIndexChanged;
+        }
 
         #region"Timer SaveUserSetting if it's modifying the user interface."
 
@@ -769,13 +785,13 @@ namespace StockRoom11net.Controls
         /// </summary>
         System.Windows.Forms.Timer SaveUserSettingTimer;
 
-        void SaveUserSetting()
+        void SaveUserSettings()
         {
             // DesignMode is unreliable for nested UserControls — use LicenseManager instead.
             if (DesignMode || LicenseManager.UsageMode == LicenseUsageMode.Designtime)
                 return;
 
-            if (DesignMode || _employeesService == null || _currentEmployeeLogIn == null)
+            if (_currentEmployeeLogIn == null || internalResizeEvent)
                 return;
 
             SaveUserSettingTimer.Start();
@@ -786,14 +802,14 @@ namespace StockRoom11net.Controls
 
         async Task SaveUserSettingTickAsync(object? sender, EventArgs e)
         {
-            if (DesignMode || _employeesService == null || _currentEmployeeLogIn == null)
+            if (_currentEmployeeLogIn == null)
                 return;
 
             // DesignMode is not reliable in a UserControl constructor — it only works
             // correctly after the control has been sited (i.e., added to a parent).
             // If you call InitializeSaveUserSettingTimer from the constructor, use 
-            if (LicenseManager.UsageMode == LicenseUsageMode.Designtime)
-                return;
+           // if (LicenseManager.UsageMode == LicenseUsageMode.Designtime)
+           //     return;
 
             if (_employeesService == null || string.IsNullOrEmpty(userSettingName))
                 return;
@@ -809,7 +825,7 @@ namespace StockRoom11net.Controls
             SaveUserSettingTimer.Stop();
             On_StatusBarMessage(new StatusBarMessage_EventArgs("", "  "));//Clear the StatusBar.
                         
-            await _currentEmployeeLogIn.UpDateSave_DataTreeView_UserSetting(olvDataTreeMaster.Font, olvDataTreeMaster.Columns[0].Width);
+            await _currentEmployeeLogIn.UpDateSave_DataTreeView_UserSetting(userSettingName, olvDataTreeMaster.Font, olvDataTreeMaster.Columns[0].Width);
         }
 
         #endregion"Timer SaveUserSetting if it's modifying the user interface."   
@@ -898,18 +914,18 @@ namespace StockRoom11net.Controls
             olvDataTreeMaster.AutoGenerateColumns = false;
 
             olvDataTreeMaster.OwnerDraw = true;
-
-            olvDataTreeMaster.GotFocus   += OlvDataTreeMaster_GotFocus;
-            olvDataTreeMaster.Resize     += OlvDataTreeMaster_Resize;
-            olvDataTreeMaster.ItemDrag   += OlvDataTreeMaster_ItemDrag;
-            olvDataTreeMaster.KeyDown    += OlvDataTreeMaster_KeyDown;
-            olvDataTreeMaster.Expanding  += OlvDataTreeMaster_Expanding;
-            olvDataTreeMaster.Expanded   += olvDataTreeMaster_Expanded;
-            olvDataTreeMaster.MouseDown  += OlvDataTreeMaster_MouseDown;
-            olvDataTreeMaster.MouseClick += OlvDataTreeMaster_MouseClick;
-            olvDataTreeMaster.MouseWheel += olvDataTreeMaster_MouseWheel;
-            olvDataTreeMaster.ColumnWidthChanged    += OlvDataTreeMaster_ColumnWidthChanged;
-            olvDataTreeMaster.SelectedIndexChanged  += OlvDataTreeMaster_SelectedIndexChanged;
+                        
+            olvDataTreeMaster.GotFocus   -= OlvDataTreeMaster_GotFocus;
+            olvDataTreeMaster.Resize -= OlvDataTreeMaster_Resize;
+            olvDataTreeMaster.ItemDrag -= OlvDataTreeMaster_ItemDrag;
+            olvDataTreeMaster.KeyDown -= OlvDataTreeMaster_KeyDown;
+            olvDataTreeMaster.Expanding -= OlvDataTreeMaster_Expanding;
+            olvDataTreeMaster.Expanded -= OlvDataTreeMaster_Expanded;
+            olvDataTreeMaster.MouseDown -= OlvDataTreeMaster_MouseDown;
+            olvDataTreeMaster.MouseClick -= OlvDataTreeMaster_MouseClick;
+            olvDataTreeMaster.MouseWheel -= OlvDataTreeMaster_MouseWheel;
+            olvDataTreeMaster.ColumnWidthChanged    -= OlvDataTreeMaster_ColumnWidthChanged;
+            olvDataTreeMaster.SelectedIndexChanged -= OlvDataTreeMaster_SelectedIndexChanged;
 
             imageListTasks = new ImageList
             {
@@ -1415,7 +1431,8 @@ namespace StockRoom11net.Controls
                 if (position >= 0)
                     BindingSourceTreeView.Position = position;
             }
-            else if (typeName == nameof(Table_TimeLine_TreeView))
+
+            if (typeName == nameof(Table_TimeLine_TreeView))
             {
                 Table_TimeLine_TreeView? itemEF = await _unitOfWork.TableTimeLineTreeViewRepository.GetByIdAsync(model.ID);
                 if (itemEF != null)
@@ -1450,6 +1467,42 @@ namespace StockRoom11net.Controls
                 if (position >= 0)
                     BindingSourceTreeView.Position = position;
             }
+
+            if (typeName == nameof(Table_Employees_TreeView))
+            {
+                Table_Employees_TreeView? itemEF = await _unitOfWork.TableEmployeesTreeViewRepository.GetByIdAsync(model.ID);
+                if (itemEF != null)
+                {
+                    model.Parent_ID = ((Table_Base_TreeView)args.TargetModel)?.ID ?? rootKeyValueToMaster; ;
+                    itemEF.Parent_ID = model.Parent_ID;
+                    await _unitOfWork.TableEmployeesTreeViewRepository.UpdateAsync(itemEF, CancellationToken.None);
+                    int positionIndex = FindPositionById(model.ID);
+                    if (positionIndex >= 0)
+                        BindingSourceTreeView.Position = positionIndex;
+
+                    BindingSourceTreeView.ResetBindings(false);
+                    olvDataTree_ToDelete.RebuildAll(true);
+                    olvDataTree_ToDelete.ClearHotItem();
+                    return;
+                }
+
+                var typedItem = new Table_Employees_TreeView
+                {
+                    Index = NextID,  // Incrementing the index for each new node to ensure uniqueness
+                    ID = NextID, // Use the same ID as Index for simplicity, but in a real application
+                                 // you might want to use a different strategy for generating unique IDs
+                    Parent_ID = ((Table_Base_TreeView)args.TargetModel)?.ID ?? rootKeyValueToMaster,
+                    Text_Name = model.Text_Name,
+                    Description_Short = model.Description_Short,
+                    Description_Expand = model.Description_Expand,
+                    Image = model.Image
+                };
+                await _unitOfWork.TableEmployeesTreeViewRepository.AddAsync(typedItem, CancellationToken.None);
+                BindingSourceTreeView.Add(typedItem);
+                int position = FindPositionById(typedItem.ID);
+                if (position >= 0)
+                    BindingSourceTreeView.Position = position;
+            }
         }
 
         /// <summary>
@@ -1475,7 +1528,7 @@ namespace StockRoom11net.Controls
         /// at initialization we set the SplitterDistance according to the user setting, and we do not want to save the user
         /// setting at this moment, because it is not a user action, it is just the application of the user setting.
         /// </summary>        
-        bool internalResizeEvent = false;
+        bool internalResizeEvent = true;
         void OlvDataTreeMaster_ColumnWidthChanged(object? sender, ColumnWidthChangedEventArgs e)
         {
             // Only save user setting if the first column (Text_Name) is resized, not the description column,
@@ -1484,12 +1537,12 @@ namespace StockRoom11net.Controls
                 return;
 
             if (internalResizeEvent)
-                return;
-           
+                return; // still inside the programmatic init resize burst — ignore
+
             if (e.ColumnIndex == olvDataTreeMaster.Columns[0].Index)
             {
                 // Update the user setting for the column width
-                SaveUserSetting();                
+                SaveUserSettings();
             }
         }
 
@@ -1544,7 +1597,7 @@ namespace StockRoom11net.Controls
         }
 
         TreeBranchExpandedEventArgs treeBranchExpandedEventArgs;
-        void olvDataTreeMaster_Expanded(object? sender, TreeBranchExpandedEventArgs e)
+        void OlvDataTreeMaster_Expanded(object? sender, TreeBranchExpandedEventArgs e)
         {
             if (e.Item == null)
                 return;
@@ -1562,7 +1615,7 @@ namespace StockRoom11net.Controls
         Type DataBoundObject;
         string DataBoundObject_Name;
         DataRowView? CurrentDataRowViewActive = null;
-        Table_Base_TreeView? _currentNodeItem = null;
+        public Table_Base_TreeView? CurrentNodeItem = null;
 
         /// <summary>
         /// Handles the event triggered when the selected index of the ObjectListView data tree changes.
@@ -1598,8 +1651,12 @@ namespace StockRoom11net.Controls
                     Table_Base_TreeView? _currentNodeTBT = olvDataTreeMaster.SelectedItem.RowObject as Table_Base_TreeView;
                     if (_currentNodeTBT != null)
                     {
+                        // If the current node item is not null and its ID matches the selected node's ID,
+                        // return early to avoid unnecessary processing.
+                        if (CurrentNodeItem != null && CurrentNodeItem.ID == _currentNodeTBT.ID)
+                            return;
 
-                        _currentNodeItem = _currentNodeTBT;
+                        CurrentNodeItem = _currentNodeTBT;
 
                         // Change the image list based on the length of Description_Expand
                         // If exist some text in Description_Expand, use imageListHotItem size 32x42;
@@ -1609,7 +1666,7 @@ namespace StockRoom11net.Controls
                         else
                             olvDataTreeMaster.SmallImageList = imageListTasks;
 
-                        UpDateCurrentSelectedIndex();
+                        UpDateCurrentSelectedIndex("Master");
                     }
                 }
             }
@@ -1619,41 +1676,99 @@ namespace StockRoom11net.Controls
             }
         }
 
-         
-        public void UpDateCurrentSelectedIndex()
+        /// <summary>
+        /// Updates the current selected index and raises the SelectedIndexChanged event if the current node item has changed.
+        /// Guarantees that the event is only raised when the selected item changes, preventing duplicate events for the same selection.
+        /// </summary>
+        Table_Base_TreeView _itemSended = null;
+        public void UpDateCurrentSelectedIndex(string origen)
         {
-            On_SelectedIndexChanged(new TreeViewSelectedIndexChangedEventArgs()
+            // If the current node item is the same as the last sent item, do not send it again.
+            if (_itemSended == CurrentNodeItem)
+                return;
+
+            if (origen == "ByProgram")
             {
-                CurrentNode = _currentNodeItem
-            });
+                if (CurrentNodeItem != null)
+                {
+                    _itemSended = CurrentNodeItem;
+                    On_SelectedIndexChanged(new TreeViewSelectedIndexChangedEventArgs()
+                    {
+                        CurrentNode = CurrentNodeItem
+                    });
+                }               
+            }
+
+            if (origen == "Master")
+            {
+                if(olvDataTreeMaster.Bounds.Contains(olvDataTreeMaster.PointToClient(MousePosition)))
+                {
+                    if (CurrentNodeItem != null)
+                    {
+                        _itemSended = CurrentNodeItem;
+                        On_SelectedIndexChanged(new TreeViewSelectedIndexChangedEventArgs()
+                        {
+                            CurrentNode = CurrentNodeItem
+                        });
+                    }
+                }
+            }
+
+            if (origen == "Add")
+            {
+                if (olvDataTree_ToAdd.Bounds.Contains(olvDataTree_ToAdd.PointToClient(MousePosition)))
+                {
+                    if (CurrentNodeItem != null)
+                    {
+                        _itemSended = CurrentNodeItem;
+                        On_SelectedIndexChanged(new TreeViewSelectedIndexChangedEventArgs()
+                        {
+                            CurrentNode = CurrentNodeItem
+                        });
+                    }
+                }
+            }
+
+            if (origen == "ToDelete")
+            {
+                if (olvDataTree_ToDelete.Bounds.Contains(olvDataTree_ToDelete.PointToClient(MousePosition)))
+                {
+                    if (CurrentNodeItem != null)
+                    {
+                        _itemSended = CurrentNodeItem;
+                        On_SelectedIndexChanged(new TreeViewSelectedIndexChangedEventArgs()
+                        {
+                            CurrentNode = CurrentNodeItem
+                        });
+                    }
+                }
+            }
         }
 
         void OlvDataTreeMaster_MouseClick(object? sender, MouseEventArgs e)
         {
             if (olvDataTreeMaster.SelectedItem == null)
             {
-                _currentNodeItem = _emptyNodeItem;
+                CurrentNodeItem = _emptyNodeItem;
                 _bindingSourceTreeView.Position = -1;
-                UpDateCurrentSelectedIndex();
+                UpDateCurrentSelectedIndex("Master");
             }
         }
 
         void OlvDataTreeMaster_MouseDown(object? sender, MouseEventArgs e)
         {
-            internalResizeEvent = false;
-
             if (olvDataTreeMaster.HotCellHitLocation == HitTestLocation.Nothing)
             {
                 if (_bindingSourceTreeView.Position == -1)
                     return;
                 olvDataTreeMaster.FocusedItem = null;
-                _currentNodeItem = _emptyNodeItem;
+                CurrentNodeItem = _emptyNodeItem;
                 _bindingSourceTreeView.Position = -1;
-                UpDateCurrentSelectedIndex();
+                UpDateCurrentSelectedIndex("Master");
             }
         }
 
-        void olvDataTreeMaster_MouseWheel(object? sender, MouseEventArgs e)
+        void OlvDataTreeMaster_MouseWheel(object? sender, MouseEventArgs e)
         {
             if (ModifierKeys == Keys.Control)
             {
@@ -1671,7 +1786,7 @@ namespace StockRoom11net.Controls
 
                 ((HandledMouseEventArgs)e).Handled = true;
                 
-                SaveUserSetting();
+                SaveUserSettings();
             }
         }
 
@@ -1878,7 +1993,6 @@ namespace StockRoom11net.Controls
         #endregion"DataTreeListViewMaster"
 
         #region"olvDataTree_toAdd"
-
         bool mouseLeave = false;
 
         /// <summary>
@@ -1946,7 +2060,8 @@ namespace StockRoom11net.Controls
                         BindingSourceTreeView.Add(newEntity);
                     }
                 }
-                else if (typeName.Contains("Table_TimeLine_TreeView"))
+
+                if (typeName.Contains("Table_TimeLine_TreeView"))
                 {
                     MessageDebugPosition = "SetupRowsToAddAsync() - Adding new nodes";
                     foreach (string nodeName in _newNodeNames)
@@ -1984,6 +2099,44 @@ namespace StockRoom11net.Controls
                     }
                 }
 
+                if (typeName.Contains("Table_Employees_TreeView"))
+                {
+                    MessageDebugPosition = "SetupRowsToAddAsync() - Adding new nodes";
+                    foreach (string nodeName in _newNodeNames)
+                    {
+                        MessageDebugPosition = $"SetupRowsToAddAsync() - Checking if node exists: {nodeName}";
+                        Table_Employees_TreeView? node = await _unitOfWork.TableEmployeesTreeViewRepository.FirstOrDefaultAsync(n => n.Text_Name == nodeName);
+
+                        MessageDebugPosition = $"Node check complete for: {nodeName}, node found: {(node != null)}";
+                        if (node != null)
+                            continue;
+
+                        var newEntity = new Table_Employees_TreeView
+                        {
+                            Index = NextID, // Incrementing the index for each new node to ensure uniqueness
+                            ID = NextID,    // Use the same ID as Index for simplicity, but in a real application
+                                            // you might want to use a different strategy for generating unique IDs
+                            Parent_ID = rootKeyValueToAdd,
+                            Text_Name = nodeName,
+                            Node_PDF = "",
+                            Node_Picture = "",
+                            Image = "",
+                            String_Filter = "",
+                            ItemCount = 0,
+                            DateCreated = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
+                            Created_by = "",
+                            AvailableDepartments = $"AvalaibleDepart LIKE '*{_employeesService.CurrentDepartmentLogIn}*'",
+                            Properties = "",
+                            Message_String = "",
+                            Description_Short = "",
+                            Description_Expand = "",
+                        };
+
+                        await _unitOfWork.TableEmployeesTreeViewRepository.AddAsync(newEntity, CancellationToken.None);
+                        BindingSourceTreeView.Add(newEntity);
+                    }
+                }
+
                 MessageDebugPosition = "SetupRowsToAddAsync() - Finished adding nodes, resuming binding";
                 _bindingSourceTreeView.RaiseListChangedEvents = true;
                 _bindingSourceTreeView.ResumeBinding();
@@ -2007,7 +2160,7 @@ namespace StockRoom11net.Controls
             olvDataTree_ToAdd.AutoGenerateColumns = false;
             ((OLVColumn)olvDataTree_ToAdd.Columns[0]).FillsFreeSpace = true;
             olvDataTree_ToAdd.SelectedIndexChanged += olvDataTree_ToAdd_SelectedIndexChanged;
-
+           
             SetupDragAndDrop_toAdd();
         }
 
@@ -2036,12 +2189,12 @@ namespace StockRoom11net.Controls
                     var _currentNodeToAddTBT = olvDataTree_ToAdd.SelectedItem.RowObject as Table_Base_TreeView;
                     
                     if (_currentNodeToAddTBT != null)
-                        if (_currentNodeItem != null && _currentNodeItem.ID == _currentNodeToAddTBT.ID)
+                        if (CurrentNodeItem != null && CurrentNodeItem.ID == _currentNodeToAddTBT.ID)
                             return;
 
-                    _currentNodeItem = _currentNodeToAddTBT;
+                    CurrentNodeItem = _currentNodeToAddTBT;
 
-                    UpDateCurrentSelectedIndex();
+                    UpDateCurrentSelectedIndex("Add");
                 }
 
             }
@@ -2468,12 +2621,12 @@ namespace StockRoom11net.Controls
                     var _currentNodeToDeleteTBT = olvDataTree_ToDelete.SelectedItem.RowObject as Table_Base_TreeView;
 
                     if (_currentNodeToDeleteTBT != null)
-                        if (_currentNodeItem == null || _currentNodeItem.ID == _currentNodeToDeleteTBT.ID)
+                        if (CurrentNodeItem == null || CurrentNodeItem.ID == _currentNodeToDeleteTBT.ID)
                             return;
 
-                    _currentNodeItem = _currentNodeToDeleteTBT;
+                    CurrentNodeItem = _currentNodeToDeleteTBT;
 
-                    UpDateCurrentSelectedIndex();
+                    UpDateCurrentSelectedIndex("ToDelete");
                 }
 
             }
@@ -2682,8 +2835,12 @@ namespace StockRoom11net.Controls
                 // ✅ Persist to DB — same pattern as UpdateObjectToEFAsync
                 if (TableName.Contains("Table_StockRoom_TreeView"))
                     await _unitOfWork.TableStockRoomTreeViewRepository.UpdateAsync((Table_StockRoom_TreeView)model, CancellationToken.None);
-                else if (TableName.Contains("Table_TimeLine_TreeView"))
+
+                if (TableName.Contains("Table_TimeLine_TreeView"))
                     await _unitOfWork.TableTimeLineTreeViewRepository.UpdateAsync((Table_TimeLine_TreeView)model, CancellationToken.None);
+
+                if (TableName.Contains("Table_Employees_TreeView"))
+                    await _unitOfWork.TableEmployeesTreeViewRepository.UpdateAsync((Table_Employees_TreeView)model, CancellationToken.None);
             }
 
             BindingSourceTreeView.ResetBindings(false);
@@ -2701,7 +2858,6 @@ namespace StockRoom11net.Controls
                 return;
             }
 
-            // If the target is a leaf node, we need to add the objects as children of that node
             if (args.DropTargetItem == null)
             {
                 foreach (Table_Base_TreeView model in args.SourceModels)
@@ -2729,8 +2885,11 @@ namespace StockRoom11net.Controls
                 int positionIndex = FindPositionById(model.ID);
                 if (positionIndex >= 0)
                     BindingSourceTreeView.Position = positionIndex;
+
+                return;
             }
-            else if (TableName.Contains("Table_TimeLine_TreeView"))
+
+            if (TableName.Contains("Table_TimeLine_TreeView"))
             {                
                 Table_TimeLine_TreeView itemTL = (Table_TimeLine_TreeView)model;
                 itemTL.Parent_ID = rootKeyValueToDelete;
@@ -2747,7 +2906,31 @@ namespace StockRoom11net.Controls
                 int positionIndex = FindPositionById(model.ID);
                 if (positionIndex >= 0)
                     BindingSourceTreeView.Position = positionIndex;
+
+                return;
             }
+
+            if (TableName.Contains("Table_Employees_TreeView"))
+            {
+                Table_Employees_TreeView itemTL = (Table_Employees_TreeView)model;
+                itemTL.Parent_ID = rootKeyValueToDelete;
+                model.Parent_ID = rootKeyValueToDelete;
+                OrphansNodes.Add(model); // Add to orphans list
+
+                await _unitOfWork.TableEmployeesTreeViewRepository.UpdateAsync(itemTL, CancellationToken.None);
+
+                BindingSourceTreeView.ResetBindings(false);
+
+                olvDataTree_ToDelete.RebuildAll(false);
+                olvDataTree_ToDelete.ClearHotItem();
+
+                int positionIndex = FindPositionById(model.ID);
+                if (positionIndex >= 0)
+                    BindingSourceTreeView.Position = positionIndex;
+
+                return;
+            }
+
         }
 
         #region"ContextMenuStrip_ToDelete"
@@ -2786,7 +2969,12 @@ namespace StockRoom11net.Controls
             {
                 if (olvDataTree_ToDelete.SelectedItem == null)
                     return;
-                
+
+                BindingSourceTreeView.SuspendBinding();
+                olvDataTreeMaster.SelectedIndexChanged -= OlvDataTreeMaster_SelectedIndexChanged;
+                olvDataTree_ToAdd.SelectedIndexChanged -= olvDataTree_ToAdd_SelectedIndexChanged;
+                olvDataTree_ToDelete.SelectedIndexChanged -= olvDataTree_ToDelete_SelectedIndexChanged;
+
                 if (TableName.Contains("Table_StockRoom_TreeView"))
                 {
                     if (olvDataTree_ToDelete.SelectedItem.RowObject is not Table_StockRoom_TreeView selectedItem)
@@ -2820,8 +3008,11 @@ namespace StockRoom11net.Controls
 
                     await _unitOfWork.TableStockRoomTreeViewRepository.DeleteAsync(selectedItem.Index);
                     RemoveFromBindingSourceByIndex(selectedItem.Index);
+
+                    return;
                 }
-                else if (TableName.Contains("Table_TimeLine_TreeView"))
+
+                if (TableName.Contains("Table_TimeLine_TreeView"))
                 {
                     if (olvDataTree_ToDelete.SelectedItem.RowObject is not Table_TimeLine_TreeView selectedItem)
                         return;
@@ -2853,6 +3044,44 @@ namespace StockRoom11net.Controls
                     await _unitOfWork.TableTimeLineTreeViewRepository.DeleteAsync(selectedItem.Index);
                     RemoveFromBindingSourceByIndex(selectedItem.Index);
                 }
+
+                if (TableName.Contains("Table_Employees_TreeView"))
+                {
+                    if (olvDataTree_ToDelete.SelectedItem.RowObject is not Table_Employees_TreeView selectedItem)
+                        return;
+
+                    IEnumerable<Table_Base_TreeView> children = OrphansNodes.Where(x => x.Parent_ID == selectedItem.ID).ToList();
+
+                    if (children.Any())
+                    {
+                        DialogResult dialogResult =
+                        MessageBox.Show("Do you want to delete all the children as well?", "Cannot Delete Node with Childrens",
+                                        MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+
+                        if (dialogResult == DialogResult.No || dialogResult == DialogResult.Cancel)
+                            return;
+
+                        if (dialogResult == DialogResult.Yes)
+                        {
+                            foreach (Table_Employees_TreeView itemEF in children)
+                            {
+                                // ✅ Use DeleteAsync — it fetches the tracked entity by PK (Index)
+                                // then removes it. Avoids attaching detached entities with Index = 0.
+                                await _unitOfWork.TableEmployeesTreeViewRepository.DeleteAsync(itemEF.Index);
+
+                                RemoveFromBindingSourceByIndex(itemEF.Index);
+                            }
+                        }
+                    }
+
+                    await _unitOfWork.TableEmployeesTreeViewRepository.DeleteAsync(selectedItem.Index);
+                    RemoveFromBindingSourceByIndex(selectedItem.Index);
+                }
+
+                BindingSourceTreeView.ResumeBinding();
+                olvDataTreeMaster.SelectedIndexChanged += OlvDataTreeMaster_SelectedIndexChanged;
+                olvDataTree_ToAdd.SelectedIndexChanged += olvDataTree_ToAdd_SelectedIndexChanged;
+                olvDataTree_ToDelete.SelectedIndexChanged += olvDataTree_ToDelete_SelectedIndexChanged;
 
                 BindingSourceTreeView.ResetBindings(false);
                 olvDataTree_ToDelete.RebuildAll(false);
@@ -2889,8 +3118,12 @@ namespace StockRoom11net.Controls
                     
                     if (TableName.Contains("Table_StockRoom_TreeView"))
                         await _unitOfWork.TableStockRoomTreeViewRepository.DeleteRangeAsync(indexesToDelete);
-                    else if (TableName.Contains("Table_TimeLine_TreeView"))
+
+                    if (TableName.Contains("Table_TimeLine_TreeView"))
                         await _unitOfWork.TableTimeLineTreeViewRepository.DeleteRangeAsync(indexesToDelete);
+
+                    if (TableName.Contains("Table_Employees_TreeView"))
+                        await _unitOfWork.TableEmployeesTreeViewRepository.DeleteRangeAsync(indexesToDelete);
 
                     olvDataTreeMaster.SelectedIndexChanged -= OlvDataTreeMaster_SelectedIndexChanged;
                     olvDataTree_ToAdd.SelectedIndexChanged -= olvDataTree_ToAdd_SelectedIndexChanged;
@@ -2912,6 +3145,8 @@ namespace StockRoom11net.Controls
                 BindingSourceTreeView.ResetBindings(false);
                 olvDataTree_ToDelete.RebuildAll(false);
                 olvDataTree_ToDelete.ClearHotItem();
+
+                
             }
             catch (Exception error)
             {

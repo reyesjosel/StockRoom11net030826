@@ -10,20 +10,7 @@ namespace StockRoom11net
         /// Required designer variable.
         /// </summary>
         private System.ComponentModel.IContainer components = null;
-
-        /// <summary>
-        /// Clean up any resources being used.
-        /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing && (components != null))
-            {
-                components.Dispose();
-            }
-            base.Dispose(disposing);
-        }
-
+                
         #region Windows Form Designer generated code
 
         /// <summary>
@@ -33,47 +20,45 @@ namespace StockRoom11net
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            splitContainer1 = new SplitContainer();
-            splitContainer2 = new SplitContainer();
-            olvDataTree = new DataTreeListView();
-            olvColumn_TextName = new OLVColumn();
-            olvColumn_Description = new OLVColumn();
-            customTabControl_Employee = new CustomTabControl();
+            splitContainer_Horizontal = new SplitContainer();
+            splitContainer_Vertical = new SplitContainer();
+            dataTreeViewToAdd_Cancel_Delete = new DataTreeViewToAddCancelDelete();
+            customTabControl = new CustomTabControl();
             tabPage_Employee = new TabPage();
             grouper_AccessRight = new CodeVendor.Controls.Grouper();
             panel9 = new Panel();
             label_EnableSetting = new Label();
-            comboBox_EnableSetting = new ComboBox();
+            comboBox_Employee_EnableSetting = new ComboBox();
             panel8 = new Panel();
             label_EditMode = new Label();
-            comboBox_EditMode = new ComboBox();
+            comboBox_Employee_EditMode = new ComboBox();
             panel6 = new Panel();
             label_AccessLevel = new Label();
-            comboBox_AccessLevel = new ComboBox();
+            comboBox_Employee_AccessLevel = new ComboBox();
             panel5 = new Panel();
             label_Department = new Label();
-            comboBox_Department = new ComboBox();
+            comboBox_Employee_Department = new ComboBox();
             panel4 = new Panel();
             label_Position = new Label();
-            comboBox_Position = new ComboBox();
+            comboBox_Employee_Position = new ComboBox();
             panel_Spacer6pts = new Panel();
             grouper_EmployeeInformations = new CodeVendor.Controls.Grouper();
             panel_EmployeeInformation = new Panel();
             panel3_Last6_Telephone_Size = new Panel();
             panel8_Size = new Panel();
-            textBox_Size = new TextBox();
+            textBox_Employee_Size = new TextBox();
             label_Size = new Label();
             panel10_Last6 = new Panel();
-            textBox_Last6Digit = new TextBox();
+            textBox_Employee_Last6Digit = new TextBox();
             label_Employee_ID = new Label();
             panel9_Telephone = new Panel();
-            textBox_Telephone = new TextBox();
+            textBox_Employee_Telephone = new TextBox();
             label_Telephone = new Label();
             panel4_HireDate = new Panel();
-            dateTimePicker_Hire_Date = new DateTimePicker();
+            dateTimePicker_Employee_Hire_Date = new DateTimePicker();
             label_Hire_Date = new Label();
             panel2_Address = new Panel();
-            textBox_Address = new TextBox();
+            textBox_Employee_Address = new TextBox();
             label_Address = new Label();
             panel1_Name_LastName = new Panel();
             panel5_LastName = new Panel();
@@ -82,7 +67,7 @@ namespace StockRoom11net
             panel_Name = new Panel();
             textBox_Employee_Name = new TextBox();
             label1 = new Label();
-            PicturesBox_Image = new PictureBox();
+            PicturesBox_EmployeeImage = new PictureBox();
             panel2 = new Panel();
             flowLayoutPanel2 = new FlowLayoutPanel();
             button_AddNewEmployee = new Button();
@@ -93,23 +78,23 @@ namespace StockRoom11net
             grouper_DepartmentInformations = new CodeVendor.Controls.Grouper();
             panel14 = new Panel();
             panel15 = new Panel();
-            textBox_DepartmentID = new TextBox();
+            textBox_Department_ID = new TextBox();
             label_DepartmentID = new Label();
             panel16 = new Panel();
-            textBox_DepartmentTelephone = new TextBox();
+            textBox_Department_Telephone = new TextBox();
             label_DepartmentTelephone = new Label();
             panel13 = new Panel();
-            textBox_DepartmentComents = new TextBox();
+            textBox_Department_Coments = new TextBox();
             label_DepartmentComments = new Label();
             panel_DeptmentName = new Panel();
-            textBox_DepartmentName = new TextBox();
+            textBox_Department_Name = new TextBox();
             label_DepartmentName = new Label();
-            PicturesBox_DepartmentPictures = new PictureBox();
+            PicturesBox_Department_Pictures = new PictureBox();
             panel1 = new Panel();
             flowLayoutPanel1 = new FlowLayoutPanel();
             button_AddNewDept = new Button();
-            button_AdjustmentDept = new Button();
             button_SaveDept = new Button();
+            button_DeleteDept = new Button();
             tabPage_Profile = new TabPage();
             panel_dataGridViewProfile = new Panel();
             panel3 = new Panel();
@@ -118,8 +103,8 @@ namespace StockRoom11net
             button_CancelProfile = new Button();
             button_SaveProfile = new Button();
             button_DeleteProfile = new Button();
-            _dataGridViewExtended_Employee = new StockRoom11net.Controls.DataGridViewExtend.DataGridViewExtended();
-            _bindingSource_Employees = new BindingSource(components);
+            tabPage_TreeViewSetting = new TabPage();
+            dataGridViewExtended = new DataGridViewExtended();
             dataView_Employees = new System.Data.DataView();
             _contextMenuStripTreeView = new ContextMenuStrip(components);
             ToolStripMenuItem_singleExpandedNode = new ToolStripMenuItem();
@@ -141,16 +126,15 @@ namespace StockRoom11net
             toolStripMenuItem_FullRowSelect = new ToolStripMenuItem();
             timeLineToolStripMenuItem = new ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)BindingSourceTreeViewBase).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
-            splitContainer1.Panel1.SuspendLayout();
-            splitContainer1.Panel2.SuspendLayout();
-            splitContainer1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)splitContainer2).BeginInit();
-            splitContainer2.Panel1.SuspendLayout();
-            splitContainer2.Panel2.SuspendLayout();
-            splitContainer2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)olvDataTree).BeginInit();
-            customTabControl_Employee.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)splitContainer_Horizontal).BeginInit();
+            splitContainer_Horizontal.Panel1.SuspendLayout();
+            splitContainer_Horizontal.Panel2.SuspendLayout();
+            splitContainer_Horizontal.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)splitContainer_Vertical).BeginInit();
+            splitContainer_Vertical.Panel1.SuspendLayout();
+            splitContainer_Vertical.Panel2.SuspendLayout();
+            splitContainer_Vertical.SuspendLayout();
+            customTabControl.SuspendLayout();
             tabPage_Employee.SuspendLayout();
             grouper_AccessRight.SuspendLayout();
             panel9.SuspendLayout();
@@ -169,7 +153,7 @@ namespace StockRoom11net
             panel1_Name_LastName.SuspendLayout();
             panel5_LastName.SuspendLayout();
             panel_Name.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)PicturesBox_Image).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)PicturesBox_EmployeeImage).BeginInit();
             panel2.SuspendLayout();
             flowLayoutPanel2.SuspendLayout();
             tabPage_Department.SuspendLayout();
@@ -180,121 +164,86 @@ namespace StockRoom11net
             panel16.SuspendLayout();
             panel13.SuspendLayout();
             panel_DeptmentName.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)PicturesBox_DepartmentPictures).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)PicturesBox_Department_Pictures).BeginInit();
             panel1.SuspendLayout();
             flowLayoutPanel1.SuspendLayout();
             tabPage_Profile.SuspendLayout();
             panel3.SuspendLayout();
             flowLayoutPanel3.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)_bindingSource_Employees).BeginInit();
             ((System.ComponentModel.ISupportInitialize)dataView_Employees).BeginInit();
             _contextMenuStripTreeView.SuspendLayout();
             SuspendLayout();
             // 
-            // splitContainer1
+            // splitContainer_Horizontal
             // 
-            splitContainer1.BorderStyle = BorderStyle.Fixed3D;
-            splitContainer1.Dock = DockStyle.Fill;
-            splitContainer1.Location = new Point(0, 0);
-            splitContainer1.Name = "splitContainer1";
-            splitContainer1.Orientation = Orientation.Horizontal;
+            splitContainer_Horizontal.BorderStyle = BorderStyle.Fixed3D;
+            splitContainer_Horizontal.Dock = DockStyle.Fill;
+            splitContainer_Horizontal.Location = new Point(0, 0);
+            splitContainer_Horizontal.Name = "splitContainer_Horizontal";
+            splitContainer_Horizontal.Orientation = Orientation.Horizontal;
             // 
-            // splitContainer1.Panel1
+            // splitContainer_Horizontal.Panel1
             // 
-            splitContainer1.Panel1.Controls.Add(splitContainer2);
+            splitContainer_Horizontal.Panel1.Controls.Add(splitContainer_Vertical);
             // 
-            // splitContainer1.Panel2
+            // splitContainer_Horizontal.Panel2
             // 
-            splitContainer1.Panel2.Controls.Add(_dataGridViewExtended_Employee);
-            splitContainer1.Size = new Size(1639, 726);
-            splitContainer1.SplitterDistance = 454;
-            splitContainer1.TabIndex = 0;
+            splitContainer_Horizontal.Panel2.Controls.Add(dataGridViewExtended);
+            splitContainer_Horizontal.Size = new Size(1639, 726);
+            splitContainer_Horizontal.SplitterDistance = 454;
+            splitContainer_Horizontal.SplitterWidth = 6;
+            splitContainer_Horizontal.TabIndex = 0;
             // 
-            // splitContainer2
+            // splitContainer_Vertical
             // 
-            splitContainer2.BorderStyle = BorderStyle.Fixed3D;
-            splitContainer2.Dock = DockStyle.Fill;
-            splitContainer2.Location = new Point(0, 0);
-            splitContainer2.Name = "splitContainer2";
+            splitContainer_Vertical.BorderStyle = BorderStyle.Fixed3D;
+            splitContainer_Vertical.Dock = DockStyle.Fill;
+            splitContainer_Vertical.Location = new Point(0, 0);
+            splitContainer_Vertical.Name = "splitContainer_Vertical";
             // 
-            // splitContainer2.Panel1
+            // splitContainer_Vertical.Panel1
             // 
-            splitContainer2.Panel1.Controls.Add(olvDataTree);
+            splitContainer_Vertical.Panel1.Controls.Add(dataTreeViewToAdd_Cancel_Delete);
             // 
-            // splitContainer2.Panel2
+            // splitContainer_Vertical.Panel2
             // 
-            splitContainer2.Panel2.Controls.Add(customTabControl_Employee);
-            splitContainer2.Size = new Size(1639, 454);
-            splitContainer2.SplitterDistance = 473;
-            splitContainer2.TabIndex = 0;
+            splitContainer_Vertical.Panel2.Controls.Add(customTabControl);
+            splitContainer_Vertical.Size = new Size(1639, 454);
+            splitContainer_Vertical.SplitterDistance = 473;
+            splitContainer_Vertical.TabIndex = 0;
             // 
-            // olvDataTreeMaster
+            // dataTreeViewToAdd_Cancel_Delete
             // 
-            olvDataTree.AlternateRowBackColor = Color.FromArgb(224, 224, 224);
-            olvDataTree.AutoGenerateColumns = false;
-            olvDataTree.Columns.AddRange(new ColumnHeader[] { olvColumn_TextName, olvColumn_Description });
-            olvDataTree.DataSource = null;
-            olvDataTree.Dock = DockStyle.Fill;
-            olvDataTree.Font = new Font("Microsoft Sans Serif", 12F);
-            olvDataTree.FullRowSelect = true;
-            olvDataTree.KeyAspectName = "Id";
-            olvDataTree.Location = new Point(0, 0);
-            olvDataTree.Margin = new Padding(1);
-            olvDataTree.Name = "olvDataTreeMaster";
-            olvDataTree.ParentKeyAspectName = "ParentId";
-            olvDataTree.RootKeyValueString = "";
-            olvDataTree.SelectColumnsOnRightClick = false;
-            olvDataTree.SelectColumnsOnRightClickBehaviour = ObjectListView.ColumnSelectBehaviour.None;
-            olvDataTree.ShowGroups = false;
-            olvDataTree.ShowKeyColumns = false;
-            olvDataTree.Size = new Size(469, 450);
-            olvDataTree.TabIndex = 2;
-            olvDataTree.UseCompatibleStateImageBehavior = false;
-            olvDataTree.UseFilterIndicator = true;
-            olvDataTree.UseFiltering = true;
-            olvDataTree.UseHotItem = true;
-            olvDataTree.UseTranslucentHotItem = true;
-            olvDataTree.UseTranslucentSelection = true;
-            olvDataTree.View = View.Details;
-            olvDataTree.VirtualMode = true;
-            olvDataTree.SelectedIndexChanged += OlvDataTree_SelectedIndexChanged;
-            olvDataTree.MouseClick += OlvDataTree_MouseClick;
+            dataTreeViewToAdd_Cancel_Delete.Dock = DockStyle.Fill;
+            dataTreeViewToAdd_Cancel_Delete.Font = new Font("Microsoft Sans Serif", 12F);
+            dataTreeViewToAdd_Cancel_Delete.Location = new Point(0, 0);
+            dataTreeViewToAdd_Cancel_Delete.Margin = new Padding(1);
+            dataTreeViewToAdd_Cancel_Delete.Name = "dataTreeViewToAdd_Cancel_Delete";
+            dataTreeViewToAdd_Cancel_Delete.Size = new Size(469, 450);
+            dataTreeViewToAdd_Cancel_Delete.TabIndex = 1;
             // 
-            // olvColumn_TextName
+            // customTabControl
             // 
-            olvColumn_TextName.AspectName = "Text_Name";
-            olvColumn_TextName.Text = "      Name";
-            olvColumn_TextName.Width = 150;
-            // 
-            // olvColumn_Description
-            // 
-            olvColumn_Description.AspectName = "Description_Expand";
-            olvColumn_Description.Text = "Description";
-            olvColumn_Description.Width = 300;
-            // 
-            // customTabControl_Employee
-            // 
-            customTabControl_Employee.Controls.Add(tabPage_Employee);
-            customTabControl_Employee.Controls.Add(tabPage_Department);
-            customTabControl_Employee.Controls.Add(tabPage_Profile);
-            customTabControl_Employee.DisplayStyle = TabStyle.VisualStudio;
-            // 
-            // 
-            // 
-            customTabControl_Employee.DisplayStyleProvider.BorderColor = Color.DarkGray;
-            customTabControl_Employee.DisplayStyleProvider.BorderColorHot = Color.DarkGray;
-            customTabControl_Employee.DisplayStyleProvider.BorderColorSelected = Color.FromArgb(127, 157, 185);
-            customTabControl_Employee.DisplayStyleProvider.CloserColor = Color.DarkGray;
-            customTabControl_Employee.DisplayStyleProvider.TextColor = Color.Black;
-            customTabControl_Employee.DisplayStyleProvider.TextColorDisabled = Color.DarkGray;
-            customTabControl_Employee.DisplayStyleProvider.TextColorSelected = Color.Black;
-            customTabControl_Employee.Dock = DockStyle.Fill;
-            customTabControl_Employee.Font = new Font("Microsoft Sans Serif", 12F);
-            customTabControl_Employee.Location = new Point(0, 0);
-            customTabControl_Employee.Name = "customTabControl_Employee";
-            customTabControl_Employee.SelectedIndex = 0;
-            customTabControl_Employee.Size = new Size(1158, 450);
-            customTabControl_Employee.TabIndex = 0;
+            customTabControl.Alignment = TabAlignment.Bottom;
+            customTabControl.AlignmentExtended = TabAlignment.Bottom;
+            customTabControl.AppearanceExtended = TabAppearance.Normal;
+            customTabControl.Controls.Add(tabPage_Employee);
+            customTabControl.Controls.Add(tabPage_Department);
+            customTabControl.Controls.Add(tabPage_Profile);
+            customTabControl.Controls.Add(tabPage_TreeViewSetting);
+            customTabControl.DisplayStyle = TabStyle.VisualStudio;
+            customTabControl.Dock = DockStyle.Fill;
+            customTabControl.Font = new Font("Microsoft Sans Serif", 12F);
+            customTabControl.HotTrack = true;
+            customTabControl.HotTrackExtended = true;
+            customTabControl.Location = new Point(0, 0);
+            customTabControl.MultilineExtended = false;
+            customTabControl.Name = "customTabControl";
+            customTabControl.Padding = new Point(13, 1);
+            customTabControl.PaddingExtended = new Point(14, 1);
+            customTabControl.SelectedIndex = 0;
+            customTabControl.Size = new Size(1158, 450);
+            customTabControl.TabIndex = 0;
             // 
             // tabPage_Employee
             // 
@@ -325,7 +274,6 @@ namespace StockRoom11net
             grouper_AccessRight.CustomGroupBoxColor = Color.White;
             grouper_AccessRight.Dock = DockStyle.Top;
             grouper_AccessRight.Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Bold);
-            grouper_AccessRight.GroupImage = null;
             grouper_AccessRight.GroupTitle = "Access Right";
             grouper_AccessRight.Location = new Point(5, 244);
             grouper_AccessRight.Margin = new Padding(0);
@@ -343,7 +291,7 @@ namespace StockRoom11net
             // panel9
             // 
             panel9.Controls.Add(label_EnableSetting);
-            panel9.Controls.Add(comboBox_EnableSetting);
+            panel9.Controls.Add(comboBox_Employee_EnableSetting);
             panel9.Dock = DockStyle.Left;
             panel9.Location = new Point(865, 28);
             panel9.Margin = new Padding(0);
@@ -364,21 +312,21 @@ namespace StockRoom11net
             label_EnableSetting.TabIndex = 20;
             label_EnableSetting.Text = "Enable Setting";
             // 
-            // comboBox_EnableSetting
+            // comboBox_Employee_EnableSetting
             // 
-            comboBox_EnableSetting.Dock = DockStyle.Bottom;
-            comboBox_EnableSetting.FormattingEnabled = true;
-            comboBox_EnableSetting.Items.AddRange(new object[] { "Folder to be lock, hidde or readOnly properties changed." });
-            comboBox_EnableSetting.Location = new Point(4, 30);
-            comboBox_EnableSetting.Margin = new Padding(3, 2, 3, 2);
-            comboBox_EnableSetting.Name = "comboBox_EnableSetting";
-            comboBox_EnableSetting.Size = new Size(142, 28);
-            comboBox_EnableSetting.TabIndex = 19;
+            comboBox_Employee_EnableSetting.Dock = DockStyle.Bottom;
+            comboBox_Employee_EnableSetting.FormattingEnabled = true;
+            comboBox_Employee_EnableSetting.Items.AddRange(new object[] { "Folder to be lock, hidde or readOnly properties changed." });
+            comboBox_Employee_EnableSetting.Location = new Point(4, 30);
+            comboBox_Employee_EnableSetting.Margin = new Padding(3, 2, 3, 2);
+            comboBox_Employee_EnableSetting.Name = "comboBox_Employee_EnableSetting";
+            comboBox_Employee_EnableSetting.Size = new Size(142, 28);
+            comboBox_Employee_EnableSetting.TabIndex = 19;
             // 
             // panel8
             // 
             panel8.Controls.Add(label_EditMode);
-            panel8.Controls.Add(comboBox_EditMode);
+            panel8.Controls.Add(comboBox_Employee_EditMode);
             panel8.Dock = DockStyle.Left;
             panel8.Location = new Point(715, 28);
             panel8.Margin = new Padding(0);
@@ -399,21 +347,21 @@ namespace StockRoom11net
             label_EditMode.TabIndex = 20;
             label_EditMode.Text = "Edit Mode";
             // 
-            // comboBox_EditMode
+            // comboBox_Employee_EditMode
             // 
-            comboBox_EditMode.Dock = DockStyle.Bottom;
-            comboBox_EditMode.FormattingEnabled = true;
-            comboBox_EditMode.Items.AddRange(new object[] { "Folder to be lock, hidde or readOnly properties changed." });
-            comboBox_EditMode.Location = new Point(4, 30);
-            comboBox_EditMode.Margin = new Padding(3, 2, 3, 2);
-            comboBox_EditMode.Name = "comboBox_EditMode";
-            comboBox_EditMode.Size = new Size(142, 28);
-            comboBox_EditMode.TabIndex = 19;
+            comboBox_Employee_EditMode.Dock = DockStyle.Bottom;
+            comboBox_Employee_EditMode.FormattingEnabled = true;
+            comboBox_Employee_EditMode.Items.AddRange(new object[] { "Folder to be lock, hidde or readOnly properties changed." });
+            comboBox_Employee_EditMode.Location = new Point(4, 30);
+            comboBox_Employee_EditMode.Margin = new Padding(3, 2, 3, 2);
+            comboBox_Employee_EditMode.Name = "comboBox_Employee_EditMode";
+            comboBox_Employee_EditMode.Size = new Size(142, 28);
+            comboBox_Employee_EditMode.TabIndex = 19;
             // 
             // panel6
             // 
             panel6.Controls.Add(label_AccessLevel);
-            panel6.Controls.Add(comboBox_AccessLevel);
+            panel6.Controls.Add(comboBox_Employee_AccessLevel);
             panel6.Dock = DockStyle.Left;
             panel6.Location = new Point(500, 28);
             panel6.Margin = new Padding(0);
@@ -434,21 +382,21 @@ namespace StockRoom11net
             label_AccessLevel.TabIndex = 20;
             label_AccessLevel.Text = "Access Level";
             // 
-            // comboBox_AccessLevel
+            // comboBox_Employee_AccessLevel
             // 
-            comboBox_AccessLevel.Dock = DockStyle.Bottom;
-            comboBox_AccessLevel.FormattingEnabled = true;
-            comboBox_AccessLevel.Items.AddRange(new object[] { "Folder to be lock, hidde or readOnly properties changed." });
-            comboBox_AccessLevel.Location = new Point(4, 30);
-            comboBox_AccessLevel.Margin = new Padding(3, 2, 3, 2);
-            comboBox_AccessLevel.Name = "comboBox_AccessLevel";
-            comboBox_AccessLevel.Size = new Size(207, 28);
-            comboBox_AccessLevel.TabIndex = 19;
+            comboBox_Employee_AccessLevel.Dock = DockStyle.Bottom;
+            comboBox_Employee_AccessLevel.FormattingEnabled = true;
+            comboBox_Employee_AccessLevel.Items.AddRange(new object[] { "Folder to be lock, hidde or readOnly properties changed." });
+            comboBox_Employee_AccessLevel.Location = new Point(4, 30);
+            comboBox_Employee_AccessLevel.Margin = new Padding(3, 2, 3, 2);
+            comboBox_Employee_AccessLevel.Name = "comboBox_Employee_AccessLevel";
+            comboBox_Employee_AccessLevel.Size = new Size(207, 28);
+            comboBox_Employee_AccessLevel.TabIndex = 19;
             // 
             // panel5
             // 
             panel5.Controls.Add(label_Department);
-            panel5.Controls.Add(comboBox_Department);
+            panel5.Controls.Add(comboBox_Employee_Department);
             panel5.Dock = DockStyle.Left;
             panel5.Location = new Point(285, 28);
             panel5.Margin = new Padding(0);
@@ -469,21 +417,21 @@ namespace StockRoom11net
             label_Department.TabIndex = 20;
             label_Department.Text = "Department";
             // 
-            // comboBox_Department
+            // comboBox_Employee_Department
             // 
-            comboBox_Department.Dock = DockStyle.Bottom;
-            comboBox_Department.FormattingEnabled = true;
-            comboBox_Department.Items.AddRange(new object[] { "Folder to be lock, hidde or readOnly properties changed." });
-            comboBox_Department.Location = new Point(4, 30);
-            comboBox_Department.Margin = new Padding(3, 2, 3, 2);
-            comboBox_Department.Name = "comboBox_Department";
-            comboBox_Department.Size = new Size(207, 28);
-            comboBox_Department.TabIndex = 19;
+            comboBox_Employee_Department.Dock = DockStyle.Bottom;
+            comboBox_Employee_Department.FormattingEnabled = true;
+            comboBox_Employee_Department.Items.AddRange(new object[] { "Folder to be lock, hidde or readOnly properties changed." });
+            comboBox_Employee_Department.Location = new Point(4, 30);
+            comboBox_Employee_Department.Margin = new Padding(3, 2, 3, 2);
+            comboBox_Employee_Department.Name = "comboBox_Employee_Department";
+            comboBox_Employee_Department.Size = new Size(207, 28);
+            comboBox_Employee_Department.TabIndex = 19;
             // 
             // panel4
             // 
             panel4.Controls.Add(label_Position);
-            panel4.Controls.Add(comboBox_Position);
+            panel4.Controls.Add(comboBox_Employee_Position);
             panel4.Dock = DockStyle.Left;
             panel4.Location = new Point(10, 28);
             panel4.Margin = new Padding(0);
@@ -504,16 +452,16 @@ namespace StockRoom11net
             label_Position.TabIndex = 20;
             label_Position.Text = "Position";
             // 
-            // comboBox_Position
+            // comboBox_Employee_Position
             // 
-            comboBox_Position.Dock = DockStyle.Bottom;
-            comboBox_Position.FormattingEnabled = true;
-            comboBox_Position.Items.AddRange(new object[] { "Folder to be lock, hidde or readOnly properties changed." });
-            comboBox_Position.Location = new Point(4, 30);
-            comboBox_Position.Margin = new Padding(3, 2, 3, 2);
-            comboBox_Position.Name = "comboBox_Position";
-            comboBox_Position.Size = new Size(267, 28);
-            comboBox_Position.TabIndex = 19;
+            comboBox_Employee_Position.Dock = DockStyle.Bottom;
+            comboBox_Employee_Position.FormattingEnabled = true;
+            comboBox_Employee_Position.Items.AddRange(new object[] { "Folder to be lock, hidde or readOnly properties changed." });
+            comboBox_Employee_Position.Location = new Point(4, 30);
+            comboBox_Employee_Position.Margin = new Padding(3, 2, 3, 2);
+            comboBox_Employee_Position.Name = "comboBox_Employee_Position";
+            comboBox_Employee_Position.Size = new Size(267, 28);
+            comboBox_Employee_Position.TabIndex = 19;
             // 
             // panel_Spacer6pts
             // 
@@ -533,12 +481,11 @@ namespace StockRoom11net
             grouper_EmployeeInformations.BorderColor = Color.Black;
             grouper_EmployeeInformations.BorderThickness = 1F;
             grouper_EmployeeInformations.Controls.Add(panel_EmployeeInformation);
-            grouper_EmployeeInformations.Controls.Add(PicturesBox_Image);
+            grouper_EmployeeInformations.Controls.Add(PicturesBox_EmployeeImage);
             grouper_EmployeeInformations.CustomGroupBoxColor = Color.White;
             grouper_EmployeeInformations.Dock = DockStyle.Top;
             grouper_EmployeeInformations.Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Bold);
-            grouper_EmployeeInformations.GroupImage = null;
-            grouper_EmployeeInformations.GroupTitle = "EmployeeInformation Informations";
+            grouper_EmployeeInformations.GroupTitle = "Employee Informations";
             grouper_EmployeeInformations.Location = new Point(5, 5);
             grouper_EmployeeInformations.Margin = new Padding(0);
             grouper_EmployeeInformations.MinimumSize = new Size(250, 230);
@@ -583,7 +530,7 @@ namespace StockRoom11net
             // panel8_Size
             // 
             panel8_Size.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            panel8_Size.Controls.Add(textBox_Size);
+            panel8_Size.Controls.Add(textBox_Employee_Size);
             panel8_Size.Controls.Add(label_Size);
             panel8_Size.Dock = DockStyle.Fill;
             panel8_Size.Location = new Point(390, 0);
@@ -594,17 +541,17 @@ namespace StockRoom11net
             panel8_Size.Size = new Size(194, 65);
             panel8_Size.TabIndex = 17;
             // 
-            // textBox_Size
+            // textBox_Employee_Size
             // 
-            textBox_Size.Dock = DockStyle.Top;
-            textBox_Size.Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            textBox_Size.Location = new Point(4, 25);
-            textBox_Size.Margin = new Padding(0);
-            textBox_Size.MinimumSize = new Size(5, 30);
-            textBox_Size.Name = "textBox_Size";
-            textBox_Size.Size = new Size(186, 30);
-            textBox_Size.TabIndex = 17;
-            textBox_Size.Text = "LX";
+            textBox_Employee_Size.Dock = DockStyle.Top;
+            textBox_Employee_Size.Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            textBox_Employee_Size.Location = new Point(4, 25);
+            textBox_Employee_Size.Margin = new Padding(0);
+            textBox_Employee_Size.MinimumSize = new Size(5, 30);
+            textBox_Employee_Size.Name = "textBox_Employee_Size";
+            textBox_Employee_Size.Size = new Size(186, 30);
+            textBox_Employee_Size.TabIndex = 17;
+            textBox_Employee_Size.Text = "LX";
             // 
             // label_Size
             // 
@@ -619,7 +566,7 @@ namespace StockRoom11net
             // 
             // panel10_Last6
             // 
-            panel10_Last6.Controls.Add(textBox_Last6Digit);
+            panel10_Last6.Controls.Add(textBox_Employee_Last6Digit);
             panel10_Last6.Controls.Add(label_Employee_ID);
             panel10_Last6.Dock = DockStyle.Left;
             panel10_Last6.Location = new Point(231, 0);
@@ -630,17 +577,17 @@ namespace StockRoom11net
             panel10_Last6.Size = new Size(159, 65);
             panel10_Last6.TabIndex = 17;
             // 
-            // textBox_Last6Digit
+            // textBox_Employee_Last6Digit
             // 
-            textBox_Last6Digit.Dock = DockStyle.Top;
-            textBox_Last6Digit.Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            textBox_Last6Digit.Location = new Point(4, 25);
-            textBox_Last6Digit.Margin = new Padding(0);
-            textBox_Last6Digit.MinimumSize = new Size(4, 30);
-            textBox_Last6Digit.Name = "textBox_Last6Digit";
-            textBox_Last6Digit.Size = new Size(151, 30);
-            textBox_Last6Digit.TabIndex = 8;
-            textBox_Last6Digit.Text = "123456";
+            textBox_Employee_Last6Digit.Dock = DockStyle.Top;
+            textBox_Employee_Last6Digit.Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            textBox_Employee_Last6Digit.Location = new Point(4, 25);
+            textBox_Employee_Last6Digit.Margin = new Padding(0);
+            textBox_Employee_Last6Digit.MinimumSize = new Size(4, 30);
+            textBox_Employee_Last6Digit.Name = "textBox_Employee_Last6Digit";
+            textBox_Employee_Last6Digit.Size = new Size(151, 30);
+            textBox_Employee_Last6Digit.TabIndex = 8;
+            textBox_Employee_Last6Digit.Text = "123456";
             // 
             // label_Employee_ID
             // 
@@ -655,7 +602,7 @@ namespace StockRoom11net
             // 
             // panel9_Telephone
             // 
-            panel9_Telephone.Controls.Add(textBox_Telephone);
+            panel9_Telephone.Controls.Add(textBox_Employee_Telephone);
             panel9_Telephone.Controls.Add(label_Telephone);
             panel9_Telephone.Dock = DockStyle.Left;
             panel9_Telephone.Location = new Point(0, 0);
@@ -666,17 +613,17 @@ namespace StockRoom11net
             panel9_Telephone.Size = new Size(231, 65);
             panel9_Telephone.TabIndex = 17;
             // 
-            // textBox_Telephone
+            // textBox_Employee_Telephone
             // 
-            textBox_Telephone.Dock = DockStyle.Top;
-            textBox_Telephone.Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            textBox_Telephone.Location = new Point(4, 25);
-            textBox_Telephone.Margin = new Padding(0);
-            textBox_Telephone.MinimumSize = new Size(4, 30);
-            textBox_Telephone.Name = "textBox_Telephone";
-            textBox_Telephone.Size = new Size(223, 30);
-            textBox_Telephone.TabIndex = 12;
-            textBox_Telephone.Text = "3059081234";
+            textBox_Employee_Telephone.Dock = DockStyle.Top;
+            textBox_Employee_Telephone.Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            textBox_Employee_Telephone.Location = new Point(4, 25);
+            textBox_Employee_Telephone.Margin = new Padding(0);
+            textBox_Employee_Telephone.MinimumSize = new Size(4, 30);
+            textBox_Employee_Telephone.Name = "textBox_Employee_Telephone";
+            textBox_Employee_Telephone.Size = new Size(223, 30);
+            textBox_Employee_Telephone.TabIndex = 12;
+            textBox_Employee_Telephone.Text = "3059081234";
             // 
             // label_Telephone
             // 
@@ -692,7 +639,7 @@ namespace StockRoom11net
             // panel4_HireDate
             // 
             panel4_HireDate.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            panel4_HireDate.Controls.Add(dateTimePicker_Hire_Date);
+            panel4_HireDate.Controls.Add(dateTimePicker_Employee_Hire_Date);
             panel4_HireDate.Controls.Add(label_Hire_Date);
             panel4_HireDate.Dock = DockStyle.Right;
             panel4_HireDate.Location = new Point(584, 0);
@@ -703,16 +650,16 @@ namespace StockRoom11net
             panel4_HireDate.Size = new Size(286, 65);
             panel4_HireDate.TabIndex = 23;
             // 
-            // dateTimePicker_Hire_Date
+            // dateTimePicker_Employee_Hire_Date
             // 
-            dateTimePicker_Hire_Date.Dock = DockStyle.Top;
-            dateTimePicker_Hire_Date.Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            dateTimePicker_Hire_Date.Location = new Point(4, 25);
-            dateTimePicker_Hire_Date.Margin = new Padding(0);
-            dateTimePicker_Hire_Date.MinimumSize = new Size(4, 30);
-            dateTimePicker_Hire_Date.Name = "dateTimePicker_Hire_Date";
-            dateTimePicker_Hire_Date.Size = new Size(278, 30);
-            dateTimePicker_Hire_Date.TabIndex = 16;
+            dateTimePicker_Employee_Hire_Date.Dock = DockStyle.Top;
+            dateTimePicker_Employee_Hire_Date.Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            dateTimePicker_Employee_Hire_Date.Location = new Point(4, 25);
+            dateTimePicker_Employee_Hire_Date.Margin = new Padding(0);
+            dateTimePicker_Employee_Hire_Date.MinimumSize = new Size(4, 30);
+            dateTimePicker_Employee_Hire_Date.Name = "dateTimePicker_Employee_Hire_Date";
+            dateTimePicker_Employee_Hire_Date.Size = new Size(278, 30);
+            dateTimePicker_Employee_Hire_Date.TabIndex = 16;
             // 
             // label_Hire_Date
             // 
@@ -728,7 +675,7 @@ namespace StockRoom11net
             // panel2_Address
             // 
             panel2_Address.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            panel2_Address.Controls.Add(textBox_Address);
+            panel2_Address.Controls.Add(textBox_Employee_Address);
             panel2_Address.Controls.Add(label_Address);
             panel2_Address.Dock = DockStyle.Top;
             panel2_Address.Location = new Point(0, 65);
@@ -739,16 +686,16 @@ namespace StockRoom11net
             panel2_Address.Size = new Size(870, 65);
             panel2_Address.TabIndex = 21;
             // 
-            // textBox_Address
+            // textBox_Employee_Address
             // 
-            textBox_Address.Dock = DockStyle.Top;
-            textBox_Address.Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            textBox_Address.Location = new Point(4, 24);
-            textBox_Address.Margin = new Padding(1);
-            textBox_Address.MinimumSize = new Size(4, 30);
-            textBox_Address.Name = "textBox_Address";
-            textBox_Address.Size = new Size(862, 30);
-            textBox_Address.TabIndex = 10;
+            textBox_Employee_Address.Dock = DockStyle.Top;
+            textBox_Employee_Address.Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            textBox_Employee_Address.Location = new Point(4, 24);
+            textBox_Employee_Address.Margin = new Padding(1);
+            textBox_Employee_Address.MinimumSize = new Size(4, 30);
+            textBox_Employee_Address.Name = "textBox_Employee_Address";
+            textBox_Employee_Address.Size = new Size(862, 30);
+            textBox_Employee_Address.TabIndex = 10;
             // 
             // label_Address
             // 
@@ -844,18 +791,18 @@ namespace StockRoom11net
             label1.TabIndex = 8;
             label1.Text = "Name:";
             // 
-            // PicturesBox_Image
+            // PicturesBox_EmployeeImage
             // 
-            PicturesBox_Image.BackColor = Color.LightGoldenrodYellow;
-            PicturesBox_Image.Dock = DockStyle.Right;
-            PicturesBox_Image.Location = new Point(880, 28);
-            PicturesBox_Image.Margin = new Padding(0);
-            PicturesBox_Image.MinimumSize = new Size(200, 200);
-            PicturesBox_Image.Name = "PicturesBox_Image";
-            PicturesBox_Image.Size = new Size(250, 200);
-            PicturesBox_Image.SizeMode = PictureBoxSizeMode.Zoom;
-            PicturesBox_Image.TabIndex = 2;
-            PicturesBox_Image.TabStop = false;
+            PicturesBox_EmployeeImage.BackColor = Color.LightGoldenrodYellow;
+            PicturesBox_EmployeeImage.Dock = DockStyle.Right;
+            PicturesBox_EmployeeImage.Location = new Point(880, 28);
+            PicturesBox_EmployeeImage.Margin = new Padding(0);
+            PicturesBox_EmployeeImage.MinimumSize = new Size(200, 200);
+            PicturesBox_EmployeeImage.Name = "PicturesBox_EmployeeImage";
+            PicturesBox_EmployeeImage.Size = new Size(250, 200);
+            PicturesBox_EmployeeImage.SizeMode = PictureBoxSizeMode.Zoom;
+            PicturesBox_EmployeeImage.TabIndex = 2;
+            PicturesBox_EmployeeImage.TabStop = false;
             // 
             // panel2
             // 
@@ -919,7 +866,7 @@ namespace StockRoom11net
             tabPage_Department.Location = new Point(4, 4);
             tabPage_Department.Name = "tabPage_Department";
             tabPage_Department.Padding = new Padding(3);
-            tabPage_Department.Size = new Size(192, 72);
+            tabPage_Department.Size = new Size(1150, 418);
             tabPage_Department.TabIndex = 0;
             tabPage_Department.Text = "   Department";
             tabPage_Department.UseVisualStyleBackColor = true;
@@ -932,7 +879,7 @@ namespace StockRoom11net
             panel7.Margin = new Padding(0);
             panel7.MinimumSize = new Size(200, 200);
             panel7.Name = "panel7";
-            panel7.Size = new Size(200, 200);
+            panel7.Size = new Size(1144, 364);
             panel7.TabIndex = 18;
             // 
             // grouper_DepartmentInformations
@@ -946,11 +893,10 @@ namespace StockRoom11net
             grouper_DepartmentInformations.Controls.Add(panel14);
             grouper_DepartmentInformations.Controls.Add(panel13);
             grouper_DepartmentInformations.Controls.Add(panel_DeptmentName);
-            grouper_DepartmentInformations.Controls.Add(PicturesBox_DepartmentPictures);
+            grouper_DepartmentInformations.Controls.Add(PicturesBox_Department_Pictures);
             grouper_DepartmentInformations.CustomGroupBoxColor = Color.White;
             grouper_DepartmentInformations.Dock = DockStyle.Top;
             grouper_DepartmentInformations.Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Bold);
-            grouper_DepartmentInformations.GroupImage = null;
             grouper_DepartmentInformations.GroupTitle = "Department Informations.";
             grouper_DepartmentInformations.Location = new Point(0, 0);
             grouper_DepartmentInformations.Margin = new Padding(3, 2, 3, 2);
@@ -962,7 +908,7 @@ namespace StockRoom11net
             grouper_DepartmentInformations.ShadowColor = Color.DarkGray;
             grouper_DepartmentInformations.ShadowControl = false;
             grouper_DepartmentInformations.ShadowThickness = 3;
-            grouper_DepartmentInformations.Size = new Size(200, 300);
+            grouper_DepartmentInformations.Size = new Size(1144, 300);
             grouper_DepartmentInformations.TabIndex = 16;
             // 
             // panel14
@@ -973,12 +919,12 @@ namespace StockRoom11net
             panel14.Location = new Point(10, 211);
             panel14.Margin = new Padding(3, 2, 3, 0);
             panel14.Name = "panel14";
-            panel14.Size = new Size(0, 73);
+            panel14.Size = new Size(916, 73);
             panel14.TabIndex = 16;
             // 
             // panel15
             // 
-            panel15.Controls.Add(textBox_DepartmentID);
+            panel15.Controls.Add(textBox_Department_ID);
             panel15.Controls.Add(label_DepartmentID);
             panel15.Dock = DockStyle.Fill;
             panel15.Location = new Point(0, 0);
@@ -986,19 +932,19 @@ namespace StockRoom11net
             panel15.MinimumSize = new Size(108, 75);
             panel15.Name = "panel15";
             panel15.Padding = new Padding(8, 10, 8, 2);
-            panel15.Size = new Size(108, 75);
+            panel15.Size = new Size(624, 75);
             panel15.TabIndex = 10;
             // 
-            // textBox_DepartmentID
+            // textBox_Department_ID
             // 
-            textBox_DepartmentID.Dock = DockStyle.Top;
-            textBox_DepartmentID.Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            textBox_DepartmentID.Location = new Point(8, 30);
-            textBox_DepartmentID.Margin = new Padding(3, 2, 3, 2);
-            textBox_DepartmentID.MinimumSize = new Size(95, 29);
-            textBox_DepartmentID.Name = "textBox_DepartmentID";
-            textBox_DepartmentID.Size = new Size(95, 29);
-            textBox_DepartmentID.TabIndex = 8;
+            textBox_Department_ID.Dock = DockStyle.Top;
+            textBox_Department_ID.Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            textBox_Department_ID.Location = new Point(8, 30);
+            textBox_Department_ID.Margin = new Padding(3, 2, 3, 2);
+            textBox_Department_ID.MinimumSize = new Size(95, 29);
+            textBox_Department_ID.Name = "textBox_Department_ID";
+            textBox_Department_ID.Size = new Size(608, 29);
+            textBox_Department_ID.TabIndex = 8;
             // 
             // label_DepartmentID
             // 
@@ -1012,28 +958,28 @@ namespace StockRoom11net
             // 
             // panel16
             // 
-            panel16.Controls.Add(textBox_DepartmentTelephone);
+            panel16.Controls.Add(textBox_Department_Telephone);
             panel16.Controls.Add(label_DepartmentTelephone);
             panel16.Dock = DockStyle.Right;
-            panel16.Location = new Point(-187, 0);
+            panel16.Location = new Point(624, 0);
             panel16.Margin = new Padding(3, 2, 3, 2);
-            panel16.MinimumSize = new Size(187, 75);
+            panel16.MinimumSize = new Size(200, 75);
             panel16.Name = "panel16";
             panel16.Padding = new Padding(8, 10, 8, 2);
-            panel16.Size = new Size(187, 75);
+            panel16.Size = new Size(292, 75);
             panel16.TabIndex = 11;
             // 
-            // textBox_DepartmentTelephone
+            // textBox_Department_Telephone
             // 
-            textBox_DepartmentTelephone.Dock = DockStyle.Top;
-            textBox_DepartmentTelephone.Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            textBox_DepartmentTelephone.Location = new Point(8, 30);
-            textBox_DepartmentTelephone.Margin = new Padding(3, 2, 3, 2);
-            textBox_DepartmentTelephone.MinimumSize = new Size(4, 25);
-            textBox_DepartmentTelephone.Name = "textBox_DepartmentTelephone";
-            textBox_DepartmentTelephone.Size = new Size(171, 26);
-            textBox_DepartmentTelephone.TabIndex = 12;
-            textBox_DepartmentTelephone.Text = "3059042289-103";
+            textBox_Department_Telephone.Dock = DockStyle.Top;
+            textBox_Department_Telephone.Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            textBox_Department_Telephone.Location = new Point(8, 30);
+            textBox_Department_Telephone.Margin = new Padding(3, 2, 3, 2);
+            textBox_Department_Telephone.MinimumSize = new Size(4, 25);
+            textBox_Department_Telephone.Name = "textBox_Department_Telephone";
+            textBox_Department_Telephone.Size = new Size(276, 26);
+            textBox_Department_Telephone.TabIndex = 12;
+            textBox_Department_Telephone.Text = "3059042289-103";
             // 
             // label_DepartmentTelephone
             // 
@@ -1048,7 +994,7 @@ namespace StockRoom11net
             // panel13
             // 
             panel13.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            panel13.Controls.Add(textBox_DepartmentComents);
+            panel13.Controls.Add(textBox_Department_Coments);
             panel13.Controls.Add(label_DepartmentComments);
             panel13.Dock = DockStyle.Top;
             panel13.Location = new Point(10, 103);
@@ -1056,19 +1002,19 @@ namespace StockRoom11net
             panel13.MinimumSize = new Size(0, 89);
             panel13.Name = "panel13";
             panel13.Padding = new Padding(8, 10, 8, 2);
-            panel13.Size = new Size(0, 108);
+            panel13.Size = new Size(916, 108);
             panel13.TabIndex = 15;
             // 
-            // textBox_DepartmentComents
+            // textBox_Department_Coments
             // 
-            textBox_DepartmentComents.Dock = DockStyle.Top;
-            textBox_DepartmentComents.Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            textBox_DepartmentComents.Location = new Point(8, 30);
-            textBox_DepartmentComents.Margin = new Padding(3, 2, 3, 2);
-            textBox_DepartmentComents.Multiline = true;
-            textBox_DepartmentComents.Name = "textBox_DepartmentComents";
-            textBox_DepartmentComents.Size = new Size(0, 63);
-            textBox_DepartmentComents.TabIndex = 10;
+            textBox_Department_Coments.Dock = DockStyle.Top;
+            textBox_Department_Coments.Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            textBox_Department_Coments.Location = new Point(8, 30);
+            textBox_Department_Coments.Margin = new Padding(3, 2, 3, 2);
+            textBox_Department_Coments.Multiline = true;
+            textBox_Department_Coments.Name = "textBox_Department_Coments";
+            textBox_Department_Coments.Size = new Size(900, 63);
+            textBox_Department_Coments.TabIndex = 10;
             // 
             // label_DepartmentComments
             // 
@@ -1083,7 +1029,7 @@ namespace StockRoom11net
             // panel_DeptmentName
             // 
             panel_DeptmentName.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            panel_DeptmentName.Controls.Add(textBox_DepartmentName);
+            panel_DeptmentName.Controls.Add(textBox_Department_Name);
             panel_DeptmentName.Controls.Add(label_DepartmentName);
             panel_DeptmentName.Dock = DockStyle.Top;
             panel_DeptmentName.Location = new Point(10, 28);
@@ -1091,19 +1037,19 @@ namespace StockRoom11net
             panel_DeptmentName.MinimumSize = new Size(0, 59);
             panel_DeptmentName.Name = "panel_DeptmentName";
             panel_DeptmentName.Padding = new Padding(8, 10, 8, 2);
-            panel_DeptmentName.Size = new Size(0, 75);
+            panel_DeptmentName.Size = new Size(916, 75);
             panel_DeptmentName.TabIndex = 14;
             // 
-            // textBox_DepartmentName
+            // textBox_Department_Name
             // 
-            textBox_DepartmentName.Dock = DockStyle.Top;
-            textBox_DepartmentName.Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            textBox_DepartmentName.Location = new Point(8, 30);
-            textBox_DepartmentName.Margin = new Padding(3, 2, 3, 2);
-            textBox_DepartmentName.MinimumSize = new Size(4, 30);
-            textBox_DepartmentName.Name = "textBox_DepartmentName";
-            textBox_DepartmentName.Size = new Size(4, 30);
-            textBox_DepartmentName.TabIndex = 4;
+            textBox_Department_Name.Dock = DockStyle.Top;
+            textBox_Department_Name.Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            textBox_Department_Name.Location = new Point(8, 30);
+            textBox_Department_Name.Margin = new Padding(3, 2, 3, 2);
+            textBox_Department_Name.MinimumSize = new Size(4, 30);
+            textBox_Department_Name.Name = "textBox_Department_Name";
+            textBox_Department_Name.Size = new Size(900, 30);
+            textBox_Department_Name.TabIndex = 4;
             // 
             // label_DepartmentName
             // 
@@ -1115,17 +1061,17 @@ namespace StockRoom11net
             label_DepartmentName.TabIndex = 5;
             label_DepartmentName.Text = "Deptment Name :";
             // 
-            // PicturesBox_DepartmentPictures
+            // PicturesBox_Department_Pictures
             // 
-            PicturesBox_DepartmentPictures.BackColor = Color.LightGoldenrodYellow;
-            PicturesBox_DepartmentPictures.Dock = DockStyle.Right;
-            PicturesBox_DepartmentPictures.Location = new Point(-18, 28);
-            PicturesBox_DepartmentPictures.Margin = new Padding(3, 4, 3, 4);
-            PicturesBox_DepartmentPictures.Name = "PicturesBox_DepartmentPictures";
-            PicturesBox_DepartmentPictures.Size = new Size(208, 262);
-            PicturesBox_DepartmentPictures.SizeMode = PictureBoxSizeMode.Zoom;
-            PicturesBox_DepartmentPictures.TabIndex = 2;
-            PicturesBox_DepartmentPictures.TabStop = false;
+            PicturesBox_Department_Pictures.BackColor = Color.LightGoldenrodYellow;
+            PicturesBox_Department_Pictures.Dock = DockStyle.Right;
+            PicturesBox_Department_Pictures.Location = new Point(926, 28);
+            PicturesBox_Department_Pictures.Margin = new Padding(3, 4, 3, 4);
+            PicturesBox_Department_Pictures.Name = "PicturesBox_Department_Pictures";
+            PicturesBox_Department_Pictures.Size = new Size(208, 262);
+            PicturesBox_Department_Pictures.SizeMode = PictureBoxSizeMode.Zoom;
+            PicturesBox_Department_Pictures.TabIndex = 2;
+            PicturesBox_Department_Pictures.TabStop = false;
             // 
             // panel1
             // 
@@ -1133,23 +1079,23 @@ namespace StockRoom11net
             panel1.BorderStyle = BorderStyle.FixedSingle;
             panel1.Controls.Add(flowLayoutPanel1);
             panel1.Dock = DockStyle.Bottom;
-            panel1.Location = new Point(3, 21);
+            panel1.Location = new Point(3, 367);
             panel1.Margin = new Padding(0);
             panel1.Name = "panel1";
-            panel1.Size = new Size(186, 48);
+            panel1.Size = new Size(1144, 48);
             panel1.TabIndex = 0;
             // 
             // flowLayoutPanel1
             // 
             flowLayoutPanel1.Controls.Add(button_AddNewDept);
-            flowLayoutPanel1.Controls.Add(button_AdjustmentDept);
             flowLayoutPanel1.Controls.Add(button_SaveDept);
+            flowLayoutPanel1.Controls.Add(button_DeleteDept);
             flowLayoutPanel1.Dock = DockStyle.Fill;
             flowLayoutPanel1.Location = new Point(0, 0);
             flowLayoutPanel1.Margin = new Padding(0);
             flowLayoutPanel1.Name = "flowLayoutPanel1";
             flowLayoutPanel1.Padding = new Padding(5);
-            flowLayoutPanel1.Size = new Size(184, 46);
+            flowLayoutPanel1.Size = new Size(1142, 46);
             flowLayoutPanel1.TabIndex = 0;
             // 
             // button_AddNewDept
@@ -1158,26 +1104,26 @@ namespace StockRoom11net
             button_AddNewDept.Name = "button_AddNewDept";
             button_AddNewDept.Size = new Size(128, 30);
             button_AddNewDept.TabIndex = 0;
-            button_AddNewDept.Text = "AddNewDept";
+            button_AddNewDept.Text = "Add New";
             button_AddNewDept.UseVisualStyleBackColor = true;
-            // 
-            // button_AdjustmentDept
-            // 
-            button_AdjustmentDept.Location = new Point(8, 44);
-            button_AdjustmentDept.Name = "button_AdjustmentDept";
-            button_AdjustmentDept.Size = new Size(162, 30);
-            button_AdjustmentDept.TabIndex = 1;
-            button_AdjustmentDept.Text = "AdjustmentDept";
-            button_AdjustmentDept.UseVisualStyleBackColor = true;
             // 
             // button_SaveDept
             // 
-            button_SaveDept.Location = new Point(8, 80);
+            button_SaveDept.Location = new Point(142, 8);
             button_SaveDept.Name = "button_SaveDept";
-            button_SaveDept.Size = new Size(94, 30);
-            button_SaveDept.TabIndex = 2;
-            button_SaveDept.Text = "SaveDept";
+            button_SaveDept.Size = new Size(162, 30);
+            button_SaveDept.TabIndex = 1;
+            button_SaveDept.Text = "Save";
             button_SaveDept.UseVisualStyleBackColor = true;
+            // 
+            // button_DeleteDept
+            // 
+            button_DeleteDept.Location = new Point(310, 8);
+            button_DeleteDept.Name = "button_DeleteDept";
+            button_DeleteDept.Size = new Size(94, 30);
+            button_DeleteDept.TabIndex = 2;
+            button_DeleteDept.Text = "Delete";
+            button_DeleteDept.UseVisualStyleBackColor = true;
             // 
             // tabPage_Profile
             // 
@@ -1268,26 +1214,35 @@ namespace StockRoom11net
             button_DeleteProfile.UseVisualStyleBackColor = true;
             button_DeleteProfile.Click += Button_Profile_Delete_Click;
             // 
-            // _dataGridViewExtended_Employee
+            // tabPage_TreeViewSetting
             // 
-            _dataGridViewExtended_Employee.BindingCompleted = false;
-            _dataGridViewExtended_Employee.CurrentRowBackgroundColor = Color.DeepSkyBlue;
-            _dataGridViewExtended_Employee.CurrentRowBorderColor = Color.DarkBlue;
-            _dataGridViewExtended_Employee.CustomEdit = Utilities.EditMode.Delete;
-            _dataGridViewExtended_Employee.DividerColor = Color.Red;
-            _dataGridViewExtended_Employee.DividerHeight = 0;
-            _dataGridViewExtended_Employee.Dock = DockStyle.Fill;
-            _dataGridViewExtended_Employee.FirstDisplayedRow = null;
-            _dataGridViewExtended_Employee.Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            _dataGridViewExtended_Employee.Location = new Point(0, 0);
-            _dataGridViewExtended_Employee.Margin = new Padding(4, 5, 4, 5);
-            _dataGridViewExtended_Employee.Name = "_dataGridViewExtended_Employee";
-            _dataGridViewExtended_Employee.NeedSaveData = false;
-            _dataGridViewExtended_Employee.SelectionBorderWidth = 3;
-            _dataGridViewExtended_Employee.SelectionColor = Color.DeepSkyBlue;
-            _dataGridViewExtended_Employee.SetValueAt = null;
-            _dataGridViewExtended_Employee.Size = new Size(1635, 264);
-            _dataGridViewExtended_Employee.TabIndex = 2;
+            tabPage_TreeViewSetting.Location = new Point(4, 4);
+            tabPage_TreeViewSetting.Name = "tabPage_TreeViewSetting";
+            tabPage_TreeViewSetting.Size = new Size(192, 72);
+            tabPage_TreeViewSetting.TabIndex = 3;
+            tabPage_TreeViewSetting.Text = "  TreeViewSetting";
+            tabPage_TreeViewSetting.UseVisualStyleBackColor = true;
+            // 
+            // dataGridViewExtended
+            // 
+            dataGridViewExtended.BindingCompleted = false;
+            dataGridViewExtended.CurrentRowBackgroundColor = Color.DeepSkyBlue;
+            dataGridViewExtended.CurrentRowBorderColor = Color.DarkBlue;
+            dataGridViewExtended.CustomEdit = Utilities.EditMode.Delete;
+            dataGridViewExtended.DividerColor = Color.Red;
+            dataGridViewExtended.DividerHeight = 0;
+            dataGridViewExtended.Dock = DockStyle.Fill;
+            dataGridViewExtended.FirstDisplayedRow = null;
+            dataGridViewExtended.Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            dataGridViewExtended.Location = new Point(0, 0);
+            dataGridViewExtended.Margin = new Padding(4, 5, 4, 5);
+            dataGridViewExtended.Name = "dataGridViewExtended";
+            dataGridViewExtended.NeedSaveData = false;
+            dataGridViewExtended.SelectionBorderWidth = 3;
+            dataGridViewExtended.SelectionColor = Color.DeepSkyBlue;
+            dataGridViewExtended.SetValueAt = null;
+            dataGridViewExtended.Size = new Size(1635, 262);
+            dataGridViewExtended.TabIndex = 2;
             // 
             // _contextMenuStripTreeView
             // 
@@ -1416,23 +1371,22 @@ namespace StockRoom11net
             // 
             // Employees_Management
             // 
-            AutoScaleDimensions = new SizeF(6F, 13F);
+            AutoScaleDimensions = new SizeF(9F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1639, 726);
-            Controls.Add(splitContainer1);
+            Controls.Add(splitContainer_Horizontal);
             Name = "Employees_Management";
             Text = "FormTestControl";
             ((System.ComponentModel.ISupportInitialize)BindingSourceTreeViewBase).EndInit();
-            splitContainer1.Panel1.ResumeLayout(false);
-            splitContainer1.Panel2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)splitContainer1).EndInit();
-            splitContainer1.ResumeLayout(false);
-            splitContainer2.Panel1.ResumeLayout(false);
-            splitContainer2.Panel2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)splitContainer2).EndInit();
-            splitContainer2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)olvDataTree).EndInit();
-            customTabControl_Employee.ResumeLayout(false);
+            splitContainer_Horizontal.Panel1.ResumeLayout(false);
+            splitContainer_Horizontal.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)splitContainer_Horizontal).EndInit();
+            splitContainer_Horizontal.ResumeLayout(false);
+            splitContainer_Vertical.Panel1.ResumeLayout(false);
+            splitContainer_Vertical.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)splitContainer_Vertical).EndInit();
+            splitContainer_Vertical.ResumeLayout(false);
+            customTabControl.ResumeLayout(false);
             tabPage_Employee.ResumeLayout(false);
             grouper_AccessRight.ResumeLayout(false);
             panel9.ResumeLayout(false);
@@ -1457,7 +1411,7 @@ namespace StockRoom11net
             panel5_LastName.PerformLayout();
             panel_Name.ResumeLayout(false);
             panel_Name.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)PicturesBox_Image).EndInit();
+            ((System.ComponentModel.ISupportInitialize)PicturesBox_EmployeeImage).EndInit();
             panel2.ResumeLayout(false);
             flowLayoutPanel2.ResumeLayout(false);
             tabPage_Department.ResumeLayout(false);
@@ -1472,13 +1426,12 @@ namespace StockRoom11net
             panel13.PerformLayout();
             panel_DeptmentName.ResumeLayout(false);
             panel_DeptmentName.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)PicturesBox_DepartmentPictures).EndInit();
+            ((System.ComponentModel.ISupportInitialize)PicturesBox_Department_Pictures).EndInit();
             panel1.ResumeLayout(false);
             flowLayoutPanel1.ResumeLayout(false);
             tabPage_Profile.ResumeLayout(false);
             panel3.ResumeLayout(false);
             flowLayoutPanel3.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)_bindingSource_Employees).EndInit();
             ((System.ComponentModel.ISupportInitialize)dataView_Employees).EndInit();
             _contextMenuStripTreeView.ResumeLayout(false);
             ResumeLayout(false);
@@ -1486,9 +1439,9 @@ namespace StockRoom11net
 
         #endregion
 
-        private SplitContainer splitContainer1;
-        private SplitContainer splitContainer2;
-        private CustomTabControl customTabControl_Employee;
+        private SplitContainer splitContainer_Horizontal;
+        private SplitContainer splitContainer_Vertical;
+        private CustomTabControl customTabControl;
         private TabPage tabPage_Department;
         private TabPage tabPage_Employee;
         private Panel panel1;
@@ -1496,7 +1449,7 @@ namespace StockRoom11net
         private Button button_AddNewDept;
         private Button button_AdjustmentDept;
         private Button button_SaveDept;
-        private DataGridViewExtended _dataGridViewExtended_Employee;
+        private DataGridViewExtended dataGridViewExtended;
         private Panel panel2;
         private FlowLayoutPanel flowLayoutPanel2;
         private Button button_AddNewEmployee;
@@ -1505,20 +1458,20 @@ namespace StockRoom11net
         private CodeVendor.Controls.Grouper grouper_EmployeeInformations;
         private Panel panel_EmployeeInformation;
         private Panel panel4_HireDate;
-        private DateTimePicker dateTimePicker_Hire_Date;
+        private DateTimePicker dateTimePicker_Employee_Hire_Date;
         private Label label_Hire_Date;
         private Panel panel3_Last6_Telephone_Size;
         private Panel panel9_Telephone;
-        private TextBox textBox_Telephone;
+        private TextBox textBox_Employee_Telephone;
         private Label label_Telephone;
         private Panel panel10_Last6;
-        private TextBox textBox_Last6Digit;
+        private TextBox textBox_Employee_Last6Digit;
         private Label label_Employee_ID;
         private Panel panel8_Size;
-        private TextBox textBox_Size;
+        private TextBox textBox_Employee_Size;
         private Label label_Size;
         private Panel panel2_Address;
-        private TextBox textBox_Address;
+        private TextBox textBox_Employee_Address;
         private Label label_Address;
         private Panel panel1_Name_LastName;
         private Panel panel_Name;
@@ -1526,11 +1479,7 @@ namespace StockRoom11net
         private Panel panel5_LastName;
         private TextBox textBox_Employee_LastName;
         private Label label_Employee_LastName;
-        private PictureBox PicturesBox_Image;
-        private BrightIdeasSoftware.DataTreeListView olvDataTree;
-        private BrightIdeasSoftware.OLVColumn olvColumn_TextName;
-        private BrightIdeasSoftware.OLVColumn olvColumn_Description;
-        private BindingSource _bindingSource_Employees;
+        private PictureBox PicturesBox_EmployeeImage;
         private System.Data.DataView dataView_Employees;
         private Label label1;
         private ContextMenuStrip _contextMenuStripTreeView;
@@ -1557,18 +1506,18 @@ namespace StockRoom11net
         private CodeVendor.Controls.Grouper grouper_DepartmentInformations;
         private Panel panel14;
         private Panel panel15;
-        private TextBox textBox_DepartmentID;
+        private TextBox textBox_Department_ID;
         private Label label_DepartmentID;
         private Panel panel16;
-        private TextBox textBox_DepartmentTelephone;
+        private TextBox textBox_Department_Telephone;
         private Label label_DepartmentTelephone;
         private Panel panel13;
-        private TextBox textBox_DepartmentComents;
+        private TextBox textBox_Department_Coments;
         private Label label_DepartmentComments;
         private Panel panel_DeptmentName;
-        private TextBox textBox_DepartmentName;
+        private TextBox textBox_Department_Name;
         private Label label_DepartmentName;
-        private PictureBox PicturesBox_DepartmentPictures;
+        private PictureBox PicturesBox_Department_Pictures;
         private TabPage tabPage_Profile;
         private Panel panel3;
         private FlowLayoutPanel flowLayoutPanel3;
@@ -1577,21 +1526,25 @@ namespace StockRoom11net
         private Button button_SaveProfile;
         private Button button_DeleteProfile;
         private Panel panel_dataGridViewProfile;
-        private ComboBox comboBox_Position;
+        private ComboBox comboBox_Employee_Position;
         private Panel panel4;
         private Label label_Position;
         private Panel panel9;
         private Label label_EnableSetting;
-        private ComboBox comboBox_EnableSetting;
+        private ComboBox comboBox_Employee_EnableSetting;
         private Panel panel8;
         private Label label_EditMode;
-        private ComboBox comboBox_EditMode;
+        private ComboBox comboBox_Employee_EditMode;
         private Panel panel6;
         private Label label_AccessLevel;
-        private ComboBox comboBox_AccessLevel;
+        private ComboBox comboBox_Employee_AccessLevel;
         private Panel panel5;
         private Label label_Department;
-        private ComboBox comboBox_Department;
+        private ComboBox comboBox_Employee_Department;
         private Panel panel_Spacer6pts;
+        private DataTreeViewToAddCancelDelete dataTreeViewToAdd_Cancel_Delete;
+        private TabPage tabPage_TreeViewSetting;
+        private Button button_AddDept;
+        private Button button_DeleteDept;
     }
 }

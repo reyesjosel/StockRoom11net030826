@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Data;
+using System.Text.RegularExpressions;
 using ColumnNameSelected_EventArgs = StockRoom11net.Controls.Custom_Events_Args.ColumnNameSelected_EventArgs;
 using Need_SaveData_EventArgs = StockRoom11net.Controls.Custom_Events_Args.Need_SaveData_EventArgs;
 using SecondCondition_EventArgs = StockRoom11net.Controls.Custom_Events_Args.SecondCondition_EventArgs;
@@ -194,16 +195,16 @@ namespace StockRoom11net.Controls
             set
             {
                 _debugMode = value;
-                filterCondition0.DebugMode = true;
+                filterCondition0.DebugMode = value;
             }
         }
 
-        DataColumnCollection _columnsCollection;
+        PropertyDescriptorCollection _columnsCollection;
         /// <summary>
         /// Keep a record of all columns existent in StockRoom datatable.
         /// </summary>
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public DataColumnCollection ColumnsCollection
+        public PropertyDescriptorCollection ColumnsCollection
         {
             get
             {
@@ -278,7 +279,7 @@ namespace StockRoom11net.Controls
                 string error = ex.Message;
             }
         }
-
+                
         void FilterCondition0_StatusBarMessage(object sender, StatusBarMessage_EventArgs e)
         {
             On_StatusBarMessage(e);
@@ -303,8 +304,6 @@ namespace StockRoom11net.Controls
         // A new filter has been generated.
         private void NewControl_StringFilter(object sender, StringFilterControl_EventArgs e)
         {
-            SendStatusBarMessage("NewControl_StringFilter");
-
             if (e == null || e.ControlText == null)
                 return;
 
@@ -365,18 +364,19 @@ namespace StockRoom11net.Controls
         private FilterCondition AddNew_FilterCondition(SecondCondition_EventArgs e)
         {
             var newControlFilter = AddNewFilter(ColumnsCollection);
-            newControlFilter.Location = new Point(e.LocationX + 15, e.LocationY + e.Higth);
-            newControlFilter.MinimumSize = new Size((e.Width - 15), newControlFilter.MinimumSize.Height);
+          //  newControlFilter.Location = new Point(e.LocationX + 15, e.LocationY + e.Higth);
+           // newControlFilter.MinimumSize = new Size((e.Width - 50), newControlFilter.MinimumSize.Height);
             // Do not dock to top, loss position and order.
-            //newControlFilter.Dock = DockStyle.Top;
+            newControlFilter.Dock = DockStyle.Bottom;
 
             panelFilterConditions.Controls.Add(newControlFilter);
+          //  panelFilterConditions.Controls.SetChildIndex(newControlFilter, panelFilterConditions.Controls.Count - 1);
             panelFilterConditions.Height += newControlFilter.Height;
 
             return newControlFilter;
         }
 
-        private FilterCondition AddNewFilter(DataColumnCollection dataColumns)
+        private FilterCondition AddNewFilter(PropertyDescriptorCollection dataColumns)
         {
             var countedFilter = panelFilterConditions.Controls.Count;
 
@@ -386,7 +386,8 @@ namespace StockRoom11net.Controls
                 Tag = countedFilter,
                 ControlText = "NewControl " + countedFilter,
                 FilterControlIndex = countedFilter,
-                Width = filterCondition0.Width
+                Width = filterCondition0.Width,
+                ShowLabels = false,
             };
 
             newControl.NeedSaveData += NewControl_Need_SaveData;
@@ -432,6 +433,8 @@ namespace StockRoom11net.Controls
                 return;
             }
 
+            stringFilter = SanitizeFilter(stringFilter);
+
             if (stringFilter.Contains(" NOT LIKE "))
                 stringFilter = stringFilter.Replace("NOT LIKE", "NOTLIKE");
 
@@ -440,7 +443,7 @@ namespace StockRoom11net.Controls
 
             var defaultFilterCondition = panelFilterConditions.Controls["filterCondition0"] as FilterCondition;
 
-            //SuspendLayout();
+            SuspendLayout();
             //MyCode.SuspendDrawing(this);
 
             string[] filterArray;
@@ -516,7 +519,18 @@ namespace StockRoom11net.Controls
             comboBoxStringFilter.Text = stringFilter;
 
             //MyCode.ResumeDrawing(this);
-            //ResumeLayout(true);
+            ResumeLayout(true);
+        }
+
+        static string SanitizeFilter(string filter)
+        {
+            if (string.IsNullOrWhiteSpace(filter))
+                return string.Empty;
+
+            filter = filter.Trim();
+            filter = Regex.Replace(filter, @"(?i)\s+(AND|OR)\s*$", "").Trim();
+            filter = Regex.Replace(filter, @"(?i)^\s*(AND|OR)\s+", "").Trim();
+            return filter;
         }
 
         #endregion"Filter, add new filter condition"

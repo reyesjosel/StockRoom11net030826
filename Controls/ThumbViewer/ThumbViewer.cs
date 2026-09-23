@@ -154,8 +154,8 @@ namespace StockRoom11net.Controls.ThumbViewer
 
                 EmployeeName = value.Name;
                 EmployeeLastName = value.LastName;
-                EmployeeEditMode = value.EmployeeEditMode;
-                EmployeeAccessLevel = value.EmployeeAccessLevel;
+                EmployeeEditMode = value.EditMode;
+                EmployeeAccessLevel = value.AccessLevel;
                 _currentEmployeesLogIn = value;
             }
         }

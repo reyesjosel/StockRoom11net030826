@@ -1199,7 +1199,7 @@ namespace StockRoom11net
             if (treeViewApplicationsSetting.SelectedNode == null)
                 return;
 
-            if (CurrentEmployeesLogIn.EmployeeAccessLevel > Utilities.AccessLevel.Administrator)
+            if (CurrentEmployeesLogIn.AccessLevel > Utilities.AccessLevel.Administrator)
             {
                 if (treeViewApplicationsSetting.SelectedNode.Text.Contains("USB Device Utility"))
                     if (Recognized_Devices_System.Count > 0)

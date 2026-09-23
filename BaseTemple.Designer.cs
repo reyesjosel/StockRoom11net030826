@@ -20,8 +20,6 @@ namespace StockRoom11net
 
             if (_cache != null)
                 _cache.Dispose();
-            if(dataGridViewExtendedBase != null)
-                dataGridViewExtendedBase.Dispose();
             if (thumbViewerBasePictures != null)
                 thumbViewerBasePictures.Dispose();           
             if (_currentColumnActive != null)

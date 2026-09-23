@@ -35,25 +35,29 @@
             labelColumnName = new Label();
             labelOperator = new Label();
             labelCondition = new Label();
-            labelSecondCondition = new Label();
             tableLayoutPanel1 = new TableLayoutPanel();
-            panel_Labels = new Panel();
-            panel1 = new Panel();
+            panel_Next = new Panel();
+            labelNext = new Label();
+            panel_Operator = new Panel();
+            panel_Condition = new Panel();
+            panel_Name = new Panel();
             tableLayoutPanel1.SuspendLayout();
-            panel_Labels.SuspendLayout();
-            panel1.SuspendLayout();
+            panel_Next.SuspendLayout();
+            panel_Operator.SuspendLayout();
+            panel_Condition.SuspendLayout();
+            panel_Name.SuspendLayout();
             SuspendLayout();
             // 
             // comboBoxCondition
             // 
-            comboBoxCondition.Dock = DockStyle.Fill;
+            comboBoxCondition.Dock = DockStyle.Top;
             comboBoxCondition.Enabled = false;
             comboBoxCondition.FormattingEnabled = true;
-            comboBoxCondition.Location = new Point(103, 5);
+            comboBoxCondition.Location = new Point(4, 24);
             comboBoxCondition.Margin = new Padding(5);
             comboBoxCondition.MaxDropDownItems = 20;
             comboBoxCondition.Name = "comboBoxCondition";
-            comboBoxCondition.Size = new Size(58, 29);
+            comboBoxCondition.Size = new Size(233, 28);
             comboBoxCondition.TabIndex = 13;
             comboBoxCondition.DrawItem += ComboBoxDrawItem;
             comboBoxCondition.TextChanged += ComboBoxConditionTextChanged;
@@ -62,14 +66,14 @@
             // comboBoxOperator
             // 
             comboBoxOperator.BackColor = SystemColors.Window;
-            comboBoxOperator.Dock = DockStyle.Fill;
+            comboBoxOperator.Dock = DockStyle.Top;
             comboBoxOperator.Enabled = false;
             comboBoxOperator.FormattingEnabled = true;
-            comboBoxOperator.Location = new Point(53, 4);
+            comboBoxOperator.Location = new Point(4, 24);
             comboBoxOperator.Margin = new Padding(4);
             comboBoxOperator.MaxDropDownItems = 20;
             comboBoxOperator.Name = "comboBoxOperator";
-            comboBoxOperator.Size = new Size(41, 29);
+            comboBoxOperator.Size = new Size(234, 28);
             comboBoxOperator.TabIndex = 9;
             comboBoxOperator.DrawItem += ComboBoxDrawItem;
             comboBoxOperator.SelectedIndexChanged += ComboBoxOperatorSelectedIndexChanged;
@@ -79,14 +83,14 @@
             // comboBoxSecondCondition
             // 
             comboBoxSecondCondition.AutoCompleteCustomSource.AddRange(new string[] { "AND", "OR", "NONE" });
-            comboBoxSecondCondition.Dock = DockStyle.Fill;
+            comboBoxSecondCondition.Dock = DockStyle.Top;
             comboBoxSecondCondition.Enabled = false;
             comboBoxSecondCondition.FormattingEnabled = true;
             comboBoxSecondCondition.Items.AddRange(new object[] { "AND", "OR", "None" });
-            comboBoxSecondCondition.Location = new Point(171, 5);
+            comboBoxSecondCondition.Location = new Point(4, 24);
             comboBoxSecondCondition.Margin = new Padding(5);
             comboBoxSecondCondition.Name = "comboBoxSecondCondition";
-            comboBoxSecondCondition.Size = new Size(20, 29);
+            comboBoxSecondCondition.Size = new Size(135, 28);
             comboBoxSecondCondition.TabIndex = 18;
             comboBoxSecondCondition.Text = "None";
             comboBoxSecondCondition.DrawItem += ComboBoxDrawItem;
@@ -95,14 +99,14 @@
             // 
             // comboBoxColumnName
             // 
-            comboBoxColumnName.Dock = DockStyle.Fill;
+            comboBoxColumnName.Dock = DockStyle.Top;
             comboBoxColumnName.DropDownStyle = ComboBoxStyle.DropDownList;
             comboBoxColumnName.FormattingEnabled = true;
-            comboBoxColumnName.Location = new Point(5, 5);
+            comboBoxColumnName.Location = new Point(4, 24);
             comboBoxColumnName.Margin = new Padding(5);
             comboBoxColumnName.MaxDropDownItems = 20;
             comboBoxColumnName.Name = "comboBoxColumnName";
-            comboBoxColumnName.Size = new Size(39, 29);
+            comboBoxColumnName.Size = new Size(234, 28);
             comboBoxColumnName.TabIndex = 19;
             comboBoxColumnName.DrawItem += ComboBoxDrawItem;
             comboBoxColumnName.SelectedIndexChanged += ComboBoxColumnNameSelectedIndexChanged;
@@ -112,117 +116,150 @@
             // labelColumnName
             // 
             labelColumnName.AutoSize = true;
-            labelColumnName.Dock = DockStyle.Left;
+            labelColumnName.Dock = DockStyle.Top;
             labelColumnName.Location = new Point(4, 4);
-            labelColumnName.Margin = new Padding(4, 0, 4, 0);
+            labelColumnName.Margin = new Padding(4);
             labelColumnName.Name = "labelColumnName";
-            labelColumnName.Size = new Size(122, 21);
+            labelColumnName.Size = new Size(113, 20);
             labelColumnName.TabIndex = 22;
-            labelColumnName.Text = "  Column Name.";
+            labelColumnName.Text = "Column Name.";
             // 
             // labelOperator
             // 
             labelOperator.AutoSize = true;
-            labelOperator.Location = new Point(227, 2);
+            labelOperator.Dock = DockStyle.Top;
+            labelOperator.Location = new Point(4, 4);
             labelOperator.Margin = new Padding(4, 0, 4, 0);
             labelOperator.Name = "labelOperator";
-            labelOperator.Size = new Size(76, 21);
+            labelOperator.Size = new Size(76, 20);
             labelOperator.TabIndex = 23;
             labelOperator.Text = "Operator.";
             // 
             // labelCondition
             // 
             labelCondition.AutoSize = true;
-            labelCondition.Location = new Point(447, 2);
+            labelCondition.Dock = DockStyle.Top;
+            labelCondition.Location = new Point(4, 4);
             labelCondition.Margin = new Padding(0);
             labelCondition.Name = "labelCondition";
-            labelCondition.Size = new Size(81, 21);
+            labelCondition.Size = new Size(80, 20);
             labelCondition.TabIndex = 24;
             labelCondition.Text = "Condition.";
             // 
-            // labelSecondCondition
-            // 
-            labelSecondCondition.AutoSize = true;
-            labelSecondCondition.Dock = DockStyle.Right;
-            labelSecondCondition.Location = new Point(71, 4);
-            labelSecondCondition.Margin = new Padding(4, 0, 4, 0);
-            labelSecondCondition.Name = "labelSecondCondition";
-            labelSecondCondition.Size = new Size(121, 21);
-            labelSecondCondition.TabIndex = 21;
-            labelSecondCondition.Text = "Second Cond.    ";
-            // 
             // tableLayoutPanel1
             // 
-            tableLayoutPanel1.AutoSize = true;
-            tableLayoutPanel1.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            tableLayoutPanel1.BackColor = Color.Gainsboro;
             tableLayoutPanel1.ColumnCount = 4;
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25.09411F));
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25.0941029F));
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 35.13174F));
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 14.68005F));
-            tableLayoutPanel1.Controls.Add(comboBoxOperator, 1, 0);
-            tableLayoutPanel1.Controls.Add(comboBoxCondition, 2, 0);
-            tableLayoutPanel1.Controls.Add(comboBoxSecondCondition, 3, 0);
-            tableLayoutPanel1.Controls.Add(comboBoxColumnName, 0, 0);
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 27.92322F));
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 27.92321F));
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 27.8184986F));
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 16.33508F));
+            tableLayoutPanel1.Controls.Add(panel_Next, 3, 0);
+            tableLayoutPanel1.Controls.Add(panel_Operator, 1, 0);
+            tableLayoutPanel1.Controls.Add(panel_Condition, 2, 0);
+            tableLayoutPanel1.Controls.Add(panel_Name, 0, 0);
             tableLayoutPanel1.Dock = DockStyle.Top;
-            tableLayoutPanel1.Location = new Point(0, 27);
+            tableLayoutPanel1.Location = new Point(0, 0);
+            tableLayoutPanel1.MinimumSize = new Size(300, 0);
             tableLayoutPanel1.Name = "tableLayoutPanel1";
             tableLayoutPanel1.RowCount = 1;
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
-            tableLayoutPanel1.Size = new Size(196, 39);
+            tableLayoutPanel1.Size = new Size(868, 56);
             tableLayoutPanel1.TabIndex = 27;
             // 
-            // panel_Labels
+            // panel_Next
             // 
-            panel_Labels.AutoSize = true;
-            panel_Labels.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            panel_Labels.Controls.Add(labelColumnName);
-            panel_Labels.Controls.Add(labelOperator);
-            panel_Labels.Controls.Add(labelCondition);
-            panel_Labels.Controls.Add(labelSecondCondition);
-            panel_Labels.Dock = DockStyle.Top;
-            panel_Labels.Location = new Point(0, 0);
-            panel_Labels.Name = "panel_Labels";
-            panel_Labels.Padding = new Padding(4);
-            panel_Labels.Size = new Size(196, 27);
-            panel_Labels.TabIndex = 28;
+            panel_Next.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            panel_Next.AutoSize = true;
+            panel_Next.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            panel_Next.BackColor = Color.Transparent;
+            panel_Next.Controls.Add(comboBoxSecondCondition);
+            panel_Next.Controls.Add(labelNext);
+            panel_Next.Location = new Point(725, 0);
+            panel_Next.Margin = new Padding(0);
+            panel_Next.Name = "panel_Next";
+            panel_Next.Padding = new Padding(4);
+            panel_Next.Size = new Size(143, 56);
+            panel_Next.TabIndex = 32;
             // 
-            // panel1
+            // labelNext
             // 
-            panel1.AutoSize = true;
-            panel1.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            panel1.Controls.Add(tableLayoutPanel1);
-            panel1.Controls.Add(panel_Labels);
-            panel1.Dock = DockStyle.Fill;
-            panel1.Location = new Point(0, 0);
-            panel1.Name = "panel1";
-            panel1.Size = new Size(196, 66);
-            panel1.TabIndex = 29;
+            labelNext.AutoSize = true;
+            labelNext.Dock = DockStyle.Top;
+            labelNext.Location = new Point(4, 4);
+            labelNext.Name = "labelNext";
+            labelNext.Size = new Size(41, 20);
+            labelNext.TabIndex = 19;
+            labelNext.Text = "Next";
+            // 
+            // panel_Operator
+            // 
+            panel_Operator.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            panel_Operator.AutoSize = true;
+            panel_Operator.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            panel_Operator.BackColor = Color.Transparent;
+            panel_Operator.Controls.Add(comboBoxOperator);
+            panel_Operator.Controls.Add(labelOperator);
+            panel_Operator.Location = new Point(242, 0);
+            panel_Operator.Margin = new Padding(0);
+            panel_Operator.Name = "panel_Operator";
+            panel_Operator.Padding = new Padding(4);
+            panel_Operator.Size = new Size(242, 56);
+            panel_Operator.TabIndex = 30;
+            // 
+            // panel_Condition
+            // 
+            panel_Condition.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            panel_Condition.AutoSize = true;
+            panel_Condition.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            panel_Condition.BackColor = Color.Transparent;
+            panel_Condition.Controls.Add(comboBoxCondition);
+            panel_Condition.Controls.Add(labelCondition);
+            panel_Condition.Location = new Point(484, 0);
+            panel_Condition.Margin = new Padding(0);
+            panel_Condition.Name = "panel_Condition";
+            panel_Condition.Padding = new Padding(4);
+            panel_Condition.Size = new Size(241, 56);
+            panel_Condition.TabIndex = 31;
+            // 
+            // panel_Name
+            // 
+            panel_Name.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            panel_Name.AutoSize = true;
+            panel_Name.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            panel_Name.BackColor = Color.Transparent;
+            panel_Name.Controls.Add(comboBoxColumnName);
+            panel_Name.Controls.Add(labelColumnName);
+            panel_Name.Location = new Point(0, 0);
+            panel_Name.Margin = new Padding(0);
+            panel_Name.Name = "panel_Name";
+            panel_Name.Padding = new Padding(4);
+            panel_Name.Size = new Size(242, 56);
+            panel_Name.TabIndex = 29;
             // 
             // FilterCondition
             // 
-            AutoScaleDimensions = new SizeF(9F, 21F);
+            AutoScaleDimensions = new SizeF(9F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            AutoSize = true;
-            AutoSizeMode = AutoSizeMode.GrowAndShrink;
             BackColor = Color.Gainsboro;
-            BorderStyle = BorderStyle.Fixed3D;
-            Controls.Add(panel1);
+            Controls.Add(tableLayoutPanel1);
             DoubleBuffered = true;
             Margin = new Padding(4, 5, 4, 5);
-            MinimumSize = new Size(200, 40);
+            MinimumSize = new Size(300, 0);
             Name = "FilterCondition";
-            Size = new Size(196, 66);
+            Size = new Size(868, 59);
             Load += Filter_Condition_Load;
-            VisibleChanged += Filter_Condition_VisibleChanged;
             tableLayoutPanel1.ResumeLayout(false);
-            panel_Labels.ResumeLayout(false);
-            panel_Labels.PerformLayout();
-            panel1.ResumeLayout(false);
-            panel1.PerformLayout();
+            tableLayoutPanel1.PerformLayout();
+            panel_Next.ResumeLayout(false);
+            panel_Next.PerformLayout();
+            panel_Operator.ResumeLayout(false);
+            panel_Operator.PerformLayout();
+            panel_Condition.ResumeLayout(false);
+            panel_Condition.PerformLayout();
+            panel_Name.ResumeLayout(false);
+            panel_Name.PerformLayout();
             ResumeLayout(false);
-            PerformLayout();
 
         }
 
@@ -235,9 +272,11 @@
         private System.Windows.Forms.Label labelColumnName;
         private System.Windows.Forms.Label labelOperator;
         private System.Windows.Forms.Label labelCondition;
-        private System.Windows.Forms.Label labelSecondCondition;
         private TableLayoutPanel tableLayoutPanel1;
-        private Panel panel_Labels;
-        private Panel panel1;
+        private Panel panel_Name;
+        private Panel panel_Operator;
+        private Panel panel_Condition;
+        private Panel panel_Next;
+        private Label labelNext;
     }
 }

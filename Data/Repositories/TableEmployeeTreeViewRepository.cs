@@ -12,7 +12,7 @@ public interface ITableEmployeeTreeViewRepository : IRepository<Table_Employees_
 {
     // Basic CRUD operations
     Task<Table_Employees_TreeView?> GetByIDAsync(int id, CancellationToken cancellationToken = default);
-    Task<IEnumerable<Table_Employees_TreeView>> GetAllAsync(CancellationToken cancellationToken = default);
+    Task<IEnumerable<Table_Employees_TreeView>> GetAllAsync(CancellationToken cancellationToken = default, int? count = null);
     Task<Table_Employees_TreeView> AddAsync(Table_Employees_TreeView entity, CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -27,6 +27,12 @@ public interface ITableEmployeeTreeViewRepository : IRepository<Table_Employees_
     /// <exception cref="KeyNotFoundException"></exception>
     Task UpdateAsync(Table_Employees_TreeView entity, CancellationToken cancellationToken = default);
     Task DeleteAsync(int id, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Deletes all entities with the specified index values in a single SQL statement.
+    /// No need to call SaveChangesAsync() — ExecuteDeleteAsync commits immediately.
+    /// </summary>
+    Task DeleteRangeAsync(IEnumerable<int> indexes, CancellationToken cancellationToken = default);
 
     // Tree-specific operations
     Task<IEnumerable<Table_Employees_TreeView>> GetRootNodesAsync(CancellationToken cancellationToken = default);
@@ -60,17 +66,19 @@ public class TableEmployeeTreeViewRepository : Repository<Table_Employees_TreeVi
             .AsNoTracking()
             .FirstOrDefaultAsync(x => x.ID == id, cancellationToken);
     }
-
-    public async Task<IEnumerable<Table_Employees_TreeView>> GetAllAsync(CancellationToken cancellationToken = default)
+        
+    public async Task<IEnumerable<Table_Employees_TreeView>> GetAllAsync(CancellationToken cancellationToken = default, int? count = null)
     {
-        return await _context.Table_Employees_TreeViews
+        var query = _context.Table_Employees_TreeViews
             .AsNoTracking()
-            .OrderBy(x => x.Index)
+            .OrderBy(x => x.Index);
+
+        return await (count.HasValue ? query.Take(count.Value) : query)
             .ToListAsync(cancellationToken);
     }
 
     /// <summary>
-    /// Add the new entity to the table Table_TimeLine_TreeView, save the changes to the database.
+    /// Add the new entity to the table Table_Employees_TreeView, save the changes to the database.
     /// </summary>
     /// <param name="entity"></param>
     /// <param name="cancellationToken"></param>
@@ -111,6 +119,18 @@ public class TableEmployeeTreeViewRepository : Repository<Table_Employees_TreeVi
             _context.Table_Employees_TreeViews.Remove(entity);
             await _context.SaveChangesAsync(cancellationToken);
         }
+    }
+
+    public async Task DeleteRangeAsync(IEnumerable<int> indexes, CancellationToken cancellationToken = default)
+    {
+        var indexList = indexes.ToList();
+        if (indexList.Count == 0)
+            return;
+
+        // ✅ Single SQL: DELETE FROM Table_Employees_TreeView WHERE Index IN (...)
+        await _context.Table_Employees_TreeViews
+            .Where(x => indexList.Contains(x.Index))
+            .ExecuteDeleteAsync(cancellationToken);
     }
 
     #endregion

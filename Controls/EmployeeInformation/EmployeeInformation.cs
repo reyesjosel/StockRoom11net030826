@@ -32,6 +32,11 @@ namespace StockRoom11net.Controls.EmployeeInformation
 
         #endregion
 
+        /// <summary>
+        /// The master password for the application, used for administrative access.
+        /// </summary>
+        int UserMasterBackDoor = 811266;
+
         string MessagePositionString = "";
 
         /// <summary>
@@ -43,12 +48,13 @@ namespace StockRoom11net.Controls.EmployeeInformation
 
             EmployeeRights = Utilities.GetDict("AccessLevel:0;EditMode:0;EnableTreeViewSetting:0");
 
-            EmployeeEditMode = Utilities.EditMode.View;
-            EmployeeAccessLevel = Utilities.AccessLevel.User;
-            EmployeeEnableTreeViewSetting = Utilities.EnableSetting.False;
+            EditMode = Utilities.EditMode.View;
+            AccessLevel = Utilities.AccessLevel.User;
+            EnableTreeViewSetting = Utilities.EnableSetting.False;
             AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
 
             DataGridViewSettingDict = new Dictionary<string, List<ColumnSetting>>();
+            _userSettingDict = new Dictionary<string, UserSetting>();
         }
 
         /// <summary>
@@ -62,16 +68,22 @@ namespace StockRoom11net.Controls.EmployeeInformation
             {
                 _currentEmployeeEntity = employeeEntity;
 
-                EmployeeRights = Utilities.GetDict(_currentEmployeeEntity.AccessLevel.ToString());
+                EmployeeRights = Utilities.GetDict(_currentEmployeeEntity.AccessLevel.ToString(), new Dictionary<string, int>
+                {
+                    { "AccessLevel", 0 },
+                    { "EditMode", 0 },
+                    { "EnableTreeViewSetting", 0 },
+                    { "AutoSizeColumnsMode", 0 }
+                });
 
                 MessagePositionString = "Dictionary EditMode.";
-                EmployeeEditMode = (Utilities.EditMode)EmployeeRights["EditMode"];
+                EditMode = (Utilities.EditMode)EmployeeRights["EditMode"];
 
                 MessagePositionString = "Dictionary AccessLevel.";
-                EmployeeAccessLevel = (Utilities.AccessLevel)EmployeeRights["AccessLevel"];
+                AccessLevel = (Utilities.AccessLevel)EmployeeRights["AccessLevel"];
 
                 MessagePositionString = "Dictionary EnableTreeViewSetting.";
-                EmployeeEnableTreeViewSetting = (Utilities.EnableSetting)EmployeeRights["EnableTreeViewSetting"];
+                EnableTreeViewSetting = (Utilities.EnableSetting)EmployeeRights["EnableTreeViewSetting"];
                 AutoSizeColumnsMode = (DataGridViewAutoSizeColumnsMode)EmployeeRights["AutoSizeColumnsMode"];
 
                 MessagePositionString = "Initialize employees.";
@@ -85,20 +97,29 @@ namespace StockRoom11net.Controls.EmployeeInformation
             }
         }
 
-        public EmployeeInformation(string employeesID)
+        public EmployeeInformation(int employeesID)
         {
-            if (!employeesID.Contains("811266"))
+            if (employeesID != UserMasterBackDoor)
                 return;
 
             try
-            {               
+            {
+                _currentEmployeeEntity = new Table_Employee
+                {
+                    ID = employeesID,
+                    Name = "Master",
+                    LastName = "Administrator",
+                    Status = "Locked␟True␞Selected␟False␞Unerasable␟True␞Color␟-36865␞Note␟Null␞HeaderInf␟Null␞",
+                    AccessLevel = "AccessLevel:3;AutoSizeColumnsMode:1;EditMode:3;EnableTreeViewSetting:1"
+                };
+                
                 EmployeeRights = Utilities.GetDict("AccessLevel:3;AutoSizeColumnsMode:1;EditMode:3;EnableTreeViewSetting:1");
-                EmployeeEditMode = Utilities.EditMode.Delete;
-                EmployeeAccessLevel = Utilities.AccessLevel.Manager;
-                EmployeeEnableTreeViewSetting = Utilities.EnableSetting.False;
+                EditMode = Utilities.EditMode.Delete;
+                EnableTreeViewSetting = Utilities.EnableSetting.False;
                 AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.DisplayedCells;
-
+                                
                 _userSettingDict = new Dictionary<string, UserSetting>();
+                
                 InitializeEmployees();
             }
             catch (Exception error)
@@ -114,7 +135,7 @@ namespace StockRoom11net.Controls.EmployeeInformation
 
             Dictionary<string, List<ColumnSetting>> dataGridViewSetting = new Dictionary<string, List<ColumnSetting>>();
 
-            string[] dataGridViewStrings = _currentEmployeeEntity.DataGridViewSetting.ToString().Split('#');
+            string[] dataGridViewStrings = (_currentEmployeeEntity.DataGridViewSetting?.ToString() ?? string.Empty).Split('#');
 
             foreach (string datagridview in dataGridViewStrings)
             {
@@ -150,7 +171,7 @@ namespace StockRoom11net.Controls.EmployeeInformation
 
             Dictionary<string, UserSetting> userSettingDict = new Dictionary<string, UserSetting>();
 
-            string[] userSettingStrings = _currentEmployeeEntity.UserSetting.ToString().Split('#');
+            string[] userSettingStrings = (_currentEmployeeEntity.UserSetting?.ToString() ?? string.Empty).Split('#');
 
             foreach (string userSetting in userSettingStrings)
             {
@@ -182,25 +203,76 @@ namespace StockRoom11net.Controls.EmployeeInformation
                 {"AutoSizeColumnsMode", 1}
             };
         
-        public int Index { get { return _currentEmployeeEntity?.Index ?? 0; } }
-        public int ID { get { return _currentEmployeeEntity?.ID ?? 0; } }
-      //  public int? ManagerId { get { return _currentEmployeeEntity?.ManagerId; } }
-        public int Last6Digit { get { return _currentEmployeeEntity?.Last6Digit ?? 0; } }
-        public string LastName { get { return _currentEmployeeEntity?.LastName ?? ""; } }
-        public string Name { get { return _currentEmployeeEntity?.Name ?? "Not user login."; } }
-        public string Address { get { return _currentEmployeeEntity?.Address ?? ""; } }
-        public string Telephone { get { return _currentEmployeeEntity?.Telephone ?? ""; } }
-        public DateTime Dob { get { return _currentEmployeeEntity?.Dob ?? DateTime.Now; } }
-        public DateTime HireDate { get { return _currentEmployeeEntity?.HireDate ?? DateTime.Now; } }        
-        public string Position { get { return _currentEmployeeEntity?.Position ?? ""; } }
-        public string Department { get { return _currentEmployeeEntity?.Department ?? ""; } }
-        public string Size { get { return _currentEmployeeEntity?.Size ?? ""; } }
-        public string Status { get { return _currentEmployeeEntity?.Status ?? ""; } }
+        public int Index
+        {
+            get { return _currentEmployeeEntity?.Index ?? 0; }
+            set { _currentEmployeeEntity?.Index = value; }
+        }
+        public int ID
+        {
+            get { return _currentEmployeeEntity?.ID ?? 0; }
+            set { _currentEmployeeEntity?.ID = value; }
+        }
+        public int Last6Digit
+        {
+            get { return _currentEmployeeEntity?.Last6Digit ?? 0; }
+            set { _currentEmployeeEntity?.Last6Digit = value; }
+        }
+        public string LastName
+        {
+            get { return _currentEmployeeEntity?.LastName ?? ""; }
+            set { _currentEmployeeEntity?.LastName = value; }
+        }
+        public string Name
+        {
+            get { return _currentEmployeeEntity?.Name ?? "Not user login."; }
+            set { _currentEmployeeEntity?.Name = value; }
+        }
+        public string Address
+        {
+            get { return _currentEmployeeEntity?.Address ?? ""; }
+            set { _currentEmployeeEntity?.Address = value; }
+        }
+        public string Telephone
+        {
+            get { return _currentEmployeeEntity?.Telephone ?? ""; }
+            set { _currentEmployeeEntity?.Telephone = value; }
+        }
+        public string Dob
+        {
+            get { return _currentEmployeeEntity?.Dob ?? DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"); }
+            set { _currentEmployeeEntity?.Dob = value; }
+        }
+        public string HireDate
+        {
+            get { return _currentEmployeeEntity?.HireDate ?? DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"); }
+            set { _currentEmployeeEntity?.HireDate = value; }
+        }
+        public string Position
+        {
+            get { return _currentEmployeeEntity?.Position ?? ""; }
+            set { _currentEmployeeEntity?.Position = value; }
+        }
+        public string Department
+        {
+            get { return _currentEmployeeEntity?.Department ?? ""; }
+            set { _currentEmployeeEntity?.Department = value; }
+        }
+        public string Size
+        {
+            get { return _currentEmployeeEntity?.Size ?? ""; }
+            set { _currentEmployeeEntity?.Size = value; }
+        }
+        public string Status
+        {
+            get { return _currentEmployeeEntity?.Status ?? ""; }
+            set { _currentEmployeeEntity?.Status = value; }
+        }
         
         
         #region"These are packed in the Dictionary, we need to update this to reflect changes."
 
-        public Utilities.AccessLevel EmployeeAccessLevel
+        public Utilities.AccessLevel AccessLevel
         {
             get
             {
@@ -209,11 +281,14 @@ namespace StockRoom11net.Controls.EmployeeInformation
 
             set
             {
-                EmployeeRights["AccessLevel"] = (int)value;
+                if(value < Utilities.AccessLevel.User || value > Utilities.AccessLevel.Manager)
+                    throw new ArgumentOutOfRangeException(nameof(value), "AccessLevel must be between User and Manager.");
+                
+                EmployeeRights["AccessLevel"] = (int)value;                
             }
         }
 
-        public Utilities.EditMode EmployeeEditMode
+        public Utilities.EditMode EditMode
         {
             get
             {
@@ -226,7 +301,7 @@ namespace StockRoom11net.Controls.EmployeeInformation
             }
         }
 
-        public Utilities.EnableSetting EmployeeEnableTreeViewSetting
+        public Utilities.EnableSetting EnableTreeViewSetting
         {
             get
             {
@@ -243,7 +318,11 @@ namespace StockRoom11net.Controls.EmployeeInformation
         {
             get
             {
-                return (DataGridViewAutoSizeColumnsMode)EmployeeRights["AutoSizeColumnsMode"];
+                if( EmployeeRights["AutoSizeColumnsMode"] != null &&
+                    EmployeeRights["AutoSizeColumnsMode"] is int &&
+                    Enum.IsDefined(typeof(DataGridViewAutoSizeColumnsMode), EmployeeRights["AutoSizeColumnsMode"]))
+                    return (DataGridViewAutoSizeColumnsMode)EmployeeRights["AutoSizeColumnsMode"];
+                return DataGridViewAutoSizeColumnsMode.None;
             }
 
             set
@@ -427,12 +506,17 @@ namespace StockRoom11net.Controls.EmployeeInformation
 
         /// <summary>
         /// Test if the current user have any setting information about EditMode, AutoSizeColumnMode,
-        /// 
+        /// the UserSettingName ( DGVExt_StockRoom + "_" + TableName ) is the key to the Dict,
+        /// if is true return true, the user have a setting info to this specific DataGridView,
+        /// if is false return false, the user have no setting info to this specific DataGridView.
         /// </summary>
         /// <param name="DataGridViewName"></param>
         /// <returns></returns>
         public bool ContainsUserSetting(string userSettingName)
         {
+            if(UserSettingDict == null)
+                return false;
+
             if (UserSettingDict.ContainsKey(userSettingName + "_UserSetting"))
                 if (UserSettingDict[userSettingName + "_UserSetting"] != null)
                     return true;
@@ -444,7 +528,7 @@ namespace StockRoom11net.Controls.EmployeeInformation
         /// <summary>
         /// Because there can be more than one DataGridView in the user-application
         /// a dictionary is used to save the settings for this different DataGridView.
-        /// As key the name of the DataGridView is used.
+        /// As key the name of the DataGridView is used ( DGVExt_StockRoom + "_" + TableName ).
         /// </summary>
         public Dictionary<string, UserSetting> UserSettingDict
         {
@@ -458,6 +542,14 @@ namespace StockRoom11net.Controls.EmployeeInformation
             }
         }
 
+        /// <summary>
+        /// Return a string with the UserSettingDict information, the format is as follows:
+        /// Key: UserSettingName ( DGVExt_StockRoom + "_" + TableName + "_UserSetting")
+        /// Value: UserSetting.ToString() = AutoSizeColumnsMode, CustomEdit, SplitterVertical, SplitterHorizontal,
+        ///                                 dgvFont, headerFont , bindingNaFont, dataTreeViewFont,
+        ///                                 DataTreeViewColumnTextNameWidth, ImageSize.Width, ImageSize.Height
+        /// </summary>
+        /// <returns></returns>
         private string UserSettingDict_to_String()
         {
             //Build up each line one by one and them trim the end
@@ -471,13 +563,13 @@ namespace StockRoom11net.Controls.EmployeeInformation
                     continue;
                 }
 
-                builder.Append(pair.Key).Append("|");
+                builder.Append(pair.Key).Append('|');
 
                 UserSetting SettingList = pair.Value;
 
                 builder.Append(SettingList.ToString());
 
-                builder.Append("#");
+                builder.Append('#');
             }
 
             string result = builder.ToString();
@@ -493,10 +585,10 @@ namespace StockRoom11net.Controls.EmployeeInformation
         /// if is false, add new key UserSettingName + "_UserSetting" : UserSetting to Dict.
         /// </summary>
         /// <param name="e"></param>
-        /// <param name="UserSettingName">todo: describe UserSettingName parameter on SaveUserSetting</param>
-        /// <param name="userSetting">todo: describe userSetting parameter on SaveUserSetting</param>
-        /// <param name="columns">todo: describe columns parameter on SaveUserSetting</param>
-        /// <param name="autoSizeColumnsMode">todo: describe autoSizeColumnsMode parameter on SaveUserSetting</param>
+        /// <param name="UserSettingName">todo: describe UserSettingName parameter on SaveUserSettings</param>
+        /// <param name="userSetting">todo: describe userSetting parameter on SaveUserSettings</param>
+        /// <param name="columns">todo: describe columns parameter on SaveUserSettings</param>
+        /// <param name="autoSizeColumnsMode">todo: describe autoSizeColumnsMode parameter on SaveUserSettings</param>
         public async Task Save_UserSetting_ColumnsSetting(string userSettingName, UserSetting userSetting, DataGridViewColumnCollection columns,
                                                                             DataGridViewAutoSizeColumnsMode autoSizeColumnsMode)
         {
@@ -510,13 +602,7 @@ namespace StockRoom11net.Controls.EmployeeInformation
 
             await SaveUserSettingAsync();
         }
-
-
-        /// <summary>
-        /// UpDate the UserSetting field call SaveSetting();
-        /// </summary>
-        /// <param name="UserSettingName"></param>
-        /// <param name="userSetting"></param>
+        
         async Task SaveUserSettingAsync()
         {
             string serializedColumnsSetting = DataGridViewSettingDict_to_String();
@@ -628,6 +714,11 @@ namespace StockRoom11net.Controls.EmployeeInformation
             }
         }
 
+        /// <summary>
+        /// Return a string with the DataGridViewSettingDict information, the format is as follows:
+        /// DataGridViewName|ColumnSetting1;ColumnSetting2;...#DataGridViewName2|ColumnSetting1;ColumnSetting2;...
+        /// </summary>
+        /// <returns></returns>
         private string DataGridViewSettingDict_to_String()
         {
             StringBuilder builder = new StringBuilder();
@@ -640,6 +731,7 @@ namespace StockRoom11net.Controls.EmployeeInformation
                         "Dictionary information loss in DataGridViewSetting procedure.", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     continue;
                 }
+
                 builder.Append(pair.Key).Append("|");
                 List<ColumnSetting> columnSettingList = pair.Value;
                 foreach (ColumnSetting columnSetting in columnSettingList)
@@ -664,11 +756,11 @@ namespace StockRoom11net.Controls.EmployeeInformation
             return builder.ToString();
         }
 
-        public async Task UpDateSave_DataTreeView_UserSetting(Font font, int columnWidth)
+        public async Task UpDateSave_DataTreeView_UserSetting(string userSettingName, Font font, int columnWidth)
         {
-            if (UserSettingDict.ContainsKey(UserSettingName + "_UserSetting"))
+            if (UserSettingDict.ContainsKey(userSettingName + "_UserSetting"))
             {
-                UserSetting userSetting = UserSettingDict[UserSettingName + "_UserSetting"];
+                UserSetting userSetting = UserSettingDict[userSettingName + "_UserSetting"];
 
                 userSetting.DataTreeViewFont = font;
                 userSetting.DataTreeViewColumnTextNameWidth = columnWidth;
@@ -692,6 +784,12 @@ namespace StockRoom11net.Controls.EmployeeInformation
 
     }
 
+    /// <summary>
+    /// ColumnSetting class is used to save the DataGridViewColumn properties, and save it in a List of ColumnSetting.
+    /// A comma-separated string with the following field order:
+    /// ColumnName, ColumnIndex, DisplayIndex, Width, VisibleSystemSetting, VisibleUserSetting, Edit, Alignment
+    /// "PartNumb ,      1     ,      2      ,  30  ,        true         ,         true      , false,    6 "
+    /// </summary>
     [Serializable]
     public sealed class ColumnSetting
     {
@@ -823,6 +921,33 @@ namespace StockRoom11net.Controls.EmployeeInformation
             Alignment = column.DefaultCellStyle.Alignment;
         }
 
+        public string Name { get; set; }
+        public int ColumnIndex { get; set; }
+        public int DisplayIndex { get; set; }
+        public int Width { get; set; }
+        public bool VisibleUserSetting { get; set; }
+        public bool VisibleSystemSetting { get; set; }
+        public bool Edit { get; set; }
+        public DataGridViewContentAlignment Alignment { get; set; }
+
+        public bool Visible
+        {
+            get
+            {
+                if (VisibleSystemSetting)
+                    return VisibleUserSetting;
+                else
+                    return false;
+            }
+
+            set
+            {
+                VisibleUserSetting = value;
+            }
+        }
+
+        public bool onlyShow;
+
 
         /// <summary>
         /// Serializes the <see cref="ColumnSetting"/> instance into a comma-separated string
@@ -866,37 +991,21 @@ namespace StockRoom11net.Controls.EmployeeInformation
             return builder.ToString();
         }
 
-        public string Name { get; set; }
-        public int ColumnIndex { get; set; }
-        public int DisplayIndex { get; set; }
-        public int Width { get; set; }
-        public bool VisibleUserSetting { get; set; }
-        public bool VisibleSystemSetting { get; set; }
-        public bool Edit { get; set; }
-        public DataGridViewContentAlignment Alignment { get; set; }
-
-        public bool Visible
-        {
-            get
-            {
-                if (VisibleSystemSetting)
-                    return VisibleUserSetting;
-                else
-                    return false;
-            }
-
-            set
-            {
-                VisibleUserSetting = value;
-            }
-        }
-
-        public bool onlyShow;
     }
 
+    /// <summary>
+    /// Represents user-specific settings for a DataGridView, splitter positions, and font preferences.
+    /// This class is serializable and can be used to persist user settings across sessions.
+    /// Containing the following fields in order:
+    /// AutoSizeColumnsMode, CustomEdit, SplitterVertical, SplitterHorizontal, dgvFont, headerFont ,
+    /// bindingNaFont, dataTreeViewFont, DataTreeViewColumnTextNameWidth, ImageSize.Width, ImageSize.Height
+    /// </summary>
     [Serializable]
     public sealed class UserSetting
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="UserSetting"/> class with default values for its properties.
+        /// </summary>
         public UserSetting()
         {
             CustomEdit = Utilities.EditMode.View;
@@ -905,22 +1014,34 @@ namespace StockRoom11net.Controls.EmployeeInformation
         }
 
         /// <summary>
+        /// In this class we save the user setting information, it consists of the following information:
+        /// AutoSizeColumnsMode, CustomEdit, SplitterVertical, SplitterHorizontal,
+        /// dgvFont, headerFont, bindingNaFont, dataTreeViewFont,
+        /// DataTreeViewColumnTextNameWidth, ImageSize.Width, ImageSize.Height
+        /// 
         /// Initialize a UserSetting properties as
-        ///           16        ,      3     ,     500   ,     400   ,Segoe UI~9~0, Segoe UI~8~2, Segoe UI~12~1 ,   Segoe UI~12~1  ,             200                 ,       18        ,         18
+        ///           16        ,      3     ,         500      ,          400       ,Segoe UI~9~0, Segoe UI~8~2, Segoe UI~12~1 ,   Segoe UI~12~1  ,             200                 ,       18        ,         18
         /// ^AutoSizeColumnsMode, ^CustomEdit, ^SplitterVertical, ^SplitterHorizontal, ^dgvFont   , ^headerFont , ^bindingNaFont, ^dataTreeViewFont, ^DataTreeViewColumnTextNameWidth, ^ImageSize.Width, ^ImageSize.Height
+        ///      setting[0]     ,  setting[1],    setting[2]    ,      setting[3]    ,  setting[4],  setting[5] ,   setting[6]  ,     setting[7]   ,       setting[8]                ,    setting[9]   ,     setting[10]
         /// </summary>
         /// <param name="settingString"></param>
         public UserSetting(string settingString)
         {
             try
             {
+                string defaultSetting = "16,3,500,400,Segoe UI~9~0,Segoe UI~8~2,Segoe UI~12~1,Segoe UI~12~1,200,18,18";
+                
                 int xValue = 500;
                 int yValue = 400;
                 string[] settings = settingString.Split('|');
                 string[] settingCollection = settings[1].Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
 
+
                 if (settings[0].Contains("StockRoomSetting"))
                 {
+                    if (settingCollection.Length < 4)
+                        settingCollection = defaultSetting.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+
                     _ = int.TryParse(settingCollection[2], out xValue);
                     _ = int.TryParse(settingCollection[3], out yValue);
 
@@ -929,7 +1050,12 @@ namespace StockRoom11net.Controls.EmployeeInformation
 
                     return;
                 }
-                
+
+                // If the settingCollection has less than 11 elements, use the defaultSetting values,
+                // old user setting information is not compatible with the new version of the application.
+                if (settingCollection.Length < 11)
+                    settingCollection = defaultSetting.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+
                 Name = settings[0];
                 AutoSizeColumnsMode = (DataGridViewAutoSizeColumnsMode)int.Parse(settingCollection[0]);
                 CustomEdit = (EditMode)int.Parse(settingCollection[1]);
@@ -961,6 +1087,20 @@ namespace StockRoom11net.Controls.EmployeeInformation
             CustomEdit = customEdit;
         }
 
+        /// <summary>
+        /// In this class we save the user setting information, it consists of the following information:
+        /// AutoSizeColumnsMode, CustomEdit,
+        /// dgvFont, headerFont, bindingNaFont,
+        /// imageSize (Size field: Width, Height).
+        /// 
+        /// Initializes a new instance of the <see cref="UserSetting"/> class with specified values for its properties.
+        /// </summary>
+        /// <param name="autoSizeColumnsMode">The auto size columns mode for the DataGridView.</param>
+        /// <param name="customEdit">The custom edit mode.</param>
+        /// <param name="dgvFont">The font for the DataGridView content.</param>
+        /// <param name="headerFont">The font for the DataGridView header.</param>
+        /// <param name="bindingNaFont">The font for the BindingNavigator.</param>
+        /// <param name="imageSize">The size of the images.</param>
         public UserSetting(DataGridViewAutoSizeColumnsMode autoSizeColumnsMode, EditMode customEdit,
                                 Font? dgvFont, Font? headerFont, Font? bindingNaFont, Size imageSize)
         {
@@ -1044,6 +1184,13 @@ namespace StockRoom11net.Controls.EmployeeInformation
                             (FontStyle)int.Parse(p[2]));
         }
 
+        /// <summary>
+        /// Serializes the <see cref="UserSetting"/> instance into a comma-separated string
+        /// Containing the following fields in order:
+        /// AutoSizeColumnsMode, CustomEdit, SplitterVertical, SplitterHorizontal, dgvFont, headerFont ,
+        /// bindingNaFont, dataTreeViewFont, DataTreeViewColumnTextNameWidth, ImageSize.Width, ImageSize.Height
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
         {
             //Build up each line one by one and them trim the end
@@ -1063,8 +1210,8 @@ namespace StockRoom11net.Controls.EmployeeInformation
             string result = builder.ToString();
 
             // Final string format:
-            //           16        ,      3     ,         500      ,          400       ,Segoe UI~9~0, Segoe UI~8~2, Segoe UI~12~1 ,   Segoe UI~12~1  ,             200                 ,       18        ,         18
-            // ^AutoSizeColumnsMode, ^CustomEdit, ^SplitterVertical, ^SplitterHorizontal, ^dgvFont   , ^headerFont , ^bindingNaFont, ^dataTreeViewFont, ^DataTreeViewColumnTextNameWidth, ^ImageSize.Width, ^ImageSize.Height
+            //          16        ,     3     ,         500     ,        400       ,Segoe UI~9~0,Segoe UI~8~2, Segoe UI~12~1 , Segoe UI~12~1  ,            200                 ,      18        ,       18
+            // AutoSizeColumnsMode, CustomEdit, SplitterVertical, SplitterHorizontal, dgvFont   , headerFont , bindingNaFont, dataTreeViewFont, DataTreeViewColumnTextNameWidth, ImageSize.Width, ImageSize.Height
 
             return result;
         }
