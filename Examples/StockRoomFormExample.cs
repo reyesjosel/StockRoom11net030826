@@ -48,12 +48,12 @@ public partial class StockRoomFormExample : Form
     private void LoadData_OldWay()
     {
         var adapter = new Table_StockRoomTableAdapter();
-        var dataTable = new Production_InventoryDataSet.Table_StockRoomDataTable();
+        var dataTableEmployees = new Production_InventoryDataSet.Table_StockRoomDataTable();
 
-        adapter.Fill(dataTable);
+        adapter.Fill(dataTableEmployees);
 
         var bindingSource = new BindingSource();
-        bindingSource.DataSource = dataTable;
+        bindingSource.DataSource = dataTableEmployees;
         dataGridView.DataSource = bindingSource;
     }
     */

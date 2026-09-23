@@ -104,8 +104,6 @@ namespace StockRoom11net
         {
             _dataGridViewLabelsSMT.SuspendLayout();
 
-            dataGridViewExtendedBase = _dataGridViewLabelsSMT;
-
             _dataGridViewLabelsSMT.Name = "PrintLabelSMT";
 
             _dataGridViewLabelsSMT.CurrentRowActivesEvent += dataGridViewLabelsSMT_CurrentRowActive;

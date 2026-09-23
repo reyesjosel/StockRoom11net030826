@@ -63,7 +63,7 @@ namespace StockRoom11net
                 if (dataGridViewExtended.CustomFilter != null &&
                     dataGridViewExtended.CustomFilter.Contains("Location LIKE '" + e.BarcodeData + "'"))
                 {
-                    //  TabControl_Inventory.SelectTab(returnToTabpage);
+                    //  customTabControl.SelectTab(returnToTabpage);
                     //    if (_currentFocusedNodeproperties != null)
                     //        dataGridViewExtended.CustomFilter = _currentFocusedNodeproperties.StringFilter;
                     //    else
@@ -73,14 +73,14 @@ namespace StockRoom11net
 
                 dataGridViewExtended.CustomFilter = "Location LIKE '" + e.BarcodeData + "'";
 
-                /*  if (TabControl_Inventory.SelectedTab.Name.Contains("tabPage_Location"))
+                /*  if (customTabControl.SelectedTab.Name.Contains("tabPage_Location"))
                   {
                       return;
                   }
                   else
                   {
-                      returnToTabpage = TabControl_Inventory.SelectedTab.Name;
-                      TabControl_Inventory.SelectTab("tabPage_Location");
+                      returnToTabpage = customTabControl.SelectedTab.Name;
+                      customTabControl.SelectTab("tabPage_Location");
                       return;
                   }
                  */
@@ -98,7 +98,7 @@ namespace StockRoom11net
                 if (dataGridViewExtended.CustomFilter != null &&
                     dataGridViewExtended.CustomFilter.Contains("PartNumber LIKE '*" + partNumber + "*'"))
                 {
-                    // TabControl_Inventory.SelectTab(returnToTabpage);
+                    // customTabControl.SelectTab(returnToTabpage);
                     //   if (_currentFocusedNodeproperties != null)
                     //       dataGridViewExtended.CustomFilter = _currentFocusedNodeproperties.StringFilter;
                     //   else
@@ -107,14 +107,14 @@ namespace StockRoom11net
                 }
 
                 dataGridViewExtended.CustomFilter = "PartNumber LIKE '*" + partNumber + "*'";
-                //  if (TabControl_Inventory.SelectedTab.Name.Contains("tabPage_Picturess"))
+                //  if (customTabControl.SelectedTab.Name.Contains("tabPage_Picturess"))
                 //  {
                 //      return;
                 //  }
                 //  else
                 //  {
-                //      returnToTabpage = TabControl_Inventory.SelectedTab.Name;
-                // TabControl_Inventory.SelectTab("tabPage_Picturess");
+                //      returnToTabpage = customTabControl.SelectedTab.Name;
+                // customTabControl.SelectTab("tabPage_Picturess");
                 //      return;
                 //  }
             }
@@ -331,7 +331,7 @@ namespace StockRoom11net
 
             #endregion"IsManager or Administrator"
 
-         //   if (CurrentEmployeesLogIn.EmployeeEnableTreeViewSetting == Utilities.EnableSetting.True)
+         //   if (CurrentEmployeesLogIn.EnableTreeViewSetting == Utilities.EnableSetting.True)
          //   {
 
          //   }

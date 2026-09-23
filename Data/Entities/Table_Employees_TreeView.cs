@@ -10,8 +10,9 @@ namespace StockRoom11net.Data.Entities;
 [Index("Code", Name = "IDXTable_Employees_TreeView_Code")]
 [Index("ID", Name = "IDXTable_Employees_TreeView_ID", IsUnique = true)]
 [Index("Index", Name = "IDXTable_Employees_TreeView_Index", IsUnique = true)]
-public partial class Table_Employees_TreeView
+public partial class Table_Employees_TreeView : Table_Base_TreeView
 {
+    /*public Table_Employees_TreeView()
     [Key]
     public int Index { get; set; }
 
@@ -129,4 +130,5 @@ public partial class Table_Employees_TreeView
     public int? MyGrandFatherIs { get; set; }
 
     public string? Status { get; set; }
+    */
 }

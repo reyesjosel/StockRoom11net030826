@@ -19,8 +19,8 @@ public interface IUnitOfWork : IDisposable
     ITableTimeLineRepository TableTimeLineRepository { get; }
     ITableTimeLineTreeViewRepository TableTimeLineTreeViewRepository { get; }
 
-    ITableEmployeeRepository TableEmployeeRepository { get; }
-    ITableEmployeeTreeViewRepository TableEmployeeTreeViewRepository { get; }
+    ITableEmployeeRepository TableEmployeesRepository { get; }
+    ITableEmployeeTreeViewRepository TableEmployeesTreeViewRepository { get; }
 
     // Save changes methods
     Task<int> CompleteAsync();
@@ -79,12 +79,12 @@ public class UnitOfWork : IUnitOfWork
         get { return _tableTimeLineTreeViews ??= new TableTimeLineTreeViewRepository(_context); }
     }
     
-    public ITableEmployeeRepository TableEmployeeRepository
+    public ITableEmployeeRepository TableEmployeesRepository
     {
         get { return _tableEmployees ??= new TableEmployeeRepository(_context); }
     }
 
-    public ITableEmployeeTreeViewRepository TableEmployeeTreeViewRepository
+    public ITableEmployeeTreeViewRepository TableEmployeesTreeViewRepository
     {
         get { return _tableEmployeeTreeViews ??= new TableEmployeeTreeViewRepository(_context); }
     }

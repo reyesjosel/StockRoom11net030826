@@ -300,10 +300,16 @@ namespace StockRoom11net.Controls
             set
             {
                 _showLabels = value;
-                if (value)
-                    panel_Labels.Visible = true;
-                else
-                    panel_Labels.Visible = false;
+                if (!value)                
+                {
+                    panel_Name.Controls.Remove(labelColumnName);                    
+                    panel_Operator.Controls.Remove(labelOperator);
+                    panel_Condition.Controls.Remove(labelCondition);
+                    panel_Next.Controls.Remove(labelNext);
+
+                    this.Height = 38;
+                    this.MinimumSize = new Size(0, 38);
+                }
             }
         }
 
@@ -317,26 +323,26 @@ namespace StockRoom11net.Controls
         /// Name of the column below to this control.
         /// </summary>
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public DataColumn ColumnNameProperty
+        public PropertyDescriptor? ColumnNameProperty
         {
             get
             {
                 if (ColumnsCollections == null)
-                    return new DataColumn("No Column in the collection", typeof(Int32));
+                    return null;
 
                 return ColumnsCollections[comboBoxColumnName.Text];
             }
             set
             {
-                comboBoxColumnName.Text = value.ColumnName;
+                comboBoxColumnName.Text = value?.Name;
             }
         }
 
-        DataColumnCollection _columnsCollections;
+        PropertyDescriptorCollection _columnsCollections;
         /// <summary>
         /// Keep a record of all columns existent in StockRoom datatable.
         /// </summary>
-        DataColumnCollection ColumnsCollections
+        PropertyDescriptorCollection ColumnsCollections
         {
             get
             {
@@ -357,34 +363,27 @@ namespace StockRoom11net.Controls
             InitializeComponent();
 
             FilterControlIndex = 0;
-            Filter_Condition_Resize(new object(), new EventArgs());
         }
 
-        public FilterCondition(DataColumnCollection columnsCollections)
+        public FilterCondition(PropertyDescriptorCollection columnsCollections)
         {
             InitializeComponent();
 
             FilterControlIndex = 0;
             ColumnsNameFactory(columnsCollections);
-
-            Filter_Condition_Resize(new object(), new EventArgs());
         }
 
-        public FilterCondition(DataColumnCollection columnsCollections, int filterControlIndex)
+        public FilterCondition(PropertyDescriptorCollection columnsCollections, int filterControlIndex)
         {
             InitializeComponent();
 
             FilterControlIndex = filterControlIndex;
 
             ColumnsNameFactory(columnsCollections);
-
-            Filter_Condition_Resize(new object(), new EventArgs());
         }
 
         void Filter_Condition_Load(object sender, EventArgs e)
-        {
-            SendStatusBarMessage("Filter_Condition_Load");
-
+        {            
             _upDateProcess = true;
 
             comboBoxColumnName.TabIndex = 1;
@@ -401,11 +400,7 @@ namespace StockRoom11net.Controls
 
             comboBoxCondition.DisplayMember = "Text";
             comboBoxCondition.ValueMember = "Value";
-            comboBoxCondition.Text = "";
-
-            Resize += Filter_Condition_Resize;
-
-            Filter_Condition_Resize(sender, e);
+            comboBoxCondition.Text = "";            
         }
 
         void SendStatusBarMessage(string info)
@@ -415,71 +410,13 @@ namespace StockRoom11net.Controls
 
             CounterEvents++;
             On_StatusBarMessage(new StatusBarMessage_EventArgs(info + " " + CounterEvents));
-        }
-
-        void Filter_Condition_Resize(object sender, EventArgs e)
-        {
-            SuspendLayout();
-
-            if (ShowLabels)
-            {
-                var position = 0;
-                labelColumnName.Location = new Point(position, 0);
-                comboBoxColumnName.Location = new Point(position, 0);
-                comboBoxColumnName.Width = (Width * 22) / 100;
-
-                position += comboBoxColumnName.Width + 5;
-                labelOperator.Location = new Point(position, 0);
-                comboBoxOperator.Location = new Point(position, 0);
-                comboBoxOperator.Width = (Width * 17) / 100;
-
-                position += comboBoxOperator.Width + 5;
-                labelCondition.Location = new Point(position, 0);
-                comboBoxCondition.Location = new Point(position, 0);
-                comboBoxCondition.Width = (Width * 44) / 100;
-
-                position += comboBoxCondition.Width + 5;
-                labelSecondCondition.Location = new Point(position, 0);
-                comboBoxSecondCondition.Location = new Point(position, 0);
-                comboBoxSecondCondition.Width = (Width * 13) / 100;
-            }
-            else
-            {
-                var position = 0;
-                comboBoxColumnName.Location = new Point(position, 0);
-                comboBoxColumnName.Width = (Width * 22) / 100;
-
-                position += comboBoxColumnName.Width + 5;
-                comboBoxOperator.Location = new Point(position, 0);
-                comboBoxOperator.Width = (Width * 17) / 100;
-
-                position += comboBoxOperator.Width + 5;
-                comboBoxCondition.Location = new Point(position, 0);
-                comboBoxCondition.Width = (Width * 44) / 100;
-
-                position += comboBoxCondition.Width + 5;
-                comboBoxSecondCondition.Location = new Point(position, 0);
-                comboBoxSecondCondition.Width = (Width * 13) / 100;
-            }
-
-            ResumeLayout(true);
-        }
-
-        //ToDo: Check if this event is necessary.
-        void Filter_Condition_VisibleChanged(object sender, EventArgs e)
-        {
-            return;
-
-            if (Visible)
-                On_StringFilter(new StringFilterControl_EventArgs(ColumnNameProperty, comboBoxColumnName.Text,
-                                                                comboBoxOperator.Text, comboBoxCondition.Text, ControlText));
-        }
+        }       
 
         /// <summary>
         /// Fills items in Column name, and initialized ColumnsCollections property.
         /// </summary>
         /// <param name="columnsCollections"></param>
-        public void ColumnsNameFactory(DataColumnCollection columnsCollections)
+        public void ColumnsNameFactory(PropertyDescriptorCollection columnsCollections)
         {
             if (columnsCollections == null)
                 return;
@@ -487,9 +424,9 @@ namespace StockRoom11net.Controls
             //Initialize the collection.
             ColumnsCollections = columnsCollections;
 
-            foreach (DataColumn column in columnsCollections)
+            foreach (PropertyDescriptor column in columnsCollections)
             {
-                comboBoxColumnName.Items.Add(column.ColumnName);
+                comboBoxColumnName.Items.Add(column.Name);
             }
         }
 
@@ -502,9 +439,7 @@ namespace StockRoom11net.Controls
             try
             {
                 _upDateProcess = true;
-
-                SendStatusBarMessage("Update_Filter");
-
+                
                 if (stringFilter == null)
                 {
                     comboBoxColumnName.SelectedItem = null;
@@ -513,8 +448,9 @@ namespace StockRoom11net.Controls
                     comboBoxCondition.Text = "";
                     comboBoxCondition.SelectedItem = null;
                     comboBoxCondition.Enabled = false;
-                    comboBoxSecondCondition.Text = "";                                                                         // 0        1        2
+                    comboBoxSecondCondition.Text = "";                                       //  0    1     2
                     comboBoxSecondCondition.SelectedItem = comboBoxSecondCondition.Items[2]; // AND - OR - None
+                    comboBoxSecondCondition.Text = "None";
                     comboBoxSecondCondition.Enabled = false;
                     return;
                 }
@@ -531,9 +467,9 @@ namespace StockRoom11net.Controls
                 comboBoxColumnName.SelectedIndex = -1;
                 if (ColumnsCollections != null)
                 {
-                    foreach (DataColumn column in ColumnsCollections)
+                    foreach (PropertyDescriptor column in ColumnsCollections)
                     {
-                        if (column.ColumnName == _columnName)
+                        if (column.Name == _columnName)
                         {
                             comboBoxColumnName.SelectedIndex = ColumnsCollections.IndexOf(column);
                             break;
@@ -806,19 +742,24 @@ namespace StockRoom11net.Controls
 
                 #region"Second Condition"
 
-                comboBoxSecondCondition.SelectedItem = "None";
-
                 _upDateProcess = true;
 
-                foreach (string item in comboBoxSecondCondition.Items)
+                if (stringFilter.Contains(" AND "))
                 {
-                    if (stringFilter.Contains(" " + item))
-                    {
-                        comboBoxSecondCondition.SelectedItem = item;
-                        break;
-                    }
+                    comboBoxSecondCondition.Text = "AND";
+                    return;
                 }
-
+                
+                if (stringFilter.Contains(" OR "))
+                {
+                    comboBoxSecondCondition.Text = "OR";
+                    return;
+                }
+                else
+                {
+                    comboBoxSecondCondition.Text = "None";
+                }
+                
                 #endregion"Second Condition"
 
             }
@@ -894,7 +835,7 @@ namespace StockRoom11net.Controls
             public ComboEnumItem(Enum originalEnum)
             {
                 this.Value = originalEnum;
-                this.Text = this.ToString();
+                this.Text = originalEnum.ToString();
             }
         }
 
@@ -910,7 +851,7 @@ namespace StockRoom11net.Controls
             if (columnSelected == null)
                 return;
 
-            FillComboBoxItems(comboBoxOperator, columnSelected.DataType.Name);
+            FillComboBoxItems(comboBoxOperator, columnSelected.PropertyType.Name);
             comboBoxSecondCondition.Enabled = true;
             comboBoxOperator.Focus();
 
@@ -1026,10 +967,6 @@ namespace StockRoom11net.Controls
                 _upDateProcess = false;
 
                 return;
-
-                On_StringFilter(new StringFilterControl_EventArgs(ColumnNameProperty, comboBoxColumnName.Text,
-                                                    comboBoxOperator.Text, comboBoxCondition.Text, ControlText));
-                return;
             }
 
             if (comboBoxSecondCondition.Text.Contains("None"))
@@ -1112,7 +1049,7 @@ namespace StockRoom11net.Controls
                 string? selectedColumnType = "";
 
                 if (comboBoxColumnName.Text != null)
-                    selectedColumnType = ColumnsCollections[comboBoxColumnName.Text].DataType.Name;
+                    selectedColumnType = ColumnsCollections[comboBoxColumnName.Text].PropertyType.Name;
                 else
                     selectedColumnType = "Int64";
 

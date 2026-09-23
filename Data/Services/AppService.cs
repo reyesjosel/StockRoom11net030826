@@ -14,14 +14,10 @@ namespace StockRoom11net.Data.Services
         public bool Showing { get; set; }
         public string FilePathPicturesBoxImage { get; set; }
         public string FilePathLocationBoxImage { get; set; }
-        public DataColumnCollection? ColumnsCollection { get; set; }
-     //   public DataRowView CurrentRowViewActive { get; set; }
+        public PropertyDescriptorCollection? ColumnsCollection { get; set; }
         public CurrentStatus CurrentStatusReference { get; set; }
        
-        public DataColumn? CurrentColumnActive { get; set; }
-
-
-
+        public PropertyDescriptor? CurrentColumnActive { get; set; }
 
         public event Action<StatusBarMessage_EventArgs>? StatusBarMessageEvent;
 
@@ -44,8 +40,6 @@ namespace StockRoom11net.Data.Services
     public class AppService : IAppService
     {
         #region"Properties"
-
-        
 
         /// <summary>
         /// A flags about the visibility state of the dock control,
@@ -81,14 +75,14 @@ namespace StockRoom11net.Data.Services
         public string _lastDataSheet = "";
 
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public DataColumnCollection? ColumnsCollection { get; set; }
+        public PropertyDescriptorCollection? ColumnsCollection { get; set; }
 
         /// <summary>
         /// Current column active in the dataGridViewExtended_Inventory,
         /// update on CellClick and CellBegingEdit event.
         /// </summary>
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public DataColumn? CurrentColumnActive { get; set; } = new DataColumn();
+        public PropertyDescriptor? CurrentColumnActive { get; set; }
 
         /// <summary>
         /// Current DataRowView active in the dataGridViewExtended_Inventory,

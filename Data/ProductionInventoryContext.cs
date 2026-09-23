@@ -54,33 +54,26 @@ public partial class ProductionInventoryContext : DbContext
         modelBuilder.Entity<Table_Employees_TreeView>(entity =>
         {
             entity.Property(e => e.Index).ValueGeneratedNever();
-            entity.Property(e => e.BackgroundColor).HasDefaultValue("Color [White]");
-            entity.Property(e => e.DateCreated).HasDefaultValueSql("CURRENT_TIMESTAMP");
-            entity.Property(e => e.EndDate).HasDefaultValueSql("CURRENT_TIMESTAMP");
-            entity.Property(e => e.EndTime).HasDefaultValueSql("CURRENT_TIMESTAMP");
-            entity.Property(e => e.FinishPanel).HasDefaultValue(0);
-            entity.Property(e => e.ImageAlign).HasDefaultValue("West");
-            entity.Property(e => e.ItemCount).HasDefaultValue(0);
-            entity.Property(e => e.MinuteEndTop).HasDefaultValue(0);
-            entity.Property(e => e.MinuteStartTop).HasDefaultValue(0);
-            entity.Property(e => e.MyChildIs).HasDefaultValue(-1234);
-            entity.Property(e => e.MyFatherIs).HasDefaultValue(-1234);
-            entity.Property(e => e.MyGrandFatherIs).HasDefaultValue(0);
-            entity.Property(e => e.PCBComment).HasDefaultValue("New PCB, coment this as best profecional.");
-            entity.Property(e => e.PCBName).HasDefaultValue("Name the new PCB");
-            entity.Property(e => e.PCBNumber).HasDefaultValue("110-");
-            entity.Property(e => e.Pattern).HasDefaultValue("");
-            entity.Property(e => e.PatternColor).HasDefaultValue("Color [Red]");
-            entity.Property(e => e.Pcs_Panel).HasDefaultValue(0);
-            entity.Property(e => e.QtyProduced).HasDefaultValue(0);
-            entity.Property(e => e.QtyProjectPlaned).HasDefaultValue(0);
-            entity.Property(e => e.QtyProjectProduced).HasDefaultValue(0);
-            entity.Property(e => e.QtyProjectRemaining).HasDefaultValue(0);
-            entity.Property(e => e.StartDate).HasDefaultValueSql("CURRENT_TIMESTAMP");
-            entity.Property(e => e.StartPanel).HasDefaultValue(0);
-            entity.Property(e => e.StartTime).HasDefaultValueSql("CURRENT_TIMESTAMP");
-            entity.Property(e => e.TextItem).HasDefaultValue("Undefined");
-            entity.Property(e => e.TotalPanel).HasDefaultValue(0);
+            entity.Property(e => e.ItemOpen).HasDefaultValueSql("false");
+            entity.Property(e => e.Parent_ID).IsRequired(false); // NULL allowed: root nodes have no parent
+
+            // NULL → "" converters: IsRequired(false) tells EF Core to call IsDBNull
+            // before GetString, so the null-coalescing converter is actually reached.
+            entity.Property(e => e.Code).IsRequired(false).HasConversion(v => v, v => v ?? "");
+            entity.Property(e => e.Range).IsRequired(false).HasConversion(v => v, v => v ?? "");
+            entity.Property(e => e.Text_Name).IsRequired(false).HasConversion(v => v, v => v ?? "");
+            entity.Property(e => e.Node_PDF).IsRequired(false).HasConversion(v => v, v => v ?? "");
+            entity.Property(e => e.Node_Picture).IsRequired(false).HasConversion(v => v, v => v ?? "");
+            entity.Property(e => e.Description_Short).IsRequired(false).HasConversion(v => v, v => v ?? "");
+            entity.Property(e => e.Description_Expand).IsRequired(false).HasConversion(v => v, v => v ?? "");
+            entity.Property(e => e.Image).IsRequired(false).HasDefaultValueSql("'No_Picture_Found'").HasConversion(v => v, v => v ?? "");
+            entity.Property(e => e.String_Filter).IsRequired(false).HasConversion(v => v, v => v ?? "");
+            entity.Property(e => e.DateCreated).IsRequired(false).HasConversion(v => v, v => v ?? "");
+            entity.Property(e => e.Created_by).IsRequired(false).HasConversion(v => v, v => v ?? "");
+            entity.Property(e => e.AvailableDepartments).IsRequired(false).HasConversion(v => v, v => v ?? "");
+            entity.Property(e => e.Properties).IsRequired(false).HasConversion(v => v, v => v ?? "");
+            entity.Property(e => e.Message_String).IsRequired(false).HasConversion(v => v, v => v ?? "");
+            entity.Property(e => e.Status).IsRequired(false).HasConversion(v => v, v => v ?? "");
         });
 
         modelBuilder.Entity<Table_Labels_SMT>(entity =>

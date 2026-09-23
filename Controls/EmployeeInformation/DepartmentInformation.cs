@@ -25,7 +25,7 @@ namespace StockRoom11net.Controls.EmployeeInformation
 
                 DepartmentComments = "";
                 DepartmentTelephone = "";
-                HireDate = DateTime.Now;
+                HireDate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
                 Position = "";
                 Department = "Department";
 
@@ -78,13 +78,19 @@ namespace StockRoom11net.Controls.EmployeeInformation
                     DepartmentComments = DepartmentRow.LastName ?? "Not a comments here.";
                     DepartmentDocumentsProcess(DepartmentRow.Address);
                     DepartmentTelephone = DepartmentRow.Telephone ?? "No telephone available";
-                    HireDate = DepartmentRow.HireDate ?? DateTime.Now;
+                    HireDate = DepartmentRow.HireDate ?? DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
                     Position = DepartmentRow.Position ?? "No position available";
                     Department = DepartmentRow.Department ?? "No department available";
 
                     string deptAccessLevelString = DepartmentRow.AccessLevel ?? "AccessLevel:0;EditMode:0;EnableTreeViewSetting:0";
 
-                    DeptRights = Utilities.GetDict(deptAccessLevelString);
+                    DeptRights = Utilities.GetDict(deptAccessLevelString, new Dictionary<string, int>
+                    {
+                        { "AccessLevel", 0 },
+                        { "EditMode", 0 },
+                        { "EnableTreeViewSetting", 0 },
+                        { "AutoSizeColumnsMode", 0 }
+                    });
                     DeptEditMode = (Utilities.EditMode)DeptRights["EditMode"];
                     DeptAccessLevel = (Utilities.AccessLevel)DeptRights["AccessLevel"];
                     AutoSizeColumnsMode = (DataGridViewAutoSizeColumnsMode)DeptRights["AutoSizeColumnsMode"];                    
@@ -223,12 +229,12 @@ namespace StockRoom11net.Controls.EmployeeInformation
         /// Department telephone if exist one.
         /// </summary>
         public string DepartmentTelephone = "";
-        public DateTime Dob = DateTime.Now;
-        public DateTime HireDate = DateTime.Now;
+        public string Dob = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+        public string HireDate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
         public string DepartmentSetting = "";
         public string DataGridViewSetting = "";
         public string Position = "";
-        public string Department { get; set; }
+        public string Department { get; set; } = "Department"; //Department is Department.
         public string AccessLevel = "";
         public string Status = "";
         public string Properties { get; set; }

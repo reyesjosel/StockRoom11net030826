@@ -17,17 +17,28 @@ public interface ITableEmployeeRepository : IRepository<Table_Employee>
     Task<Table_Employee> AddAsync(Table_Employee entity, CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Update the existing entity in the table Table_Employees, save the changes to the database.
-    /// It first checks if the entity exists in the database by its primary key (Index). If it doesn't exist, it throws a KeyNotFoundException.
+    /// Updates an existing entity in the Table_Employees table.
+    /// It first checks if the entity exists in the database by its primary key (Index).
+    /// If it doesn't exist, it throws a KeyNotFoundException. If it exists, it updates
+    /// the tracked entity with the new values and saves the changes to the database.
     /// No need call SaveChangesAsync() after this method, it will be called in the service layer after all operations are done.
     /// </summary>
-    /// <param name="entity"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
+    /// <param name="entity">The entity to update.</param>
+    /// <param name="cancellationToken">A cancellation token.</param>
+    /// <returns>A task representing the asynchronous operation.</returns>
     /// <exception cref="ArgumentNullException"></exception>
     /// <exception cref="KeyNotFoundException"></exception>
     Task UpdateAsync(Table_Employee entity, CancellationToken cancellationToken = default);
-    Task DeleteAsync(int id, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Deletes an entity from the Table_Employees table by its ID. If the entity is found,
+    /// it is removed and changes are saved to the database. If the entity is not found, no action is taken.
+    /// No need call SaveChangesAsync() after this method, it will be called in the service layer after all operations are done.
+    /// </summary>
+    /// <param name="id">The ID of the entity to delete.</param>
+    /// <param name="cancellationToken">A cancellation token.</param>
+    /// <returns>A task representing the asynchronous operation.</returns>
+    Task DeleteByIdAsync(int id, CancellationToken cancellationToken = default);
         
     // Query operations
     Task<IEnumerable<Table_Employee>> FindByLastNameAsync(string lastName, CancellationToken cancellationToken = default);
@@ -37,6 +48,14 @@ public interface ITableEmployeeRepository : IRepository<Table_Employee>
 
     // Batch operations
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
+
+    string StatusInfoDefault { get; }
+
+    string AccessLevelDefault { get; }
+
+    Task<int> GetMaxIdAsync(CancellationToken cancellationToken = default);
+
+    Task<int> GetNextIdAsync(CancellationToken cancellationToken = default);
 }
 
 
@@ -46,6 +65,40 @@ public interface ITableEmployeeRepository : IRepository<Table_Employee>
 /// </summary>
 public class TableEmployeeRepository : Repository<Table_Employee>, ITableEmployeeRepository
 {
+    static readonly string _statusInfoDefault = "Locked␟True␞Selected␟False␞Unerasable␟True␞Color␟-36865␞Note␟Null␞HeaderInf␟Null␞";
+
+    public string StatusInfoDefault
+    {
+        get
+        {
+            return _statusInfoDefault;
+        }
+    }
+
+    static readonly string _accessLevelDefault = "AccessLevel:3;AutoSizeColumnsMode:1;EditMode:3;EnableTreeViewSetting:1";
+
+    public string AccessLevelDefault
+    {
+        get
+        {
+            return _accessLevelDefault;
+        }
+    }
+
+    public async Task<int> GetMaxIdAsync(CancellationToken cancellationToken = default)
+    {
+        return await _dbSet.AnyAsync(cancellationToken)?
+               await _dbSet.MaxAsync(e => e.ID, cancellationToken)
+              : 0;
+    }
+
+    public async Task<int> GetNextIdAsync(CancellationToken cancellationToken = default)
+    {
+        return await _dbSet.AnyAsync(cancellationToken)?
+               await _dbSet.MaxAsync(e => e.ID, cancellationToken) + 1
+               : 1;
+    }
+
     public TableEmployeeRepository(ProductionInventoryContext context) : base(context)
     {
     }
@@ -76,6 +129,14 @@ public class TableEmployeeRepository : Repository<Table_Employee>, ITableEmploye
             .ToListAsync(cancellationToken);
     }
 
+    /// <summary>
+    /// Adds a new entity to the Table_Employees table and saves changes to the database.
+    /// No need call SaveChangesAsync() after this method, it will be called in the service layer after all operations are done.
+    /// </summary>
+    /// <param name="entity">The entity to add.</param>
+    /// <param name="cancellationToken">A cancellation token.</param>
+    /// <returns>The added entity.</returns>
+    /// <exception cref="ArgumentNullException"></exception>
     public async Task<Table_Employee> AddAsync(Table_Employee entity, CancellationToken cancellationToken = default)
     {
         if (entity == null)
@@ -85,7 +146,19 @@ public class TableEmployeeRepository : Repository<Table_Employee>, ITableEmploye
         await _context.SaveChangesAsync(cancellationToken);
         return entity;
     }
-        
+
+    /// <summary>
+    /// Updates an existing entity in the Table_Employees table.
+    /// It first checks if the entity exists in the database by its primary key (Index).
+    /// If it doesn't exist, it throws a KeyNotFoundException. If it exists, it updates
+    /// the tracked entity with the new values and saves the changes to the database.
+    /// No need call SaveChangesAsync() after this method, it will be called in the service layer after all operations are done.
+    /// </summary>
+    /// <param name="entity">The entity to update.</param>
+    /// <param name="cancellationToken">A cancellation token.</param>
+    /// <returns>A task representing the asynchronous operation.</returns>
+    /// <exception cref="ArgumentNullException"></exception>
+    /// <exception cref="KeyNotFoundException"></exception>
     public async Task UpdateAsync(Table_Employee entity, CancellationToken cancellationToken = default)
     {
         if (entity == null)
@@ -103,9 +176,17 @@ public class TableEmployeeRepository : Repository<Table_Employee>, ITableEmploye
         await _context.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task DeleteAsync(int id, CancellationToken cancellationToken = default)
+    /// <summary>
+    /// Deletes an entity from the Table_Employees table by its Index. If the entity is found,
+    /// it is removed and changes are saved to the database. If the entity is not found, no action is taken.
+    /// No need call SaveChangesAsync() after this method, it will be called in the service layer after all operations are done.
+    /// </summary>
+    /// <param name="index">The Index of the entity to delete.</param>
+    /// <param name="cancellationToken">A cancellation token.</param>
+    /// <returns>A task representing the asynchronous operation.</returns>
+    public async Task DeleteByIdAsync(int index, CancellationToken cancellationToken = default)
     {
-        var entity = await _context.Table_Employees.FindAsync(new object[] { id }, cancellationToken);
+        var entity = await _context.Table_Employees.FindAsync(new object[] { index }, cancellationToken);
         if (entity != null)
         {
             _context.Table_Employees.Remove(entity);

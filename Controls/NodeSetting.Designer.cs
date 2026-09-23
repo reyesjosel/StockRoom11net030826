@@ -35,11 +35,11 @@ namespace StockRoom11net.Controls
             contextMenuStrip_AvailableDepartmentsSetting = new ContextMenuStrip(components);
             toolStripMenuItem_AvailableToAllDepartments = new ToolStripMenuItem();
             toolStripMenuItem_UnavailableToAllDepartements = new ToolStripMenuItem();
-            customTabControl = new CustomTabControl();
+            customTabControl_NodeSetting = new CustomTabControl();
             tabPage_Properties = new TabPage();
             panel3 = new Panel();
             queryBuilder = new QueryBuilder();
-            panel1 = new Panel();
+            panel_Spacer = new Panel();
             grouper_Name = new CodeVendor.Controls.Grouper();
             panel9 = new Panel();
             panel11 = new Panel();
@@ -77,7 +77,7 @@ namespace StockRoom11net.Controls
             panel_SeletaDepartmentWherethisMenuWillbeAvailable = new Panel();
             label_SeletDepartment = new Label();
             contextMenuStrip_AvailableDepartmentsSetting.SuspendLayout();
-            customTabControl.SuspendLayout();
+            customTabControl_NodeSetting.SuspendLayout();
             tabPage_Properties.SuspendLayout();
             panel3.SuspendLayout();
             grouper_Name.SuspendLayout();
@@ -123,29 +123,27 @@ namespace StockRoom11net.Controls
             toolStripMenuItem_UnavailableToAllDepartements.Text = "Unavailable to all departements";
             toolStripMenuItem_UnavailableToAllDepartements.ToolTipText = "This is a global setting, select to make this menu unavailable to all departments.";
             // 
-            // customTabControl
+            // customTabControl_NodeSetting
             // 
-            customTabControl.Controls.Add(tabPage_Properties);
-            customTabControl.Controls.Add(tabPage_CustomNodeResponse);
-            customTabControl.DisplayStyle = TabStyle.Angled;
-            // 
-            // 
-            // 
-            customTabControl.DisplayStyleProvider.BorderColor = Color.DarkGray;
-            customTabControl.DisplayStyleProvider.BorderColorHot = Color.DarkGray;
-            customTabControl.DisplayStyleProvider.BorderColorSelected = Color.FromArgb(127, 157, 185);
-            customTabControl.DisplayStyleProvider.CloserColor = Color.DarkGray;
-            customTabControl.DisplayStyleProvider.Radius = 10;
-            customTabControl.DisplayStyleProvider.TextColor = Color.Black;
-            customTabControl.DisplayStyleProvider.TextColorDisabled = Color.DarkGray;
-            customTabControl.DisplayStyleProvider.TextColorSelected = Color.Black;
-            customTabControl.Dock = DockStyle.Fill;
-            customTabControl.Location = new Point(0, 0);
-            customTabControl.Margin = new Padding(0);
-            customTabControl.Name = "customTabControl";
-            customTabControl.SelectedIndex = 0;
-            customTabControl.Size = new Size(733, 560);
-            customTabControl.TabIndex = 17;
+            customTabControl_NodeSetting.Alignment = TabAlignment.Right;
+            customTabControl_NodeSetting.AlignmentExtended = TabAlignment.Right;
+            customTabControl_NodeSetting.AppearanceExtended = TabAppearance.Normal;
+            customTabControl_NodeSetting.Controls.Add(tabPage_Properties);
+            customTabControl_NodeSetting.Controls.Add(tabPage_CustomNodeResponse);
+            customTabControl_NodeSetting.DisplayStyle = TabStyle.Angled;
+            customTabControl_NodeSetting.Dock = DockStyle.Fill;
+            customTabControl_NodeSetting.HotTrack = true;
+            customTabControl_NodeSetting.HotTrackExtended = true;
+            customTabControl_NodeSetting.Location = new Point(0, 0);
+            customTabControl_NodeSetting.Margin = new Padding(0);
+            customTabControl_NodeSetting.Multiline = true;
+            customTabControl_NodeSetting.MultilineExtended = true;
+            customTabControl_NodeSetting.Name = "customTabControl_NodeSetting";
+            customTabControl_NodeSetting.Padding = new Point(14, 3);
+            customTabControl_NodeSetting.PaddingExtended = new Point(10, 3);
+            customTabControl_NodeSetting.SelectedIndex = 0;
+            customTabControl_NodeSetting.Size = new Size(892, 471);
+            customTabControl_NodeSetting.TabIndex = 17;
             // 
             // tabPage_Properties
             // 
@@ -153,11 +151,11 @@ namespace StockRoom11net.Controls
             tabPage_Properties.Location = new Point(4, 4);
             tabPage_Properties.Margin = new Padding(4, 5, 4, 5);
             tabPage_Properties.Name = "tabPage_Properties";
-            tabPage_Properties.Size = new Size(725, 530);
+            tabPage_Properties.Size = new Size(859, 463);
             tabPage_Properties.TabIndex = 0;
             tabPage_Properties.Text = "Properties";
             tabPage_Properties.UseVisualStyleBackColor = true;
-            tabPage_Properties.Click += tabPage_Properties_Click;
+            tabPage_Properties.Click += TabPage_Properties_Click;
             // 
             // panel3
             // 
@@ -165,46 +163,43 @@ namespace StockRoom11net.Controls
             panel3.AutoSize = true;
             panel3.AutoSizeMode = AutoSizeMode.GrowAndShrink;
             panel3.Controls.Add(queryBuilder);
-            panel3.Controls.Add(panel1);
+            panel3.Controls.Add(panel_Spacer);
             panel3.Controls.Add(grouper_Name);
             panel3.Dock = DockStyle.Fill;
             panel3.Location = new Point(0, 0);
             panel3.Margin = new Padding(4, 5, 4, 5);
             panel3.Name = "panel3";
             panel3.Padding = new Padding(8);
-            panel3.Size = new Size(725, 530);
+            panel3.Size = new Size(859, 463);
             panel3.TabIndex = 18;
             // 
             // queryBuilder
             // 
             queryBuilder.AutoSize = true;
-            queryBuilder.AutoSizeMode = AutoSizeMode.GrowAndShrink;
             queryBuilder.Dock = DockStyle.Top;
-            queryBuilder.Location = new Point(8, 218);
+            queryBuilder.Location = new Point(8, 228);
             queryBuilder.Margin = new Padding(8);
-            queryBuilder.MinimumSize = new Size(200, 100);
+            queryBuilder.MinimumSize = new Size(0, 200);
             queryBuilder.Name = "queryBuilder";
-            queryBuilder.Size = new Size(709, 203);
+            queryBuilder.Size = new Size(843, 210);
             queryBuilder.TabIndex = 15;
             // 
-            // panel1
+            // panel_Spacer
             // 
-            panel1.AutoSize = true;
-            panel1.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            panel1.BackColor = Color.Transparent;
-            panel1.Dock = DockStyle.Top;
-            panel1.Location = new Point(8, 208);
-            panel1.Margin = new Padding(4, 5, 4, 5);
-            panel1.MaximumSize = new Size(0, 66);
-            panel1.MinimumSize = new Size(0, 10);
-            panel1.Name = "panel1";
-            panel1.Size = new Size(709, 10);
-            panel1.TabIndex = 17;
+            panel_Spacer.AutoSize = true;
+            panel_Spacer.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            panel_Spacer.BackColor = Color.Transparent;
+            panel_Spacer.Dock = DockStyle.Top;
+            panel_Spacer.Location = new Point(8, 218);
+            panel_Spacer.Margin = new Padding(4, 5, 4, 5);
+            panel_Spacer.MaximumSize = new Size(0, 66);
+            panel_Spacer.MinimumSize = new Size(0, 10);
+            panel_Spacer.Name = "panel_Spacer";
+            panel_Spacer.Size = new Size(843, 10);
+            panel_Spacer.TabIndex = 17;
             // 
             // grouper_Name
             // 
-            grouper_Name.AutoSize = true;
-            grouper_Name.AutoSizeMode = AutoSizeMode.GrowAndShrink;
             grouper_Name.BackgroundColor = Color.Silver;
             grouper_Name.BackgroundGradientColor = Color.DimGray;
             grouper_Name.BackgroundGradientMode = CodeVendor.Controls.Grouper.GroupBoxGradientMode.Vertical;
@@ -214,11 +209,11 @@ namespace StockRoom11net.Controls
             grouper_Name.Controls.Add(panel7);
             grouper_Name.CustomGroupBoxColor = SystemColors.Control;
             grouper_Name.Dock = DockStyle.Top;
-            grouper_Name.GroupImage = null;
             grouper_Name.GroupTitle = "Name";
             grouper_Name.Location = new Point(8, 8);
             grouper_Name.Margin = new Padding(4, 5, 4, 8);
-            grouper_Name.MinimumSize = new Size(200, 200);
+            grouper_Name.MaximumSize = new Size(0, 220);
+            grouper_Name.MinimumSize = new Size(200, 210);
             grouper_Name.Name = "grouper_Name";
             grouper_Name.Padding = new Padding(5, 25, 5, 5);
             grouper_Name.PaintGroupBox = true;
@@ -226,7 +221,7 @@ namespace StockRoom11net.Controls
             grouper_Name.ShadowColor = Color.DarkGray;
             grouper_Name.ShadowControl = false;
             grouper_Name.ShadowThickness = 3;
-            grouper_Name.Size = new Size(709, 200);
+            grouper_Name.Size = new Size(843, 210);
             grouper_Name.TabIndex = 13;
             // 
             // panel9
@@ -238,7 +233,7 @@ namespace StockRoom11net.Controls
             panel9.Margin = new Padding(10, 3, 3, 3);
             panel9.Name = "panel9";
             panel9.Padding = new Padding(0, 0, 0, 5);
-            panel9.Size = new Size(269, 170);
+            panel9.Size = new Size(403, 180);
             panel9.TabIndex = 17;
             // 
             // panel11
@@ -246,13 +241,13 @@ namespace StockRoom11net.Controls
             panel11.BackColor = Color.Transparent;
             panel11.Controls.Add(textBox_Description);
             panel11.Controls.Add(label_Description);
-            panel11.Dock = DockStyle.Bottom;
-            panel11.Location = new Point(0, 65);
+            panel11.Dock = DockStyle.Top;
+            panel11.Location = new Point(0, 60);
             panel11.Margin = new Padding(4, 5, 4, 5);
             panel11.MinimumSize = new Size(0, 50);
             panel11.Name = "panel11";
             panel11.Padding = new Padding(8);
-            panel11.Size = new Size(269, 100);
+            panel11.Size = new Size(403, 100);
             panel11.TabIndex = 19;
             // 
             // textBox_Description
@@ -263,7 +258,7 @@ namespace StockRoom11net.Controls
             textBox_Description.Margin = new Padding(5);
             textBox_Description.Multiline = true;
             textBox_Description.Name = "textBox_Description";
-            textBox_Description.Size = new Size(253, 67);
+            textBox_Description.Size = new Size(387, 67);
             textBox_Description.TabIndex = 11;
             // 
             // label_Description
@@ -289,7 +284,7 @@ namespace StockRoom11net.Controls
             panel10.MinimumSize = new Size(0, 50);
             panel10.Name = "panel10";
             panel10.Padding = new Padding(8);
-            panel10.Size = new Size(269, 60);
+            panel10.Size = new Size(403, 60);
             panel10.TabIndex = 18;
             // 
             // textBox_Title
@@ -299,7 +294,7 @@ namespace StockRoom11net.Controls
             textBox_Title.Location = new Point(8, 25);
             textBox_Title.Margin = new Padding(5);
             textBox_Title.Name = "textBox_Title";
-            textBox_Title.Size = new Size(253, 29);
+            textBox_Title.Size = new Size(387, 29);
             textBox_Title.TabIndex = 11;
             // 
             // label1
@@ -327,7 +322,7 @@ namespace StockRoom11net.Controls
             panel7.Location = new Point(5, 25);
             panel7.Margin = new Padding(0);
             panel7.Name = "panel7";
-            panel7.Size = new Size(430, 170);
+            panel7.Size = new Size(430, 180);
             panel7.TabIndex = 16;
             // 
             // panel8
@@ -339,7 +334,7 @@ namespace StockRoom11net.Controls
             panel8.Margin = new Padding(3, 3, 10, 3);
             panel8.Name = "panel8";
             panel8.Padding = new Padding(0, 5, 0, 0);
-            panel8.Size = new Size(140, 170);
+            panel8.Size = new Size(140, 180);
             panel8.TabIndex = 17;
             // 
             // pictureBox_Image
@@ -365,7 +360,7 @@ namespace StockRoom11net.Controls
             contextMenuStripNodeSetting.Name = "PreviewDataGridViewContextMenuStrip";
             contextMenuStripNodeSetting.RenderMode = ToolStripRenderMode.Professional;
             contextMenuStripNodeSetting.ShowImageMargin = false;
-            contextMenuStripNodeSetting.Size = new Size(160, 52);
+            contextMenuStripNodeSetting.Size = new Size(160, 30);
             contextMenuStripNodeSetting.Text = "Node Setting";
             contextMenuStripNodeSetting.Opening += ContextMenuStripNodeSetting_Opening;
             // 
@@ -460,7 +455,7 @@ namespace StockRoom11net.Controls
             tabPage_CustomNodeResponse.Margin = new Padding(4, 5, 4, 5);
             tabPage_CustomNodeResponse.Name = "tabPage_CustomNodeResponse";
             tabPage_CustomNodeResponse.Padding = new Padding(4, 5, 4, 5);
-            tabPage_CustomNodeResponse.Size = new Size(192, 65);
+            tabPage_CustomNodeResponse.Size = new Size(860, 463);
             tabPage_CustomNodeResponse.TabIndex = 1;
             tabPage_CustomNodeResponse.Text = "Custom Node Response";
             tabPage_CustomNodeResponse.UseVisualStyleBackColor = true;
@@ -480,7 +475,6 @@ namespace StockRoom11net.Controls
             grouperSetDepartmentFilter.CustomGroupBoxColor = Color.Cornsilk;
             grouperSetDepartmentFilter.Dock = DockStyle.Top;
             grouperSetDepartmentFilter.Font = new Font("Segoe UI", 12F);
-            grouperSetDepartmentFilter.GroupImage = null;
             grouperSetDepartmentFilter.GroupTitle = "";
             grouperSetDepartmentFilter.Location = new Point(4, 307);
             grouperSetDepartmentFilter.Margin = new Padding(4, 5, 4, 5);
@@ -492,7 +486,7 @@ namespace StockRoom11net.Controls
             grouperSetDepartmentFilter.ShadowColor = Color.DarkGray;
             grouperSetDepartmentFilter.ShadowControl = false;
             grouperSetDepartmentFilter.ShadowThickness = 3;
-            grouperSetDepartmentFilter.Size = new Size(600, 208);
+            grouperSetDepartmentFilter.Size = new Size(852, 208);
             grouperSetDepartmentFilter.TabIndex = 16;
             // 
             // label_FilterString
@@ -526,7 +520,7 @@ namespace StockRoom11net.Controls
             buttonFilter.TabIndex = 26;
             buttonFilter.Text = "  Hide    Filter";
             buttonFilter.UseVisualStyleBackColor = true;
-            buttonFilter.Click += buttonFilter_Click;
+            buttonFilter.Click += ButtonFilter_Click;
             // 
             // panelSetDepartmentFilter
             // 
@@ -539,7 +533,7 @@ namespace StockRoom11net.Controls
             panelSetDepartmentFilter.Margin = new Padding(4, 5, 4, 5);
             panelSetDepartmentFilter.Name = "panelSetDepartmentFilter";
             panelSetDepartmentFilter.Padding = new Padding(8);
-            panelSetDepartmentFilter.Size = new Size(570, 84);
+            panelSetDepartmentFilter.Size = new Size(822, 84);
             panelSetDepartmentFilter.TabIndex = 25;
             // 
             // labelSetDepartmentFilter
@@ -550,7 +544,7 @@ namespace StockRoom11net.Controls
             labelSetDepartmentFilter.Location = new Point(8, 8);
             labelSetDepartmentFilter.Margin = new Padding(4, 0, 4, 4);
             labelSetDepartmentFilter.Name = "labelSetDepartmentFilter";
-            labelSetDepartmentFilter.Size = new Size(552, 66);
+            labelSetDepartmentFilter.Size = new Size(804, 66);
             labelSetDepartmentFilter.TabIndex = 18;
             labelSetDepartmentFilter.Text = resources.GetString("labelSetDepartmentFilter.Text");
             // 
@@ -566,7 +560,6 @@ namespace StockRoom11net.Controls
             grouper_SettingAvailableMenuInTheseDepartments.CustomGroupBoxColor = Color.Cornsilk;
             grouper_SettingAvailableMenuInTheseDepartments.Dock = DockStyle.Top;
             grouper_SettingAvailableMenuInTheseDepartments.Font = new Font("Segoe UI", 12F);
-            grouper_SettingAvailableMenuInTheseDepartments.GroupImage = null;
             grouper_SettingAvailableMenuInTheseDepartments.GroupTitle = "Setting available menu in these departments.";
             grouper_SettingAvailableMenuInTheseDepartments.Location = new Point(4, 5);
             grouper_SettingAvailableMenuInTheseDepartments.Margin = new Padding(4, 5, 4, 5);
@@ -578,7 +571,7 @@ namespace StockRoom11net.Controls
             grouper_SettingAvailableMenuInTheseDepartments.ShadowColor = Color.DarkGray;
             grouper_SettingAvailableMenuInTheseDepartments.ShadowControl = false;
             grouper_SettingAvailableMenuInTheseDepartments.ShadowThickness = 3;
-            grouper_SettingAvailableMenuInTheseDepartments.Size = new Size(600, 302);
+            grouper_SettingAvailableMenuInTheseDepartments.Size = new Size(852, 302);
             grouper_SettingAvailableMenuInTheseDepartments.TabIndex = 15;
             // 
             // flowLayoutPanel_AvailableDepartments
@@ -593,7 +586,7 @@ namespace StockRoom11net.Controls
             flowLayoutPanel_AvailableDepartments.Location = new Point(15, 93);
             flowLayoutPanel_AvailableDepartments.Margin = new Padding(4, 5, 4, 5);
             flowLayoutPanel_AvailableDepartments.Name = "flowLayoutPanel_AvailableDepartments";
-            flowLayoutPanel_AvailableDepartments.Size = new Size(570, 193);
+            flowLayoutPanel_AvailableDepartments.Size = new Size(822, 193);
             flowLayoutPanel_AvailableDepartments.TabIndex = 16;
             // 
             // checkBox1
@@ -661,7 +654,7 @@ namespace StockRoom11net.Controls
             panel_SeletaDepartmentWherethisMenuWillbeAvailable.Margin = new Padding(4, 5, 4, 5);
             panel_SeletaDepartmentWherethisMenuWillbeAvailable.Name = "panel_SeletaDepartmentWherethisMenuWillbeAvailable";
             panel_SeletaDepartmentWherethisMenuWillbeAvailable.Padding = new Padding(8, 8, 8, 2);
-            panel_SeletaDepartmentWherethisMenuWillbeAvailable.Size = new Size(570, 45);
+            panel_SeletaDepartmentWherethisMenuWillbeAvailable.Size = new Size(822, 45);
             panel_SeletaDepartmentWherethisMenuWillbeAvailable.TabIndex = 25;
             // 
             // label_SeletDepartment
@@ -678,18 +671,18 @@ namespace StockRoom11net.Controls
             // 
             // NodeSetting
             // 
-            AutoScaleDimensions = new SizeF(96F, 96F);
-            AutoScaleMode = AutoScaleMode.Dpi;
+            AutoScaleDimensions = new SizeF(9F, 20F);
+            AutoScaleMode = AutoScaleMode.Font;
             AutoScroll = true;
             AutoScrollMinSize = new Size(730, 459);
-            AutoSizeMode = AutoSizeMode.GrowAndShrink;
             BackColor = Color.Transparent;
-            Controls.Add(customTabControl);
+            Controls.Add(customTabControl_NodeSetting);
+            DoubleBuffered = true;
             Margin = new Padding(4, 5, 4, 5);
             Name = "NodeSetting";
-            Size = new Size(733, 560);
+            Size = new Size(892, 471);
             contextMenuStrip_AvailableDepartmentsSetting.ResumeLayout(false);
-            customTabControl.ResumeLayout(false);
+            customTabControl_NodeSetting.ResumeLayout(false);
             tabPage_Properties.ResumeLayout(false);
             tabPage_Properties.PerformLayout();
             panel3.ResumeLayout(false);
@@ -723,7 +716,7 @@ namespace StockRoom11net.Controls
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip_AvailableDepartmentsSetting;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_AvailableToAllDepartments;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_UnavailableToAllDepartements;
-        private CustomTabControl customTabControl;
+        private CustomTabControl customTabControl_NodeSetting;
         private TabPage tabPage_Properties;
         private Panel panel3;
         private CodeVendor.Controls.Grouper grouper_Name;
@@ -736,7 +729,7 @@ namespace StockRoom11net.Controls
         private Label label1;
         private Label label_Node_Image;
         private PictureBox pictureBox_Image;
-        private Panel panel1;
+        private Panel panel_Spacer;
         private TabPage tabPage_CustomNodeResponse;
         private CodeVendor.Controls.Grouper grouper_SettingAvailableMenuInTheseDepartments;
         private FlowLayoutPanel flowLayoutPanel_AvailableDepartments;

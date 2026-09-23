@@ -920,12 +920,15 @@ namespace StockRoom11net.Controls
             return result;
         }
 
-        public static SortedDictionary<string, int> GetDict(string stringDict)
+        public static SortedDictionary<string, int> GetDict(string stringDict, Dictionary<string, int> requiredKeysWithDefaults = null)
         {
             SortedDictionary<string, int> dict = new SortedDictionary<string, int>();
 
             if (string.IsNullOrEmpty(stringDict) || string.IsNullOrWhiteSpace(stringDict))
+            {
+                EnsureRequiredKeys(dict, requiredKeysWithDefaults);
                 return dict;
+            }
 
             // Divide all pairs (remove empty strings)
             string[] allRecords = new string[] { stringDict };
@@ -976,7 +979,27 @@ namespace StockRoom11net.Controls
                     dict.Add(projectNameValue[0].Trim(), value);
                 }
             }
+
+            EnsureRequiredKeys(dict, requiredKeysWithDefaults);
+
             return dict;
+        }
+
+        /// <summary>
+        /// Adds any missing required keys (with their default values) to the dictionary.
+        /// This guards against older/incomplete persisted data (e.g. AccessLevel strings)
+        /// that predate a key being introduced, preventing KeyNotFoundException at lookup time.
+        /// </summary>
+        private static void EnsureRequiredKeys(SortedDictionary<string, int> dict, Dictionary<string, int> requiredKeysWithDefaults)
+        {
+            if (requiredKeysWithDefaults == null)
+                return;
+
+            foreach (var requiredKey in requiredKeysWithDefaults)
+            {
+                if (!dict.ContainsKey(requiredKey.Key))
+                    dict.Add(requiredKey.Key, requiredKey.Value);
+            }
         }
 
         /// <summary>

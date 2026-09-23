@@ -17,7 +17,6 @@ public partial interface ITableStockRoomTreeViewService
     Task<DataTable> LoadStockRoomsTreeViewDataTableAsync();
     Task<BindingList<Table_StockRoom_TreeView>> LoadStockRoomsTreeViewAsync(int? count = null);
     Task<Table_StockRoom_TreeView?> GetByIdAsync(int id, CancellationToken cancellationToken = default);
-    Task<IEnumerable<Table_StockRoom_TreeView>> GetAllAsync(CancellationToken cancellationToken = default);
     Task<Table_StockRoom_TreeView> CreateAsync(Table_StockRoom_TreeView entity, CancellationToken cancellationToken = default);
     Task<Table_StockRoom_TreeView> UpdateAsync(Table_StockRoom_TreeView entity, CancellationToken cancellationToken = default);
     Task<bool> DeleteAsync(int id, CancellationToken cancellationToken = default);
@@ -67,11 +66,6 @@ public partial class TableStockRoomTreeViewService : ITableStockRoomTreeViewServ
             throw new ArgumentException("Id must be greater than zero.", nameof(id));
 
         return await _unitOfWork.TableStockRoomTreeViewRepository.GetByIDAsync(id, cancellationToken);
-    }
-
-    public async Task<IEnumerable<Table_StockRoom_TreeView>> GetAllAsync(CancellationToken cancellationToken = default)
-    {
-        return await _unitOfWork.TableStockRoomTreeViewRepository.GetAllAsync(cancellationToken);
     }
 
     public async Task<Table_StockRoom_TreeView> CreateAsync(Table_StockRoom_TreeView entity, CancellationToken cancellationToken = default)

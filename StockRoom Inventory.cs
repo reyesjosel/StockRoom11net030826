@@ -47,7 +47,24 @@ namespace StockRoom11net
         public BindingSourceValidating<Table_StockRoom> _bindingSourceStockRoomVal;
         public BindingSourceValidating<Table_Base_TreeView> _bindingSourceStockRoomTreeViewVal;
 
-        DataColumnCollection _stockroomColumns;
+        private PropertyDescriptorCollection _columnsCollectionStockRoom;
+        /// <summary>
+        /// EF Core migration: POCO/BindingList equivalent of DataColumnCollection.
+        /// Keeps a record of all "columns" (properties) existent in the Table_StockRoom entity,
+        /// obtained from _tableStockRoomService's data instead of a DataTable.
+        /// </summary>
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public PropertyDescriptorCollection ColumnsCollectionStockRoom
+        {
+            get
+            {
+                return _columnsCollectionStockRoom;
+            }
+            set
+            {
+                _columnsCollectionStockRoom = value;
+            }
+        }
 
         bool _settingMode = false;
         /// <summary>
@@ -123,7 +140,7 @@ namespace StockRoom11net
 
             if (_employeesService.CurrentEmployeeLogIn.IsManager && dataGridViewExtended.IsColumnVisible("Location"))
             {
-                if (_iappService.CurrentColumnActive != null && _iappService.CurrentColumnActive.ColumnName.Contains("Location"))
+                if (_iappService.CurrentColumnActive != null && _iappService.CurrentColumnActive.Name.Contains("Location"))
                 {
                     //_iappService.CurrentRowViewActive.Row[_iappService.CurrentColumnActive.ColumnName] = e.BarcodeData;
                     TabControl_Inventory.SelectTab("tabPage_Location");
@@ -280,15 +297,15 @@ namespace StockRoom11net
 
                 _employeeName = _currentEmployeeLogIn.Name;
                 _employeeLastName = _currentEmployeeLogIn.LastName;
-                _employeeEditMode = _currentEmployeeLogIn.EmployeeEditMode;
-                _employeeAccessLevel = _currentEmployeeLogIn.EmployeeAccessLevel;
-                EmployeeEnableTreeViewSetting = _currentEmployeeLogIn.EmployeeEnableTreeViewSetting;
+                _employeeEditMode = _currentEmployeeLogIn.EditMode;
+                _employeeAccessLevel = _currentEmployeeLogIn.AccessLevel;
+                EmployeeEnableTreeViewSetting = _currentEmployeeLogIn.EnableTreeViewSetting;
 
                 UserSetting userSetting = _currentEmployeeLogIn.UserSettingEntity(userSettingName);
 
                 internalResizeEvent = true;
-                splitContainerVertical.SplitterDistance = userSetting.SplitterVertical;
-                splitContainerHorizontal.SplitterDistance = userSetting.SplitterHorizontal;
+                splitContainer_Vertical.SplitterDistance = userSetting.SplitterVertical;
+                splitContainer_Horizontal.SplitterDistance = userSetting.SplitterHorizontal;
             }
         }
 
@@ -308,6 +325,24 @@ namespace StockRoom11net
         public StockRoom_Inventory()
         {
             InitializeComponent();
+
+#if DEBUG
+            System.Diagnostics.Debug.WriteLine(
+                "[DI WARNING] Employees_Management parameterless constructor was called. " +
+                "This usually means a required service (ITableEmployeeService, ITableEmployeeTreeViewService, or IAppService) " +
+                "is missing from the DI container. Register the missing service in Data/DependencyInjection.cs.");
+
+            MessageBox.Show(
+                "Employees_Management was created using its parameterless constructor.\n\n" +
+                "This means DI could not resolve one or more required services:\n" +
+                "  - ITableEmployeeService\n" +
+                "  - ITableEmployeeTreeViewService\n" +
+                "  - IAppService\n\n" +
+                "Register the missing service in Data/DependencyInjection.cs.",
+                "DI Registration Missing",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Warning);
+#endif
         }
 
         public StockRoom_Inventory(ITableEmployeeService employeesService,
@@ -326,7 +361,6 @@ namespace StockRoom11net
                 SaveUserSettingTimer?.Dispose();
             };
 
-            AutoScaleMode = AutoScaleMode.Dpi;
             DockAreas = WinFormsUI.Docking.DockAreas.Document | WinFormsUI.Docking.DockAreas.Float;
             Title = "StockRoom Inventory";
 
@@ -351,6 +385,10 @@ namespace StockRoom11net
 
             // ✅ Pass unitOfWork to the EXISTING designer instance, don't replace it
             dataTreeViewToAdd_Cancel_Delete.SetUnitOfWork(_unitOfWork);
+
+            // POCO equivalent of DataColumnCollection: exposes the "columns" (properties)
+            // of Table_StockRoom for UI code that previously enumerated table.Columns.
+            ColumnsCollectionStockRoom = TypeDescriptor.GetProperties(typeof(Table_StockRoom));
 
             InitializeBlazorWebView();
         }
@@ -432,49 +470,7 @@ namespace StockRoom11net
                 return;
             }
         }
-
-        /*  void InitializeBlazorWebView()
-          {
-              #region"BlazorWebView"
-
-              var serviceCollection = new ServiceCollection();
-              serviceCollection.AddWindowsFormsBlazorWebView();
-              serviceCollection.AddSingleton<ITimeLineService>(_itimeLineService);
-              serviceCollection.AddLogging(builder =>             // Add logging services and configure them
-              {
-                  builder.SetMinimumLevel(LogLevel.Information);  // Set a minimum log level
-                  builder.AddConsole();                           // Add the Console logging provider
-                  builder.AddDebug();                             // Add the Debug logging provider
-              });
-
-              // Build the service provider
-              var serviceProvider = serviceCollection.BuildServiceProvider();
-
-              // Get an ILogger instance
-              var logger = serviceProvider.GetRequiredService<ILogger<StockRoom_Inventory>>();
-              // Log a message
-              logger.LogInformation("Application started.");
-
-              blazorWebView1.HostPage = "wwwroot\\index.html";
-              blazorWebView1.Services = serviceProvider;
-              blazorWebView1.RootComponents.Add<Counter>("#app");
-
-              blazorWebView2.HostPage = "wwwroot\\index.html";
-              blazorWebView2.Services = serviceProvider;
-              blazorWebView2.RootComponents.Add<App>("#app");
-
-              AppDomain.CurrentDomain.UnhandledException += (sender, error) =>
-              {
-  #if DEBUG
-                  MessageBox.Show(text: error.ExceptionObject.ToString(), caption: "Error");
-  #else
-                          MessageBox.Show(text: "An error has occurred.", caption: "Error");
-  #endif
-              };
-
-              #endregion"BlazorWebView"                
-          }*/
-
+         
         /// <summary>
         /// Since we are using EF Core, we will load data in the LoadDataEF() method.
         /// </summary>
@@ -896,14 +892,7 @@ namespace StockRoom11net
                 MessageDebugPosition = "InitializeTab_AddNewItem";
                 InitializeTab_AddNewItem();
 
-                splitContainerHorizontal.SplitterDistance = (int)(Height * 0.65);
-
-                // Track a metric
-                Program.Telemetry.TrackEvent("StockRoomInventory shown at", new Dictionary<string, string>
-                {
-                    { "Date", DateTime.Now.ToShortDateString() },
-                    { "Time", DateTime.Now.ToShortTimeString() }
-                });
+                splitContainer_Horizontal.SplitterDistance = (int)(Height * 0.65);                                
             }
             catch (Exception error)
             {
@@ -978,7 +967,7 @@ namespace StockRoom11net
 
                 if (_nodeSettingIsDone & TabControl_Inventory.SelectedTab.Name == "tabPage_TreeViewSetting")
                 {
-                    _nodeSetting.CurrentNode = e.CurrentNode;
+                    _nodeSetting.CurrentItem = e.CurrentNode;
                 }
 
                 #endregion"tabPage_DataTreeViewSetting"
@@ -1398,6 +1387,9 @@ namespace StockRoom11net
         {
             try
             {
+                if (dataGridViewExtended.DataSource == _bindingSourceStockRoomTreeViewVal)
+                    return;
+
                 // Trim whitespace for accurate comparison, we use spaces in the tab text for alignment, so we need to ignore them.
                 // TODO: We need improve this logic to avoid relying on tab text, maybe use a Tag property or a dedicated state variable.
                 string currentTabText = TabControl_Inventory.SelectedTab.Text.Trim();
@@ -1412,7 +1404,7 @@ namespace StockRoom11net
                 }
 
                 // On each row change, if we are on the Note Editor tab, switch to Pictures tab and hide Note Editor tab to avoid confusion.
-                MessageDebugPosition = "TabControl_Inventory.SelectedTab.Name";
+                MessageDebugPosition = "customTabControl.SelectedTab.Name";
                 if (currentTabText.Contains("Note Editor"))
                 {
                     TabControl_Inventory.SelectTab(nameof(tabPage_Pictures));
@@ -1647,6 +1639,9 @@ namespace StockRoom11net
 
         void DataSheetProcess()
         {
+            if(dataGridViewExtended.DataSource == _bindingSourceStockRoomTreeViewVal)
+                return;
+
             MessageDebugPosition = "DataSheetProcess()";
             string dataSheetInfo = dataGridViewExtended.CurrentRowViewActive["DataSheet_File"]?.ToString();
 
@@ -1731,24 +1726,22 @@ namespace StockRoom11net
         Plexiglass ShowPlexiglassRectangle;
         void InitTabControlExtend()
         {
-            splitContainerHorizontal.SplitterWidth = 3;
-            splitContainerVertical.SplitterWidth = 3;
-            splitContainerHorizontal.MouseDown += SplitContainerHorizontal_MouseDown;
-            splitContainerVertical.MouseDown += SplitContainerVertical_MouseDown;
-            splitContainerHorizontal.SplitterMoved += SplitContainerHorizontal_SplitterMoved;
-            splitContainerVertical.SplitterMoved += SplitContainerVertical_SplitterMoved;
+            splitContainer_Horizontal.MouseDown += SplitContainerHorizontal_MouseDown;
+            splitContainer_Vertical.MouseDown += SplitContainerVertical_MouseDown;
+            splitContainer_Horizontal.SplitterMoved += SplitContainerHorizontal_SplitterMoved;
+            splitContainer_Vertical.SplitterMoved += SplitContainerVertical_SplitterMoved;
 
-            TabControl_Inventory.Alignment = TabAlignment.Bottom;
+            //TabControl_Inventory.Alignment = TabAlignment.Bottom;
 
-            // TabControl_Inventory.HideTab("tabPage_TreeViewSetting");
+            // customTabControl.HideTab("tabPage_TreeViewSetting");
 
             TabControl_Inventory.MouseDownResizeGripEvent += TabControl_Inventory_MouseDownResizeGripEvent;
             TabControl_Inventory.MouseUpResizeGripEvent += TabControl_Inventory_MouseUpResizeGripEventAsync;
             TabControl_Inventory.ResizeGripEvent += TabControl_Inventory_ResizeGripEvent;
             TabControl_Inventory.SelectedIndexChanged += TabControl_Inventory_SelectedIndexChanged;
 
-            //  TabControl_Inventory.HideTab(tabPage_NoteEditor);
-            //  TabControl_Inventory.HideTab(tabPage_TreeViewSetting);
+            //  customTabControl.HideTab(tabPage_NoteEditor);
+            //  customTabControl.HideTab(tabPage_TreeViewSetting);
             TabControl_Inventory.HideTab(tabPage_AddNewItem);
             TabControl_Inventory.ShowTab(tabPage_Pictures);
 
@@ -1803,8 +1796,8 @@ namespace StockRoom11net
         {
             ShowPlexiglassRectangle.Close();
 
-            splitContainerVertical.SplitterDistance = ShowPlexiglassRectangle.Location.X;
-            splitContainerHorizontal.SplitterDistance = ShowPlexiglassRectangle.Height;
+            splitContainer_Vertical.SplitterDistance = ShowPlexiglassRectangle.Location.X;
+            splitContainer_Horizontal.SplitterDistance = ShowPlexiglassRectangle.Height;
 
             TabControl_Inventory.Visible = true;
 
@@ -1820,8 +1813,8 @@ namespace StockRoom11net
             // the SplitterDistance only when the mouse up event is triggered, so the user can see the
             // resizing process with the Plexiglass rectangle, and when the mouse up event is triggered,
             // the real resizing of the splitContainer is done and the Plexiglass rectangle is closed.
-            Point location = splitContainerVertical.SplitterRectangle.Location;
-            Size sizeCon = splitContainerVertical.Panel2.ClientSize;
+            Point location = splitContainer_Vertical.SplitterRectangle.Location;
+            Size sizeCon = splitContainer_Vertical.Panel2.ClientSize;
             var rectangleImage = (Bitmap)ScreenImage.GetScreenshot(Handle, location, sizeCon);
 
             ShowPlexiglassRectangle = new Plexiglass(this)
@@ -1956,7 +1949,7 @@ namespace StockRoom11net
             DeleteOriginalFile = Settings.Default.DeleteOriginalFile;
 
 
-            _nodeSetting = new NodeSetting(_bindingSourceStockRoomTreeViewVal, _iappService.ColumnsCollection, _employeesService)
+            _nodeSetting = new NodeSetting(_bindingSourceStockRoomTreeViewVal, ColumnsCollectionStockRoom, _employeesService)
             {
                 DebugMode = false,
                 AutoScroll = true,
@@ -1967,7 +1960,7 @@ namespace StockRoom11net
                 NeedSaveData = false,
                 Size = new Size(731, 501),
                 TabIndex = 0,
-                CurrentNode = new Table_Base_TreeView()
+                CurrentItem = new Table_Base_TreeView()
             };
 
             _nodeSetting.SaveRequested += NodeSetting_Save_Requested;
@@ -1991,9 +1984,9 @@ namespace StockRoom11net
 
         async void NodeSetting_Save_Requested(object? sender, Save_Requested_EventArgs e)
         {
-            if (_bindingSourceStockRoomTreeViewVal.TableName.Contains("Table_StockRoom_TreeView"))
+            if (e.Item is Table_StockRoom_TreeView stockRoomItem)
             {
-                await _unitOfWork.TableStockRoomTreeViewRepository.UpdateAsync((Table_StockRoom_TreeView)e.Item, CancellationToken.None);
+                await _unitOfWork.TableStockRoomTreeViewRepository.UpdateAsync(stockRoomItem, CancellationToken.None);
             }
         }
 
@@ -2101,8 +2094,8 @@ namespace StockRoom11net
             SaveUserSettingTimer.Stop();
             _iappService.On_StatusBarMessage(new StatusBarMessage_EventArgs("", "  "));//Clear the StatusBar.
 
-            await _currentEmployeeLogIn.UpDateSave_Splitter_UserSetting(userSettingName, splitContainerVertical.SplitterDistance,
-                                                                        splitContainerHorizontal.SplitterDistance);
+            await _currentEmployeeLogIn.UpDateSave_Splitter_UserSetting(userSettingName, splitContainer_Vertical.SplitterDistance,
+                                                                        splitContainer_Horizontal.SplitterDistance);
         }
 
         #endregion"Timer SaveUserSetting if it's modifying the user interface."   

@@ -6,6 +6,7 @@ using StockRoom11net.Data;
 using StockRoom11net.Data.Entities;
 using StockRoom11net.Data.Services;
 using StockRoom11net.Properties;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing.Design;
@@ -1065,7 +1066,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
         private EmployeeInformation.EmployeeInformation _currentEmployeeLogIn;
 
         /// <summary>
-        /// The user setting name, we save userSettingName = Name + "_" + TableName;
+        /// The user setting name, we save userSettingName = DGVExt_StockRoom + "_" + TableName;
         /// It is update at public object DataSource{ set }
         /// We saved the datasource name because in some cases,
         /// the same dataGridView manipulates different dataSources.
@@ -1236,7 +1237,20 @@ namespace StockRoom11net.Controls.DataGridViewExtend
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public DataRowView? CurrentRowViewActive
         {
-            get => (DataRowView?)_dataGridView.CurrentRowActived.DataBoundItem;
+            get
+            {
+                if (_dataGridView.CurrentRowActived == null)
+                    return null;
+                if (_dataGridView.CurrentRowActived.DataBoundItem == null)
+                    return null;
+                if (_dataGridView.CurrentRowActived.DataBoundItem.GetType() == typeof(GroupRow))
+                    return null;
+
+                if (_dataGridView.CurrentRowActived.DataBoundItem.GetType() == typeof(DataRowView))
+                    return (DataRowView?)_dataGridView.CurrentRowActived.DataBoundItem;
+
+                return null;
+            }
         }
 
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
@@ -1927,6 +1941,70 @@ namespace StockRoom11net.Controls.DataGridViewExtend
                 if (!string.IsNullOrEmpty(value))
                 {
                     _customExternalFilter = value;
+
+                    // Local helper: verify every column name referenced in a DataView/DataTable
+                    // filter expression actually exists on the underlying DataTable. This avoids
+                    // System.Data.EvaluateException ("Cannot find column [X]") being thrown when
+                    // a filter authored for a different entity/table (e.g. String_Filter coming
+                    // from a tree node) is applied to a grid bound to an incompatible schema.
+                    bool FilterColumnsExistInDataSource(string filterExpression)
+                    {
+                        if (string.IsNullOrWhiteSpace(filterExpression))
+                            return true;
+
+                        DataTable? table = (_bindingSource?.DataSource as DataView)?.Table;
+                        if (table == null)
+                            return true;
+
+                        // Column references are either bare identifiers (e.g. "Description")
+                        // or bracketed identifiers (e.g. "[Description]"). Extract candidate
+                        // identifiers and confirm they exist on the table, ignoring string
+                        // literals, numbers and SQL-like operator keywords.
+                        MatchCollection bracketed = Regex.Matches(filterExpression, @"\[([^\]]+)\]");
+                        foreach (Match m in bracketed)
+                        {
+                            if (!table.Columns.Contains(m.Groups[1].Value))
+                                return false;
+                        }
+
+                        string withoutQuotedLiterals = Regex.Replace(filterExpression, @"'[^']*'", string.Empty);
+                        withoutQuotedLiterals = Regex.Replace(withoutQuotedLiterals, @"\[[^\]]+\]", string.Empty);
+
+                        MatchCollection identifiers = Regex.Matches(withoutQuotedLiterals, @"[A-Za-z_][A-Za-z0-9_]*");
+                        var keywords = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+                        {
+                            "AND", "OR", "NOT", "LIKE", "IN", "IS", "NULL", "TRUE", "FALSE"
+                        };
+
+                        foreach (Match m in identifiers)
+                        {
+                            string identifier = m.Value;
+                            if (keywords.Contains(identifier))
+                                continue;
+
+                            if (!table.Columns.Contains(identifier))
+                                return false;
+                        }
+
+                        return true;
+                    }
+
+                    if (!FilterColumnsExistInDataSource(_customExternalFilter))
+                    {
+                        // The filter references one or more columns that do not exist on the
+                        // currently bound DataTable (e.g. a filter authored for a different
+                        // entity/table). Skip applying it instead of letting DataView.RowFilter
+                        // throw a System.Data.EvaluateException.
+                        _customExternalFilter = string.Empty;
+                        return;
+                    }
+
+                    // If the filter ends with an incomplete logical operator (AND/OR), clear it to avoid
+                    if (Regex.IsMatch(_customExternalFilter.Trim(), @"(?i)\b(AND|OR)\s*$"))
+                    {
+                        _customExternalFilter = string.Empty;
+                        return;
+                    }
 
                     if (_dataGridView.ActiveFilter != null & _dataGridView.ActiveFilter.Length >= 1)
                     {
@@ -2981,9 +3059,9 @@ namespace StockRoom11net.Controls.DataGridViewExtend
 
                 _employeeName = _currentEmployeeLogIn.Name;
                 _employeeLastName = _currentEmployeeLogIn.LastName;
-                _employeeEditMode = _currentEmployeeLogIn.EmployeeEditMode;
-                _employeeAccessLevel = _currentEmployeeLogIn.EmployeeAccessLevel;
-                EmployeeEnableTreeViewSetting = _currentEmployeeLogIn.EmployeeEnableTreeViewSetting;
+                _employeeEditMode = _currentEmployeeLogIn.EditMode;
+                _employeeAccessLevel = _currentEmployeeLogIn.AccessLevel;
+                EmployeeEnableTreeViewSetting = _currentEmployeeLogIn.EnableTreeViewSetting;
 
                 CustomEdit = _employeeEditMode;
 
@@ -3099,14 +3177,21 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             if (e.ListChangedType == ListChangedType.PropertyDescriptorChanged || e.ListChangedType == ListChangedType.Reset)
                 return;
 
-            toolStripButton_Save.Enabled = true;
-
             if (e.ListChangedType == ListChangedType.ItemChanged && e.NewIndex >= 0)
             {
+                DertyCollectionAdd(e.NewIndex);
+            }
+        }
+
+        void DertyCollectionAdd(int index)
+        {
+            toolStripButton_Save.Enabled = true;
+
+            
                 // TreeView entities derive from Table_Base_TreeView which implements ITableBaseTreeView
                 if (TableName.Contains("_TreeView"))
                 {
-                    if (_bindingSource[e.NewIndex] is ITableBaseTreeView hasIndex)
+                    if (_bindingSource[index] is ITableBaseTreeView hasIndex)
                         DirtyDataGridViewIndexes.Add(hasIndex.Index);  // HashSet → idempotent
                     return;
                 }
@@ -3114,14 +3199,21 @@ namespace StockRoom11net.Controls.DataGridViewExtend
                 // Table_TimeLine uses a DataView as its source — items are DataRowView, not entities
                 if (TableName == "Table_TimeLine")
                 {
-                    if (_bindingSource[e.NewIndex] is DataRowView drv && drv.Row["ID"] != DBNull.Value)
+                    if (_bindingSource[index] is DataRowView drv && drv.Row["ID"] != DBNull.Value)
                         DirtyDataGridViewIndexes.Add((int)drv.Row["ID"]);
                     return;
                 }
 
+                // Table_Employees uses a DataView as its source — items are DataRowView, not entities
+                if (TableName == "Table_Employees")
+                {
+                    if (_bindingSource[index] is DataRowView drv && drv.Row["Index"] != DBNull.Value)
+                        DirtyDataGridViewIndexes.Add((int)drv.Row["Index"]);
+                    return;
+                }
+
                 if (TableName == "Table_StockRoom")
-                    DirtyDataGridViewPartNumbers.Add(_dataGridView.Rows[e.NewIndex].Cells["PartNumber"].Value.ToString());
-            }
+                    DirtyDataGridViewPartNumbers.Add(_dataGridView.Rows[index].Cells["PartNumber"].Value.ToString());            
         }
 
         void DataGridView_DataSourceChanged(object? sender, EventArgs e)
@@ -3511,6 +3603,10 @@ namespace StockRoom11net.Controls.DataGridViewExtend
 
             OnCellEndEditEvent(e);
 
+            // Do not add to dirty collection here, because binding source list changed event will handle it.
+            // This prevents duplicate entries in the dirty collection.
+            // DertyCollectionAdd(e.RowIndex);
+
             On_LogFileMessage(new Custom_Events_Args.LogFileMessageEventArgs(new List<string>
                     {
                         Tags.NewLine(""),
@@ -3808,6 +3904,17 @@ namespace StockRoom11net.Controls.DataGridViewExtend
 
             IsMouseDrivenEvent = false;
 
+            if (_currentEmployeeLogIn == null)
+            {
+                // No employee is currently logged in/assigned to this control yet,
+                // so there is nothing to save the user setting against. Bail out
+                // safely instead of throwing a NullReferenceException.
+                MessageBox.Show("No employee is currently logged in/assigned to this control yet, " +
+                                "so there is nothing to save the user setting against.",
+                                "No employee logged in", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
             SaveUserSettingTimer.Start();
             NeedSaveData = false;
             _sec = 10;
@@ -3826,6 +3933,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             }
 
             SaveUserSettingTimer.Stop();
+                        
             On_StatusBarMessage(new StatusBarMessage_EventArgs("", "  "));//Clear the StatusBar.
 
             try

@@ -59,8 +59,13 @@ namespace StockRoom11net.Controls.BindingSourceExt
                 IsDirty = true;
 
                 // For ItemDeleted, the item is already removed — accessing e.NewIndex would throw.
+                // Also guard against a negative/out-of-range index, which can occur when
+                // ResetItem/ResetCurrentItem is called while Position == -1 (no current item).
                 if (e.ListChangedType != ListChangedType.ItemDeleted)
                 {
+                    if (e.NewIndex < 0 || e.NewIndex >= Count)
+                        return;
+
                     var item = this[e.NewIndex] as T;
                     if (item != null && !ValidateItem(item))
                     {

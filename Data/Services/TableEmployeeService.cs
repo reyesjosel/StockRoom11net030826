@@ -1,5 +1,7 @@
+using StockRoom11net.Controls.BindingSourceExt;
 using StockRoom11net.Data.Entities;
 using System.ComponentModel;
+using System.Data;
 
 namespace StockRoom11net.Data.Services;
 
@@ -12,6 +14,7 @@ public partial interface ITableEmployeeService
 {    
     IUnitOfWork UnitOfWork { get; }
     Task<BindingList<Table_Employee>> LoadEmployeeAsync();
+    Task<DataTable> LoadEmployeeDataTableAsync();
     Task<BindingList<Table_Employee>> SearchEmployeeAsync(string searchTerm);
     Task<Table_Employee?> GetEmployeeByIdAsync(int id);
     Task<Table_Employee> CreateEmployeeAsync(Table_Employee employee);
@@ -28,8 +31,14 @@ public partial class TableEmployeeService : ITableEmployeeService
           
     public async Task<BindingList<Table_Employee>> LoadEmployeeAsync()
     {
-        var items = await _unitOfWork.TableEmployeeRepository.GetAllAsync();
+        var items = await _unitOfWork.TableEmployeesRepository.GetAllAsync();
         return new BindingList<Table_Employee>(items.ToList());
+    }
+
+    public async Task<DataTable> LoadEmployeeDataTableAsync()
+    {
+        var items = await _unitOfWork.TableEmployeesRepository.GetAllAsync();
+        return items.ToDataTable();
     }
 
     public async Task<BindingList<Table_Employee>> SearchEmployeeAsync(string searchTerm)
@@ -37,7 +46,7 @@ public partial class TableEmployeeService : ITableEmployeeService
         if (string.IsNullOrWhiteSpace(searchTerm))
             return await LoadEmployeeAsync();
 
-        var items = await _unitOfWork.TableEmployeeRepository.FindAsync(t => 
+        var items = await _unitOfWork.TableEmployeesRepository.FindAsync(t => 
         (t.Last6Digit != null && t.Last6Digit.ToString().Contains(searchTerm)) ||
              (t.LastName != null && t.LastName.Contains(searchTerm)) ||
              (t.Name != null && t.Name.Contains(searchTerm)));
@@ -50,7 +59,7 @@ public partial class TableEmployeeService : ITableEmployeeService
         if (string.IsNullOrWhiteSpace(filter))
             return await LoadEmployeeAsync();
 
-        var items = await _unitOfWork.TableEmployeeRepository.FindAsync(t => 
+        var items = await _unitOfWork.TableEmployeesRepository.FindAsync(t => 
                 (t.Last6Digit != null && t.Last6Digit.ToString().Contains(filter)) ||
                 (t.LastName != null && t.LastName.Contains(filter)) ||
                 (t.Name != null && t.Name.Contains(filter)));
@@ -60,34 +69,34 @@ public partial class TableEmployeeService : ITableEmployeeService
 
     public async Task<Table_Employee?> GetEmployeeByIdAsync(int id)
     {
-        return await _unitOfWork.TableEmployeeRepository.GetByIdAsync(id);
+        return await _unitOfWork.TableEmployeesRepository.GetByIdAsync(id);
     }
 
     public async Task<Table_Employee> CreateEmployeeAsync(Table_Employee employee)
     {
         // Ensure required fields are set
         if (employee.Dob == default)
-            employee.Dob = DateTime.Now;
+            employee.Dob = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
 
         if (string.IsNullOrEmpty(employee.Status))
             employee.Status = "Active";
 
-        var created = await _unitOfWork.TableEmployeeRepository.AddAsync(employee);
+        var created = await _unitOfWork.TableEmployeesRepository.AddAsync(employee);
         await _unitOfWork.SaveChangesAsync();
         return created;
     }
 
     public async Task UpdateEmployeeAsync(Table_Employee employee)
     {
-        await _unitOfWork.TableEmployeeRepository.UpdateSaveAsync(employee);
+        await _unitOfWork.TableEmployeesRepository.UpdateSaveAsync(employee);
     }
 
     public async Task DeleteEmployeeAsync(int id)
     {
-        var employee = await _unitOfWork.TableEmployeeRepository.GetByIdAsync(id);
+        var employee = await _unitOfWork.TableEmployeesRepository.GetByIdAsync(id);
         if (employee != null)
         {
-            _unitOfWork.TableEmployeeRepository.Remove(employee);
+            _unitOfWork.TableEmployeesRepository.Remove(employee);
             await _unitOfWork.SaveChangesAsync();
         }
     }

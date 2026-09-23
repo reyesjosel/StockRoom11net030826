@@ -144,15 +144,15 @@ namespace StockRoom11net
 
                 _employeeName = _currentEmployeeLogIn.Name;
                 _employeeLastName = _currentEmployeeLogIn.LastName;
-                _employeeEditMode = _currentEmployeeLogIn.EmployeeEditMode;
-                _employeeAccessLevel = _currentEmployeeLogIn.EmployeeAccessLevel;
-                EmployeeEnableTreeViewSetting = _currentEmployeeLogIn.EmployeeEnableTreeViewSetting;
+                _employeeEditMode = _currentEmployeeLogIn.EditMode;
+                _employeeAccessLevel = _currentEmployeeLogIn.AccessLevel;
+                EmployeeEnableTreeViewSetting = _currentEmployeeLogIn.EnableTreeViewSetting;
 
                 UserSetting userSetting = _currentEmployeeLogIn.UserSettingEntity(userSettingName);
 
                 internalResizeEvent = true;
-             //   splitContainerVertical.SplitterDistance = userSetting.SplitterVertical;
-             //   splitContainerHorizontal.SplitterDistance = userSetting.SplitterHorizontal;
+             //   splitContainer_Vertical.SplitterDistance = userSetting.SplitterVertical;
+             //   splitContainer_Horizontal.SplitterDistance = userSetting.SplitterHorizontal;
             }
         }
 
@@ -469,10 +469,10 @@ namespace StockRoom11net
 
             customTabControl_TimeLine.Visible = true;
 
-            //  StockRoomSetting.SplitterVertical = splitContainerVertical.SplitterDistance;
-            //  StockRoomSetting.SplitterHorizontal = splitContainerHorizontal.SplitterDistance;
+            //  StockRoomSetting.SplitterVertical = splitContainer_Vertical.SplitterDistance;
+            //  StockRoomSetting.SplitterHorizontal = splitContainer_Horizontal.SplitterDistance;
 
-            //  SaveUserSetting();
+            //  SaveUserSettings();
         }
 
         void CustomTabControl_TimeLine_MouseDownResizeGripEvent(object sender, MouseEventArgs e)
@@ -553,7 +553,7 @@ namespace StockRoom11net
                 TabIndex = 0
             };
 
-             _nodeSetting.CurrentNode = new Table_Base_TreeView();
+             _nodeSetting.CurrentItem = new Table_Base_TreeView();
             _nodeSetting.SaveRequested += NodeSetting_Save_Requested;
             _nodeSetting.StatusBarMessage += NodeSetting_StatusBarMessage;
             _nodeSetting.NodeImageChange += NodeSetting_NodeImageChange;
@@ -1033,7 +1033,7 @@ namespace StockRoom11net
 
             if (_nodeSettingIsDone & customTabControl_TimeLine.SelectedTab.Name == "tabPage_DataTreeViewSetting")
             {
-                _nodeSetting.CurrentNode = e.CurrentNode;
+                _nodeSetting.CurrentItem = e.CurrentNode;
             }
 
             #endregion"tabPage_DataTreeViewSetting"

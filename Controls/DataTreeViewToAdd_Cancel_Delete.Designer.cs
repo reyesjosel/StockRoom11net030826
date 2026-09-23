@@ -101,7 +101,7 @@
             tableLayoutPanel_DataTreeViewSetting.Name = "tableLayoutPanel_DataTreeViewSetting";
             tableLayoutPanel_DataTreeViewSetting.RowCount = 1;
             tableLayoutPanel_DataTreeViewSetting.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanel_DataTreeViewSetting.Size = new Size(851, 154);
+            tableLayoutPanel_DataTreeViewSetting.Size = new Size(851, 152);
             tableLayoutPanel_DataTreeViewSetting.TabIndex = 0;
             tableLayoutPanel_DataTreeViewSetting.AutoSizeChanged += ToolStripMenuItem_DeletedThisNode_Click;
             // 
@@ -113,7 +113,7 @@
             panel_toDelete.Location = new Point(566, 0);
             panel_toDelete.Margin = new Padding(0);
             panel_toDelete.Name = "panel_toDelete";
-            panel_toDelete.Size = new Size(285, 154);
+            panel_toDelete.Size = new Size(285, 152);
             panel_toDelete.TabIndex = 25;
             // 
             // olvDataTree_ToDelete
@@ -131,7 +131,7 @@
             olvDataTree_ToDelete.IsSimpleDragSource = true;
             olvDataTree_ToDelete.IsSimpleDropSink = true;
             olvDataTree_ToDelete.KeyAspectName = "Id";
-            olvDataTree_ToDelete.Location = new Point(0, 21);
+            olvDataTree_ToDelete.Location = new Point(0, 22);
             olvDataTree_ToDelete.Margin = new Padding(1);
             olvDataTree_ToDelete.Name = "olvDataTree_ToDelete";
             olvDataTree_ToDelete.ParentKeyAspectName = "ParentId";
@@ -140,7 +140,7 @@
             olvDataTree_ToDelete.SelectColumnsOnRightClickBehaviour = BrightIdeasSoftware.ObjectListView.ColumnSelectBehaviour.None;
             olvDataTree_ToDelete.ShowGroups = false;
             olvDataTree_ToDelete.ShowKeyColumns = false;
-            olvDataTree_ToDelete.Size = new Size(285, 133);
+            olvDataTree_ToDelete.Size = new Size(285, 130);
             olvDataTree_ToDelete.TabIndex = 25;
             olvDataTree_ToDelete.UseCompatibleStateImageBehavior = false;
             olvDataTree_ToDelete.UseFilterIndicator = true;
@@ -203,8 +203,9 @@
             label_toDelete.Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
             label_toDelete.Location = new Point(0, 0);
             label_toDelete.Margin = new Padding(4, 0, 4, 0);
+            label_toDelete.MinimumSize = new Size(0, 22);
             label_toDelete.Name = "label_toDelete";
-            label_toDelete.Size = new Size(285, 21);
+            label_toDelete.Size = new Size(285, 22);
             label_toDelete.TabIndex = 19;
             label_toDelete.Text = "To delete an Items...";
             label_toDelete.TextAlign = ContentAlignment.MiddleCenter;
@@ -217,7 +218,7 @@
             panel_toCancel.Location = new Point(283, 0);
             panel_toCancel.Margin = new Padding(0);
             panel_toCancel.Name = "panel_toCancel";
-            panel_toCancel.Size = new Size(283, 154);
+            panel_toCancel.Size = new Size(283, 152);
             panel_toCancel.TabIndex = 24;
             // 
             // olvDataTree_ToCancel
@@ -234,7 +235,7 @@
             olvDataTree_ToCancel.IsSimpleDragSource = true;
             olvDataTree_ToCancel.IsSimpleDropSink = true;
             olvDataTree_ToCancel.KeyAspectName = "Id";
-            olvDataTree_ToCancel.Location = new Point(0, 21);
+            olvDataTree_ToCancel.Location = new Point(0, 22);
             olvDataTree_ToCancel.Margin = new Padding(1);
             olvDataTree_ToCancel.Name = "olvDataTree_ToCancel";
             olvDataTree_ToCancel.ParentKeyAspectName = "ParentId";
@@ -243,7 +244,7 @@
             olvDataTree_ToCancel.SelectColumnsOnRightClickBehaviour = BrightIdeasSoftware.ObjectListView.ColumnSelectBehaviour.None;
             olvDataTree_ToCancel.ShowGroups = false;
             olvDataTree_ToCancel.ShowKeyColumns = false;
-            olvDataTree_ToCancel.Size = new Size(283, 133);
+            olvDataTree_ToCancel.Size = new Size(283, 130);
             olvDataTree_ToCancel.TabIndex = 2;
             olvDataTree_ToCancel.UseCompatibleStateImageBehavior = false;
             olvDataTree_ToCancel.UseFilterIndicator = true;
@@ -268,8 +269,9 @@
             label_toCancel.Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
             label_toCancel.Location = new Point(0, 0);
             label_toCancel.Margin = new Padding(4, 0, 4, 0);
+            label_toCancel.MinimumSize = new Size(0, 22);
             label_toCancel.Name = "label_toCancel";
-            label_toCancel.Size = new Size(283, 21);
+            label_toCancel.Size = new Size(283, 22);
             label_toCancel.TabIndex = 19;
             label_toCancel.Text = "To cancel  any drag action...";
             label_toCancel.TextAlign = ContentAlignment.MiddleCenter;
@@ -282,7 +284,7 @@
             panel_toAdd.Location = new Point(0, 0);
             panel_toAdd.Margin = new Padding(0);
             panel_toAdd.Name = "panel_toAdd";
-            panel_toAdd.Size = new Size(283, 154);
+            panel_toAdd.Size = new Size(283, 152);
             panel_toAdd.TabIndex = 23;
             // 
             // olvDataTree_ToAdd
@@ -299,7 +301,7 @@
             olvDataTree_ToAdd.IsSimpleDragSource = true;
             olvDataTree_ToAdd.IsSimpleDropSink = true;
             olvDataTree_ToAdd.KeyAspectName = "Id";
-            olvDataTree_ToAdd.Location = new Point(0, 21);
+            olvDataTree_ToAdd.Location = new Point(0, 22);
             olvDataTree_ToAdd.Margin = new Padding(1);
             olvDataTree_ToAdd.Name = "olvDataTree_ToAdd";
             olvDataTree_ToAdd.ParentKeyAspectName = "ParentId";
@@ -308,7 +310,7 @@
             olvDataTree_ToAdd.SelectColumnsOnRightClickBehaviour = BrightIdeasSoftware.ObjectListView.ColumnSelectBehaviour.None;
             olvDataTree_ToAdd.ShowGroups = false;
             olvDataTree_ToAdd.ShowKeyColumns = false;
-            olvDataTree_ToAdd.Size = new Size(283, 133);
+            olvDataTree_ToAdd.Size = new Size(283, 130);
             olvDataTree_ToAdd.TabIndex = 20;
             olvDataTree_ToAdd.UseCompatibleStateImageBehavior = false;
             olvDataTree_ToAdd.UseFilterIndicator = true;
@@ -333,8 +335,9 @@
             label_AvailableInTheseDepartment.Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
             label_AvailableInTheseDepartment.Location = new Point(0, 0);
             label_AvailableInTheseDepartment.Margin = new Padding(4, 0, 4, 0);
+            label_AvailableInTheseDepartment.MinimumSize = new Size(0, 22);
             label_AvailableInTheseDepartment.Name = "label_AvailableInTheseDepartment";
-            label_AvailableInTheseDepartment.Size = new Size(283, 21);
+            label_AvailableInTheseDepartment.Size = new Size(283, 22);
             label_AvailableInTheseDepartment.TabIndex = 19;
             label_AvailableInTheseDepartment.Text = "To add new Items...";
             label_AvailableInTheseDepartment.TextAlign = ContentAlignment.MiddleCenter;
@@ -370,6 +373,7 @@
             splitContainer_DataTreeView.Panel2MinSize = 0;
             splitContainer_DataTreeView.Size = new Size(855, 516);
             splitContainer_DataTreeView.SplitterDistance = 354;
+            splitContainer_DataTreeView.SplitterWidth = 6;
             splitContainer_DataTreeView.TabIndex = 1;
             splitContainer_DataTreeView.SplitterMoved += SplitContainer_DataTreeView_SplitterMoved;
             // 
