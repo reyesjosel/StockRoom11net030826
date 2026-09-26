@@ -887,8 +887,7 @@ namespace StockRoom11net
                     SecondsRemainingToSave = 0;
                     await SaveUserSettingTickAsync(sender, e);
                 }
-                    
-
+                
                 if (e.CurrentRowActive == null || e.CurrentRowActive.Index == -1)
                     return;
 
@@ -924,9 +923,7 @@ namespace StockRoom11net
 
                     if (employeeDepartementSelected?.Department?.Contains("Department") == true)
                     {
-                        DepartmentSelected = new DepartmentInformation(employeeDepartementSelected);
-
-                        InitializeUI_Department(DepartmentSelected);
+                        InitializeUI_Department(employeeDepartementSelected);
                         customTabControl.ShowTab("tabPage_Department");
                         customTabControl.SelectedTab = tabPage_Department;
                         customTabControl.HideTab("tabPage_ProFile");
@@ -1014,18 +1011,18 @@ namespace StockRoom11net
         void SettingUI_Employee()
         {
             textBox_Employee_Last6Digit.TextChanged += TextBox_Employee_Last6Digit_TextChanged;
-            textBox_Employee_Name.TextChanged += TextBox_Employee_Name_TextChanged;
-            textBox_Employee_LastName.TextChanged += TextBox_Employee_LastName_TextChanged;
-            textBox_Employee_Address.TextChanged += TextBox_Employee_Address_TextChanged;
-            textBox_Employee_Telephone.TextChanged += TextBox_Employee_Telephone_TextChanged;
+            textBox_Employee_Name.TextChanged       += TextBox_Employee_Name_TextChanged;
+            textBox_Employee_LastName.TextChanged   += TextBox_Employee_LastName_TextChanged;
+            textBox_Employee_Address.TextChanged    += TextBox_Employee_Address_TextChanged;
+            textBox_Employee_Telephone.TextChanged  += TextBox_Employee_Telephone_TextChanged;
             dateTimePicker_Employee_Hire_Date.ValueChanged += DateTimePicker_Employee_Hire_Date_ValueChanged;
-            textBox_Employee_Size.TextChanged += TextBox_Employee_Size_TextChanged;
+            textBox_Employee_Size.TextChanged       += TextBox_Employee_Size_TextChanged;
 
-            comboBox_Employee_Position.SelectedValueChanged += ComboBox_Employee_Position_SelectedValueChanged;
+            comboBox_Employee_Position.SelectedValueChanged += ComboBox_Employee_Position_TextChanged;
             comboBox_Employee_Position.TextChanged += ComboBox_Employee_Position_TextChanged;
             comboBox_Employee_Position.DataSource = PositionList;
 
-            comboBox_Employee_Department.SelectedValueChanged += ComboBox_Employee_Department_SelectedValueChanged;
+            comboBox_Employee_Department.SelectedValueChanged += ComboBox_Employee_Department_TextChanged;
             comboBox_Employee_Department.TextChanged += ComboBox_Employee_Department_TextChanged;
 
             // Guard against an empty DepartmentsList: ComboBox.DataSource internally tries to
@@ -1036,15 +1033,15 @@ namespace StockRoom11net
             else
                 comboBox_Employee_Department.DataSource = null;
 
-            comboBox_Employee_AccessLevel.SelectedValueChanged += ComboBox_Employee_AccessLevel_SelectedValueChanged;
+            comboBox_Employee_AccessLevel.SelectedValueChanged += ComboBox_Employee_AccessLevel_TextChanged;
             comboBox_Employee_AccessLevel.TextChanged += ComboBox_Employee_AccessLevel_TextChanged;
             comboBox_Employee_AccessLevel.DataSource = Enum.GetValues<AccessLevel>();
 
-            comboBox_Employee_EditMode.SelectedValueChanged += ComboBox_Employee_EditMode_SelectedValueChanged;
+            comboBox_Employee_EditMode.SelectedValueChanged += ComboBox_Employee_EditMode_TextChanged;
             comboBox_Employee_EditMode.TextChanged += ComboBox_Employee_EditMode_TextChanged;
             comboBox_Employee_EditMode.DataSource = Enum.GetValues<Utilities.EditMode>();
 
-            comboBox_Employee_EnableSetting.SelectedValueChanged += ComboBox_Employee_EnableSetting_SelectedValueChanged;
+            comboBox_Employee_EnableSetting.SelectedValueChanged += ComboBox_Employee_EnableSetting_TextChanged;
             comboBox_Employee_EnableSetting.TextChanged += ComboBox_Employee_EnableSetting_TextChanged;
             comboBox_Employee_EnableSetting.DataSource = Enum.GetValues<Utilities.EnableSetting>();
 
@@ -1082,29 +1079,7 @@ namespace StockRoom11net
             settingModified = "Employee";
             SaveUserSetting();
         }
-
-        private void ComboBox_Employee_EnableSetting_SelectedValueChanged(object? sender, EventArgs e)
-        {
-            if (!customTabControl.Bounds.Contains(customTabControl.PointToClient(MousePosition)))
-                return;
-
-            NeedSaveData = true;
-            EnableTreeViewSetting = Enum.Parse<EnableSetting>(comboBox_Employee_EnableSetting.Text);
-
-            string accessLevelString = $"AccessLevel:{(int)AccessLevel};EditMode:{(int)EditMode};EnableTreeViewSetting:{(int)EnableTreeViewSetting}";
-
-            if (employeeDepartementSelected != null)
-                employeeDepartementSelected.AccessLevel = accessLevelString;
-
-            dataGridViewExtended.CurrentRowActive.Cells["AccessLevel"].Value = accessLevelString;
-
-            if (_bindingSourceEmployeeVal.Position >= 0)
-                _bindingSourceEmployeeVal.ResetCurrentItem();
-
-            settingModified = "Employee";
-            SaveUserSetting();
-        }
-
+        
         private void ComboBox_Employee_EditMode_TextChanged(object? sender, EventArgs e)
         {
             if (!customTabControl.Bounds.Contains(customTabControl.PointToClient(MousePosition)))
@@ -1113,27 +1088,6 @@ namespace StockRoom11net
             NeedSaveData = true;
             EditMode = Enum.Parse<EditMode>(comboBox_Employee_EditMode.Text);
 
-            string accessLevelString = $"AccessLevel:{(int)AccessLevel};EditMode:{(int)EditMode};EnableTreeViewSetting:{(int)EnableTreeViewSetting}";
-
-            if (employeeDepartementSelected != null)
-                employeeDepartementSelected.AccessLevel = accessLevelString;
-
-            dataGridViewExtended.CurrentRowActive.Cells["AccessLevel"].Value = accessLevelString;
-
-            if (_bindingSourceEmployeeVal.Position >= 0)
-                _bindingSourceEmployeeVal.ResetCurrentItem();
-
-            settingModified = "Employee";
-            SaveUserSetting();
-        }
-
-        private void ComboBox_Employee_EditMode_SelectedValueChanged(object? sender, EventArgs e)
-        {
-            if (!customTabControl.Bounds.Contains(customTabControl.PointToClient(MousePosition)))
-                return;
-
-            NeedSaveData = true;
-            EditMode = Enum.Parse<EditMode>(comboBox_Employee_EditMode.Text);
             string accessLevelString = $"AccessLevel:{(int)AccessLevel};EditMode:{(int)EditMode};EnableTreeViewSetting:{(int)EnableTreeViewSetting}";
 
             if (employeeDepartementSelected != null)
@@ -1170,28 +1124,6 @@ namespace StockRoom11net
             SaveUserSetting();
         }
 
-        private void ComboBox_Employee_AccessLevel_SelectedValueChanged(object? sender, EventArgs e)
-        {
-            if (!customTabControl.Bounds.Contains(customTabControl.PointToClient(MousePosition)))
-                return;
-
-            NeedSaveData = true;
-            AccessLevel = Enum.Parse<AccessLevel>(comboBox_Employee_AccessLevel.Text);
-
-            string accessLevelString = $"AccessLevel:{(int)AccessLevel};EditMode:{(int)EditMode};EnableTreeViewSetting:{(int)EnableTreeViewSetting}";
-
-            if (employeeDepartementSelected != null)
-                employeeDepartementSelected.AccessLevel = accessLevelString;
-
-            dataGridViewExtended.CurrentRowActive.Cells["AccessLevel"].Value = accessLevelString;
-
-            if (_bindingSourceEmployeeVal.Position >= 0)
-                _bindingSourceEmployeeVal.ResetCurrentItem();
-
-            settingModified = "Employee";
-            SaveUserSetting();
-        }
-
         private void ComboBox_Employee_Department_TextChanged(object? sender, EventArgs e)
         {
             if (!customTabControl.Bounds.Contains(customTabControl.PointToClient(MousePosition)))
@@ -1207,40 +1139,8 @@ namespace StockRoom11net
             settingModified = "Employee";
             SaveUserSetting();
         }
-
-        private void ComboBox_Employee_Department_SelectedValueChanged(object? sender, EventArgs e)
-        {
-            if (!customTabControl.Bounds.Contains(customTabControl.PointToClient(MousePosition)))
-                return;
-
-            NeedSaveData = true;
-            employeeDepartementSelected.Department = comboBox_Employee_Department.Text;
-            dataGridViewExtended.CurrentRowActive.Cells["Department"].Value = comboBox_Employee_Department.Text;
-
-            if (_bindingSourceEmployeeVal.Position >= 0)
-                _bindingSourceEmployeeVal.ResetCurrentItem();
-
-            settingModified = "Employee";
-            SaveUserSetting();
-        }
-
+               
         private void ComboBox_Employee_Position_TextChanged(object? sender, EventArgs e)
-        {
-            if (!customTabControl.Bounds.Contains(customTabControl.PointToClient(MousePosition)))
-                return;
-
-            NeedSaveData = true;
-            employeeDepartementSelected.Position = comboBox_Employee_Position.Text;
-            dataGridViewExtended.CurrentRowActive.Cells["Position"].Value = comboBox_Employee_Position.Text;
-
-            if (_bindingSourceEmployeeVal.Position >= 0)
-                _bindingSourceEmployeeVal.ResetCurrentItem();
-
-            settingModified = "Employee";
-            SaveUserSetting();
-        }
-
-        private void ComboBox_Employee_Position_SelectedValueChanged(object? sender, EventArgs e)
         {
             if (!customTabControl.Bounds.Contains(customTabControl.PointToClient(MousePosition)))
                 return;
@@ -1595,9 +1495,7 @@ namespace StockRoom11net
         bool isNewEmployee;
         async void Button_AddEmployee_Click(object sender, EventArgs e)
         {
-            button_AddNewEmployee.Enabled = false;
-            button_SaveEmployee.Text = "Save EmployeeInformation";
-            button_SaveEmployee.Enabled = true;
+            button_AddNewEmployee.Enabled = false;            
 
             try
             {
@@ -1619,6 +1517,8 @@ namespace StockRoom11net
                 MessageBox.Show(new Form() { TopMost = true }, @"Button_Add_Click() found an error " + error.Message,
                                  @"Employees Management has generated an error.", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+
+            button_SaveEmployee.Enabled = true;
         }
 
         async void Button_SaveEmployee_Click(object sender, EventArgs e)
@@ -1735,33 +1635,105 @@ namespace StockRoom11net
 
         void SettingUI_Department()
         {
-            textBox_Department_Name.TextChanged += AnySetting_TextChanged;
-            textBox_Department_Coments.TextChanged += AnySetting_TextChanged;
-            textBox_Department_ID.TextChanged += AnySetting_TextChanged;
-            textBox_Department_Telephone.TextChanged += AnySetting_TextChanged;
+            textBox_Department_Name.TextChanged += TextBox_Department_Name_TextChanged;
+            textBox_Department_Coments.TextChanged += TextBox_Department_Coments_TextChanged;
+            textBox_Department_6digits_ID.TextChanged += TextBox_Department6Digits_ID_TextChanged;
+            textBox_Department_Telephone.TextChanged += TextBox_Department_Telephone_TextChanged;
 
             button_AddNewDept.Click += Button_AddNewDept_Click;
             button_DeleteDept.Click += Button_DeleteDept_Click;
             button_SaveDept.Click += Button_SaveDept_Click;
         }
 
-        void InitializeUI_Department(DepartmentInformation departmentInformation)
+        void TextBox_Department_Name_TextChanged(object? sender, EventArgs e)
+        {            
+            if (!customTabControl.Bounds.Contains(customTabControl.PointToClient(MousePosition)))
+                return;
+
+            NeedSaveData = true;
+            
+            employeeDepartementSelected.Name = textBox_Department_Name.Text;
+            dataGridViewExtended.CurrentRowActive.Cells["Name"].Value = textBox_Department_Name.Text;
+
+            if (_bindingSourceEmployeeVal.Position >= 0)
+                _bindingSourceEmployeeVal.ResetCurrentItem();
+
+            settingModified = "Employee";
+            SaveUserSetting();
+        }
+
+        void TextBox_Department_Coments_TextChanged(object? sender, EventArgs e)
+        {
+            if (!customTabControl.Bounds.Contains(customTabControl.PointToClient(MousePosition)))
+                return;
+
+            NeedSaveData = true;
+            
+            employeeDepartementSelected.LastName = textBox_Department_Coments.Text;
+            dataGridViewExtended.CurrentRowActive.Cells["LastName"].Value = textBox_Department_Coments.Text;
+
+            if (_bindingSourceEmployeeVal.Position >= 0)
+                _bindingSourceEmployeeVal.ResetCurrentItem();
+
+            settingModified = "Employee";
+            SaveUserSetting();
+        }
+
+        void TextBox_Department6Digits_ID_TextChanged(object? sender, EventArgs e)
+        {
+            if (!customTabControl.Bounds.Contains(customTabControl.PointToClient(MousePosition)))
+                return;
+
+            NeedSaveData = true;
+            if (int.TryParse(textBox_Department_6digits_ID.Text, out int last6Digit))
+            {
+                employeeDepartementSelected.Last6Digit = last6Digit;
+                dataGridViewExtended.CurrentRowActive.Cells["Last6Digit"].Value = last6Digit;
+            }
+            else
+            {
+                employeeDepartementSelected.Last6Digit = 0;
+                dataGridViewExtended.CurrentRowActive.Cells["Last6Digit"].Value = 0;
+            }
+
+            if (_bindingSourceEmployeeVal.Position >= 0)
+                _bindingSourceEmployeeVal.ResetCurrentItem();
+
+            settingModified = "Employee";
+            SaveUserSetting();
+        }
+
+        void TextBox_Department_Telephone_TextChanged(object? sender, EventArgs e)
+        {
+            if (!customTabControl.Bounds.Contains(customTabControl.PointToClient(MousePosition)))
+                return;
+
+            NeedSaveData = true;
+            
+            employeeDepartementSelected.Telephone = textBox_Department_Telephone.Text;
+            dataGridViewExtended.CurrentRowActive.Cells["Telephone"].Value = textBox_Department_Telephone.Text;
+
+            if (_bindingSourceEmployeeVal.Position >= 0)
+                _bindingSourceEmployeeVal.ResetCurrentItem();
+
+            settingModified = "Employee";
+            SaveUserSetting();
+        }
+
+
+        void InitializeUI_Department(Table_Employee departmentInformation)
         {
             _employeesService.DepartmentsList.Clear();
             _employeesService.DepartmentsList.Add("Department");
-
-            textBox_Department_Name.Text = departmentInformation.DepartmentName;
-            textBox_Department_Coments.Text = departmentInformation.DepartmentComments;
-            textBox_Department_ID.Text = departmentInformation.ID + "";
-            textBox_Department_Telephone.Text = departmentInformation.DepartmentTelephone;
+            textBox_Department_Name.Text = departmentInformation.Name;
+            textBox_Department_Coments.Text = departmentInformation.LastName;
+            textBox_Department_6digits_ID.Text = departmentInformation.Last6Digit + "";
+            textBox_Department_Telephone.Text = departmentInformation.Telephone;
         }
 
         void UpDateDepartmentSelected()
         {
-            DepartmentSelected.ID = Utilities.CastAsInt(textBox_Department_ID.Text);
-            DepartmentSelected.DepartmentName = textBox_Department_Name.Text;
-            DepartmentSelected.DepartmentComments = textBox_Department_Coments.Text;
-            DepartmentSelected.DepartmentTelephone = textBox_Department_Telephone.Text;
+                      
             DepartmentSelected.DeptAccessLevel = (Utilities.AccessLevel)comboBox_Employee_AccessLevel.SelectedItem;
             DepartmentSelected.DeptEditMode = (Utilities.EditMode)comboBox_Employee_EditMode.SelectedItem;
 
@@ -1782,43 +1754,118 @@ namespace StockRoom11net
             //dataGridViewExtended_Employees_Management_Save_Requested(new object(), new EventArgs());
         }
 
-        void Button_AddNewDept_Click(object? sender, EventArgs e)
+        async Task<Table_Employee> AddNewDepartment()
         {
+            var nextId = await _employeesService.GetNextIdAsync();
+
+            var newAddDepartment = new Table_Employee
+            {
+                Index = nextId,
+                ID = nextId,
+                Last6Digit = 0,
+                LastName = "",
+                Name = "",
+                Address = "",
+                Telephone = "",
+                Dob = DateTime.Now.ToShortDateString(),
+                HireDate = DateTime.Now.ToShortDateString(),
+                UserSetting = "",
+                DataGridViewSetting = "",
+                Position = "",
+                Department = "Department",
+                AccessLevel = _unitOfWork.TableEmployeesRepository.AccessLevelDefault,
+                Size = "",
+                Status = _unitOfWork.TableEmployeesRepository.StatusInfoDefault
+            };
+
+            _bindingSourceEmployeeVal.SuspendBinding();
+            // AddNew() on a DataView/DataTable-backed BindingSource returns a DataRowView, not the entity type.
+            DataRowView newRowView = (DataRowView)_bindingSourceEmployeeVal.AddNew();
+
+            // Copy the values into the DataRowView backing the grid/UI.
+            newRowView["Index"] = newAddDepartment.Index;
+            newRowView["ID"] = newAddDepartment.ID;
+            newRowView["Last6Digit"] = newAddDepartment.Last6Digit;
+            newRowView["LastName"] = newAddDepartment.LastName;
+            newRowView["Name"] = newAddDepartment.Name;
+            newRowView["Address"] = newAddDepartment.Address;
+            newRowView["Telephone"] = newAddDepartment.Telephone;
+            newRowView["Dob"] = newAddDepartment.Dob;
+            newRowView["HireDate"] = newAddDepartment.HireDate;
+            newRowView["UserSetting"] = newAddDepartment.UserSetting;
+            newRowView["DataGridViewSetting"] = newAddDepartment.DataGridViewSetting;
+            newRowView["Position"] = newAddDepartment.Position;
+            newRowView["Department"] = newAddDepartment.Department;
+            newRowView["AccessLevel"] = newAddDepartment.AccessLevel;
+            newRowView["Size"] = newAddDepartment.Size;
+            newRowView["Status"] = newAddDepartment.Status;
+
+            _bindingSourceEmployeeVal.EndEdit();
+            _bindingSourceEmployeeVal.ResumeBinding();
+
+            // Find the row's actual position in the (possibly sorted/filtered) view
+            // and make it the current item, so the grid selection follows it.
+            int newRowIndex = _bindingSourceEmployeeVal.List.IndexOf(newRowView);
+            if (newRowIndex >= 0)
+                _bindingSourceEmployeeVal.Position = newRowIndex;
+
+            _bindingSourceEmployeeVal.ResetCurrentItem();
+
+            if (dataGridViewExtended._dataGridView.Rows.Count > newRowIndex)
+                dataGridViewExtended._dataGridView.CurrentCell = dataGridViewExtended._dataGridView.Rows[newRowIndex].Cells[0];
+
+            var result = await _unitOfWork.TableEmployeesRepository.AddAsync(newAddDepartment);
+
+            return result;
+        }
+
+        async void Button_AddNewDept_Click(object? sender, EventArgs e)
+        {
+            button_AddNewDept.Enabled = false;
+
             try
             {
-                button_AddNewDept.Enabled = false;
+                var newDepartment = await AddNewDepartment();
 
-                isNewEmployee = true;
+                employeeDepartementSelected = newDepartment; 
+                EmployeesSelected = new EmployeeInformation(newDepartment);
 
-                Utilities.MouseUtility.MousePointerPosition(textBox_Department_Name, 2, 2);
-                Utilities.MouseUtility.DoMouseClick(MouseButtons.Left);
+                UpdateUI_Employee(EmployeesSelected);
 
-                //   DataGridViewExtended_Employees_CurrentRowActive(sender, new CurrentRowActive_EventArgs((int)_newRow["ID"],
-                //                                                                            dataGridViewExtended.CurrentRowActive));
+                //textBox_Employee_Last6Digit.Clear();
+                //textBox_Employee_Last6Digit.Focus();
+
             }
             catch (Exception error)
             {
-                MessageBox.Show(new Form() { TopMost = true }, @"Button_AddDept_Click() found an error " + error.Message,
-                                 @"Department Management has generated an error.", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(new Form() { TopMost = true }, @"Button_Add_Click() found an error " + error.Message,
+                                 @"Employees Management has generated an error.", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+
+            button_SaveDept.Enabled = true;
         }
 
         void Button_SaveDept_Click(object? sender, EventArgs e)
         {
-            try
-            {
-                NeedSaveData = false;
-                UpDateDepartmentSelected();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(@"Error al tratar de salvar la DataBase" + ex.Message, @"Error on DataBase. Employees Management.",
-                                MessageBoxButtons.RetryCancel, MessageBoxIcon.Error);
-            }
+
+            settingModified = "Employee";
+            SaveUserSetting();
         }
 
         void Button_DeleteDept_Click(object? sender, EventArgs e)
         {
+            // Guard against deleting the default user, which are not meant to be removed.
+            // The default user is used for system operations and should not be deleted.
+            if (employeeDepartementSelected.Name.Contains("No set to any department yet."))
+            {
+                MessageBox.Show(@"This department is the default department and cannot be deleted.",
+                                @"Delete Department Information", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            MessageBox.Show(@"Are you sure you want to delete this department? This action cannot be undone.",
+                            @"Delete Department Information", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
+
             DeleteEmployeeDepartmentSelected();
         }
 
@@ -2013,15 +2060,10 @@ namespace StockRoom11net
                 // customTabControl (via PointToClient) so they can't fire against a
                 // disposed control while messages are still pending (e.g. during
                 // ComboBox teardown), which previously caused an ObjectDisposedException.
-                comboBox_Employee_Department.SelectedValueChanged -= ComboBox_Employee_Department_SelectedValueChanged;
                 comboBox_Employee_Department.TextChanged -= ComboBox_Employee_Department_TextChanged;
-                comboBox_Employee_Position.SelectedValueChanged -= ComboBox_Employee_Position_SelectedValueChanged;
                 comboBox_Employee_Position.TextChanged -= ComboBox_Employee_Position_TextChanged;
-                comboBox_Employee_AccessLevel.SelectedValueChanged -= ComboBox_Employee_AccessLevel_SelectedValueChanged;
                 comboBox_Employee_AccessLevel.TextChanged -= ComboBox_Employee_AccessLevel_TextChanged;
-                comboBox_Employee_EditMode.SelectedValueChanged -= ComboBox_Employee_EditMode_SelectedValueChanged;
                 comboBox_Employee_EditMode.TextChanged -= ComboBox_Employee_EditMode_TextChanged;
-                comboBox_Employee_EnableSetting.SelectedValueChanged -= ComboBox_Employee_EnableSetting_SelectedValueChanged;
                 comboBox_Employee_EnableSetting.TextChanged -= ComboBox_Employee_EnableSetting_TextChanged;
 
                 if (components != null)

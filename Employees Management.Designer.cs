@@ -10,7 +10,7 @@ namespace StockRoom11net
         /// Required designer variable.
         /// </summary>
         private System.ComponentModel.IContainer components = null;
-                
+
         #region Windows Form Designer generated code
 
         /// <summary>
@@ -78,8 +78,8 @@ namespace StockRoom11net
             grouper_DepartmentInformations = new CodeVendor.Controls.Grouper();
             panel14 = new Panel();
             panel15 = new Panel();
-            textBox_Department_ID = new TextBox();
-            label_DepartmentID = new Label();
+            textBox_Department_6digits_ID = new TextBox();
+            label_Department6DigitsID = new Label();
             panel16 = new Panel();
             textBox_Department_Telephone = new TextBox();
             label_DepartmentTelephone = new Label();
@@ -924,8 +924,8 @@ namespace StockRoom11net
             // 
             // panel15
             // 
-            panel15.Controls.Add(textBox_Department_ID);
-            panel15.Controls.Add(label_DepartmentID);
+            panel15.Controls.Add(textBox_Department_6digits_ID);
+            panel15.Controls.Add(label_Department6DigitsID);
             panel15.Dock = DockStyle.Fill;
             panel15.Location = new Point(0, 0);
             panel15.Margin = new Padding(0);
@@ -935,26 +935,26 @@ namespace StockRoom11net
             panel15.Size = new Size(624, 75);
             panel15.TabIndex = 10;
             // 
-            // textBox_Department_ID
+            // textBox_Department_6digits_ID
             // 
-            textBox_Department_ID.Dock = DockStyle.Top;
-            textBox_Department_ID.Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            textBox_Department_ID.Location = new Point(8, 30);
-            textBox_Department_ID.Margin = new Padding(3, 2, 3, 2);
-            textBox_Department_ID.MinimumSize = new Size(95, 29);
-            textBox_Department_ID.Name = "textBox_Department_ID";
-            textBox_Department_ID.Size = new Size(608, 29);
-            textBox_Department_ID.TabIndex = 8;
+            textBox_Department_6digits_ID.Dock = DockStyle.Top;
+            textBox_Department_6digits_ID.Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            textBox_Department_6digits_ID.Location = new Point(8, 30);
+            textBox_Department_6digits_ID.Margin = new Padding(3, 2, 3, 2);
+            textBox_Department_6digits_ID.MinimumSize = new Size(95, 29);
+            textBox_Department_6digits_ID.Name = "textBox_Department_6digits_ID";
+            textBox_Department_6digits_ID.Size = new Size(608, 29);
+            textBox_Department_6digits_ID.TabIndex = 8;
             // 
-            // label_DepartmentID
+            // label_Department6DigitsID
             // 
-            label_DepartmentID.AutoSize = true;
-            label_DepartmentID.Dock = DockStyle.Top;
-            label_DepartmentID.Location = new Point(8, 10);
-            label_DepartmentID.Name = "label_DepartmentID";
-            label_DepartmentID.Size = new Size(138, 20);
-            label_DepartmentID.TabIndex = 9;
-            label_DepartmentID.Text = "Department ID :";
+            label_Department6DigitsID.AutoSize = true;
+            label_Department6DigitsID.Dock = DockStyle.Top;
+            label_Department6DigitsID.Location = new Point(8, 10);
+            label_Department6DigitsID.Name = "label_Department6DigitsID";
+            label_Department6DigitsID.Size = new Size(201, 20);
+            label_Department6DigitsID.TabIndex = 9;
+            label_Department6DigitsID.Text = "Department 6 digits ID :";
             // 
             // panel16
             // 
@@ -1506,8 +1506,8 @@ namespace StockRoom11net
         private CodeVendor.Controls.Grouper grouper_DepartmentInformations;
         private Panel panel14;
         private Panel panel15;
-        private TextBox textBox_Department_ID;
-        private Label label_DepartmentID;
+        private TextBox textBox_Department_6digits_ID;
+        private Label label_Department6DigitsID;
         private Panel panel16;
         private TextBox textBox_Department_Telephone;
         private Label label_DepartmentTelephone;

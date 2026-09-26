@@ -239,6 +239,18 @@ namespace StockRoom11net.Controls.EmployeeInformation
         public string Status = "";
         public string Properties { get; set; }
 
+        public int Department6DigitsID
+        {
+            get
+            {
+                return DepartmentRow.Last6Digit;
+            }
+            set
+            {
+                DepartmentRow.Last6Digit = value;
+            }
+        }
+
         public SortedDictionary<string, bool> AvailableMenus { get; set; }
 
         #region"These are packed in the Dictionary, we need to update this to reflect changes."

@@ -1469,7 +1469,7 @@ namespace StockRoom11net.Controls
 
         public static int CastAsInt(object value)
         {
-            if (value != DBNull.Value)
+            if (value != DBNull.Value && !String.IsNullOrEmpty(value.ToString()))
                 return Convert.ToInt32(value);
 
             return 0;
