@@ -1,0 +1,56 @@
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "11.0.x"
+
+      - name: Restore dependencies
+        run: dotnet restore StockRoom11net.csproj
+
+      - name: Publish (self-contained, single-file)
+        run: |
+          dotnet publish StockRoom11net.csproj `
+            --configuration Release `
+            --runtime win-x64 `
+            --self-contained true `
+            -p:Platform=x64 `
+            -p:PublishSingleFile=true `
+            -o ./publish
+
+      - name: Verify publish output
+        run: |
+          if (-not (Test-Path "./publish") -or (Get-ChildItem "./publish" -Recurse -File | Where-Object { $_.Extension -eq ".exe" }).Count -eq 0) {
+            Write-Error "Publish output missing or no .exe found in ./publish. Aborting."
+            exit 1
+          }
+          Get-ChildItem "./publish" -Recurse | Format-Table FullName, Length
+
+      - name: Zip published output
+        run: Compress-Archive -Path ./publish/* -DestinationPath ./StockRoom11net-${{ github.ref_name }}.zip -Force
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ./StockRoom11net-${{ github.ref_name }}.zip
+          name: Release ${{ github.ref_name }}
+          tag_name: ${{ github.ref_name }}
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
