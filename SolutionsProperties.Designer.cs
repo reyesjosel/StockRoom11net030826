@@ -67,6 +67,9 @@ namespace StockRoom11net
             imageListTreeView = new ImageList(components);
             customTabControlSetting = new CustomTabControl();
             tabPageApplicationSetting = new TabPage();
+            grouper7 = new CodeVendor.Controls.Grouper();
+            radioButton2 = new RadioButton();
+            radioButton1 = new RadioButton();
             grouper_ArgsToInitializarApp = new CodeVendor.Controls.Grouper();
             label_DescriptionInfo = new Label();
             label_Description = new Label();
@@ -77,9 +80,6 @@ namespace StockRoom11net
             checkBox_CheckInternetAccess = new CheckBox();
             grouper_InfoArgsToInitializarApp = new CodeVendor.Controls.Grouper();
             richTextBox_InfoArgsToInitializarApp = new RichTextBox();
-            grouper7 = new CodeVendor.Controls.Grouper();
-            radioButton2 = new RadioButton();
-            radioButton1 = new RadioButton();
             grouper_DepartProperties = new CodeVendor.Controls.Grouper();
             textBox_DataBaseAddress = new TextBox();
             comboBox_ApplicationDepartmentName = new ComboBox();
@@ -219,9 +219,9 @@ namespace StockRoom11net
             splitContainerSetting.SuspendLayout();
             customTabControlSetting.SuspendLayout();
             tabPageApplicationSetting.SuspendLayout();
+            grouper7.SuspendLayout();
             grouper_ArgsToInitializarApp.SuspendLayout();
             grouper_InfoArgsToInitializarApp.SuspendLayout();
-            grouper7.SuspendLayout();
             grouper_DepartProperties.SuspendLayout();
             tabPageNotificationsOptions.SuspendLayout();
             grouper2.SuspendLayout();
@@ -451,6 +451,9 @@ namespace StockRoom11net
             // 
             // customTabControlSetting
             // 
+            customTabControlSetting.Alignment = TabAlignment.Bottom;
+            customTabControlSetting.AlignmentExtended = TabAlignment.Bottom;
+            customTabControlSetting.AppearanceExtended = TabAppearance.Normal;
             customTabControlSetting.Controls.Add(tabPageApplicationSetting);
             customTabControlSetting.Controls.Add(tabPageNotificationsOptions);
             customTabControlSetting.Controls.Add(tabPageUSB_DeviceUtility);
@@ -464,22 +467,15 @@ namespace StockRoom11net
             customTabControlSetting.Controls.Add(tabPage_ConvertFilesFrontThisLocation);
             customTabControlSetting.Controls.Add(tabPage_PeerToPeerManagement);
             customTabControlSetting.DisplayStyle = TabStyle.Chrome;
-            // 
-            // 
-            // 
-            customTabControlSetting.DisplayStyleProvider.BorderColor = SystemColors.ControlDark;
-            customTabControlSetting.DisplayStyleProvider.BorderColorHot = SystemColors.ControlDark;
-            customTabControlSetting.DisplayStyleProvider.BorderColorSelected = Color.FromArgb(132, 130, 132);
-            customTabControlSetting.DisplayStyleProvider.CloserColor = Color.DarkGray;
-            customTabControlSetting.DisplayStyleProvider.CloserColorActive = Color.White;
-            customTabControlSetting.DisplayStyleProvider.Radius = 16;
-            customTabControlSetting.DisplayStyleProvider.TextColor = SystemColors.ControlText;
-            customTabControlSetting.DisplayStyleProvider.TextColorDisabled = SystemColors.ControlDark;
-            customTabControlSetting.DisplayStyleProvider.TextColorSelected = SystemColors.ControlText;
             customTabControlSetting.Dock = DockStyle.Fill;
+            customTabControlSetting.HotTrack = true;
+            customTabControlSetting.HotTrackExtended = true;
             customTabControlSetting.Location = new Point(0, 0);
             customTabControlSetting.Margin = new Padding(16, 11, 16, 11);
+            customTabControlSetting.MultilineExtended = false;
             customTabControlSetting.Name = "customTabControlSetting";
+            customTabControlSetting.Padding = new Point(21, 5);
+            customTabControlSetting.PaddingExtended = new Point(7, 5);
             customTabControlSetting.SelectedIndex = 0;
             customTabControlSetting.Size = new Size(1100, 663);
             customTabControlSetting.TabIndex = 0;
@@ -498,6 +494,52 @@ namespace StockRoom11net
             tabPageApplicationSetting.Text = "   Application Settings";
             tabPageApplicationSetting.UseVisualStyleBackColor = true;
             // 
+            // grouper7
+            // 
+            grouper7.BackgroundColor = SystemColors.Control;
+            grouper7.BackgroundGradientColor = Color.White;
+            grouper7.BackgroundGradientMode = CodeVendor.Controls.Grouper.GroupBoxGradientMode.None;
+            grouper7.BorderColor = Color.Black;
+            grouper7.BorderThickness = 1F;
+            grouper7.Controls.Add(radioButton2);
+            grouper7.Controls.Add(radioButton1);
+            grouper7.CustomGroupBoxColor = Color.White;
+            grouper7.Dock = DockStyle.Fill;
+            grouper7.GroupTitle = "Pictures.";
+            grouper7.Location = new Point(16, 216);
+            grouper7.Margin = new Padding(1, 14, 1, 1);
+            grouper7.Name = "grouper7";
+            grouper7.Padding = new Padding(113, 86, 113, 71);
+            grouper7.PaintGroupBox = false;
+            grouper7.RoundCorners = 10;
+            grouper7.ShadowColor = Color.DarkGray;
+            grouper7.ShadowControl = false;
+            grouper7.ShadowThickness = 3;
+            grouper7.Size = new Size(1060, 158);
+            grouper7.TabIndex = 15;
+            // 
+            // radioButton2
+            // 
+            radioButton2.AutoSize = true;
+            radioButton2.Location = new Point(55, 88);
+            radioButton2.Margin = new Padding(12, 2, 12, 2);
+            radioButton2.Name = "radioButton2";
+            radioButton2.Size = new Size(74, 24);
+            radioButton2.TabIndex = 23;
+            radioButton2.Text = "Hours.";
+            radioButton2.UseVisualStyleBackColor = true;
+            // 
+            // radioButton1
+            // 
+            radioButton1.AutoSize = true;
+            radioButton1.Location = new Point(55, 45);
+            radioButton1.Margin = new Padding(12, 2, 12, 2);
+            radioButton1.Name = "radioButton1";
+            radioButton1.Size = new Size(74, 24);
+            radioButton1.TabIndex = 22;
+            radioButton1.Text = "Hours.";
+            radioButton1.UseVisualStyleBackColor = true;
+            // 
             // grouper_ArgsToInitializarApp
             // 
             grouper_ArgsToInitializarApp.BackgroundColor = SystemColors.Control;
@@ -515,7 +557,6 @@ namespace StockRoom11net
             grouper_ArgsToInitializarApp.Controls.Add(grouper_InfoArgsToInitializarApp);
             grouper_ArgsToInitializarApp.CustomGroupBoxColor = Color.White;
             grouper_ArgsToInitializarApp.Dock = DockStyle.Bottom;
-            grouper_ArgsToInitializarApp.GroupImage = null;
             grouper_ArgsToInitializarApp.GroupTitle = "Args to initializar the App.";
             grouper_ArgsToInitializarApp.Location = new Point(16, 374);
             grouper_ArgsToInitializarApp.Margin = new Padding(1, 14, 1, 1);
@@ -617,7 +658,6 @@ namespace StockRoom11net
             grouper_InfoArgsToInitializarApp.Controls.Add(richTextBox_InfoArgsToInitializarApp);
             grouper_InfoArgsToInitializarApp.CustomGroupBoxColor = Color.White;
             grouper_InfoArgsToInitializarApp.Dock = DockStyle.Top;
-            grouper_InfoArgsToInitializarApp.GroupImage = null;
             grouper_InfoArgsToInitializarApp.GroupTitle = "";
             grouper_InfoArgsToInitializarApp.Location = new Point(25, 25);
             grouper_InfoArgsToInitializarApp.Margin = new Padding(1, 14, 1, 1);
@@ -648,53 +688,6 @@ namespace StockRoom11net
             richTextBox_InfoArgsToInitializarApp.TabIndex = 1;
             richTextBox_InfoArgsToInitializarApp.Text = "";
             // 
-            // grouper7
-            // 
-            grouper7.BackgroundColor = SystemColors.Control;
-            grouper7.BackgroundGradientColor = Color.White;
-            grouper7.BackgroundGradientMode = CodeVendor.Controls.Grouper.GroupBoxGradientMode.None;
-            grouper7.BorderColor = Color.Black;
-            grouper7.BorderThickness = 1F;
-            grouper7.Controls.Add(radioButton2);
-            grouper7.Controls.Add(radioButton1);
-            grouper7.CustomGroupBoxColor = Color.White;
-            grouper7.Dock = DockStyle.Fill;
-            grouper7.GroupImage = null;
-            grouper7.GroupTitle = "Pictures.";
-            grouper7.Location = new Point(16, 216);
-            grouper7.Margin = new Padding(1, 14, 1, 1);
-            grouper7.Name = "grouper7";
-            grouper7.Padding = new Padding(113, 86, 113, 71);
-            grouper7.PaintGroupBox = false;
-            grouper7.RoundCorners = 10;
-            grouper7.ShadowColor = Color.DarkGray;
-            grouper7.ShadowControl = false;
-            grouper7.ShadowThickness = 3;
-            grouper7.Size = new Size(1060, 158);
-            grouper7.TabIndex = 15;
-            // 
-            // radioButton2
-            // 
-            radioButton2.AutoSize = true;
-            radioButton2.Location = new Point(55, 88);
-            radioButton2.Margin = new Padding(12, 2, 12, 2);
-            radioButton2.Name = "radioButton2";
-            radioButton2.Size = new Size(74, 24);
-            radioButton2.TabIndex = 23;
-            radioButton2.Text = "Hours.";
-            radioButton2.UseVisualStyleBackColor = true;
-            // 
-            // radioButton1
-            // 
-            radioButton1.AutoSize = true;
-            radioButton1.Location = new Point(55, 45);
-            radioButton1.Margin = new Padding(12, 2, 12, 2);
-            radioButton1.Name = "radioButton1";
-            radioButton1.Size = new Size(74, 24);
-            radioButton1.TabIndex = 22;
-            radioButton1.Text = "Hours.";
-            radioButton1.UseVisualStyleBackColor = true;
-            // 
             // grouper_DepartProperties
             // 
             grouper_DepartProperties.BackgroundColor = SystemColors.Control;
@@ -712,7 +705,6 @@ namespace StockRoom11net
             grouper_DepartProperties.Controls.Add(labelApplicationHTMLtemples);
             grouper_DepartProperties.CustomGroupBoxColor = Color.White;
             grouper_DepartProperties.Dock = DockStyle.Top;
-            grouper_DepartProperties.GroupImage = null;
             grouper_DepartProperties.GroupTitle = "Department Name.";
             grouper_DepartProperties.Location = new Point(16, 11);
             grouper_DepartProperties.Margin = new Padding(1, 14, 1, 1);
@@ -829,7 +821,6 @@ namespace StockRoom11net
             grouper2.Controls.Add(panel6);
             grouper2.CustomGroupBoxColor = Color.White;
             grouper2.Dock = DockStyle.Fill;
-            grouper2.GroupImage = null;
             grouper2.GroupTitle = "";
             grouper2.Location = new Point(16, 11);
             grouper2.Margin = new Padding(16, 11, 16, 11);
@@ -867,7 +858,6 @@ namespace StockRoom11net
             grouper_Notifycations.Controls.Add(checkBox_ShowWarningsNotifications);
             grouper_Notifycations.CustomGroupBoxColor = Color.White;
             grouper_Notifycations.Dock = DockStyle.Fill;
-            grouper_Notifycations.GroupImage = null;
             grouper_Notifycations.GroupTitle = "Received Notifications.";
             grouper_Notifycations.Location = new Point(0, 139);
             grouper_Notifycations.Margin = new Padding(1, 14, 1, 1);
@@ -925,7 +915,6 @@ namespace StockRoom11net
             grouper3.Controls.Add(checkBox_SendMyOwnNotifications);
             grouper3.CustomGroupBoxColor = Color.White;
             grouper3.Dock = DockStyle.Top;
-            grouper3.GroupImage = null;
             grouper3.GroupTitle = "Send Notifications.";
             grouper3.Location = new Point(0, 0);
             grouper3.Margin = new Padding(1, 14, 1, 1);
@@ -945,7 +934,7 @@ namespace StockRoom11net
             checkBox_ShowMyOwnNotifications.Location = new Point(32, 94);
             checkBox_ShowMyOwnNotifications.Margin = new Padding(16, 11, 16, 11);
             checkBox_ShowMyOwnNotifications.Name = "checkBox_ShowMyOwnNotifications";
-            checkBox_ShowMyOwnNotifications.Size = new Size(244, 24);
+            checkBox_ShowMyOwnNotifications.Size = new Size(246, 25);
             checkBox_ShowMyOwnNotifications.TabIndex = 11;
             checkBox_ShowMyOwnNotifications.Text = "Show me my own notifications.";
             checkBox_ShowMyOwnNotifications.UseVisualStyleBackColor = true;
@@ -956,7 +945,7 @@ namespace StockRoom11net
             checkBox_SendMyOwnNotifications.Location = new Point(32, 48);
             checkBox_SendMyOwnNotifications.Margin = new Padding(16, 11, 16, 11);
             checkBox_SendMyOwnNotifications.Name = "checkBox_SendMyOwnNotifications";
-            checkBox_SendMyOwnNotifications.Size = new Size(549, 24);
+            checkBox_SendMyOwnNotifications.Size = new Size(542, 25);
             checkBox_SendMyOwnNotifications.TabIndex = 14;
             checkBox_SendMyOwnNotifications.Text = "Send my own notifications. Check to send my notifications to others users.";
             checkBox_SendMyOwnNotifications.UseVisualStyleBackColor = true;
@@ -975,7 +964,6 @@ namespace StockRoom11net
             grouper4.Controls.Add(radioButton_secund);
             grouper4.CustomGroupBoxColor = Color.White;
             grouper4.Dock = DockStyle.Bottom;
-            grouper4.GroupImage = null;
             grouper4.GroupTitle = "Interval between each reading of notifications.";
             grouper4.Location = new Point(0, 336);
             grouper4.Margin = new Padding(1, 14, 1, 1);
@@ -1020,7 +1008,7 @@ namespace StockRoom11net
             radioButton_Hours.Location = new Point(60, 148);
             radioButton_Hours.Margin = new Padding(12, 2, 12, 2);
             radioButton_Hours.Name = "radioButton_Hours";
-            radioButton_Hours.Size = new Size(74, 24);
+            radioButton_Hours.Size = new Size(73, 25);
             radioButton_Hours.TabIndex = 21;
             radioButton_Hours.Text = "Hours.";
             radioButton_Hours.UseVisualStyleBackColor = true;
@@ -1032,7 +1020,7 @@ namespace StockRoom11net
             radioButton_Minutes.Location = new Point(177, 148);
             radioButton_Minutes.Margin = new Padding(12, 2, 12, 2);
             radioButton_Minutes.Name = "radioButton_Minutes";
-            radioButton_Minutes.Size = new Size(87, 24);
+            radioButton_Minutes.Size = new Size(87, 25);
             radioButton_Minutes.TabIndex = 20;
             radioButton_Minutes.Text = "Minutes.";
             radioButton_Minutes.UseVisualStyleBackColor = true;
@@ -1045,7 +1033,7 @@ namespace StockRoom11net
             radioButton_secund.Location = new Point(301, 148);
             radioButton_secund.Margin = new Padding(12, 2, 12, 2);
             radioButton_secund.Name = "radioButton_secund";
-            radioButton_secund.Size = new Size(94, 24);
+            radioButton_secund.Size = new Size(89, 25);
             radioButton_secund.TabIndex = 19;
             radioButton_secund.TabStop = true;
             radioButton_secund.Text = "Seconds.";
@@ -1152,7 +1140,6 @@ namespace StockRoom11net
             grouper_AddNewPrintHelpsButtons.Controls.Add(flowLayoutPanel_AddNewPrintHelpsButton);
             grouper_AddNewPrintHelpsButtons.CustomGroupBoxColor = Color.White;
             grouper_AddNewPrintHelpsButtons.Dock = DockStyle.Fill;
-            grouper_AddNewPrintHelpsButtons.GroupImage = null;
             grouper_AddNewPrintHelpsButtons.GroupTitle = "";
             grouper_AddNewPrintHelpsButtons.Location = new Point(0, 0);
             grouper_AddNewPrintHelpsButtons.Margin = new Padding(12, 2, 12, 2);
@@ -1275,7 +1262,6 @@ namespace StockRoom11net
             grouper6.Controls.Add(checkBoxSaveEachTimeTheInformationIsChanged);
             grouper6.CustomGroupBoxColor = Color.White;
             grouper6.Dock = DockStyle.Fill;
-            grouper6.GroupImage = null;
             grouper6.GroupTitle = "Save Options.";
             grouper6.Location = new Point(0, 0);
             grouper6.Margin = new Padding(28, 17, 28, 17);
@@ -1356,7 +1342,6 @@ namespace StockRoom11net
             grouper5.Controls.Add(radioButtonEvery5minutes);
             grouper5.CustomGroupBoxColor = Color.White;
             grouper5.Dock = DockStyle.Bottom;
-            grouper5.GroupImage = null;
             grouper5.GroupTitle = "";
             grouper5.Location = new Point(0, 331);
             grouper5.Margin = new Padding(1, 14, 1, 1);
@@ -1376,7 +1361,7 @@ namespace StockRoom11net
             radioButtonEvery30minutes.Location = new Point(85, 219);
             radioButtonEvery30minutes.Margin = new Padding(16, 11, 16, 11);
             radioButtonEvery30minutes.Name = "radioButtonEvery30minutes";
-            radioButtonEvery30minutes.Size = new Size(152, 24);
+            radioButtonEvery30minutes.Size = new Size(151, 25);
             radioButtonEvery30minutes.TabIndex = 2;
             radioButtonEvery30minutes.Text = "Every 30 minutes.";
             radioButtonEvery30minutes.UseVisualStyleBackColor = true;
@@ -1387,7 +1372,7 @@ namespace StockRoom11net
             radioButtonEvery15minutes.Location = new Point(85, 138);
             radioButtonEvery15minutes.Margin = new Padding(16, 11, 16, 11);
             radioButtonEvery15minutes.Name = "radioButtonEvery15minutes";
-            radioButtonEvery15minutes.Size = new Size(152, 24);
+            radioButtonEvery15minutes.Size = new Size(151, 25);
             radioButtonEvery15minutes.TabIndex = 1;
             radioButtonEvery15minutes.Text = "Every 15 minutes.";
             radioButtonEvery15minutes.UseVisualStyleBackColor = true;
@@ -1398,7 +1383,7 @@ namespace StockRoom11net
             radioButtonEvery5minutes.Location = new Point(85, 59);
             radioButtonEvery5minutes.Margin = new Padding(16, 11, 16, 11);
             radioButtonEvery5minutes.Name = "radioButtonEvery5minutes";
-            radioButtonEvery5minutes.Size = new Size(143, 24);
+            radioButtonEvery5minutes.Size = new Size(142, 25);
             radioButtonEvery5minutes.TabIndex = 0;
             radioButtonEvery5minutes.Text = "Every 5 minutes.";
             radioButtonEvery5minutes.UseVisualStyleBackColor = true;
@@ -1409,7 +1394,7 @@ namespace StockRoom11net
             tabPage_InstallationLog.Location = new Point(4, 4);
             tabPage_InstallationLog.Margin = new Padding(16, 11, 16, 11);
             tabPage_InstallationLog.Name = "tabPage_InstallationLog";
-            tabPage_InstallationLog.Size = new Size(1092, 629);
+            tabPage_InstallationLog.Size = new Size(1092, 625);
             tabPage_InstallationLog.TabIndex = 4;
             tabPage_InstallationLog.Text = "   Installation Log";
             tabPage_InstallationLog.UseVisualStyleBackColor = true;
@@ -1420,7 +1405,7 @@ namespace StockRoom11net
             richTextBox_FirstInstalation.Location = new Point(0, 0);
             richTextBox_FirstInstalation.Margin = new Padding(16, 11, 16, 11);
             richTextBox_FirstInstalation.Name = "richTextBox_FirstInstalation";
-            richTextBox_FirstInstalation.Size = new Size(1092, 629);
+            richTextBox_FirstInstalation.Size = new Size(1092, 625);
             richTextBox_FirstInstalation.TabIndex = 0;
             richTextBox_FirstInstalation.Text = "";
             // 
@@ -1431,7 +1416,7 @@ namespace StockRoom11net
             tabPage_SecurityLockFolder.Location = new Point(4, 4);
             tabPage_SecurityLockFolder.Margin = new Padding(12, 2, 12, 2);
             tabPage_SecurityLockFolder.Name = "tabPage_SecurityLockFolder";
-            tabPage_SecurityLockFolder.Size = new Size(1092, 629);
+            tabPage_SecurityLockFolder.Size = new Size(1092, 625);
             tabPage_SecurityLockFolder.TabIndex = 5;
             tabPage_SecurityLockFolder.Text = "   Security & Lock System Folder";
             tabPage_SecurityLockFolder.UseVisualStyleBackColor = true;
@@ -1447,7 +1432,6 @@ namespace StockRoom11net
             grouper_SecurityLockFolder.Controls.Add(grouper_SecurityLockFolderButtons);
             grouper_SecurityLockFolder.CustomGroupBoxColor = Color.White;
             grouper_SecurityLockFolder.Dock = DockStyle.Top;
-            grouper_SecurityLockFolder.GroupImage = null;
             grouper_SecurityLockFolder.GroupTitle = "Security & Lock System Folder.";
             grouper_SecurityLockFolder.Location = new Point(0, 0);
             grouper_SecurityLockFolder.Margin = new Padding(1, 14, 1, 1);
@@ -1514,7 +1498,6 @@ namespace StockRoom11net
             grouper_SecurityLockFolderButtons.Controls.Add(button_UnLock);
             grouper_SecurityLockFolderButtons.CustomGroupBoxColor = Color.White;
             grouper_SecurityLockFolderButtons.Dock = DockStyle.Bottom;
-            grouper_SecurityLockFolderButtons.GroupImage = null;
             grouper_SecurityLockFolderButtons.GroupTitle = "";
             grouper_SecurityLockFolderButtons.Location = new Point(113, 52);
             grouper_SecurityLockFolderButtons.Margin = new Padding(1, 14, 1, 1);
@@ -1562,7 +1545,6 @@ namespace StockRoom11net
             grouper_Properties.Controls.Add(checkBox_ReadOnly);
             grouper_Properties.Controls.Add(checkBox_System);
             grouper_Properties.CustomGroupBoxColor = Color.White;
-            grouper_Properties.GroupImage = null;
             grouper_Properties.GroupTitle = "Folder Properties.";
             grouper_Properties.Location = new Point(53, 330);
             grouper_Properties.Margin = new Padding(1, 14, 1, 1);
@@ -1629,7 +1611,7 @@ namespace StockRoom11net
             tabPage_RegisterDLL.Location = new Point(4, 4);
             tabPage_RegisterDLL.Margin = new Padding(16, 11, 16, 11);
             tabPage_RegisterDLL.Name = "tabPage_RegisterDLL";
-            tabPage_RegisterDLL.Size = new Size(1092, 629);
+            tabPage_RegisterDLL.Size = new Size(1092, 625);
             tabPage_RegisterDLL.TabIndex = 6;
             tabPage_RegisterDLL.Text = "   Register a DLL";
             tabPage_RegisterDLL.UseVisualStyleBackColor = true;
@@ -1648,7 +1630,6 @@ namespace StockRoom11net
             grouper9.Controls.Add(button_RegisterDLL);
             grouper9.CustomGroupBoxColor = Color.White;
             grouper9.Dock = DockStyle.Top;
-            grouper9.GroupImage = null;
             grouper9.GroupTitle = "";
             grouper9.Location = new Point(0, 0);
             grouper9.Margin = new Padding(1, 14, 1, 1);
@@ -1709,7 +1690,7 @@ namespace StockRoom11net
             tabPage_SystemCompatibility.Location = new Point(4, 4);
             tabPage_SystemCompatibility.Margin = new Padding(16, 11, 16, 11);
             tabPage_SystemCompatibility.Name = "tabPage_SystemCompatibility";
-            tabPage_SystemCompatibility.Size = new Size(1092, 629);
+            tabPage_SystemCompatibility.Size = new Size(1092, 625);
             tabPage_SystemCompatibility.TabIndex = 7;
             tabPage_SystemCompatibility.Text = "   System Compatibility";
             tabPage_SystemCompatibility.UseVisualStyleBackColor = true;
@@ -1725,7 +1706,6 @@ namespace StockRoom11net
             grouper10.Controls.Add(label_SupportDoubleBuffering);
             grouper10.CustomGroupBoxColor = Color.White;
             grouper10.Dock = DockStyle.Top;
-            grouper10.GroupImage = null;
             grouper10.GroupTitle = "";
             grouper10.Location = new Point(0, 0);
             grouper10.Margin = new Padding(1, 14, 1, 1);
@@ -1768,7 +1748,7 @@ namespace StockRoom11net
             tabPage_Documentation.Margin = new Padding(16, 11, 16, 11);
             tabPage_Documentation.Name = "tabPage_Documentation";
             tabPage_Documentation.Padding = new Padding(21, 14, 21, 14);
-            tabPage_Documentation.Size = new Size(1092, 629);
+            tabPage_Documentation.Size = new Size(1092, 625);
             tabPage_Documentation.TabIndex = 8;
             tabPage_Documentation.Text = "   Documentation";
             tabPage_Documentation.UseVisualStyleBackColor = true;
@@ -1791,7 +1771,6 @@ namespace StockRoom11net
             grouper_DocumentationBehavior.Controls.Add(grouper_BrowserVersion);
             grouper_DocumentationBehavior.CustomGroupBoxColor = Color.White;
             grouper_DocumentationBehavior.Dock = DockStyle.Fill;
-            grouper_DocumentationBehavior.GroupImage = null;
             grouper_DocumentationBehavior.GroupTitle = "Documentation Behavior";
             grouper_DocumentationBehavior.Location = new Point(21, 14);
             grouper_DocumentationBehavior.Margin = new Padding(1, 14, 1, 1);
@@ -1802,7 +1781,7 @@ namespace StockRoom11net
             grouper_DocumentationBehavior.ShadowColor = Color.DarkGray;
             grouper_DocumentationBehavior.ShadowControl = false;
             grouper_DocumentationBehavior.ShadowThickness = 3;
-            grouper_DocumentationBehavior.Size = new Size(1050, 601);
+            grouper_DocumentationBehavior.Size = new Size(1050, 597);
             grouper_DocumentationBehavior.TabIndex = 20;
             // 
             // grouper_NoDocumentsToShow
@@ -1816,7 +1795,6 @@ namespace StockRoom11net
             grouper_NoDocumentsToShow.Controls.Add(panel_NoDocumentsToShow);
             grouper_NoDocumentsToShow.CustomGroupBoxColor = Color.White;
             grouper_NoDocumentsToShow.Dock = DockStyle.Top;
-            grouper_NoDocumentsToShow.GroupImage = null;
             grouper_NoDocumentsToShow.GroupTitle = "";
             grouper_NoDocumentsToShow.Location = new Point(113, 1856);
             grouper_NoDocumentsToShow.Margin = new Padding(1, 14, 1, 1);
@@ -1879,7 +1857,6 @@ namespace StockRoom11net
             grouper_Last2Versions.Controls.Add(panel3);
             grouper_Last2Versions.CustomGroupBoxColor = Color.White;
             grouper_Last2Versions.Dock = DockStyle.Top;
-            grouper_Last2Versions.GroupImage = null;
             grouper_Last2Versions.GroupTitle = "";
             grouper_Last2Versions.Location = new Point(113, 1476);
             grouper_Last2Versions.Margin = new Padding(1, 14, 1, 1);
@@ -1966,7 +1943,6 @@ namespace StockRoom11net
             grouper_AllVersionsFound.Controls.Add(panel_AllVersionsFound);
             grouper_AllVersionsFound.CustomGroupBoxColor = Color.White;
             grouper_AllVersionsFound.Dock = DockStyle.Top;
-            grouper_AllVersionsFound.GroupImage = null;
             grouper_AllVersionsFound.GroupTitle = "";
             grouper_AllVersionsFound.Location = new Point(113, 1081);
             grouper_AllVersionsFound.Margin = new Padding(1, 14, 1, 1);
@@ -2029,7 +2005,6 @@ namespace StockRoom11net
             grouper_LastRevision.Controls.Add(panel_LastRevision);
             grouper_LastRevision.CustomGroupBoxColor = Color.White;
             grouper_LastRevision.Dock = DockStyle.Top;
-            grouper_LastRevision.GroupImage = null;
             grouper_LastRevision.GroupTitle = "";
             grouper_LastRevision.Location = new Point(113, 765);
             grouper_LastRevision.Margin = new Padding(1, 14, 1, 1);
@@ -2092,7 +2067,6 @@ namespace StockRoom11net
             grouper_SpecifiedDocument.Controls.Add(panel_SpecifiedDocument);
             grouper_SpecifiedDocument.CustomGroupBoxColor = Color.White;
             grouper_SpecifiedDocument.Dock = DockStyle.Top;
-            grouper_SpecifiedDocument.GroupImage = null;
             grouper_SpecifiedDocument.GroupTitle = "";
             grouper_SpecifiedDocument.Location = new Point(113, 509);
             grouper_SpecifiedDocument.Margin = new Padding(1, 14, 1, 1);
@@ -2155,7 +2129,6 @@ namespace StockRoom11net
             grouper_BrowserVersion.Controls.Add(richTextBox5);
             grouper_BrowserVersion.CustomGroupBoxColor = Color.White;
             grouper_BrowserVersion.Dock = DockStyle.Top;
-            grouper_BrowserVersion.GroupImage = null;
             grouper_BrowserVersion.GroupTitle = "";
             grouper_BrowserVersion.Location = new Point(113, 71);
             grouper_BrowserVersion.Margin = new Padding(1, 14, 1, 1);
@@ -2206,7 +2179,7 @@ namespace StockRoom11net
             tabPage_SearchForPDFFileWithin.Location = new Point(4, 4);
             tabPage_SearchForPDFFileWithin.Margin = new Padding(16, 11, 16, 11);
             tabPage_SearchForPDFFileWithin.Name = "tabPage_SearchForPDFFileWithin";
-            tabPage_SearchForPDFFileWithin.Size = new Size(1092, 629);
+            tabPage_SearchForPDFFileWithin.Size = new Size(1092, 625);
             tabPage_SearchForPDFFileWithin.TabIndex = 9;
             tabPage_SearchForPDFFileWithin.Text = "   Search for PDF file within";
             tabPage_SearchForPDFFileWithin.UseVisualStyleBackColor = true;
@@ -2224,7 +2197,6 @@ namespace StockRoom11net
             grouper_DefinedAddressDocumentation.Controls.Add(documentsAddressGroup_SearchForPDFfileWithin);
             grouper_DefinedAddressDocumentation.CustomGroupBoxColor = Color.White;
             grouper_DefinedAddressDocumentation.Dock = DockStyle.Top;
-            grouper_DefinedAddressDocumentation.GroupImage = null;
             grouper_DefinedAddressDocumentation.GroupTitle = "Search for PDF file within";
             grouper_DefinedAddressDocumentation.Location = new Point(0, 395);
             grouper_DefinedAddressDocumentation.Margin = new Padding(1, 14, 1, 14);
@@ -2274,7 +2246,6 @@ namespace StockRoom11net
             grouper_SearchForPDFfileWithin.Controls.Add(richTextBox_SearchForPDFfileWithin);
             grouper_SearchForPDFfileWithin.CustomGroupBoxColor = Color.White;
             grouper_SearchForPDFfileWithin.Dock = DockStyle.Top;
-            grouper_SearchForPDFfileWithin.GroupImage = null;
             grouper_SearchForPDFfileWithin.GroupTitle = "Information about Search for PDF file within";
             grouper_SearchForPDFfileWithin.Location = new Point(0, 33);
             grouper_SearchForPDFfileWithin.Margin = new Padding(1, 14, 1, 1);
@@ -2323,7 +2294,7 @@ namespace StockRoom11net
             tabPage_ConvertFilesFrontThisLocation.Location = new Point(4, 4);
             tabPage_ConvertFilesFrontThisLocation.Margin = new Padding(16, 11, 16, 11);
             tabPage_ConvertFilesFrontThisLocation.Name = "tabPage_ConvertFilesFrontThisLocation";
-            tabPage_ConvertFilesFrontThisLocation.Size = new Size(1092, 629);
+            tabPage_ConvertFilesFrontThisLocation.Size = new Size(1092, 625);
             tabPage_ConvertFilesFrontThisLocation.TabIndex = 10;
             tabPage_ConvertFilesFrontThisLocation.Text = "   Convert files front this location";
             tabPage_ConvertFilesFrontThisLocation.UseVisualStyleBackColor = true;
@@ -2341,7 +2312,6 @@ namespace StockRoom11net
             grouper_ConvertFilesFrontThisLocation.Controls.Add(scanDocumentsAddressGroup_Default);
             grouper_ConvertFilesFrontThisLocation.CustomGroupBoxColor = Color.White;
             grouper_ConvertFilesFrontThisLocation.Dock = DockStyle.Top;
-            grouper_ConvertFilesFrontThisLocation.GroupImage = null;
             grouper_ConvertFilesFrontThisLocation.GroupTitle = "Scan these folther for...";
             grouper_ConvertFilesFrontThisLocation.Location = new Point(0, 395);
             grouper_ConvertFilesFrontThisLocation.Margin = new Padding(1, 14, 1, 14);
@@ -2391,7 +2361,6 @@ namespace StockRoom11net
             grouper_ConvertFilesFrontThisLocationInformation.Controls.Add(richTextBox7);
             grouper_ConvertFilesFrontThisLocationInformation.CustomGroupBoxColor = Color.White;
             grouper_ConvertFilesFrontThisLocationInformation.Dock = DockStyle.Top;
-            grouper_ConvertFilesFrontThisLocationInformation.GroupImage = null;
             grouper_ConvertFilesFrontThisLocationInformation.GroupTitle = "Convert files to PDF format";
             grouper_ConvertFilesFrontThisLocationInformation.Location = new Point(0, 33);
             grouper_ConvertFilesFrontThisLocationInformation.Margin = new Padding(1, 14, 1, 1);
@@ -2440,7 +2409,7 @@ namespace StockRoom11net
             tabPage_PeerToPeerManagement.Location = new Point(4, 4);
             tabPage_PeerToPeerManagement.Margin = new Padding(16, 11, 16, 11);
             tabPage_PeerToPeerManagement.Name = "tabPage_PeerToPeerManagement";
-            tabPage_PeerToPeerManagement.Size = new Size(1092, 629);
+            tabPage_PeerToPeerManagement.Size = new Size(1092, 625);
             tabPage_PeerToPeerManagement.TabIndex = 11;
             tabPage_PeerToPeerManagement.Text = "   Peer To Peer Management";
             tabPage_PeerToPeerManagement.UseVisualStyleBackColor = true;
@@ -2458,7 +2427,6 @@ namespace StockRoom11net
             grouper_P2PsettingUtilityPath.Controls.Add(textBox_NgrokUtilityPath);
             grouper_P2PsettingUtilityPath.CustomGroupBoxColor = Color.White;
             grouper_P2PsettingUtilityPath.Dock = DockStyle.Top;
-            grouper_P2PsettingUtilityPath.GroupImage = null;
             grouper_P2PsettingUtilityPath.GroupTitle = "Department Name.";
             grouper_P2PsettingUtilityPath.Location = new Point(0, 467);
             grouper_P2PsettingUtilityPath.Margin = new Padding(1);
@@ -2533,7 +2501,6 @@ namespace StockRoom11net
             grouper_P2PManagement.Controls.Add(richTextBox_P2PInfomation);
             grouper_P2PManagement.CustomGroupBoxColor = Color.White;
             grouper_P2PManagement.Dock = DockStyle.Top;
-            grouper_P2PManagement.GroupImage = null;
             grouper_P2PManagement.GroupTitle = "Peer to Peer Management";
             grouper_P2PManagement.Location = new Point(0, 33);
             grouper_P2PManagement.Margin = new Padding(1);
@@ -2571,19 +2538,14 @@ namespace StockRoom11net
             // 
             // tabControlExtendBase
             // 
-            // 
-            // 
-            // 
-            tabControlExtendBase.DisplayStyleProvider.BorderColor = SystemColors.ControlDark;
-            tabControlExtendBase.DisplayStyleProvider.BorderColorHot = SystemColors.ControlDark;
-            tabControlExtendBase.DisplayStyleProvider.BorderColorSelected = Color.FromArgb(127, 157, 185);
-            tabControlExtendBase.DisplayStyleProvider.CloserColor = Color.DarkGray;
-            tabControlExtendBase.DisplayStyleProvider.Radius = 2;
-            tabControlExtendBase.DisplayStyleProvider.TextColor = SystemColors.ControlText;
-            tabControlExtendBase.DisplayStyleProvider.TextColorDisabled = SystemColors.ControlDark;
-            tabControlExtendBase.DisplayStyleProvider.TextColorSelected = SystemColors.ControlText;
+            tabControlExtendBase.AlignmentExtended = TabAlignment.Top;
+            tabControlExtendBase.AppearanceExtended = TabAppearance.Normal;
+            tabControlExtendBase.HotTrack = true;
+            tabControlExtendBase.HotTrackExtended = true;
             tabControlExtendBase.Location = new Point(0, 0);
+            tabControlExtendBase.MultilineExtended = false;
             tabControlExtendBase.Name = "tabControlExtendBase";
+            tabControlExtendBase.PaddingExtended = new Point(6, 3);
             tabControlExtendBase.SelectedIndex = 0;
             tabControlExtendBase.Size = new Size(200, 100);
             tabControlExtendBase.TabIndex = 0;
@@ -2599,7 +2561,6 @@ namespace StockRoom11net
             grouper_ButtonSaveCancel.Controls.Add(button_Cancel);
             grouper_ButtonSaveCancel.CustomGroupBoxColor = Color.White;
             grouper_ButtonSaveCancel.Dock = DockStyle.Bottom;
-            grouper_ButtonSaveCancel.GroupImage = null;
             grouper_ButtonSaveCancel.GroupTitle = "";
             grouper_ButtonSaveCancel.Location = new Point(10, 677);
             grouper_ButtonSaveCancel.Name = "grouper_ButtonSaveCancel";
@@ -2660,11 +2621,11 @@ namespace StockRoom11net
             splitContainerSetting.ResumeLayout(false);
             customTabControlSetting.ResumeLayout(false);
             tabPageApplicationSetting.ResumeLayout(false);
+            grouper7.ResumeLayout(false);
+            grouper7.PerformLayout();
             grouper_ArgsToInitializarApp.ResumeLayout(false);
             grouper_ArgsToInitializarApp.PerformLayout();
             grouper_InfoArgsToInitializarApp.ResumeLayout(false);
-            grouper7.ResumeLayout(false);
-            grouper7.PerformLayout();
             grouper_DepartProperties.ResumeLayout(false);
             grouper_DepartProperties.PerformLayout();
             tabPageNotificationsOptions.ResumeLayout(false);

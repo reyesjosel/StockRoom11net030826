@@ -1,5 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
   <!---><Project Sdk="Microsoft.NET.Sdk"> Original...-->
+	<PropertyGroup>
+		<Version>3.0.33</Version>
+	</PropertyGroup>
   <PropertyGroup Label="Globals">
     <WebView2UseWinRT>False</WebView2UseWinRT>
     <WebView2LoaderPreference>Dynamic</WebView2LoaderPreference>
@@ -26,14 +29,11 @@
     <SupportedOSPlatformVersion>7.0</SupportedOSPlatformVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <GenerateAssemblyInfo>False</GenerateAssemblyInfo>
     <DebugType>portable</DebugType>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <GenerateAssemblyInfo>False</GenerateAssemblyInfo>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <GenerateAssemblyInfo>False</GenerateAssemblyInfo>
     <DebugType>portable</DebugType>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -91,8 +91,18 @@
     <None Include="BlazorWebAssembly\**\*.cshtml.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Properties\ReleaseDate.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
     <Content Include="Properties\Resources\Tutorial.ico" />
   </ItemGroup>
+	<ItemGroup>
+		<Content Include="Properties\ReleaseNotes.txt">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+		</Content>
+	</ItemGroup>
   <ItemGroup>
     <!-- None (not Content) so the Razor SDK does not trigger BLAZOR106.
          The Link places the file under wwwroot in the build output so
@@ -316,9 +326,6 @@
     <Compile Update="Controls\Find&amp;Replace\Find and Remplace.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Update="Controls\FirstInstallationSetting\InstallationKey.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Update="Controls\HTML_Editor\EngineeringRequestForm\Engineering Change Request.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -450,4 +457,24 @@
       <Generator>PublicResXFileCodeGenerator</Generator>
     </EmbeddedResource>
   </ItemGroup>
+	<ItemGroup>
+		<Content Update="Properties\ReleaseNotes.txt">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+		</Content>
+		<Content Update="Properties\ReleaseDate.txt">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+		</Content>
+	</ItemGroup>
+	<Target Name="BumpVersionAndNotes" BeforeTargets="Publish" Condition="'$(Configuration)' == 'Release'">
+		<Exec Command="powershell -NoProfile -ExecutionPolicy Bypass -File &quot;$(MSBuildProjectDirectory)\scripts\Bump-Version.ps1&quot; -CsprojPath &quot;$(MSBuildProjectFullPath)&quot;" />
+	</Target>
+	<Target Name="RunPostPublishRelease" AfterTargets="Publish" Condition="'$(Configuration)' == 'Release'">
+		<!-- Re-read Version from the csproj file at execution time to avoid stale cached value -->
+		<XmlPeek XmlInputPath="$(MSBuildProjectFullPath)" Query="/Project/PropertyGroup/Version/text()">
+			<Output TaskParameter="Result" ItemName="CurrentVersion" />
+		</XmlPeek>
+		<Exec Command="powershell -NoProfile -ExecutionPolicy Bypass -File &quot;$(MSBuildProjectDirectory)\scripts\Publish-Release.ps1&quot; -Version v@(CurrentVersion)" ContinueOnError="WarnAndContinue" IgnoreExitCode="true" />
+	</Target>
 </Project>

@@ -188,7 +188,7 @@ namespace StockRoom11net
             mainMenu.Items.AddRange(new ToolStripItem[] { fileToolStripMenuItem, editToolStripMenuItem, menuItemView, menuItemTools, helpToolStripMenuItem });
             mainMenu.Location = new Point(0, 0);
             mainMenu.Name = "mainMenu";
-            mainMenu.Size = new Size(1489, 29);
+            mainMenu.Size = new Size(1378, 29);
             mainMenu.Stretch = false;
             mainMenu.TabIndex = 3;
             mainMenu.Text = "menuStrip1";
@@ -763,31 +763,32 @@ namespace StockRoom11net
             // contentsToolStripMenuItem
             // 
             contentsToolStripMenuItem.Name = "contentsToolStripMenuItem";
-            contentsToolStripMenuItem.Size = new Size(142, 26);
+            contentsToolStripMenuItem.Size = new Size(180, 26);
             contentsToolStripMenuItem.Text = "&Contents";
             // 
             // indexToolStripMenuItem
             // 
             indexToolStripMenuItem.Name = "indexToolStripMenuItem";
-            indexToolStripMenuItem.Size = new Size(142, 26);
+            indexToolStripMenuItem.Size = new Size(180, 26);
             indexToolStripMenuItem.Text = "&Index";
             // 
             // searchToolStripMenuItem
             // 
             searchToolStripMenuItem.Name = "searchToolStripMenuItem";
-            searchToolStripMenuItem.Size = new Size(142, 26);
+            searchToolStripMenuItem.Size = new Size(180, 26);
             searchToolStripMenuItem.Text = "&Search";
             // 
             // toolStripSeparator5
             // 
             toolStripSeparator5.Name = "toolStripSeparator5";
-            toolStripSeparator5.Size = new Size(139, 6);
+            toolStripSeparator5.Size = new Size(177, 6);
             // 
             // aboutToolStripMenuItem
             // 
             aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            aboutToolStripMenuItem.Size = new Size(142, 26);
+            aboutToolStripMenuItem.Size = new Size(180, 26);
             aboutToolStripMenuItem.Text = "&About...";
+            aboutToolStripMenuItem.Click += AboutToolStripMenuItem_Click;
             // 
             // contextMenuStrip
             // 
@@ -808,7 +809,7 @@ namespace StockRoom11net
             dockPanel.Margin = new Padding(4, 2, 4, 2);
             dockPanel.Name = "dockPanel";
             dockPanel.RightToLeftLayout = true;
-            dockPanel.Size = new Size(1489, 678);
+            dockPanel.Size = new Size(1378, 674);
             dockPanel.TabIndex = 0;
             // 
             // toolStrip_StockRoom_Solutions
@@ -818,7 +819,7 @@ namespace StockRoom11net
             toolStrip_StockRoom_Solutions.Items.AddRange(new ToolStripItem[] { newToolStripButton, openToolStripButton, saveToolStripButton, printToolStripButton, toolStripSeparator6, cutToolStripButton, copyToolStripButton, pasteToolStripButton, toolStripSeparator7, toolStripLabel_Separating, toolStripSeparator8, toolStripTextBox_Log_User, toolStripLabel_Log_User, toolStripButton_Log_out, toolStripSeparator9, toolStripLabel1, toolStripSeparator10, helpToolStripButton, toolStripSeparator13, toolStripLabel2, toolStripButtonSpeechSynthesizer, toolStripTextBox_BarCodeInfo, toolStripButton_BarCode_Device, toolStripSeparator15, toolStripDropDownButton_Informations, toolStripSeparator11 });
             toolStrip_StockRoom_Solutions.Location = new Point(0, 29);
             toolStrip_StockRoom_Solutions.Name = "toolStrip_StockRoom_Solutions";
-            toolStrip_StockRoom_Solutions.Size = new Size(1489, 29);
+            toolStrip_StockRoom_Solutions.Size = new Size(1378, 29);
             toolStrip_StockRoom_Solutions.Stretch = true;
             toolStrip_StockRoom_Solutions.TabIndex = 8;
             toolStrip_StockRoom_Solutions.Text = "toolStrip_StockRoom_Solutions";
@@ -826,7 +827,7 @@ namespace StockRoom11net
             // newToolStripButton
             // 
             newToolStripButton.DisplayStyle = ToolStripItemDisplayStyle.Image;
-            newToolStripButton.Image = StockRoom11net.Properties.Resources.file;
+            newToolStripButton.Image = Properties.Resources.file;
             newToolStripButton.ImageTransparentColor = Color.Magenta;
             newToolStripButton.Name = "newToolStripButton";
             newToolStripButton.Size = new Size(24, 26);
@@ -835,7 +836,7 @@ namespace StockRoom11net
             // openToolStripButton
             // 
             openToolStripButton.DisplayStyle = ToolStripItemDisplayStyle.Image;
-            openToolStripButton.Image = StockRoom11net.Properties.Resources.OpenFolderImage;
+            openToolStripButton.Image = Properties.Resources.OpenFolderImage;
             openToolStripButton.ImageTransparentColor = Color.Magenta;
             openToolStripButton.Name = "openToolStripButton";
             openToolStripButton.Size = new Size(24, 26);
@@ -844,7 +845,7 @@ namespace StockRoom11net
             // saveToolStripButton
             // 
             saveToolStripButton.DisplayStyle = ToolStripItemDisplayStyle.Image;
-            saveToolStripButton.Image = StockRoom11net.Properties.Resources.SaveImage;
+            saveToolStripButton.Image = Properties.Resources.SaveImage;
             saveToolStripButton.ImageTransparentColor = Color.Magenta;
             saveToolStripButton.Name = "saveToolStripButton";
             saveToolStripButton.Size = new Size(24, 26);
@@ -853,7 +854,7 @@ namespace StockRoom11net
             // printToolStripButton
             // 
             printToolStripButton.DisplayStyle = ToolStripItemDisplayStyle.Image;
-            printToolStripButton.Image = StockRoom11net.Properties.Resources.print24_h;
+            printToolStripButton.Image = Properties.Resources.print24_h;
             printToolStripButton.ImageTransparentColor = Color.Magenta;
             printToolStripButton.Name = "printToolStripButton";
             printToolStripButton.Size = new Size(24, 26);
@@ -910,7 +911,7 @@ namespace StockRoom11net
             // toolStripTextBox_Log_User
             // 
             toolStripTextBox_Log_User.Name = "toolStripTextBox_Log_User";
-            toolStripTextBox_Log_User.Size = new Size(89, 29);
+            toolStripTextBox_Log_User.Size = new Size(83, 29);
             toolStripTextBox_Log_User.Leave += ToolStripTextBox_Log_User_Leave;
             toolStripTextBox_Log_User.KeyDown += ToolStripTextBox_Log_User_KeyDown;
             toolStripTextBox_Log_User.KeyUp += ToolStripTextBox_Log_User_KeyUp;
@@ -982,7 +983,7 @@ namespace StockRoom11net
             // 
             toolStripTextBox_BarCodeInfo.Alignment = ToolStripItemAlignment.Right;
             toolStripTextBox_BarCodeInfo.Name = "toolStripTextBox_BarCodeInfo";
-            toolStripTextBox_BarCodeInfo.Size = new Size(196, 29);
+            toolStripTextBox_BarCodeInfo.Size = new Size(182, 29);
             toolStripTextBox_BarCodeInfo.Text = "No BarCode Device.";
             // 
             // toolStripButton_BarCode_Device
@@ -1101,12 +1102,12 @@ namespace StockRoom11net
             statusStrip.Font = new Font("Microsoft Sans Serif", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
             statusStrip.Items.AddRange(new ToolStripItem[] { toolStripStatusLabel_Progress, toolStripStatusLabel_Message, toolStripStatusLabel_Spacer1, toolStripStatusLabel_NotificationEvents, toolStripStatusLabel_Spacer2, toolStripStatusLabel_Help, toolStripStatusLabel_Spacer3, toolStripStatusLabel_MousePosition });
             statusStrip.LayoutStyle = ToolStripLayoutStyle.HorizontalStackWithOverflow;
-            statusStrip.Location = new Point(1, 737);
+            statusStrip.Location = new Point(1, 733);
             statusStrip.MaximumSize = new Size(0, 26);
             statusStrip.MinimumSize = new Size(0, 20);
             statusStrip.Name = "statusStrip";
             statusStrip.Padding = new Padding(3, 2, 3, 2);
-            statusStrip.Size = new Size(1489, 25);
+            statusStrip.Size = new Size(1378, 25);
             statusStrip.SizingGrip = false;
             statusStrip.TabIndex = 2;
             // 
@@ -1193,14 +1194,14 @@ namespace StockRoom11net
             panel1.Dock = DockStyle.Top;
             panel1.Location = new Point(1, 1);
             panel1.Name = "panel1";
-            panel1.Size = new Size(1489, 58);
+            panel1.Size = new Size(1378, 58);
             panel1.TabIndex = 10;
             // 
             // Solutions_TempleClass
             // 
-            AutoScaleDimensions = new SizeF(9.723657F, 20.109371F);
+            AutoScaleDimensions = new SizeF(9F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1491, 763);
+            ClientSize = new Size(1380, 759);
             Controls.Add(dockPanel);
             Controls.Add(panel1);
             Controls.Add(statusStrip);

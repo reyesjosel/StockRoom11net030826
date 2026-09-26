@@ -371,13 +371,6 @@ namespace StockRoom11net
 
                 Settings.Default.InstallationFirstDate = DateTime.Now;
                 Settings.Default.InstallationFirstUser = "";
-
-                using (var installationKey = new StockRoom11net.Controls.FirstInstallationSetting.InstallationKey())
-                {
-                    installationKey.TopMost = true;
-                    installationKey.ShowDialog();
-                }
-
             }
         }
 

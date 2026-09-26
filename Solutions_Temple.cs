@@ -45,7 +45,7 @@ namespace StockRoom11net
     {
         // Injected EF Core services
         private readonly IAppService _iappService;
-        private readonly IUnitOfWork _unitOfWork; 
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IServiceProvider _serviceProvider;
         private ITableEmployeeService _employeesService;
 
@@ -337,7 +337,7 @@ namespace StockRoom11net
         /// </summary>
         int RowsChanged;
         string _rowHasError = "";
-        
+
         bool TestBarCodeReader;
 
         /// <summary>
@@ -366,7 +366,7 @@ namespace StockRoom11net
         public Employees_Management _employees_ManagementsForm;
         public LocationAndLayoutPlanning? _locationAndLayoutDesignForm;
         public TimeLineEditor? _timeLineEditorForm;
-                              
+
         private static SqliteConnection? DataBaseSqliteConnection;
         private static string ApplicationDefaultHtmlPages = "";
 
@@ -442,7 +442,7 @@ namespace StockRoom11net
         }
 
         public void SolutionsBaseLoad(object sender, EventArgs e)
-        {           
+        {
             try
             {
                 #region"Check if Installation was done."
@@ -451,7 +451,7 @@ namespace StockRoom11net
                 InstallationDaysAfter = DateTime.Now.Subtract(Settings.Default.InstallationFirstDate);
 
                 IsDoneInstallation = !(InstallationFirstDate == DateTime.Parse("1/1/2000"));
-                                
+
                 if (!TryGetDatabasePath(out var dbPath) || !File.Exists(dbPath))
                 {
                     OpenDialogUpdateSetting(); // Ask about dataSource file.
@@ -481,15 +481,13 @@ namespace StockRoom11net
 
                 toolStripTextBox_Log_User.Visible = false;
 
-                
-
                 //    CurrentDeptUserBroadcast_Requested += 123Solutions_TempleClass_CurrentDeptUserBroadcast_Requested;
                 ScannedDataEvent += Solutions_TempleClass_ScannedDataEvent;
 
                 var configFile = Path.Combine(Path.GetDirectoryName(Application.ExecutablePath), "DockPanel.config");
 
-              //  if (File.Exists(configFile))
-              //      dockPanel.LoadFromXml(configFile, _mDeserializeDockContent);
+                //  if (File.Exists(configFile))
+                //      dockPanel.LoadFromXml(configFile, _mDeserializeDockContent);
             }
             catch (Exception error)
             {
@@ -552,17 +550,17 @@ namespace StockRoom11net
                 {
                     string configFile = Path.Combine(Path.GetDirectoryName(Application.ExecutablePath), "DockPanel.config");
 
-                 //   if (m_bSaveLayout)
-                 //       dockPanel.SaveAsXml(configFile);
-                 //   else if (File.Exists(configFile))
-                 //       File.Delete(configFile);
+                    //   if (m_bSaveLayout)
+                    //       dockPanel.SaveAsXml(configFile);
+                    //   else if (File.Exists(configFile))
+                    //       File.Delete(configFile);
                 }
             }
             catch (Exception error)
             {
                 int ee = error.HResult;
-                  MessageBox.Show(new Form() { TopMost = true }, @"StockRoom_Solutions_FormClosing(), error is " + error.Message,
-                                   @"Solutions Temple has generated an error.", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(new Form() { TopMost = true }, @"StockRoom_Solutions_FormClosing(), error is " + error.Message,
+                                 @"Solutions Temple has generated an error.", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -806,7 +804,7 @@ namespace StockRoom11net
                 }
             }
         }
-        
+
         /// <summary>
         /// It is called when the SolutionsProperties form is closed, to initialize
         /// the properties and start the application if the installation was done.
@@ -1071,10 +1069,10 @@ namespace StockRoom11net
                 return;
             }
 
-         //   Write_LogFile(new Custom_Events_Args.LogFileMessageEventArgs(new List<string>
-        //            {
-        //                Tags.NewLine("Initialed StockRoom Projections application at " + DateTime.Now),
-        //            }));
+            //   Write_LogFile(new Custom_Events_Args.LogFileMessageEventArgs(new List<string>
+            //            {
+            //                Tags.NewLine("Initialed StockRoom Projections application at " + DateTime.Now),
+            //            }));
 
             InitStockRoomAddNewComponent("Add a new component or BOM.");
         }
@@ -1153,7 +1151,7 @@ namespace StockRoom11net
         }
 
         void Reset_OnHoldByToolStripMenuItem_Click(object sender, EventArgs e)
-        {}
+        { }
 
         void ToolStripMenuItemExploreH7HFile_Click(object sender, EventArgs e)
         {
@@ -1169,12 +1167,12 @@ namespace StockRoom11net
                 Text = @"H7H Explorer."
             };
 
-        //    _h7h_ExplorerForm.StatusBarMessageEvent += OnStatusBarMessage;
+            //    _h7h_ExplorerForm.StatusBarMessageEvent += OnStatusBarMessage;
 
-       //     Write_LogFile(new Custom_Events_Args.LogFileMessageEventArgs(new List<string>
-       //             {
-       //                 Tags.NewLine("H7H Explorer application at " + DateTime.Now),
-       //             }));
+            //     Write_LogFile(new Custom_Events_Args.LogFileMessageEventArgs(new List<string>
+            //             {
+            //                 Tags.NewLine("H7H Explorer application at " + DateTime.Now),
+            //             }));
 
             if (dockPanel.DocumentStyle == DocumentStyle.SystemMdi)
             {
@@ -1223,23 +1221,23 @@ namespace StockRoom11net
                         This process access information into the field "PartNumber" and "Status",
                         test if those columns are available before call it.
             */
-      //      if (!Production_InventoryDataSet.Table_StockRoom.Columns.Contains("PartNumber") ||
-      //          !Production_InventoryDataSet.Table_StockRoom.Columns.Contains("Status"))
-      //          return;
+            //      if (!Production_InventoryDataSet.Table_StockRoom.Columns.Contains("PartNumber") ||
+            //          !Production_InventoryDataSet.Table_StockRoom.Columns.Contains("Status"))
+            //          return;
 
-      //      _bindingSource_StockRoom.RemoveSort();
-       //     _bindingSource_StockRoom.SuspendBinding();
-       //     Production_InventoryDataSet.Table_StockRoom.BeginLoadData();
+            //      _bindingSource_StockRoom.RemoveSort();
+            //     _bindingSource_StockRoom.SuspendBinding();
+            //     Production_InventoryDataSet.Table_StockRoom.BeginLoadData();
 
             var taskA = await Task.Run(() =>
             {
-     //           var pdfFileScan = new PdfFileScan(_bindingSource_StockRoom, CurrentDepartmentLogIn);
+                //           var pdfFileScan = new PdfFileScan(_bindingSource_StockRoom, CurrentDepartmentLogIn);
 
-     //           pdfFileScan.StatusReportEvent += PdfFileScan_StatusReportEvent;
-     //           pdfFileScan.RowProcessDoneEvent += PdfFileScan_RowProcessDoneEvent;
-     //           pdfFileScan.ScanProcessDoneEvent += PdfFileScan_ScanProcessDoneEvent;
+                //           pdfFileScan.StatusReportEvent += PdfFileScan_StatusReportEvent;
+                //           pdfFileScan.RowProcessDoneEvent += PdfFileScan_RowProcessDoneEvent;
+                //           pdfFileScan.ScanProcessDoneEvent += PdfFileScan_ScanProcessDoneEvent;
 
-      //          pdfFileScan.StarScanning();
+                //          pdfFileScan.StarScanning();
 
                 string Done = "Done";
 
@@ -1260,9 +1258,9 @@ namespace StockRoom11net
         {
             InvokeOnUiThreadIfRequired(this, () =>
             {
-       //         _bindingSource_StockRoom.ResumeBinding();
+                //         _bindingSource_StockRoom.ResumeBinding();
                 toolStripMenuItem_ScanPdfFiles.Enabled = true;
-       //         Production_InventoryDataSet.Table_StockRoom.EndLoadData();
+                //         Production_InventoryDataSet.Table_StockRoom.EndLoadData();
                 //Production_InventoryDataSet.Table_StockRoom.AcceptChanges();
             });
         }
@@ -1312,11 +1310,23 @@ namespace StockRoom11net
         /// </summary>
         void ToolStripMenuItem_ClearAllDocumentsInformation_Click(object sender, EventArgs e)
         {
-         //   ClearHeaderInfStatusColumn(Production_InventoryDataSet.Table_StockRoom);
-         //   StockRoomSaveRequest();
+            //   ClearHeaderInfStatusColumn(Production_InventoryDataSet.Table_StockRoom);
+            //   StockRoomSaveRequest();
         }
 
         #endregion"Tools"
+
+        #region "Help"
+
+        void AboutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            using (var about = new AboutBox())
+            {
+                about.ShowDialog(this);
+            }
+        }
+
+        #endregion "Help"
 
         #endregion"MainMenu"
 
@@ -1479,22 +1489,22 @@ namespace StockRoom11net
             if (SpeechSynthesizerBase.State == SynthesizerState.Ready)
             {
                 SpeechSynthesizerBase.Pause();
-             //   toolStripButtonSpeechSynthesizer.Image = Resources.speaker_mute;
+                //   toolStripButtonSpeechSynthesizer.Image = Resources.speaker_mute;
                 StatusBarHelp("SpeechSynthesizer has been paused.");
             }
             else
                 if (SpeechSynthesizerBase.State == SynthesizerState.Paused)
-            {
-                SpeechSynthesizerBase.Resume();
-             //   toolStripButtonSpeechSynthesizer.Image = Resources.speaker;
-                StatusBarHelp("SpeechSynthesizer has been activated.");
-            }
+                {
+                    SpeechSynthesizerBase.Resume();
+                    //   toolStripButtonSpeechSynthesizer.Image = Resources.speaker;
+                    StatusBarHelp("SpeechSynthesizer has been activated.");
+                }
         }
 
         #endregion"ToolStrip"
 
         #region"User Log On"
-                
+
         /// <summary>
         /// Maintains a record of login attempts, if a problem winth the database occurrs,
         /// and the system manager tries for 3 times,we give access to certain resources.
@@ -1587,16 +1597,16 @@ namespace StockRoom11net
             try
             {
                 #region"EmployeesInformation"
-                
+
                 last6DigitInt = int.TryParse(last6Digit, out last6DigitInt) ? last6DigitInt : 0;
-                
+
                 bool employeeInitialized = await _employeesService.InitializeEmployeeAsync(last6DigitInt);
 
                 if (!employeeInitialized)
                     await _employeesService.InitializeEmployeeAsync(_employeesService.NoUserLogIn);
 
                 #endregion"EmployeesInformation"
-                                              
+
             }
             catch (Exception)
             {
@@ -1628,9 +1638,9 @@ namespace StockRoom11net
         #endregion"User Log On"
 
         #region"CurrentDeptment LogOn"
- 
+
         void InitializeDepartment(string departmentName)
-        {            
+        {
             try
             {
                 // Department are initialize at EmployeeService constructor.
@@ -1654,11 +1664,11 @@ namespace StockRoom11net
                 InvokeOnUiThreadIfRequired(this, () => Text = _employeesService.CurrentDepartmentLogIn.DepartmentName);
                 InvokeOnUiThreadIfRequired(this, () => InitializedLogFile());
 
-          //      if (Production_InventoryDataSet.Table_StockRoom_TreeView.Columns.Contains(" AvalaibleDepartments"))
-          //      {
-          //          InvokeOnUiThreadIfRequired(this, () => _bindingSourceStockRoomTreeView.Filter = " AvalaibleDepartments LIKE '*" +
-           //                                                _employeesService.CurrentDepartmentLogIn.DepartmentName + "*'");
-           //     }
+                //      if (Production_InventoryDataSet.Table_StockRoom_TreeView.Columns.Contains(" AvalaibleDepartments"))
+                //      {
+                //          InvokeOnUiThreadIfRequired(this, () => _bindingSourceStockRoomTreeView.Filter = " AvalaibleDepartments LIKE '*" +
+                //                                                _employeesService.CurrentDepartmentLogIn.DepartmentName + "*'");
+                //     }
             }
             catch (Exception ex)
             {
@@ -1666,7 +1676,7 @@ namespace StockRoom11net
             }
         }
 
-        
+
         /// <summary>
         /// This field is used to execute the Kill command when it is received by SMS,
         /// note its processing inside the SmSController, the 
@@ -1691,7 +1701,7 @@ namespace StockRoom11net
             stopwatchAppRunningTime = Stopwatch.StartNew();
 
             _delayToLogInCurrentUser = TimeSpan.FromSeconds(_sec);
-            
+
             //CurrentUserBroadcastDelay_Tick = procedure to callback, null = object pass to, First interval = 1000 ms, subsequent intervals = 1000 ms
             AppPeriodicTimer_5seg = new System.Threading.Timer(new TimerCallback(AppPeriodicTimer_5seg_Tick), null, 2000, 2000);
         }
@@ -1913,7 +1923,7 @@ namespace StockRoom11net
 
         private static void InitSolutionsTemple(string textTitle)
         {
-           
+
         }
 
         public void InitLabelsSMTPrint(string textTitle)
@@ -1925,27 +1935,27 @@ namespace StockRoom11net
             }
 
             //ZebraPrintsPCBLabels zebraPrints = new ZebraPrintsPCBLabels(_bindingSource_Labels_SMT);
-      //      _LabelsPrintsSMT = new LabelsPrintsSMT(_bindingSource_Labels_SMT, LastCurrentDeptUserBroadcast_EventArgs)
-       //     {
-      //          Text = textTitle
-     //       };
+            //      _LabelsPrintsSMT = new LabelsPrintsSMT(_bindingSource_Labels_SMT, LastCurrentDeptUserBroadcast_EventArgs)
+            //     {
+            //          Text = textTitle
+            //       };
 
             if (_LabelsPrintsSMT.DialogResult == DialogResult.Cancel)
                 return; //An error has been found in the initialization.
 
             _LabelsPrintsSMT.LogFileMessage += Write_LogFile;
-         //   _LabelsPrintsSMT.StatusBarMessageEvent += OnStatusBarMessage;
-         //   _LabelsPrintsSMT.Save_Requested += LabelsSMT_ProcessSaveRequest;
+            //   _LabelsPrintsSMT.StatusBarMessageEvent += OnStatusBarMessage;
+            //   _LabelsPrintsSMT.Save_Requested += LabelsSMT_ProcessSaveRequest;
             _LabelsPrintsSMT.SpeechSynthesizerBase += SpeechSynthesizerBaseSpeak;
 
-       //     CurrentDeptUserBroadcast_Requested += _LabelsPrintsSMT.CurrentUserBroadcast_EventHandler;
+            //     CurrentDeptUserBroadcast_Requested += _LabelsPrintsSMT.CurrentUserBroadcast_EventHandler;
 
             Write_LogFile(new object(), new Custom_Events_Args.LogFileMessageEventArgs(new List<string>
                     {
                         Tags.NewLine("Initialized LabelsPrintsSMT (_bindingSource_Labels_SMT); ( LabelsSMT ) application at " + DateTime.Now),
                     }));
 
-         //   _LabelsPrintsSMT.CurrentUserBroadcast_EventHandler(new object(), LastCurrentDeptUserBroadcast_EventArgs);
+            //   _LabelsPrintsSMT.CurrentUserBroadcast_EventHandler(new object(), LastCurrentDeptUserBroadcast_EventArgs);
 
             _LabelsPrintsSMT.TopMost = true;
             _LabelsPrintsSMT.Show();
@@ -1959,10 +1969,10 @@ namespace StockRoom11net
                 return;
             }
 
-         //   _SMT_Reel_Record = new SMT_Reel_Record(_bindingSource_Employees)
-         //   {
-         //       Text = textTitle
-         //   };
+            //   _SMT_Reel_Record = new SMT_Reel_Record(_bindingSource_Employees)
+            //   {
+            //       Text = textTitle
+            //   };
 
             if (_SMT_Reel_Record.DialogResult == DialogResult.Cancel)//An error has been found in the initialization.
             {
@@ -1971,11 +1981,11 @@ namespace StockRoom11net
             }
 
             _SMT_Reel_Record.FormClosing += SMTReelRecord_FormClosing;
-         //   _SMT_Reel_Record.StatusBarMessageEvent += OnStatusBarMessage;
+            //   _SMT_Reel_Record.StatusBarMessageEvent += OnStatusBarMessage;
             _SMT_Reel_Record.SpeechSynthesizerBase += SpeechSynthesizerBaseSpeak;
 
             ScannedDataEvent += _SMT_Reel_Record.OnBarcodeScanned_EventHandler;
-      //      CurrentDeptUserBroadcast_Requested += _SMT_Reel_Record.CurrentUserBroadcast_EventHandler;
+            //      CurrentDeptUserBroadcast_Requested += _SMT_Reel_Record.CurrentUserBroadcast_EventHandler;
 
             if (dockPanel.DocumentStyle == DocumentStyle.SystemMdi)
             {
@@ -1987,7 +1997,7 @@ namespace StockRoom11net
                 _SMT_Reel_Record.Show(dockPanel);
             }
 
-       //     _SMT_Reel_Record.CurrentUserBroadcast_EventHandler(new object(), LastCurrentDeptUserBroadcast_EventArgs);
+            //     _SMT_Reel_Record.CurrentUserBroadcast_EventHandler(new object(), LastCurrentDeptUserBroadcast_EventArgs);
         }
         void SMTReelRecord_FormClosing(object? sender, FormClosingEventArgs e)
         {
@@ -2010,11 +2020,11 @@ namespace StockRoom11net
             if (_ordersProcess.DialogResult == DialogResult.Cancel)//An error has been found in the initialization.
                 return;
 
-         //   _ordersProcess.StatusBarMessageEvent += OnStatusBarMessage;
+            //   _ordersProcess.StatusBarMessageEvent += OnStatusBarMessage;
             _ordersProcess.SpeechSynthesizerBase += SpeechSynthesizerBaseSpeak;
 
             ScannedDataEvent += _ordersProcess.OnBarcodeScanned_EventHandler;
-       //     CurrentDeptUserBroadcast_Requested += _ordersProcess.CurrentUserBroadcast_EventHandler;
+            //     CurrentDeptUserBroadcast_Requested += _ordersProcess.CurrentUserBroadcast_EventHandler;
 
             if (dockPanel.DocumentStyle == DocumentStyle.SystemMdi)
             {
@@ -2026,7 +2036,7 @@ namespace StockRoom11net
                 _ordersProcess.Show(dockPanel);
             }
 
-     //       _ordersProcess.CurrentUserBroadcast_EventHandler(new object(), LastCurrentDeptUserBroadcast_EventArgs);
+            //       _ordersProcess.CurrentUserBroadcast_EventHandler(new object(), LastCurrentDeptUserBroadcast_EventArgs);
         }
 
         public void InitStockRoom(string textTitle)
@@ -2034,16 +2044,17 @@ namespace StockRoom11net
             _stockRoomForm = _serviceProvider.GetRequiredService<StockRoom_Inventory>();
             {
                 Text = textTitle;
-            };
-                                                
+            }
+            ;
+
             _stockRoomForm.DockStateChanged += StockRoomDockStateChanged;
-         //   _stockRoomForm.LogFileMessage += Write_LogFile;
-            
-          //  _stockRoomForm.Node_PDF += StockRoomNodePdf;
-         //   _stockRoomForm.ActiveDataSheet += DocumentationBehaviorProcessor;
-         //   _stockRoomForm.NotificationsToSends += NotificationsToSendsProcessor;
-         //   _stockRoomForm.SpeechSynthesizerBase += SpeechSynthesizerBaseSpeak;
-                   
+            //   _stockRoomForm.LogFileMessage += Write_LogFile;
+
+            //  _stockRoomForm.Node_PDF += StockRoomNodePdf;
+            //   _stockRoomForm.ActiveDataSheet += DocumentationBehaviorProcessor;
+            //   _stockRoomForm.NotificationsToSends += NotificationsToSendsProcessor;
+            //   _stockRoomForm.SpeechSynthesizerBase += SpeechSynthesizerBaseSpeak;
+
             ScannedDataEvent += _stockRoomForm.OnBarcodeScanned_EventHandler;
 
             toolStripMenuItem_stockRoomInventory.Enabled = false;
@@ -2099,13 +2110,13 @@ namespace StockRoom11net
 
             _locationAndLayoutDesignForm.DockStateChanged += LocationLayoutDesingDockStateChanged;
             _locationAndLayoutDesignForm.LogFileMessage += Write_LogFile;
-         //   _locationAndLayoutDesignForm.StatusBarMessageEvent += OnStatusBarMessage;
+            //   _locationAndLayoutDesignForm.StatusBarMessageEvent += OnStatusBarMessage;
             _locationAndLayoutDesignForm.VisibleChanged += LocationLayoutDesignVisibleChanged;
-         //   _locationAndLayoutDesignForm.Save_Requested += LocationAndLayoutDesignSaveRequested;
-         //   _locationAndLayoutDesignForm.SaveTreeView_Requested += LocationAndLayoutDesignSaveTreeViewRequested;
+            //   _locationAndLayoutDesignForm.Save_Requested += LocationAndLayoutDesignSaveRequested;
+            //   _locationAndLayoutDesignForm.SaveTreeView_Requested += LocationAndLayoutDesignSaveTreeViewRequested;
             _locationAndLayoutDesignForm.SpeechSynthesizerBase += SpeechSynthesizerBaseSpeak;
 
-      //      CurrentDeptUserBroadcast_Requested += _locationAndLayoutDesignForm.CurrentUserBroadcast_EventHandler;
+            //      CurrentDeptUserBroadcast_Requested += _locationAndLayoutDesignForm.CurrentUserBroadcast_EventHandler;
             ScannedDataEvent += _locationAndLayoutDesignForm.OnBarcodeScanned;
 
             Write_LogFile(new object(), new Custom_Events_Args.LogFileMessageEventArgs(new List<string>
@@ -2139,16 +2150,16 @@ namespace StockRoom11net
                 return;
             }
 
-        //    _stockRoomReceiveForm = new StockRoomReceive(_bindingSourceStockRoomTreeView, _bindingSource_StockRoom)
-        //    {
-        //        Text = textTitle
-        //    };
+            //    _stockRoomReceiveForm = new StockRoomReceive(_bindingSourceStockRoomTreeView, _bindingSource_StockRoom)
+            //    {
+            //        Text = textTitle
+            //    };
 
             if (_stockRoomReceiveForm.DialogResult == DialogResult.Cancel)//An error has been found in the initialization.
                 return;
 
             _stockRoomReceiveForm.DockStateChanged += StockRoomReceiveDockStateChanged;
-         //   _stockRoomReceiveForm.Save_Requested += StockRoom_ProcessSaveRequest;
+            //   _stockRoomReceiveForm.Save_Requested += StockRoom_ProcessSaveRequest;
             _stockRoomReceiveForm.SpeechSynthesizerBase += SpeechSynthesizerBaseSpeak;
 
             CellDoubleClick_Event += _stockRoomReceiveForm.CellDoubleClick_Event;
@@ -2223,15 +2234,15 @@ namespace StockRoom11net
             ;
 
             //      DataTable dataTableInventory = ((DataSet)_bindingSource_StockRoom.DataSource).Tables[_bindingSource_StockRoom.DataMember];
-           
-            _employees_ManagementsForm.DockStateChanged += EmployeesManagementsDockStateChanged;
-       //     _employees_ManagementsForm.Refresh_Requested += EmployeesManagementsRefreshRequested;
-         //   _employees_ManagementsForm.Save_Requested += EmployeesManagements_ProcessSaveRequest;
-         //   _employees_ManagementsForm.SaveTreeView_Requested += EmployeesManagementsSaveTreeViewRequested;
-        //    _employees_ManagementsForm.StatusBarMessageEvent += OnStatusBarMessage;
-        //    _employees_ManagementsForm.SpeechSynthesizerBase += SpeechSynthesizerBaseSpeak;
 
-      //      CurrentDeptUserBroadcast_Requested += _employees_ManagementsForm.CurrentUserBroadcast_EventHandler;
+            _employees_ManagementsForm.DockStateChanged += EmployeesManagementsDockStateChanged;
+            //     _employees_ManagementsForm.Refresh_Requested += EmployeesManagementsRefreshRequested;
+            //   _employees_ManagementsForm.Save_Requested += EmployeesManagements_ProcessSaveRequest;
+            //   _employees_ManagementsForm.SaveTreeView_Requested += EmployeesManagementsSaveTreeViewRequested;
+            //    _employees_ManagementsForm.StatusBarMessageEvent += OnStatusBarMessage;
+            //    _employees_ManagementsForm.SpeechSynthesizerBase += SpeechSynthesizerBaseSpeak;
+
+            //      CurrentDeptUserBroadcast_Requested += _employees_ManagementsForm.CurrentUserBroadcast_EventHandler;
 
             toolStripMenuItem_Employees.Enabled = false;
 
@@ -2314,29 +2325,29 @@ namespace StockRoom11net
                 return;
             }
 
-     //       _stockRoomAddNewCompForm = new StockRoom_AddNewComp(_bindingSource_StockRoom,
-     //                                                       _bindingSource_CodeTreeView, DepartmentsList)
-     //       {
-    //            Text = textTitle
-    //        };
+            //       _stockRoomAddNewCompForm = new StockRoom_AddNewComp(_bindingSource_StockRoom,
+            //                                                       _bindingSource_CodeTreeView, DepartmentsList)
+            //       {
+            //            Text = textTitle
+            //        };
 
-         //   if (_stockRoomAddNewCompForm.DialogResult == DialogResult.Cancel)//An error has been found in the initialization.
-                return;
+            //   if (_stockRoomAddNewCompForm.DialogResult == DialogResult.Cancel)//An error has been found in the initialization.
+            return;
 
             //   _stockRoomAddNewComp.Need_SaveData      += StockRoom_NeedSaveData;
             _stockRoomAddNewCompForm.DockStateChanged += StockRoomAddNewCompDockStateChanged;
             //   _stockRoomAddNewComp.LogFileMessage     += Write_LogFile;
             //   _stockRoomAddNewCompForm.StatusBarMessageEvent += OnStatusBarMessage;
-          //  _stockRoomAddNewCompForm.Save_Requested += StockRoom_ProcessSaveRequest;
+            //  _stockRoomAddNewCompForm.Save_Requested += StockRoom_ProcessSaveRequest;
 
-         //   _stockRoomAddNewCompForm.SaveTreeView_Requested += StockRoomSaveTreeViewRequested;
+            //   _stockRoomAddNewCompForm.SaveTreeView_Requested += StockRoomSaveTreeViewRequested;
             //   _stockRoomAddNewComp.AddNewItemSaveTreeViewRequested += AddNewItemSaveTreeViewRequested;
             //   _stockRoomAddNewComp.Refresh_Requested      += StockRoomRefreshRequested;
 
             //   _stockRoomAddNewComp.NotificationsToSends   += StockRoomNotificationsToSends;
             _stockRoomAddNewCompForm.SpeechSynthesizerBase += SpeechSynthesizerBaseSpeak;
 
-      //      CurrentDeptUserBroadcast_Requested += _stockRoomAddNewCompForm.CurrentUserBroadcast_EventHandler;
+            //      CurrentDeptUserBroadcast_Requested += _stockRoomAddNewCompForm.CurrentUserBroadcast_EventHandler;
             //   TreeViewUpdate                      += _stockRoomAddNewComp.TreeViewUpdate_EventHandler;
             //   ScannedData                         += _stockRoomAddNewComp.OnBarcodeScanned;
 
@@ -2357,7 +2368,7 @@ namespace StockRoom11net
                 _stockRoomAddNewCompForm.Show(dockPanel);
             }
 
-      //      _stockRoomAddNewCompForm.CurrentUserBroadcast_EventHandler(new object(), LastCurrentDeptUserBroadcast_EventArgs);
+            //      _stockRoomAddNewCompForm.CurrentUserBroadcast_EventHandler(new object(), LastCurrentDeptUserBroadcast_EventArgs);
         }
 
         public void InitSolutionsProperties(string textTitle)
@@ -2369,7 +2380,7 @@ namespace StockRoom11net
                 return;
             }
 
-           CallSolutionsProperties(false);
+            CallSolutionsProperties(false);
         }
 
         public void InitTimeLineEditor(string textTitle)
@@ -2383,28 +2394,29 @@ namespace StockRoom11net
                 return;
             }
 
-             //? Get TimeLineEditor from DI with all dependencies injected
-               _timeLineEditorForm = _serviceProvider.GetRequiredService<TimeLineEditor>();
-               {
-                   Text = textTitle;
-               };
+            //? Get TimeLineEditor from DI with all dependencies injected
+            _timeLineEditorForm = _serviceProvider.GetRequiredService<TimeLineEditor>();
+            {
+                Text = textTitle;
+            }
+            ;
 
             //_timeLineEditorForm._bindingSourceTimeLineTreeView = _bindingSource_TimeLine_TreeView;
 
-           // _timeLineEditorForm = new TimeLineEditor(_bindingSource_TimeLine, _bindingSource_TimeLine_TreeView)
-          //  {
-          //      Text = textTitle
-          //  };
+            // _timeLineEditorForm = new TimeLineEditor(_bindingSource_TimeLine, _bindingSource_TimeLine_TreeView)
+            //  {
+            //      Text = textTitle
+            //  };
 
             if (_timeLineEditorForm.DialogResult == DialogResult.Cancel)//An error has been found in the initialization.
                 return;
-                        
+
             _timeLineEditorForm.DockStateChanged += TimeLineDockStateChanged;
             //_timeLineEditorForm.LogFileMessage += Write_LogFile;
             //_timeLineEditorForm.StatusBarMessageEvent += OnStatusBarMessage;
             //_timeLineEditorForm.Save_Requested += TimeLine_ProcessSaveRequest;
             // _timeLineEditorForm.CellDoubleClick_Event += StockRoomCellDoubleClick;
-           // _timeLineEditorForm.SaveTreeView_Requested += TimeLineSaveTreeViewRequested;
+            // _timeLineEditorForm.SaveTreeView_Requested += TimeLineSaveTreeViewRequested;
             //_timeLineEditorForm.AddNewItemSaveTreeViewRequested += AddNewItemSaveTreeViewRequested;
             //_timeLineEditorForm.Refresh_Requested += StockRoomRefreshRequested;
 
@@ -2413,9 +2425,9 @@ namespace StockRoom11net
             //_timeLineEditorForm.NotificationsToSends += StockRoomNotificationsToSends;
             //_timeLineEditorForm.SpeechSynthesizerBase += SpeechSynthesizerBaseSpeak;
 
-           // _timeLineEditorForm.CurrentUserBroadcast_EventHandler(new object(), LastCurrentDeptUserBroadcast_EventArgs);
+            // _timeLineEditorForm.CurrentUserBroadcast_EventHandler(new object(), LastCurrentDeptUserBroadcast_EventArgs);
 
-          //  CurrentDeptUserBroadcast_Requested += _timeLineEditorForm.CurrentUserBroadcast_EventHandler;
+            //  CurrentDeptUserBroadcast_Requested += _timeLineEditorForm.CurrentUserBroadcast_EventHandler;
 
             ToolStripMenuItem_TimeLineEditor.Enabled = false;
 
@@ -2476,7 +2488,7 @@ namespace StockRoom11net
         }
 
         #endregion"StockRoom Inventory Control"
-        
+
         #region"WeifenLuo.WinFormsUI.Docking"
 
         static IDockContent GetContentFromPersistString(string persistString)
@@ -2592,11 +2604,11 @@ namespace StockRoom11net
                     toolStripMenuItem_stockRoomInventory.Enabled = true;
 
                 _stockRoomForm.DockStateChanged -= StockRoomDockStateChanged;
-             //   _stockRoomForm.Save_Requested -= StockRoom_ProcessSaveRequest;
-              //  _stockRoomForm.CellDoubleClick_Event -= StockRoomCellDoubleClick;
-             //   _stockRoomForm.SaveTreeView_Requested -= StockRoomSaveTreeViewRequested;
+                //   _stockRoomForm.Save_Requested -= StockRoom_ProcessSaveRequest;
+                //  _stockRoomForm.CellDoubleClick_Event -= StockRoomCellDoubleClick;
+                //   _stockRoomForm.SaveTreeView_Requested -= StockRoomSaveTreeViewRequested;
 
-              //  _stockRoomForm = null;
+                //  _stockRoomForm = null;
 
                 Write_LogFile(new object(), new Custom_Events_Args.LogFileMessageEventArgs(new List<string>
                     {
@@ -2644,7 +2656,7 @@ namespace StockRoom11net
                     toolStripMenuItem_StockRoom_Receive.Enabled = true;
 
                 _stockRoomReceiveForm.DockStateChanged -= StockRoomReceiveDockStateChanged;
-            //    _stockRoomReceiveForm.Save_Requested -= StockRoom_ProcessSaveRequest;
+                //    _stockRoomReceiveForm.Save_Requested -= StockRoom_ProcessSaveRequest;
 
                 CellDoubleClick_Event -= _stockRoomReceiveForm.CellDoubleClick_Event;
 
@@ -2903,7 +2915,7 @@ namespace StockRoom11net
         }
 
         #endregion"VisibleChanged"
-        
+
         #region"NotifycationsToSend"
 
         void NotificationsToSendsProcessor(object sender, Notification e)
@@ -3517,7 +3529,7 @@ namespace StockRoom11net
         }
 
         #endregion"USB-BarCode initialization & BarcodeScanned"
-       
+
         #region"InitializeThreadTimer Check status table. Notifications"
 
         System.Threading.Timer timerCheckStatusTable;
@@ -3868,7 +3880,7 @@ namespace StockRoom11net
                                     //    return;
 
                                     LastAccessTime = notification.Value.DateCreated;
-                                   // BackgroundWorkerFillByLastAccessTime.RunWorkerAsync();
+                                    // BackgroundWorkerFillByLastAccessTime.RunWorkerAsync();
                                 }
 
                                 break;
@@ -3991,7 +4003,7 @@ namespace StockRoom11net
             else
             {
                 StopThreadTimerSaveEveryInterval();
-           //     OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Stopped process Saved by timer..."));
+                //     OnStatusBarMessage(new object(), new StatusBarMessage_EventArgs("Stopped process Saved by timer..."));
             }
         }
 
@@ -4003,7 +4015,7 @@ namespace StockRoom11net
                 {
                     //NeedSaveDataProject hold the project name.
                     NeedSaveData = false;
-             //       StockRoom_ProcessSaveRequest(new object(), new Save_Requested_EventArgs(Utilities.NotificationEvents.DataBaseUpDated));
+                    //       StockRoom_ProcessSaveRequest(new object(), new Save_Requested_EventArgs(Utilities.NotificationEvents.DataBaseUpDated));
                 }
             }
             catch (Exception errors)
@@ -4073,7 +4085,7 @@ namespace StockRoom11net
         }
 
         #endregion"Log file, reading and writing information."
-        
+
         #region"Instantiate FileSystemWatcher class, set handlers, start monitoring, and display the action message."
 
         List<Controls.FileSystemWatcherAgent.FileSystemWatcherAgent> FileSystemWatcherAgentList =
@@ -4142,7 +4154,7 @@ namespace StockRoom11net
         /// <param name="e"></param>
         void ToolStripMenuItem_ClearAllDataProjectsViewer_Click(object sender, EventArgs e)
         {
-            
+
         }
 
         /// <summary>
@@ -4178,7 +4190,7 @@ namespace StockRoom11net
         /// </summary>
         /// <param name="pathRootFolder"></param>
         void FileFolderManagenment(string pathRootFolder)
-        {            
+        {
             var taskB = Task.Run(() => FileFolderScan(pathRootFolder))
                   .ContinueWith((antecedents) => Task.Run(() => ProcessFileFolderFounded()));
         }
@@ -4273,7 +4285,7 @@ namespace StockRoom11net
             _bindingSource_ProjectsTreeView.EndEdit();
             _bindingSource_ProjectsTreeView.ResumeBinding();
             */
-           // _projectViewer_Save_Requested(new object(), new EventArgs());
+            // _projectViewer_Save_Requested(new object(), new EventArgs());
         }
 
         #endregion"Task FileFolderScann"
@@ -4544,6 +4556,8 @@ namespace StockRoom11net
         {
             _mouseInToolStripStatusLabel_Progress = false;
         }
+
+        
     }
 
 }
