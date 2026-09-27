@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
   <!---><Project Sdk="Microsoft.NET.Sdk"> Original...-->
 	<PropertyGroup>
-		<Version>3.0.33</Version>
+		<Version>3.0.38</Version>
 	</PropertyGroup>
   <PropertyGroup Label="Globals">
     <WebView2UseWinRT>False</WebView2UseWinRT>
@@ -58,6 +58,25 @@
     <None Remove="Docs\VisTimeLine\**" />
     <None Remove="MyStuff11net\**" />
     <None Remove="obj\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <!-- Seed archives extracted by Program.CreateFolderStructure to populate
+         missing application subfolders (LogFile, Pictures, Projects, DataSheets)
+         on first run / when the folder structure is recreated.
+         Note: Sdk.Razor auto-includes all files as default items (typically as
+         None outside wwwroot), so we use Update (not Include) on both None and
+         Content to avoid NETSDK1022 duplicate-item errors while guaranteeing the
+         copy metadata attaches to whichever item type the file was auto-included as. -->
+    <None Update="SeedData\*.zip">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <Link>%(Filename)%(Extension)</Link>
+    </None>
+    <Content Update="SeedData\*.zip">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <Link>%(Filename)%(Extension)</Link>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="bin\**" />
@@ -127,16 +146,16 @@
     </PackageReference>
     <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="11.0.0-preview.7.26381.103" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="11.0.0-preview.7.26381.103" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="11.0.0-preview.7.26381.103">
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="11.0.0-preview.7.26381.103" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="11.0.0-preview.7.26381.103" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="11.0.0-preview.7.26381.103">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
+	  <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="11.0.0-preview.7.26381.103">
+		  <IncludeAssets>build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		  <PrivateAssets>all</PrivateAssets>
+	  </PackageReference>
+	  <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="11.0.0-preview.7.26381.103" />
+	  <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="11.0.0-preview.7.26381.103" />
+	  <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="11.0.0-preview.7.26381.103">
+		  <PrivateAssets>all</PrivateAssets>
+		  <IncludeAssets>build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+	  </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="11.0.0-preview.7.26381.103" />
     <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="11.0.0-preview.7.26381.103" />
     <PackageReference Include="Microsoft.Extensions.Primitives" Version="11.0.0-preview.7.26381.103" />
@@ -153,7 +172,15 @@
     <PackageReference Include="System.Management" Version="11.0.0-preview.7.26381.103" />
     <PackageReference Include="System.Memory.Data" Version="11.0.0-preview.7.26381.103" />
     <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="11.0.0-preview.7.26381.103" />
-    <PackageReference Include="System.Speech" Version="11.0.0-preview.7.26381.103" />
+    <PackageReference Include="System.Speech" Version="11.0.0-preview.7.26381.103" />  
+	<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="11.0.0-preview.7.26381.103">
+		<IncludeAssets>build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		<PrivateAssets>all</PrivateAssets>
+	</PackageReference>
+	<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="11.0.0-preview.7.26381.103">
+		<IncludeAssets>build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		<PrivateAssets>all</PrivateAssets>
+	</PackageReference>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="CodeVendor.Controls">
@@ -415,6 +442,12 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
       <Generator>PublicSettingsSingleFileGenerator</Generator>
     </None>
+    <Content Update="SeedData\LogFile.zip">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="SeedData\Resources.zip">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Content Update="wwwroot\**">

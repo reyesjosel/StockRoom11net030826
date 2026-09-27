@@ -97,7 +97,7 @@
           }
         },
         "runtime": {
-          "lib/net10.0/Humanizer.dll": {
+          "lib/net10.0/_._": {
             "related": ".xml"
           }
         },
@@ -298,7 +298,7 @@
           }
         },
         "runtime": {
-          "lib/net10.0/Microsoft.Build.Framework.dll": {
+          "lib/net10.0/_._": {
             "related": ".pdb;.xml"
           }
         }
@@ -321,49 +321,8 @@
           }
         },
         "runtime": {
-          "lib/net10.0/Microsoft.CodeAnalysis.dll": {
+          "lib/net10.0/_._": {
             "related": ".pdb;.xml"
-          }
-        },
-        "resource": {
-          "lib/net10.0/cs/Microsoft.CodeAnalysis.resources.dll": {
-            "locale": "cs"
-          },
-          "lib/net10.0/de/Microsoft.CodeAnalysis.resources.dll": {
-            "locale": "de"
-          },
-          "lib/net10.0/es/Microsoft.CodeAnalysis.resources.dll": {
-            "locale": "es"
-          },
-          "lib/net10.0/fr/Microsoft.CodeAnalysis.resources.dll": {
-            "locale": "fr"
-          },
-          "lib/net10.0/it/Microsoft.CodeAnalysis.resources.dll": {
-            "locale": "it"
-          },
-          "lib/net10.0/ja/Microsoft.CodeAnalysis.resources.dll": {
-            "locale": "ja"
-          },
-          "lib/net10.0/ko/Microsoft.CodeAnalysis.resources.dll": {
-            "locale": "ko"
-          },
-          "lib/net10.0/pl/Microsoft.CodeAnalysis.resources.dll": {
-            "locale": "pl"
-          },
-          "lib/net10.0/pt-BR/Microsoft.CodeAnalysis.resources.dll": {
-            "locale": "pt-BR"
-          },
-          "lib/net10.0/ru/Microsoft.CodeAnalysis.resources.dll": {
-            "locale": "ru"
-          },
-          "lib/net10.0/tr/Microsoft.CodeAnalysis.resources.dll": {
-            "locale": "tr"
-          },
-          "lib/net10.0/zh-Hans/Microsoft.CodeAnalysis.resources.dll": {
-            "locale": "zh-Hans"
-          },
-          "lib/net10.0/zh-Hant/Microsoft.CodeAnalysis.resources.dll": {
-            "locale": "zh-Hant"
           }
         }
       },
@@ -379,49 +338,8 @@
           }
         },
         "runtime": {
-          "lib/net10.0/Microsoft.CodeAnalysis.CSharp.dll": {
+          "lib/net10.0/_._": {
             "related": ".pdb;.xml"
-          }
-        },
-        "resource": {
-          "lib/net10.0/cs/Microsoft.CodeAnalysis.CSharp.resources.dll": {
-            "locale": "cs"
-          },
-          "lib/net10.0/de/Microsoft.CodeAnalysis.CSharp.resources.dll": {
-            "locale": "de"
-          },
-          "lib/net10.0/es/Microsoft.CodeAnalysis.CSharp.resources.dll": {
-            "locale": "es"
-          },
-          "lib/net10.0/fr/Microsoft.CodeAnalysis.CSharp.resources.dll": {
-            "locale": "fr"
-          },
-          "lib/net10.0/it/Microsoft.CodeAnalysis.CSharp.resources.dll": {
-            "locale": "it"
-          },
-          "lib/net10.0/ja/Microsoft.CodeAnalysis.CSharp.resources.dll": {
-            "locale": "ja"
-          },
-          "lib/net10.0/ko/Microsoft.CodeAnalysis.CSharp.resources.dll": {
-            "locale": "ko"
-          },
-          "lib/net10.0/pl/Microsoft.CodeAnalysis.CSharp.resources.dll": {
-            "locale": "pl"
-          },
-          "lib/net10.0/pt-BR/Microsoft.CodeAnalysis.CSharp.resources.dll": {
-            "locale": "pt-BR"
-          },
-          "lib/net10.0/ru/Microsoft.CodeAnalysis.CSharp.resources.dll": {
-            "locale": "ru"
-          },
-          "lib/net10.0/tr/Microsoft.CodeAnalysis.CSharp.resources.dll": {
-            "locale": "tr"
-          },
-          "lib/net10.0/zh-Hans/Microsoft.CodeAnalysis.CSharp.resources.dll": {
-            "locale": "zh-Hans"
-          },
-          "lib/net10.0/zh-Hant/Microsoft.CodeAnalysis.CSharp.resources.dll": {
-            "locale": "zh-Hant"
           }
         }
       },
@@ -441,49 +359,8 @@
           }
         },
         "runtime": {
-          "lib/net10.0/Microsoft.CodeAnalysis.CSharp.Workspaces.dll": {
+          "lib/net10.0/_._": {
             "related": ".pdb;.xml"
-          }
-        },
-        "resource": {
-          "lib/net10.0/cs/Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll": {
-            "locale": "cs"
-          },
-          "lib/net10.0/de/Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll": {
-            "locale": "de"
-          },
-          "lib/net10.0/es/Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll": {
-            "locale": "es"
-          },
-          "lib/net10.0/fr/Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll": {
-            "locale": "fr"
-          },
-          "lib/net10.0/it/Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll": {
-            "locale": "it"
-          },
-          "lib/net10.0/ja/Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll": {
-            "locale": "ja"
-          },
-          "lib/net10.0/ko/Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll": {
-            "locale": "ko"
-          },
-          "lib/net10.0/pl/Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll": {
-            "locale": "pl"
-          },
-          "lib/net10.0/pt-BR/Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll": {
-            "locale": "pt-BR"
-          },
-          "lib/net10.0/ru/Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll": {
-            "locale": "ru"
-          },
-          "lib/net10.0/tr/Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll": {
-            "locale": "tr"
-          },
-          "lib/net10.0/zh-Hans/Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll": {
-            "locale": "zh-Hans"
-          },
-          "lib/net10.0/zh-Hant/Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll": {
-            "locale": "zh-Hant"
           }
         }
       },
@@ -504,49 +381,8 @@
           }
         },
         "runtime": {
-          "lib/net10.0/Microsoft.CodeAnalysis.Workspaces.dll": {
+          "lib/net10.0/_._": {
             "related": ".pdb;.xml"
-          }
-        },
-        "resource": {
-          "lib/net10.0/cs/Microsoft.CodeAnalysis.Workspaces.resources.dll": {
-            "locale": "cs"
-          },
-          "lib/net10.0/de/Microsoft.CodeAnalysis.Workspaces.resources.dll": {
-            "locale": "de"
-          },
-          "lib/net10.0/es/Microsoft.CodeAnalysis.Workspaces.resources.dll": {
-            "locale": "es"
-          },
-          "lib/net10.0/fr/Microsoft.CodeAnalysis.Workspaces.resources.dll": {
-            "locale": "fr"
-          },
-          "lib/net10.0/it/Microsoft.CodeAnalysis.Workspaces.resources.dll": {
-            "locale": "it"
-          },
-          "lib/net10.0/ja/Microsoft.CodeAnalysis.Workspaces.resources.dll": {
-            "locale": "ja"
-          },
-          "lib/net10.0/ko/Microsoft.CodeAnalysis.Workspaces.resources.dll": {
-            "locale": "ko"
-          },
-          "lib/net10.0/pl/Microsoft.CodeAnalysis.Workspaces.resources.dll": {
-            "locale": "pl"
-          },
-          "lib/net10.0/pt-BR/Microsoft.CodeAnalysis.Workspaces.resources.dll": {
-            "locale": "pt-BR"
-          },
-          "lib/net10.0/ru/Microsoft.CodeAnalysis.Workspaces.resources.dll": {
-            "locale": "ru"
-          },
-          "lib/net10.0/tr/Microsoft.CodeAnalysis.Workspaces.resources.dll": {
-            "locale": "tr"
-          },
-          "lib/net10.0/zh-Hans/Microsoft.CodeAnalysis.Workspaces.resources.dll": {
-            "locale": "zh-Hans"
-          },
-          "lib/net10.0/zh-Hant/Microsoft.CodeAnalysis.Workspaces.resources.dll": {
-            "locale": "zh-Hant"
           }
         }
       },
@@ -566,51 +402,7 @@
           "lib/net10.0/_._": {}
         },
         "runtime": {
-          "lib/net10.0/Microsoft.CodeAnalysis.ExternalAccess.RazorCompiler.dll": {},
-          "lib/net10.0/Microsoft.CodeAnalysis.Workspaces.MSBuild.dll": {
-            "related": ".pdb;.xml"
-          }
-        },
-        "resource": {
-          "lib/net10.0/cs/Microsoft.CodeAnalysis.Workspaces.MSBuild.resources.dll": {
-            "locale": "cs"
-          },
-          "lib/net10.0/de/Microsoft.CodeAnalysis.Workspaces.MSBuild.resources.dll": {
-            "locale": "de"
-          },
-          "lib/net10.0/es/Microsoft.CodeAnalysis.Workspaces.MSBuild.resources.dll": {
-            "locale": "es"
-          },
-          "lib/net10.0/fr/Microsoft.CodeAnalysis.Workspaces.MSBuild.resources.dll": {
-            "locale": "fr"
-          },
-          "lib/net10.0/it/Microsoft.CodeAnalysis.Workspaces.MSBuild.resources.dll": {
-            "locale": "it"
-          },
-          "lib/net10.0/ja/Microsoft.CodeAnalysis.Workspaces.MSBuild.resources.dll": {
-            "locale": "ja"
-          },
-          "lib/net10.0/ko/Microsoft.CodeAnalysis.Workspaces.MSBuild.resources.dll": {
-            "locale": "ko"
-          },
-          "lib/net10.0/pl/Microsoft.CodeAnalysis.Workspaces.MSBuild.resources.dll": {
-            "locale": "pl"
-          },
-          "lib/net10.0/pt-BR/Microsoft.CodeAnalysis.Workspaces.MSBuild.resources.dll": {
-            "locale": "pt-BR"
-          },
-          "lib/net10.0/ru/Microsoft.CodeAnalysis.Workspaces.MSBuild.resources.dll": {
-            "locale": "ru"
-          },
-          "lib/net10.0/tr/Microsoft.CodeAnalysis.Workspaces.MSBuild.resources.dll": {
-            "locale": "tr"
-          },
-          "lib/net10.0/zh-Hans/Microsoft.CodeAnalysis.Workspaces.MSBuild.resources.dll": {
-            "locale": "zh-Hans"
-          },
-          "lib/net10.0/zh-Hant/Microsoft.CodeAnalysis.Workspaces.MSBuild.resources.dll": {
-            "locale": "zh-Hant"
-          }
+          "lib/net10.0/_._": {}
         },
         "contentFiles": {
           "contentFiles/any/any/_._": {
@@ -814,7 +606,7 @@
           }
         },
         "runtime": {
-          "lib/net11.0/Microsoft.EntityFrameworkCore.Design.dll": {
+          "lib/net11.0/_._": {
             "related": ".xml"
           }
         },
@@ -903,7 +695,7 @@
           "lib/net10.0/_._": {}
         },
         "runtime": {
-          "lib/net10.0/EFCore.Tools.dll": {}
+          "lib/net10.0/_._": {}
         }
       },
       "Microsoft.Extensions.Caching.Memory/11.0.0-preview.7.26381.103": {
@@ -1608,7 +1400,7 @@
           }
         },
         "runtime": {
-          "lib/net8.0/Microsoft.VisualStudio.SolutionPersistence.dll": {
+          "lib/net8.0/_._": {
             "related": ".xml"
           }
         }
@@ -1639,7 +1431,7 @@
           "lib/net6.0/_._": {}
         },
         "runtime": {
-          "lib/net6.0/Mono.TextTemplating.dll": {}
+          "lib/net6.0/_._": {}
         },
         "build": {
           "buildTransitive/Mono.TextTemplating.targets": {}
@@ -2110,7 +1902,7 @@
           }
         },
         "runtime": {
-          "lib/net9.0/System.Composition.AttributedModel.dll": {
+          "lib/net9.0/_._": {
             "related": ".xml"
           }
         },
@@ -2129,7 +1921,7 @@
           }
         },
         "runtime": {
-          "lib/net9.0/System.Composition.Convention.dll": {
+          "lib/net9.0/_._": {
             "related": ".xml"
           }
         },
@@ -2148,7 +1940,7 @@
           }
         },
         "runtime": {
-          "lib/net9.0/System.Composition.Hosting.dll": {
+          "lib/net9.0/_._": {
             "related": ".xml"
           }
         },
@@ -2164,7 +1956,7 @@
           }
         },
         "runtime": {
-          "lib/net9.0/System.Composition.Runtime.dll": {
+          "lib/net9.0/_._": {
             "related": ".xml"
           }
         },
@@ -2185,7 +1977,7 @@
           }
         },
         "runtime": {
-          "lib/net9.0/System.Composition.TypedParts.dll": {
+          "lib/net9.0/_._": {
             "related": ".xml"
           }
         },
@@ -2428,7 +2220,8 @@
         "lib/netstandard2.1/Blazor.Extensions.Canvas.JS.dll",
         "lib/netstandard2.1/Blazor.Extensions.Canvas.dll",
         "lib/netstandard2.1/Blazor.Extensions.Canvas.pdb",
-        "staticwebassets/blazor.extensions.canvas.js"
+        "staticwebassets/blazor.extensions.canvas.js",
+        "staticwebassets/blazor.extensions.canvas.js.bak"
       ]
     },
     "GenCode128/2.0.0": {
@@ -5581,13 +5374,13 @@
     "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder": {}
   },
   "project": {
-    "version": "3.0.33",
+    "version": "3.0.38",
     "restore": {
-      "projectUniqueName": "C:\\Users\\reyes\\Source\\Repos\\StockRoom11net090626\\StockRoom11net.csproj",
+      "projectUniqueName": "C:\\Users\\reyes\\Source\\Repos\\StockRoom11net092626\\StockRoom11net.csproj",
       "projectName": "StockRoom11net",
-      "projectPath": "C:\\Users\\reyes\\Source\\Repos\\StockRoom11net090626\\StockRoom11net.csproj",
+      "projectPath": "C:\\Users\\reyes\\Source\\Repos\\StockRoom11net092626\\StockRoom11net.csproj",
       "packagesPath": "C:\\Users\\reyes\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\reyes\\Source\\Repos\\StockRoom11net090626\\obj\\",
+      "outputPath": "C:\\Users\\reyes\\Source\\Repos\\StockRoom11net092626\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",
@@ -5670,7 +5463,7 @@
             "version": "[11.0.0-preview.7.26381.103, )"
           },
           "Microsoft.EntityFrameworkCore.Design": {
-            "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+            "include": "Build, Native, ContentFiles, Analyzers, BuildTransitive",
             "suppressParent": "All",
             "target": "Package",
             "version": "[11.0.0-preview.7.26381.103, )"
@@ -5684,7 +5477,7 @@
             "version": "[11.0.0-preview.7.26381.103, )"
           },
           "Microsoft.EntityFrameworkCore.Tools": {
-            "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+            "include": "Build, Native, ContentFiles, Analyzers, BuildTransitive",
             "suppressParent": "All",
             "target": "Package",
             "version": "[11.0.0-preview.7.26381.103, )"

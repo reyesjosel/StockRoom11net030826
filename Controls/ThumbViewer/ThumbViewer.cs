@@ -571,7 +571,7 @@ namespace StockRoom11net.Controls.ThumbViewer
         {
             _informationStatus = 0;
 
-            if (_pathFromPartNumber == null)
+            if (_pathFromPartNumber == null || DefaultAddress == null || DefaultAddress == string.Empty)
                 return;
 
             if (_pathFromPartNumber.Contains(';'))
