@@ -189,7 +189,7 @@ namespace StockRoom11net.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("D:\\ProductionManagement")]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\NoSetYet")]
         public string DataBaseAddress {
             get {
                 return ((string)(this["DataBaseAddress"]));
@@ -201,7 +201,7 @@ namespace StockRoom11net.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("ProductionInventory.sqlite")]
+        [global::System.Configuration.DefaultSettingValueAttribute("NoSetYet.sqlite")]
         public string DataBaseName {
             get {
                 return ((string)(this["DataBaseName"]));

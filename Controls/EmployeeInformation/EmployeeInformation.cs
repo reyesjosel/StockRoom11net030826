@@ -404,6 +404,11 @@ namespace StockRoom11net.Controls.EmployeeInformation
             private set { }
         }
 
+        /// <summary>
+        /// Test if the current user is a Manager, if is true return true, if is false return false.
+        /// The AccessLevel is stored in the Dictionary EmployeeRights["AccessLevel"].
+        /// The possible values are: User, Editor, Administrator, Manager.
+        /// </summary>
         public bool IsManager
         {
             get

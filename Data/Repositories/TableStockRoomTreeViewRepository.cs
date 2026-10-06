@@ -63,6 +63,14 @@ public interface ITableStockRoomTreeViewRepository : IRepository<Table_StockRoom
 
     Task<List<(int RowPosition, long IndexVal, long IdVal, List<string> NullColumns)>>
     FindIntegerNullsAsync(CancellationToken cancellationToken = default);
+
+    string StatusInfoDefault { get; }
+
+    string AccessLevelDefault { get; }
+
+    Task<int> GetMaxIdAsync(CancellationToken cancellationToken = default);
+
+    Task<int> GetNextIdAsync(CancellationToken cancellationToken = default);
 }
 
 
@@ -72,6 +80,40 @@ public interface ITableStockRoomTreeViewRepository : IRepository<Table_StockRoom
 /// </summary>
 public class TableStockRoomTreeViewRepository : Repository<Table_StockRoom_TreeView>, ITableStockRoomTreeViewRepository
 {
+    static readonly string _statusInfoDefault = "Locked␟True␞Selected␟False␞Unerasable␟True␞Color␟-36865␞Note␟Null␞HeaderInf␟Null␞";
+
+    public string StatusInfoDefault
+    {
+        get
+        {
+            return _statusInfoDefault;
+        }
+    }
+
+    static readonly string _accessLevelDefault = "AccessLevel:3;AutoSizeColumnsMode:1;EditMode:3;EnableTreeViewSetting:1";
+
+    public string AccessLevelDefault
+    {
+        get
+        {
+            return _accessLevelDefault;
+        }
+    }
+
+    public async Task<int> GetMaxIdAsync(CancellationToken cancellationToken = default)
+    {
+        return await _dbSet.AnyAsync(cancellationToken) ?
+               await _dbSet.MaxAsync(e => e.ID, cancellationToken)
+              : 0;
+    }
+
+    public async Task<int> GetNextIdAsync(CancellationToken cancellationToken = default)
+    {
+        return await _dbSet.AnyAsync(cancellationToken) ?
+               await _dbSet.MaxAsync(e => e.ID, cancellationToken) + 1
+               : 1;
+    }
+
     public TableStockRoomTreeViewRepository(ProductionInventoryContext context) : base(context)
     {}
 

@@ -101,7 +101,7 @@
             tableLayoutPanel_DataTreeViewSetting.Name = "tableLayoutPanel_DataTreeViewSetting";
             tableLayoutPanel_DataTreeViewSetting.RowCount = 1;
             tableLayoutPanel_DataTreeViewSetting.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanel_DataTreeViewSetting.Size = new Size(851, 152);
+            tableLayoutPanel_DataTreeViewSetting.Size = new Size(851, 199);
             tableLayoutPanel_DataTreeViewSetting.TabIndex = 0;
             tableLayoutPanel_DataTreeViewSetting.AutoSizeChanged += ToolStripMenuItem_DeletedThisNode_Click;
             // 
@@ -113,7 +113,7 @@
             panel_toDelete.Location = new Point(566, 0);
             panel_toDelete.Margin = new Padding(0);
             panel_toDelete.Name = "panel_toDelete";
-            panel_toDelete.Size = new Size(285, 152);
+            panel_toDelete.Size = new Size(285, 199);
             panel_toDelete.TabIndex = 25;
             // 
             // olvDataTree_ToDelete
@@ -140,7 +140,7 @@
             olvDataTree_ToDelete.SelectColumnsOnRightClickBehaviour = BrightIdeasSoftware.ObjectListView.ColumnSelectBehaviour.None;
             olvDataTree_ToDelete.ShowGroups = false;
             olvDataTree_ToDelete.ShowKeyColumns = false;
-            olvDataTree_ToDelete.Size = new Size(285, 130);
+            olvDataTree_ToDelete.Size = new Size(285, 177);
             olvDataTree_ToDelete.TabIndex = 25;
             olvDataTree_ToDelete.UseCompatibleStateImageBehavior = false;
             olvDataTree_ToDelete.UseFilterIndicator = true;
@@ -218,7 +218,7 @@
             panel_toCancel.Location = new Point(283, 0);
             panel_toCancel.Margin = new Padding(0);
             panel_toCancel.Name = "panel_toCancel";
-            panel_toCancel.Size = new Size(283, 152);
+            panel_toCancel.Size = new Size(283, 199);
             panel_toCancel.TabIndex = 24;
             // 
             // olvDataTree_ToCancel
@@ -244,7 +244,7 @@
             olvDataTree_ToCancel.SelectColumnsOnRightClickBehaviour = BrightIdeasSoftware.ObjectListView.ColumnSelectBehaviour.None;
             olvDataTree_ToCancel.ShowGroups = false;
             olvDataTree_ToCancel.ShowKeyColumns = false;
-            olvDataTree_ToCancel.Size = new Size(283, 130);
+            olvDataTree_ToCancel.Size = new Size(283, 177);
             olvDataTree_ToCancel.TabIndex = 2;
             olvDataTree_ToCancel.UseCompatibleStateImageBehavior = false;
             olvDataTree_ToCancel.UseFilterIndicator = true;
@@ -284,7 +284,7 @@
             panel_toAdd.Location = new Point(0, 0);
             panel_toAdd.Margin = new Padding(0);
             panel_toAdd.Name = "panel_toAdd";
-            panel_toAdd.Size = new Size(283, 152);
+            panel_toAdd.Size = new Size(283, 199);
             panel_toAdd.TabIndex = 23;
             // 
             // olvDataTree_ToAdd
@@ -310,7 +310,7 @@
             olvDataTree_ToAdd.SelectColumnsOnRightClickBehaviour = BrightIdeasSoftware.ObjectListView.ColumnSelectBehaviour.None;
             olvDataTree_ToAdd.ShowGroups = false;
             olvDataTree_ToAdd.ShowKeyColumns = false;
-            olvDataTree_ToAdd.Size = new Size(283, 130);
+            olvDataTree_ToAdd.Size = new Size(283, 177);
             olvDataTree_ToAdd.TabIndex = 20;
             olvDataTree_ToAdd.UseCompatibleStateImageBehavior = false;
             olvDataTree_ToAdd.UseFilterIndicator = true;
@@ -366,13 +366,14 @@
             // splitContainer_DataTreeView.Panel1
             // 
             splitContainer_DataTreeView.Panel1.Controls.Add(olvDataTreeMaster);
+            splitContainer_DataTreeView.Panel1MinSize = 200;
             // 
             // splitContainer_DataTreeView.Panel2
             // 
             splitContainer_DataTreeView.Panel2.Controls.Add(tableLayoutPanel_DataTreeViewSetting);
-            splitContainer_DataTreeView.Panel2MinSize = 0;
+            splitContainer_DataTreeView.Panel2MinSize = 75;
             splitContainer_DataTreeView.Size = new Size(855, 516);
-            splitContainer_DataTreeView.SplitterDistance = 354;
+            splitContainer_DataTreeView.SplitterDistance = 307;
             splitContainer_DataTreeView.SplitterWidth = 6;
             splitContainer_DataTreeView.TabIndex = 1;
             splitContainer_DataTreeView.SplitterMoved += SplitContainer_DataTreeView_SplitterMoved;
@@ -400,7 +401,7 @@
             olvDataTreeMaster.SelectColumnsOnRightClickBehaviour = BrightIdeasSoftware.ObjectListView.ColumnSelectBehaviour.None;
             olvDataTreeMaster.ShowGroups = false;
             olvDataTreeMaster.ShowKeyColumns = false;
-            olvDataTreeMaster.Size = new Size(851, 350);
+            olvDataTreeMaster.Size = new Size(851, 303);
             olvDataTreeMaster.TabIndex = 2;
             olvDataTreeMaster.UseCompatibleStateImageBehavior = false;
             olvDataTreeMaster.UseFilterIndicator = true;

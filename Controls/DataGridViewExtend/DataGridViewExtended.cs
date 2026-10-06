@@ -1628,7 +1628,8 @@ namespace StockRoom11net.Controls.DataGridViewExtend
         /// <summary>
         /// Tracks PartNumbers of rows edited in the DataGridView since last save.
         /// PartNumber is the unique identifier of the row in the Table_StockRoom,
-        /// so we must use it to identify the row in the database and update it.
+        /// has not ID or Index column, so we must use it (PartNumber) to identify
+        /// the row in the database and update it.
         /// </summary>
         public readonly HashSet<string> DirtyDataGridViewPartNumbers = new();
 
@@ -3187,33 +3188,36 @@ namespace StockRoom11net.Controls.DataGridViewExtend
         {
             toolStripButton_Save.Enabled = true;
 
-            
-                // TreeView entities derive from Table_Base_TreeView which implements ITableBaseTreeView
-                if (TableName.Contains("_TreeView"))
-                {
-                    if (_bindingSource[index] is ITableBaseTreeView hasIndex)
-                        DirtyDataGridViewIndexes.Add(hasIndex.Index);  // HashSet → idempotent
-                    return;
-                }
+            // TreeView entities derive from Table_Base_TreeView which implements ITableBaseTreeView
+            if (TableName.Contains("_TreeView"))
+            {
+                if (_bindingSource[index] is ITableBaseTreeView hasIndex)
+                    DirtyDataGridViewIndexes.Add(hasIndex.Index);  // HashSet → idempotent
+                return;
+            }
 
-                // Table_TimeLine uses a DataView as its source — items are DataRowView, not entities
-                if (TableName == "Table_TimeLine")
-                {
-                    if (_bindingSource[index] is DataRowView drv && drv.Row["ID"] != DBNull.Value)
-                        DirtyDataGridViewIndexes.Add((int)drv.Row["ID"]);
-                    return;
-                }
+            // Table_TimeLine uses a DataView as its source — items are DataRowView, not entities
+            if (TableName == "Table_TimeLine")
+            {
+                if (_bindingSource[index] is DataRowView drv && drv.Row["ID"] != DBNull.Value)
+                    DirtyDataGridViewIndexes.Add((int)drv.Row["ID"]);
+                return;
+            }
 
-                // Table_Employees uses a DataView as its source — items are DataRowView, not entities
-                if (TableName == "Table_Employees")
-                {
-                    if (_bindingSource[index] is DataRowView drv && drv.Row["Index"] != DBNull.Value)
-                        DirtyDataGridViewIndexes.Add((int)drv.Row["Index"]);
-                    return;
-                }
+            // Table_Employees uses a DataView as its source — items are DataRowView, not entities
+            if (TableName == "Table_Employees")
+            {
+                if (_bindingSource[index] is DataRowView drv && drv.Row["Index"] != DBNull.Value)
+                    DirtyDataGridViewIndexes.Add((int)drv.Row["Index"]);
+                return;
+            }
 
-                if (TableName == "Table_StockRoom")
-                    DirtyDataGridViewPartNumbers.Add(_dataGridView.Rows[index].Cells["PartNumber"].Value.ToString());            
+            if (TableName == "Table_StockRoom")
+            {
+                // Table_StockRoom uses a DataView as its source — items are DataRowView, not entities
+                // has not an integer ID column or Index column, so we use the PartNumber as the identifier for dirty rows
+                DirtyDataGridViewPartNumbers.Add(_dataGridView.Rows[index].Cells["PartNumber"].Value.ToString());
+            }
         }
 
         void DataGridView_DataSourceChanged(object? sender, EventArgs e)
@@ -3709,6 +3713,11 @@ namespace StockRoom11net.Controls.DataGridViewExtend
                     return;
 
                 currentDataGriedViewRow = CurrentRowActive;
+                // We have to set the position of the binding source, because when we select a row in the datagridview,
+                // the current row in the binding source is not updated, so we have to update it manually.
+                // otherwise, will trigger another event.
+                _bindingSource.Position = CurrentRowActive.Index;
+
                 CurrentRowStatus = new CurrentStatus(CurrentRowActive);
                 OnCurrentRowActivesEvent(new CurrentRowActive_EventArgs(CurrentRowActive.Index, CurrentRowActive));
             }
@@ -5665,7 +5674,8 @@ namespace StockRoom11net.Controls.DataGridViewExtend
                             
             On_Save_Requested(new Save_Requested_EventArgs
             {
-                DirtyDataGridViewIndexes = DirtyDataGridViewIndexes
+                DirtyDataGridViewIndexes = DirtyDataGridViewIndexes,
+                DirtyDataGridViewPartNumbers = DirtyDataGridViewPartNumbers
             });
 
             On_LogFileMessage(new Custom_Events_Args.LogFileMessageEventArgs(new List<string>

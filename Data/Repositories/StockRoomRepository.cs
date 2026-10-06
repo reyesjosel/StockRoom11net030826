@@ -11,7 +11,7 @@ namespace StockRoom11net.Data.Repositories;
 public interface IStockRoomRepository : IRepository<Table_StockRoom>
 {
     // Basic CRUD operations
-    Task<IEnumerable<Table_StockRoom>> GetByPartNumberAsync(string partNumber);
+    Task<Table_StockRoom?> GetByPartNumberAsync(string partNumber);
     Task<IEnumerable<Table_StockRoom>> GetByLocationAsync(string location);
     Task<IEnumerable<Table_StockRoom>> SearchByDescriptionAsync(string searchTerm);
     Task<IEnumerable<Table_StockRoom>> GetLowInventoryAsync(int threshold);
@@ -32,24 +32,50 @@ public interface IStockRoomRepository : IRepository<Table_StockRoom>
 
     // Batch operations
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
+
+    string StatusInfoDefault { get; }
+
+    string AccessLevelDefault { get; }
+        
 }
 
 
 // ✅ REPOSITORY — only data access, no logic
 public class StockRoomRepository : Repository<Table_StockRoom>, IStockRoomRepository
 {
+    static readonly string _statusInfoDefault = "Locked␟True␞Selected␟False␞Unerasable␟True␞Color␟-36865␞Note␟Null␞HeaderInf␟Null␞";
+
+    public string StatusInfoDefault
+    {
+        get
+        {
+            return _statusInfoDefault;
+        }
+    }
+
+    static readonly string _accessLevelDefault = "AccessLevel:3;AutoSizeColumnsMode:1;EditMode:3;EnableTreeViewSetting:1";
+
+    public string AccessLevelDefault
+    {
+        get
+        {
+            return _accessLevelDefault;
+        }
+    }
+
+    
     public StockRoomRepository(ProductionInventoryContext context) : base(context)
     {
     }
 
     #region Basic CRUD Operations
 
-    public async Task<IEnumerable<Table_StockRoom>> GetByPartNumberAsync(string partNumber)
+    public async Task<Table_StockRoom?> GetByPartNumberAsync(string partNumber)
     {
         return await _dbSet
             .Where(s => s.PartNumber == partNumber)
             .OrderBy(s => s.Location)
-            .ToListAsync();
+            .FirstOrDefaultAsync();
     }
 
     public async Task<IEnumerable<Table_StockRoom>> GetByLocationAsync(string location)
@@ -77,6 +103,18 @@ public class StockRoomRepository : Repository<Table_StockRoom>, IStockRoomReposi
             .ToListAsync();
     }
 
+    /// <summary>
+    /// Updates an existing Table_StockRoom entity in the database. It first checks if the entity exists by
+    /// its primary key (PartNumber). If it doesn't exist, it throws a KeyNotFoundException. If the entity is
+    /// null, it throws an ArgumentNullException. After updating the entity, it saves the changes to the database.
+    /// No need to call SaveChangesAsync() after this method, it will be
+    /// called in the service layer after all update operations are done.
+    /// </summary>
+    /// <param name="entity"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentNullException"></exception>
+    /// <exception cref="KeyNotFoundException"></exception>
     public async Task UpdateAsync(Table_StockRoom entity, CancellationToken cancellationToken = default)
     {
         if (entity == null)

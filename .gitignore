@@ -497,3 +497,6 @@ wwwroot/Videos/*.webm
 
 # Assessment and large JSON files
 **/assessment.json
+lfs/
+
+temp-check/

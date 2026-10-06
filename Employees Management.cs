@@ -31,8 +31,18 @@ namespace StockRoom11net
         private ITableEmployeeService _employeesService;
         private ITableEmployeeTreeViewService _tableEmployeesTreeViewService;
 
-        // Declare as extended type
+        /// <summary>
+        /// BindingSource for Employee data, backed by a <b>DataView</b> of the Employee DataTable.
+        /// Items in this BindingSource are <b>DataRowView</b> objects, not <i>Table_Employee entities</i>.
+        /// It supports filtering and sorting, and is used as the DataSource for the DataGridViewExtended control.
+        /// </summary>
         public BindingSourceValidating<Table_Employee> _bindingSourceEmployeeVal;
+
+        /// <summary>
+        /// BindingSource for Employee TreeView data, backed by a <b>BindingList</b> of Table_Base_TreeView entities.
+        /// Items in this BindingSource are <b>Table_Base_TreeView</b> objects, which can be used to populate a TreeView control.
+        /// It does not support filtering or sorting, but allows direct access to the typed entities for TreeView operations.
+        /// </summary>
         public BindingSourceValidating<Table_Base_TreeView> _bindingSourceEmployeeTreeViewVal;
 
         #region"CurrentUserBroadcast"
@@ -116,6 +126,22 @@ namespace StockRoom11net
                 internalResizeEvent = true;
                 splitContainer_Vertical.SplitterDistance = userSetting.SplitterVertical;
                 splitContainer_Horizontal.SplitterDistance = userSetting.SplitterHorizontal;
+
+                if (CurrentEmployeeLogIn.IsUser || CurrentEmployeeLogIn.IsEditor)
+                {
+                    _employeesService.CurrentEmployeeLogInChanged -= EmployeesService_CurrentEmployeeLogInChanged;
+
+                    MessageBox.Show("You do not have permission to access this form. Please contact your manager.",
+                                    "Access Denied", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                    Dispose(true);
+                    this.Close();
+                }
+
+                if (CurrentEmployeeLogIn.IsManager)
+                    customTabControl.ShowTab("tabPage_TreeViewSetting");
+                else
+                    customTabControl.HideTab("tabPage_TreeViewSetting");
             }
         }
 
@@ -245,6 +271,7 @@ namespace StockRoom11net
             // ✅ Pass unitOfWork to the EXISTING designer instance, don't replace it
             dataTreeViewToAdd_Cancel_Delete.SetUnitOfWork(_unitOfWork);
 
+            Title = "Employees Management";
             Name = "Employees Management";
             dataGridViewExtended.Name = "DGVExt_Employee";
             // We need pass employeeService, at initialization we call currentEmployeeLogIn
@@ -454,7 +481,14 @@ namespace StockRoom11net
             customTabControl.MouseUpResizeGripEvent += TabControl_Inventory_MouseUpResizeGripEventAsync;
             customTabControl.ResizeGripEvent += TabControl_Inventory_ResizeGripEvent;
             customTabControl.SelectedIndexChanged += TabControl_Inventory_SelectedIndexChanged;
-                        
+
+            // TODO: We need to check if the current employee is a manager, if so, we will show the tabPage_ProFile,
+            // otherwise we will hide it. The profile tabPage is not ready at this moment, so we will hide it for now.            
+            customTabControl.HideTab("tabPage_ProFile");
+
+            if(CurrentEmployeeLogIn.IsManager)
+                customTabControl.ShowTab("tabPage_TreeViewSetting");
+
         }
 
         void SplitContainerVertical_MouseDown(object? sender, MouseEventArgs e)
@@ -484,37 +518,7 @@ namespace StockRoom11net
             settingModified = "Splitter";
             SaveUserSetting();
         }
-
-        void TabControl_Inventory_SelectedIndexChanged(object? sender, EventArgs e)
-        {
-            if (!customTabControl.Bounds.Contains(customTabControl.PointToClient(MousePosition)))
-                return;
-
-            if (customTabControl.SelectedTab != null & customTabControl.SelectedTab.Name.Contains("tabPage_Employee"))
-            {
-                //    dataTreeViewToAdd_Cancel_Delete.SelectedIndex = 0;
-                customTabControl.ShowTab("tabPage_ProFile");
-            }
-
-            if (customTabControl.SelectedTab != null & customTabControl.SelectedTab.Name.Contains("tabPage_Department"))
-            {
-                //        dataTreeViewToAdd_Cancel_Delete.SelectedIndex = 1;
-                customTabControl.HideTab("tabPage_ProFile");
-            }
-
-            if (customTabControl.SelectedTab.Name == "tabPage_TreeViewSetting")
-            {
-                InitializeNodeSettingTabPage();
-                SettingMode = true;
-            }
-            else
-            {
-                if (SettingMode)
-                    SettingMode = false;
-            }
-
-        }
-
+                
         void TabControl_Inventory_MouseUpResizeGripEventAsync(object? sender, MouseEventArgs e)
         {
             ShowPlexiglassRectangle.Close();
@@ -556,6 +560,48 @@ namespace StockRoom11net
             ShowPlexiglassRectangle.Location = new Point(ShowPlexiglassRectangle.Location.X + e.X, ShowPlexiglassRectangle.Location.Y);
             ShowPlexiglassRectangle.ClientSize = new Size(ShowPlexiglassRectangle.ClientSize.Width - e.X, ShowPlexiglassRectangle.ClientSize.Height + e.Y);
         }
+
+        void TabControl_Inventory_SelectedIndexChanged(object? sender, EventArgs e)
+        {
+            if (!customTabControl.Bounds.Contains(customTabControl.PointToClient(MousePosition)))
+                return;
+
+            if (customTabControl.SelectedTab != null & customTabControl.SelectedTab.Name.Contains("tabPage_Employee"))
+            {
+                // This is a workaround for a bug in the customTabControl, when we switch from tabPage_Employee
+                // to tabPage_Department, the tabPage_Employee is disabled, and we cannot switch back to
+                // tabPage_Employee, so we need to enable it again.
+                tabPage_Employee.Enabled = true;
+
+                // TODO: We need to check if the current employee is a manager, if so, we will show the tabPage_ProFile,
+                // otherwise we will hide it. The profile tabPage is not ready at this moment, so we will hide it for now.
+                //   if(CurrentEmployeeLogIn.IsManager)
+                //       customTabControl.ShowTab("tabPage_ProFile");
+            }
+
+            if (customTabControl.SelectedTab != null & customTabControl.SelectedTab.Name.Contains("tabPage_Department"))
+            {
+                // This is a workaround for a bug in the customTabControl, when we switch from tabPage_Employee
+                // to tabPage_Department, the tabPage_Employee is disabled, and we cannot switch back to
+                // tabPage_Employee, so we need to enable it again.
+                tabPage_Employee.Enabled = true;
+
+                customTabControl.HideTab("tabPage_ProFile");
+            }
+
+            if (customTabControl.SelectedTab.Name == "tabPage_TreeViewSetting")
+            {
+                InitializeNodeSettingTabPage();
+                SettingMode = true;
+            }
+            else
+            {
+                if (SettingMode)
+                    SettingMode = false;
+            }
+
+        }
+
 
         #endregion"TabControlExtende"
 
@@ -779,41 +825,38 @@ namespace StockRoom11net
                     // Force-commit any cell still in edit mode before reading values.
                     _bindingSourceEmployeeVal.EndEdit();
 
-                    BindingList<Table_Employee> employeesList = await _employeesService.LoadEmployeeAsync();
+                    var dirtyItems = await _employeesService.GetEmployeesByIndexesAsync(e.DirtyDataGridViewIndexes);
 
-                    foreach (var item in employeesList)
+                    foreach (var item in dirtyItems)
                     {
-                        if (e.DirtyDataGridViewIndexes.Contains(item.Index))
+                        DataRowView? originalItem = _bindingSourceEmployeeVal.Cast<DataRowView>()
+                                                    .FirstOrDefault(r => (int)r.Row["Index"] == item.Index);
+
+                        foreach (PropertyDescriptor property in ColumnsCollectionEmployee)
                         {
-                            DataRowView? originalItem = _bindingSourceEmployeeVal.Cast<DataRowView>()
-                                                        .FirstOrDefault(r => (int)r.Row["Index"] == item.Index);
-
-                            foreach (PropertyDescriptor property in ColumnsCollectionEmployee)
+                            var propertyName = property.Name;
+                            var newValue = item.GetType().GetProperty(propertyName)?.GetValue(item);
+                            var originalValue = originalItem?.Row[propertyName];
+                            if (originalValue is DBNull)
                             {
-                                var propertyName = property.Name;
-                                var newValue = item.GetType().GetProperty(propertyName)?.GetValue(item);
-                                var originalValue = originalItem?.Row[propertyName];
-                                if (originalValue is DBNull)
-                                {
-                                    originalValue = null;
-                                }
-                                if (!Equals(newValue, originalValue))
-                                {
-                                    item.GetType().GetProperty(propertyName)?.SetValue(item, originalValue);
-                                }
-
-                                string statusInfo = _unitOfWork.TableEmployeesRepository.StatusInfoDefault;
-
-                                if (propertyName == "Status")
-                                {
-                                    item.GetType().GetProperty(propertyName)?.SetValue(item, statusInfo);
-                                    originalItem?.Row[propertyName] = statusInfo;
-                                    _bindingSourceEmployeeVal.ResetItem(_bindingSourceEmployeeVal.IndexOf(originalItem));
-                                }
+                                originalValue = null;
+                            }
+                            if (!Equals(newValue, originalValue))
+                            {
+                                item.GetType().GetProperty(propertyName)?.SetValue(item, originalValue);
                             }
 
-                            await _unitOfWork.TableEmployeesRepository.UpdateAsync(item, CancellationToken.None);
+                            string statusInfo = _unitOfWork.TableEmployeesRepository.StatusInfoDefault;
+
+                            if (propertyName == "Status")
+                            {
+                                item.GetType().GetProperty(propertyName)?.SetValue(item, statusInfo);
+                                originalItem?.Row[propertyName] = statusInfo;
+                                _bindingSourceEmployeeVal.ResetItem(_bindingSourceEmployeeVal.IndexOf(originalItem));
+                            }
                         }
+
+                        await _unitOfWork.TableEmployeesRepository.UpdateAsync(item, CancellationToken.None);
                     }
 
                     dataGridViewExtended.SavedRequestedDone();
@@ -874,20 +917,17 @@ namespace StockRoom11net
         /// Path.Combine(Settings.Default.DataBaseAddress, "Resources", "Photos", employeeImageFileName);
         /// </summary>
         string EmployeeImagePath = "";
-
+                
         async void DataGridViewExtended_Employees_CurrentRowActive(object? sender, CurrentRowActive_EventArgs e)
         {
             try
             {
-                // If the SaveUserSettingTimer is enabled, we want to save the user settings immediately
-                // before processing the current row change. This ensures that any pending changes
-                // are saved before we potentially switch to a different employee or department.
                 if (SaveUserSettingTimer.Enabled)
                 {
                     SecondsRemainingToSave = 0;
                     await SaveUserSettingTickAsync(sender, e);
                 }
-                
+
                 if (e.CurrentRowActive == null || e.CurrentRowActive.Index == -1)
                     return;
 
@@ -900,13 +940,14 @@ namespace StockRoom11net
                     object? data = currentRow.Cells["ID"].Value;
                     if (data == null || data == DBNull.Value)
                     {
-                        // MessageBox.Show(@"The current row does not have a valid ID value.",
-                        //             @"Error, invalid data.", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        return;
+                        if (currentRow.DataBoundItem is DataRowView drv && (drv.Row.RowState == DataRowState.Detached || drv.IsNew))
+                            data = employeeDepartementSelected.ID;
                     }
 
                     int _ID = Convert.ToInt32(data);
-                    employeeDepartementSelected = await _employeesService.GetEmployeeByIdAsync(_ID);
+                    var fetchedEmployee = await _employeesService.GetEmployeeByIdAsync(_ID);
+                                        
+                    employeeDepartementSelected = fetchedEmployee;
 
                     if (employeeDepartementSelected == null)
                     {
@@ -915,34 +956,25 @@ namespace StockRoom11net
                         return;
                     }
 
-                    // If the user is already on the TreeViewSetting tab, we don't want to switch to another
-                    // tab when selecting a row in the DataGridView. In this case, the user is likely editing
-                    // the TreeView settings and doesn't want to be interrupted by switching tabs.
                     if (customTabControl.SelectedTab == tabPage_TreeViewSetting)
                         return;
 
                     if (employeeDepartementSelected?.Department?.Contains("Department") == true)
                     {
-                        InitializeUI_Department(employeeDepartementSelected);
+                        // Ensure the Department tab is never left stuck
+                        tabPage_Department.Enabled = true;
                         customTabControl.ShowTab("tabPage_Department");
                         customTabControl.SelectedTab = tabPage_Department;
-                        customTabControl.HideTab("tabPage_ProFile");
-                        customTabControl.HideTab("tabPage_Employee");
+                        tabPage_Employee.Enabled = true;
 
-                        if (employeeDepartementSelected.Name.Contains("No set to any department yet."))
-                        {
-                            tabPage_Department.Enabled = false;
-                            return;
-                        }
-                        else
-                        {
-                            tabPage_Department.Enabled = true;
-                            return;
-                        }
+                        InitializeUI_Department(employeeDepartementSelected);                        
+                    //    customTabControl.HideTab("tabPage_ProFile");
+                    //    customTabControl.HideTab("tabPage_Employee");
+
+                        tabPage_Department.Enabled = !employeeDepartementSelected.Name.Contains("No set to any department yet.");
+                        return;
                     }
 
-                    // If the selected row is an employee (not a department),
-                    // we want to show the Employee tab and hide the Department tab.
                     if (employeeDepartementSelected?.Department?.Contains("Department") == false)
                     {
                         EmployeesSelected = new EmployeeInformation(employeeDepartementSelected);
@@ -950,30 +982,23 @@ namespace StockRoom11net
                         employeeImageFileName = EmployeesSelected.Name + EmployeesSelected.LastName + ".png";
                         EmployeeImagePath = Path.Combine(Settings.Default.DataBaseAddress, "Resources", "Photos", employeeImageFileName);
 
-                        InitializeUI_Employee(EmployeesSelected);
+                        // Ensure the Employee tab is never left stuck
+                        tabPage_Employee.Enabled = true;
                         customTabControl.ShowTab("tabPage_Employee");
                         customTabControl.SelectedTab = tabPage_Employee;
-                        customTabControl.HideTab("tabPage_ProFile");
-                        customTabControl.HideTab("tabPage_Department");
 
-                        if (employeeDepartementSelected.Name.Contains("No User Log On") ||
-                            employeeDepartementSelected.Last6Digit == 811266)
-                        {
-                            tabPage_Employee.Enabled = false;
-                            return;
-                        }
-                        else
-                        {
-                            tabPage_Employee.Enabled = true;
-                            return;
-                        }
+                        InitializeUI_Employee(EmployeesSelected);                        
+                     //   customTabControl.HideTab("tabPage_ProFile");
+                     //   customTabControl.HideTab("tabPage_Department");
+
+                        tabPage_Employee.Enabled = !(employeeDepartementSelected.Name.Contains("No User Log On") ||
+                                                      employeeDepartementSelected.Last6Digit == 811266);
+                        return;
                     }
                 }
 
                 if (dataGridViewExtended.DataSource == _bindingSourceEmployeeTreeViewVal)
                 {
-                    // Send the current node to the NodeSetting control if the mouse is over the DataGridViewExtended.
-                    // It was a user action, so we want to update the NodeSetting.CurrentItem to reflect the user's selection.
                     if (dataGridViewExtended.Bounds.Contains(dataGridViewExtended.PointToClient(MousePosition)))
                     {
                         _nodeSetting.CurrentItem = dataTreeViewToAdd_Cancel_Delete.CurrentNodeItem;
@@ -986,8 +1011,7 @@ namespace StockRoom11net
                 {
                     MessageBox.Show(@"Message related to this error is " + error.Message +
                                     @", Break code at position " + MessageDebugPosition,
-                                    @"StockRoom Inventory has generated an error.",
-                                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                    @"Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }
@@ -1473,6 +1497,7 @@ namespace StockRoom11net
             newRowView["Size"] = newAddEmployee.Size;
             newRowView["Status"] = newAddEmployee.Status;
 
+            newRowView.EndEdit();
             _bindingSourceEmployeeVal.EndEdit();
             _bindingSourceEmployeeVal.ResumeBinding();
 
@@ -1485,7 +1510,15 @@ namespace StockRoom11net
             _bindingSourceEmployeeVal.ResetCurrentItem();
 
             if (dataGridViewExtended._dataGridView.Rows.Count > newRowIndex)
-                dataGridViewExtended._dataGridView.CurrentCell = dataGridViewExtended._dataGridView.Rows[newRowIndex].Cells[0];
+            {
+                var newRow = dataGridViewExtended._dataGridView.Rows[newRowIndex];
+                var firstVisibleCell = newRow.Cells
+                    .Cast<DataGridViewCell>()
+                    .FirstOrDefault(c => c.OwningColumn.Visible);
+
+                if (firstVisibleCell != null)
+                    dataGridViewExtended._dataGridView.CurrentCell = firstVisibleCell;
+            }
 
             var result = await _unitOfWork.TableEmployeesRepository.AddAsync(newAddEmployee);
 
@@ -1731,7 +1764,7 @@ namespace StockRoom11net
             textBox_Department_Telephone.Text = departmentInformation.Telephone;
         }
 
-        void UpDateDepartmentSelected()
+        void UpDateDepartmentSelected(Table_Employee employeeDepartementSelected)
         {
                       
             DepartmentSelected.DeptAccessLevel = (Utilities.AccessLevel)comboBox_Employee_AccessLevel.SelectedItem;
@@ -1757,6 +1790,8 @@ namespace StockRoom11net
         async Task<Table_Employee> AddNewDepartment()
         {
             var nextId = await _employeesService.GetNextIdAsync();
+
+            var totest = nextId;
 
             var newAddDepartment = new Table_Employee
             {
@@ -1800,6 +1835,7 @@ namespace StockRoom11net
             newRowView["Size"] = newAddDepartment.Size;
             newRowView["Status"] = newAddDepartment.Status;
 
+            newRowView.EndEdit();
             _bindingSourceEmployeeVal.EndEdit();
             _bindingSourceEmployeeVal.ResumeBinding();
 
@@ -1812,7 +1848,15 @@ namespace StockRoom11net
             _bindingSourceEmployeeVal.ResetCurrentItem();
 
             if (dataGridViewExtended._dataGridView.Rows.Count > newRowIndex)
-                dataGridViewExtended._dataGridView.CurrentCell = dataGridViewExtended._dataGridView.Rows[newRowIndex].Cells[0];
+            {
+                var newRow = dataGridViewExtended._dataGridView.Rows[newRowIndex];
+                var firstVisibleCell = newRow.Cells
+                    .Cast<DataGridViewCell>()
+                    .FirstOrDefault(c => c.OwningColumn.Visible);
+
+                if (firstVisibleCell != null)
+                    dataGridViewExtended._dataGridView.CurrentCell = firstVisibleCell;
+            }
 
             var result = await _unitOfWork.TableEmployeesRepository.AddAsync(newAddDepartment);
 
@@ -1821,16 +1865,14 @@ namespace StockRoom11net
 
         async void Button_AddNewDept_Click(object? sender, EventArgs e)
         {
-            button_AddNewDept.Enabled = false;
-
             try
             {
                 var newDepartment = await AddNewDepartment();
 
-                employeeDepartementSelected = newDepartment; 
-                EmployeesSelected = new EmployeeInformation(newDepartment);
+                employeeDepartementSelected = newDepartment;
+          //    DepartmentSelected = new DepartmentInformation(newDepartment);
 
-                UpdateUI_Employee(EmployeesSelected);
+                InitializeUI_Department(employeeDepartementSelected);
 
                 //textBox_Employee_Last6Digit.Clear();
                 //textBox_Employee_Last6Digit.Focus();

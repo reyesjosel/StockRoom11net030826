@@ -17,6 +17,7 @@ public partial interface ITableEmployeeService
     Task<DataTable> LoadEmployeeDataTableAsync();
     Task<BindingList<Table_Employee>> SearchEmployeeAsync(string searchTerm);
     Task<Table_Employee?> GetEmployeeByIdAsync(int id);
+    Task<BindingList<Table_Employee>> GetEmployeesByIndexesAsync(IEnumerable<int> indexes);
     Task<Table_Employee> CreateEmployeeAsync(Table_Employee employee);
     Task UpdateEmployeeAsync(Table_Employee employee);
     Task DeleteEmployeeAsync(int id);
@@ -72,6 +73,12 @@ public partial class TableEmployeeService : ITableEmployeeService
         return await _unitOfWork.TableEmployeesRepository.GetByIdAsync(id);
     }
 
+    public async Task<BindingList<Table_Employee>> GetEmployeesByIndexesAsync(IEnumerable<int> indexes)
+    {
+        var items = await _unitOfWork.TableEmployeesRepository.FindAsync(t => indexes.Contains(t.Index));
+        return new BindingList<Table_Employee>(items.ToList());
+    }
+
     public async Task<Table_Employee> CreateEmployeeAsync(Table_Employee employee)
     {
         // Ensure required fields are set
@@ -100,4 +107,5 @@ public partial class TableEmployeeService : ITableEmployeeService
             await _unitOfWork.SaveChangesAsync();
         }
     }
+
 }

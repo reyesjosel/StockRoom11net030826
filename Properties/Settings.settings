@@ -45,10 +45,10 @@
       <Value Profile="(Default)">0</Value>
     </Setting>
     <Setting Name="DataBaseAddress" Type="System.String" Scope="User">
-      <Value Profile="(Default)">D:\ProductionManagement</Value>
+      <Value Profile="(Default)">C:\NoSetYet</Value>
     </Setting>
     <Setting Name="DataBaseName" Type="System.String" Scope="User">
-      <Value Profile="(Default)">ProductionInventory.sqlite</Value>
+      <Value Profile="(Default)">NoSetYet.sqlite</Value>
     </Setting>
     <Setting Name="comboBox_SecondCondition_AND" Type="System.String" Scope="User">
       <Value Profile="(Default)">The AND operator displays a record if both the first/n condition and the second condition is true.</Value>

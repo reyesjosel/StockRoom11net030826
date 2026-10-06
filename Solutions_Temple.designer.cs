@@ -540,7 +540,7 @@ namespace StockRoom11net
             toolStripMenuItem_Employees.Size = new Size(294, 26);
             toolStripMenuItem_Employees.Text = "&Employees Managements";
             toolStripMenuItem_Employees.Visible = false;
-            toolStripMenuItem_Employees.Click += ToolStripMenuItemEmployeesClick1;
+            toolStripMenuItem_Employees.Click += ToolStripMenuItemEmployeesClick;
             // 
             // toolStripMenuItem_BOM_Managements
             // 
@@ -549,7 +549,7 @@ namespace StockRoom11net
             toolStripMenuItem_BOM_Managements.Size = new Size(294, 26);
             toolStripMenuItem_BOM_Managements.Text = "&BOM Managements";
             toolStripMenuItem_BOM_Managements.Visible = false;
-            toolStripMenuItem_BOM_Managements.Click += ToolStripMenuItemBomManagementsClick1;
+            toolStripMenuItem_BOM_Managements.Click += ToolStripMenuItemBomManagementsClick;
             // 
             // menuItem3
             // 

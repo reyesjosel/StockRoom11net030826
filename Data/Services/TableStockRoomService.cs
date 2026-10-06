@@ -17,7 +17,8 @@ public interface ITableStockRoomService
     Task<DataTable> LoadStockRoomsDataTableAsync();
     Task<BindingList<Table_StockRoom>> LoadStockRoomsAsync();
     Task<BindingList<Table_StockRoom>> SearchStockRoomsAsync(string searchTerm);
-    Task<Table_StockRoom?> GetStockRoomByIdAsync(int id);
+    Task<Table_StockRoom?> GetStockRoomByPartNumberAsync(string partNumber);
+    Task<BindingList<Table_StockRoom>> GetStockRoomsByPartNumbersAsync(IEnumerable<string> partNumbers);
     Task<Table_StockRoom> CreateStockRoomAsync(Table_StockRoom stockRoom);
     Task UpdateStockRoomAsync(Table_StockRoom stockRoom);
     Task DeleteStockRoomAsync(int id);
@@ -61,10 +62,17 @@ public class TableStockRoomService : ITableStockRoomService
         return new BindingList<Table_StockRoom>(items.ToList());
     }
 
-    public async Task<Table_StockRoom?> GetStockRoomByIdAsync(int id)
+    public async Task<Table_StockRoom?> GetStockRoomByPartNumberAsync(string partNumber)
     {
-        return await _unitOfWork.TableStockRoomRepository.GetByIdAsync(id);
+        return await _unitOfWork.TableStockRoomRepository.GetByPartNumberAsync(partNumber);
     }
+
+    public async Task<BindingList<Table_StockRoom>> GetStockRoomsByPartNumbersAsync(IEnumerable<string> partNumbers)
+    {
+        var items = await _unitOfWork.TableStockRoomRepository.FindAsync(t => partNumbers.Contains(t.PartNumber));
+        return new BindingList<Table_StockRoom>(items.ToList());
+    }
+
 
     public async Task<Table_StockRoom> CreateStockRoomAsync(Table_StockRoom stockRoom)
     {

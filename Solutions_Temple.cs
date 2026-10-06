@@ -1077,12 +1077,12 @@ namespace StockRoom11net
             InitStockRoomAddNewComponent("Add a new component or BOM.");
         }
         // F11
-        void ToolStripMenuItemEmployeesClick1(object sender, EventArgs e)
+        void ToolStripMenuItemEmployeesClick(object sender, EventArgs e)
         {
-            InitEmployeesManagement(@"Employees Informations.");
+            InitEmployeesManagement(@"Employees Management.");
         }
         // F12
-        void ToolStripMenuItemBomManagementsClick1(object sender, EventArgs e)
+        void ToolStripMenuItemBomManagementsClick(object sender, EventArgs e)
         {
             InitBomManagements(@"BOM Managements.");
         }
@@ -1844,6 +1844,7 @@ namespace StockRoom11net
                 #region"Manager"
 
                 toolStripMenuItem_Employees.Visible = true;
+                toolStripMenuItem_Employees.Enabled = true;
                 ToolStripMenuItem_LocationAndLayout.Visible = true;
                 toolStripMenuItem_BOM_Managements.Visible = true;
                 toolStripMenuItem_StockRoom_Receive.Visible = true;
@@ -2230,6 +2231,7 @@ namespace StockRoom11net
             _employees_ManagementsForm = _serviceProvider.GetRequiredService<Employees_Management>();
             {
                 Text = textTitle;
+                _employees_ManagementsForm.TabText = textTitle; // controls the DockPanel tab caption
             }
             ;
 

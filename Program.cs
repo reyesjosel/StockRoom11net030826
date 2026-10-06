@@ -11,6 +11,7 @@ using StockRoom11net.Data;
 using StockRoom11net.Data.Services;
 using System.Diagnostics;
 using System.IO.Compression;
+using static StockRoom11net.Controls.FileSystemEnumerator.UsingKernel32;
 
 namespace StockRoom11net
 {
@@ -48,7 +49,7 @@ namespace StockRoom11net
                     services.AddTransient<Solutions_TempleClass>();
                     services.AddTransient<TimeLineEditor>();
                     services.AddTransient<StockRoom_Inventory>();
-                    services.AddTransient<SolutionsProperties> ();
+                    services.AddTransient<SolutionsProperties>();
                     services.AddTransient<Employees_Management>();
                 })
                 .Build();
@@ -74,7 +75,7 @@ namespace StockRoom11net
 
             //Application.Run(new Solutions_TempleClass());
             // Start WinForms using DI
-            Application.Run(_appHost.Services.GetRequiredService<Solutions_TempleClass>());                        
+            Application.Run(_appHost.Services.GetRequiredService<Solutions_TempleClass>());
         }
 
         private static readonly string[] RequiredSubFolders = { "LogFile", "Pictures", "Projects", "DataSheets", "Resources" };
@@ -96,22 +97,20 @@ namespace StockRoom11net
             // The database file name is authoritative from the DataBaseName setting.
             // Fall back to the connection string's file name if DataBaseName is not set.
             // TODO: Consider validating that the file name ends with ".sqlite" and prompting the user if it doesn't.
-            // Por ahora, we just wire it up to "ProductionInventory.sqlite".
-            var fileName = "ProductionInventory.sqlite"; //Properties.Settings.Default.DataBaseName;
-            if (string.IsNullOrWhiteSpace(fileName))
+            var fileName = Properties.Settings.Default.DataBaseName; //NoSetYet.sqlite / "ProductionInventory.sqlite";
+            if (string.IsNullOrWhiteSpace(fileName) || fileName == "NoSetYet.sqlite")
             {
-                fileName = Path.GetFileName(Path.GetFullPath(builder.DataSource));
+                fileName = "ProductionInventory.sqlite";
                 Properties.Settings.Default.DataBaseName = fileName;
             }
 
             // The root application folder is authoritative from the DataBaseAddress setting.
             // Fall back to the connection string's directory if DataBaseAddress is not set.
             // TODO: Consider validating that the folder name is a valid path and prompting the user if it isn't.
-            // Por ahora, we just wire it up to "D:\ProductionManagement".
-            var rootDirectory = "D:\\ProductionManagement"; //Properties.Settings.Default.DataBaseAddress;
-            if (string.IsNullOrWhiteSpace(rootDirectory))
+            var rootDirectory = Properties.Settings.Default.DataBaseAddress; //C:\\NoSetYet / "D:\\ProductionManagement";
+            if (string.IsNullOrWhiteSpace(rootDirectory) || rootDirectory == "C:\\NoSetYet")
             {
-                rootDirectory = Path.GetDirectoryName(Path.GetFullPath(builder.DataSource));
+                rootDirectory = "C:\\ProductionManagement";
                 Properties.Settings.Default.DataBaseAddress = rootDirectory ?? string.Empty;
             }
 
@@ -163,48 +162,14 @@ namespace StockRoom11net
             }
 
             var databasePath = Path.Combine(rootDirectory, fileName);
-
             if (!File.Exists(databasePath))
             {
-                // The folder structure exists (or was just created), but the database
-                // file itself is missing. Let the user browse to a specific file -
-                // either an existing database file elsewhere, or a new file name/location
-                // to create - instead of only picking a folder.
-                using var fileDialog = new SaveFileDialog
-                {
-                    Title = "Database File Not Found",
-                    InitialDirectory = rootDirectory,
-                    FileName = fileName,
-                    Filter = "SQLite Database (*.sqlite)|*.sqlite|All Files (*.*)|*.*",
-                    OverwritePrompt = false,
-                    CheckPathExists = true
-                };
+                CreateDataBaseFile(rootDirectory);
 
-                if (fileDialog.ShowDialog() != DialogResult.OK || string.IsNullOrWhiteSpace(fileDialog.FileName))
-                {
-                    MessageBox.Show("The database file could not be located. " +
-                                     "The application will not be able to run correctly.",
-                                     "Database File Not Found",
-                                     MessageBoxButtons.OK, MessageBoxIcon.Error);
-
-                    Environment.Exit(1);
-                    return;
-                }
-
-                var selectedPath = fileDialog.FileName;
-
-                // Always keep the database file inside the application's structure folder
-                // (rootDirectory). If the user picked an existing file located elsewhere,
-                // copy it in; if they typed a new file name, the file will simply be
-                // created there by SQLite when the connection is opened.
-                fileName = Path.GetFileName(selectedPath);
-                databasePath = Path.Combine(rootDirectory, fileName);
-
-                if (!string.Equals(Path.GetFullPath(selectedPath), Path.GetFullPath(databasePath), StringComparison.OrdinalIgnoreCase)
-                    && File.Exists(selectedPath))
-                {
-                    File.Copy(selectedPath, databasePath, overwrite: true);
-                }
+                Properties.Settings.Default.DataBaseConnectionStringSQLite = new SqliteConnectionStringBuilder
+                                                                            {
+                                                                                DataSource = databasePath
+                                                                            }.ConnectionString;
 
                 Properties.Settings.Default.DataBaseAddress = rootDirectory;
                 Properties.Settings.Default.DataBaseName = fileName;
@@ -264,5 +229,37 @@ namespace StockRoom11net
                 }
             }
         }
+
+        private static void CreateDataBaseFile(string rootDirectory)
+        {
+            var dataBasePath = Path.Combine(rootDirectory, Properties.Settings.Default.DataBaseName);
+            if (!File.Exists(dataBasePath))
+            {
+                var zipFilePath = Path.Combine(AppContext.BaseDirectory, "ProductionInventory.zip");
+                var sqliteFilePath = Path.Combine(rootDirectory, "ProductionInventory.sqlite");
+
+                if(File.Exists(sqliteFilePath))
+                {
+                    MessageBox.Show($"The database file already exists at {sqliteFilePath}. " + Environment.NewLine +
+                                    $"It will be overwritten with the contents of {zipFilePath}." + Environment.NewLine +
+                                    $"Save or rename your database; this installation will be aborted.",
+                                    "Database File Exists",
+                                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                    Environment.Exit(1);
+                }
+
+                if (File.Exists(zipFilePath))
+                {
+                    using var archive = ZipFile.OpenRead(zipFilePath);
+                    var entry = archive.GetEntry("ProductionInventory.sqlite");
+                    if (entry != null)
+                    {
+                        entry.ExtractToFile(dataBasePath, overwrite: true);
+                    }
+                }
+            }
+        }
+
     }
 }

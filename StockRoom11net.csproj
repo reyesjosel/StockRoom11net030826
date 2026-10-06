@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
   <!---><Project Sdk="Microsoft.NET.Sdk"> Original...-->
 	<PropertyGroup>
-		<Version>3.0.38</Version>
+		<Version>3.0.42</Version>
 	</PropertyGroup>
   <PropertyGroup Label="Globals">
     <WebView2UseWinRT>False</WebView2UseWinRT>
@@ -67,12 +67,12 @@
          None outside wwwroot), so we use Update (not Include) on both None and
          Content to avoid NETSDK1022 duplicate-item errors while guaranteeing the
          copy metadata attaches to whichever item type the file was auto-included as. -->
-    <None Update="SeedData\*.zip">
+    <None Include="SeedData\*.zip">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
       <Link>%(Filename)%(Extension)</Link>
     </None>
-    <Content Update="SeedData\*.zip">
+    <Content Include="SeedData\*.zip">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
       <Link>%(Filename)%(Extension)</Link>

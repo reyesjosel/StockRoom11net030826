@@ -43,8 +43,18 @@ namespace StockRoom11net
         private readonly ITableStockRoomService _tableStockRoomService;
         private readonly ITableStockRoomTreeViewService _tableStockRoomTreeViewService;
 
-        // Declare as extended type
+        /// <summary>
+        /// BindingSource for StockRoom data, backed by a <b>DataView</b> of the StockRoom DataTable.
+        /// Items in this BindingSource are <b>DataRowView</b> objects, not <i>Table_StockRoom entities</i>.
+        /// It supports filtering and sorting, and is used as the DataSource for the DataGridViewExtended control.
+        /// </summary>
         public BindingSourceValidating<Table_StockRoom> _bindingSourceStockRoomVal;
+
+        /// <summary>
+        /// BindingSource for StockRoom TreeView data, backed by a <b>BindingList</b> of Table_Base_TreeView entities.
+        /// Items in this BindingSource are <b>Table_Base_TreeView</b> objects, which can be used to populate a TreeView control.
+        /// It does not support filtering or sorting, but allows direct access to the typed entities for TreeView operations.
+        /// </summary>
         public BindingSourceValidating<Table_Base_TreeView> _bindingSourceStockRoomTreeViewVal;
 
         private PropertyDescriptorCollection _columnsCollectionStockRoom;
@@ -1154,7 +1164,12 @@ namespace StockRoom11net
                 try
                 {
                     foreach (var item in dirtyItems)
+                    {
+                        item.Status = _unitOfWork.TableStockRoomTreeViewRepository.StatusInfoDefault;
+                        _bindingSourceStockRoomTreeViewVal.ResetItem(_bindingSourceStockRoomTreeViewVal.IndexOf(item));
                         await _unitOfWork.TableStockRoomTreeViewRepository.UpdateAsync(item, CancellationToken.None);
+                    }
+
 
                     dataGridViewExtended.SavedRequestedDone();
                     _bindingSourceStockRoomTreeViewVal.ResetDirtyFlag();
@@ -1169,26 +1184,44 @@ namespace StockRoom11net
 
             if (dataGridViewExtended.DataSource == _bindingSourceStockRoomVal)
             {
-                if (e.DirtyDataGridViewIndexes.Count == 0)
-                {
-                    dataGridViewExtended.SavedRequestedDone();
-                    return;
-                }
-
-                // Force-commit any cell still in edit mode before reading values.
-                _bindingSourceStockRoomVal.EndEdit();
-
-                // Collect only the rows that were actually changed.
-                var dirtyItems = _bindingSourceStockRoomVal
-                    .GetAllItems()
-                    .OfType<Table_StockRoom>()
-                    .Where(item => e.DirtyDataGridViewPartNumbers.Contains(item.PartNumber))
-                    .ToList();
-
                 try
                 {
+                    // Force-commit any cell still in edit mode before reading values.
+                    _bindingSourceStockRoomVal.EndEdit();
+
+                    var dirtyItems = await _tableStockRoomService.GetStockRoomsByPartNumbersAsync(e.DirtyDataGridViewPartNumbers);
+
                     foreach (var item in dirtyItems)
+                    {
+                        DataRowView? originalItem = _bindingSourceStockRoomVal.Cast<DataRowView>()
+                                                    .FirstOrDefault(r => (string)r.Row["PartNumber"] == item.PartNumber);
+
+                        foreach (PropertyDescriptor property in ColumnsCollectionStockRoom)
+                        {
+                            var propertyName = property.Name;
+                            var newValue = item.GetType().GetProperty(propertyName)?.GetValue(item);
+                            var originalValue = originalItem?.Row[propertyName];
+                            if (originalValue is DBNull)
+                            {
+                                originalValue = null;
+                            }
+                            if (!Equals(newValue, originalValue))
+                            {
+                                item.GetType().GetProperty(propertyName)?.SetValue(item, originalValue);
+                            }
+
+                            string statusInfo = _unitOfWork.TableStockRoomRepository.StatusInfoDefault;
+
+                            if (propertyName == "Status")
+                            {
+                                item.GetType().GetProperty(propertyName)?.SetValue(item, statusInfo);
+                                originalItem?.Row[propertyName] = statusInfo;
+                                _bindingSourceStockRoomVal.ResetItem(_bindingSourceStockRoomVal.IndexOf(originalItem));
+                            }
+                        }
+
                         await _unitOfWork.TableStockRoomRepository.UpdateAsync(item, CancellationToken.None);
+                    }
 
                     dataGridViewExtended.SavedRequestedDone();
                     _bindingSourceStockRoomVal.ResetDirtyFlag();
@@ -1196,7 +1229,7 @@ namespace StockRoom11net
                 catch (Exception ex)
                 {
                     MessageDebugPosition = $"SaveRequested (StockRoom) error: {ex.Message}";
-                    // dataGridViewExtended.DirtyDataGridViewPartNumbers intentionally NOT cleared — retry is still possible.
+                    // dataGridViewExtended.DirtyDataGridViewIndexes intentionally NOT cleared — retry is still possible.
                     throw;
                 }
             }

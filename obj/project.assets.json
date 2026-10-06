@@ -5374,7 +5374,7 @@
     "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder": {}
   },
   "project": {
-    "version": "3.0.38",
+    "version": "3.0.42",
     "restore": {
       "projectUniqueName": "C:\\Users\\reyes\\Source\\Repos\\StockRoom11net092626\\StockRoom11net.csproj",
       "projectName": "StockRoom11net",

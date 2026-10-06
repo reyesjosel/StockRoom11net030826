@@ -191,7 +191,8 @@ namespace StockRoom11net.Controls
 
                 internalResizeEvent = true;
                 olvDataTreeMaster.Font = userSetting.DataTreeViewFont;
-                olvDataTreeMaster.Columns[0].Width = userSetting.DataTreeViewColumnTextNameWidth;
+                if (olvDataTreeMaster.Columns.Count > 0)
+                    olvDataTreeMaster.Columns[0].Width = userSetting.DataTreeViewColumnTextNameWidth;
                 // Defer clearing the flag until after the control has settled from
                 // the programmatic Font/Width change (avoids the multiple ColumnWidthChanged
                 // notifications fired during layout recalculation).
@@ -655,14 +656,15 @@ namespace StockRoom11net.Controls
                 _settingMode = value;
                 if (_settingMode)
                 {
-                  //  SetupDragAndDrop();
-
-                  //  olvDataTreeMaster.AllowDrop = true;
-                  //  olvDataTreeMaster.IsSimpleDragSource = true;
-                  //  olvDataTreeMaster.IsSimpleDropSink = true;
-
+                    olvDataTreeMaster.AllowDrop = true;
                     splitContainer_DataTreeView.Panel2Collapsed = false;
-                    splitContainer_DataTreeView.SplitterDistance = Settings.Default.SplitterDistance_DataTreeViewToAdd_Cancel_Delete;
+
+                    var splitterDistance = Settings.Default.SplitterDistance_DataTreeViewToAdd_Cancel_Delete;
+
+                    if(splitterDistance < splitContainer_DataTreeView.Panel2MinSize)
+                        splitterDistance = splitContainer_DataTreeView.Panel2MinSize;
+
+                    splitContainer_DataTreeView.SplitterDistance = splitterDistance;
 
                     On_SelectedIndexChanged(new TreeViewSelectedIndexChangedEventArgs()
                     {
@@ -674,9 +676,6 @@ namespace StockRoom11net.Controls
                 else
                 {
                     olvDataTreeMaster.AllowDrop = false;
-                   // olvDataTreeMaster.IsSimpleDragSource = false;
-                   // olvDataTreeMaster.IsSimpleDropSink = false;
-
                     splitContainer_DataTreeView.Panel2Collapsed = true;
                 }
             }
@@ -850,11 +849,11 @@ namespace StockRoom11net.Controls
                     ID = 100000,
                     Parent_ID = 100000,
                     Code = "",
-                    Text_Name = "",
+                    Text_Name = "No selected node",
                     Node_PDF = "",
                     Node_Picture = "",
                     Description_Short = "",
-                    Description_Expand = "",
+                    Description_Expand = "This placeholder node is used when there are no selected nodes.",
                     Image = "",
                     String_Filter = "",
                     ItemCount = 0,
