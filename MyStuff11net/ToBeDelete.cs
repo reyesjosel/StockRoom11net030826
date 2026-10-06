@@ -1,9 +1,0 @@
-﻿namespace MyStuff11net
-{
-
-
-
-
-
-
-}
