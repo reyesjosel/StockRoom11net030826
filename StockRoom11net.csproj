@@ -101,6 +101,12 @@
     <None Remove="WebviewAppShared\**" />
   </ItemGroup>
   <ItemGroup>    
+    <Content Remove="SeedData\DataSheets.zip" />    
+    <Content Remove="SeedData\LogFile.zip" />    
+    <Content Remove="SeedData\Pictures.zip" />    
+    <Content Remove="SeedData\ProductionInventory.zip" />    
+    <Content Remove="SeedData\Projects.zip" />    
+    <Content Remove="SeedData\Resources.zip" />    
     <Content Remove="wwwroot\Jscript\CanvasHelper.js" />
     <Content Remove="wwwroot\Jscript\VisTimeLineHelper1.js" />
     <!-- Exclude MVC .cshtml scaffolding — this is a Blazor/WinForms app (RAZORSDK1004) -->
@@ -108,6 +114,20 @@
     <Compile Remove="BlazorWebAssembly\**\*.cshtml.cs" />
     <None Include="BlazorWebAssembly\**\*.cshtml" />
     <None Include="BlazorWebAssembly\**\*.cshtml.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="SeedData\DataSheets.zip" />
+    <None Remove="SeedData\DataSheets.zip" />
+    <None Remove="SeedData\LogFile.zip" />
+    <None Remove="SeedData\LogFile.zip" />
+    <None Remove="SeedData\Pictures.zip" />
+    <None Remove="SeedData\Pictures.zip" />
+    <None Remove="SeedData\ProductionInventory.zip" />
+    <None Remove="SeedData\ProductionInventory.zip" />
+    <None Remove="SeedData\Projects.zip" />
+    <None Remove="SeedData\Projects.zip" />
+    <None Remove="SeedData\Resources.zip" />
+    <None Remove="SeedData\Resources.zip" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Properties\ReleaseDate.txt">
@@ -427,27 +447,12 @@
       <AutoGen>True</AutoGen>
     </Compile>
     <Compile Update="TimeLineEditor.cs" />
-    <Compile Update="Production_InventoryDataSet.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Production_InventoryDataSet.xsd</DependentUpon>
-    </Compile>
   </ItemGroup>  
   <ItemGroup>
-    <None Update="Production_InventoryDataSet.xsd">
-      <Generator>MSDataSetGenerator</Generator>
-      <LastGenOutput>Production_InventoryDataSet.Designer.cs</LastGenOutput>
-    </None>
     <None Update="Properties\Settings.settings">
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
       <Generator>PublicSettingsSingleFileGenerator</Generator>
     </None>
-    <Content Update="SeedData\LogFile.zip">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Update="SeedData\Resources.zip">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
   </ItemGroup>
   <ItemGroup>
     <Content Update="wwwroot\**">
@@ -499,6 +504,9 @@
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 			<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
 		</Content>
+	</ItemGroup>
+	<ItemGroup>
+	  <Folder Include="SeedData\" />
 	</ItemGroup>
 	<Target Name="BumpVersionAndNotes" BeforeTargets="Publish" Condition="'$(Configuration)' == 'Release'">
 		<Exec Command="powershell -NoProfile -ExecutionPolicy Bypass -File &quot;$(MSBuildProjectDirectory)\scripts\Bump-Version.ps1&quot; -CsprojPath &quot;$(MSBuildProjectFullPath)&quot;" />

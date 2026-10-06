@@ -5376,11 +5376,11 @@
   "project": {
     "version": "3.0.42",
     "restore": {
-      "projectUniqueName": "C:\\Users\\reyes\\Source\\Repos\\StockRoom11net092626\\StockRoom11net.csproj",
+      "projectUniqueName": "C:\\Users\\reyes\\Source\\Repos\\StockRoom11net100526\\StockRoom11net.csproj",
       "projectName": "StockRoom11net",
-      "projectPath": "C:\\Users\\reyes\\Source\\Repos\\StockRoom11net092626\\StockRoom11net.csproj",
+      "projectPath": "C:\\Users\\reyes\\Source\\Repos\\StockRoom11net100526\\StockRoom11net.csproj",
       "packagesPath": "C:\\Users\\reyes\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\reyes\\Source\\Repos\\StockRoom11net092626\\obj\\",
+      "outputPath": "C:\\Users\\reyes\\Source\\Repos\\StockRoom11net100526\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",

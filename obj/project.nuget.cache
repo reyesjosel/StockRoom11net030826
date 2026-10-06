@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "ZgyU+37fF+o=",
+  "dgSpecHash": "6+t4jy4SqzA=",
   "success": true,
-  "projectFilePath": "C:\\Users\\reyes\\Source\\Repos\\StockRoom11net092626\\StockRoom11net.csproj",
+  "projectFilePath": "C:\\Users\\reyes\\Source\\Repos\\StockRoom11net100526\\StockRoom11net.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\reyes\\.nuget\\packages\\azure.core\\1.54.0\\azure.core.1.54.0.nupkg.sha512",
     "C:\\Users\\reyes\\.nuget\\packages\\azure.monitor.opentelemetry.exporter\\1.8.0\\azure.monitor.opentelemetry.exporter.1.8.0.nupkg.sha512",
