@@ -79,20 +79,6 @@
     <EmbeddedResource Remove="bin\**" />
     <None Remove="bin\**" />
   </ItemGroup>
-  <ItemGroup>
-    <Compile Remove="AvnCanvasHelper\**" />
-    <Compile Remove="Pages\**" />
-    <Compile Remove="WebviewAppShared\**" />
-    <Content Remove="AvnCanvasHelper\**" />
-    <Content Remove="Pages\**" />
-    <Content Remove="WebviewAppShared\**" />
-    <EmbeddedResource Remove="AvnCanvasHelper\**" />    
-    <EmbeddedResource Remove="Pages\**" />
-    <EmbeddedResource Remove="WebviewAppShared\**" />
-    <None Remove="AvnCanvasHelper\**" />
-    <None Remove="Pages\**" />
-    <None Remove="WebviewAppShared\**" />
-  </ItemGroup>
   <ItemGroup>    
     <Content Remove="SeedData\DataSheets.zip" />    
     <Content Remove="SeedData\LogFile.zip" />    

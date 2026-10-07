@@ -1,3 +1,0 @@
-﻿<Project>
-  <Import Project="..\build\AvnCanvasHelper.props" />
-</Project>
