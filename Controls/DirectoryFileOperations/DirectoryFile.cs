@@ -395,7 +395,7 @@ namespace StockRoom11net.Controls.DirectoryFileOperations
         }
 
         /// <summary>
-        /// Process DataSheet files to folder Settings.Default.DataBaseAddress + "\\DataSheets\\",
+        /// Process dataSheet_File files to folder Settings.Default.DataBaseAddress + "\\DataSheets\\",
         /// renameDiskFileName, true to rename with fileName, false keep original fileName,
         /// deleteOriginalFile, true to delete the source file, false keep source file.
         /// </summary>

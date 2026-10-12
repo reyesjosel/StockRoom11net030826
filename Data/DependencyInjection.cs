@@ -23,9 +23,8 @@ public static class DependencyInjection
         {
             options.UseSqlite(connectionString);
             options.EnableSensitiveDataLogging(); // For development only
-            options.EnableDetailedErrors(); // For development only
+            options.EnableDetailedErrors();       // For development only
         }, ServiceLifetime.Scoped);
-
 
         // Register Unit of Work
         services.AddScoped<IUnitOfWork, UnitOfWork>();

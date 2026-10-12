@@ -273,6 +273,7 @@ namespace StockRoom11net
 
             Title = "Employees Management";
             Name = "Employees Management";
+            TabText = "Employees Management";   // controls the DockPanel tab caption, it is here for ejercise.
             dataGridViewExtended.Name = "DGVExt_Employee";
             // We need pass employeeService, at initialization we call currentEmployeeLogIn
             //dataGridViewExtended.EmployeesService = EmployeesService;

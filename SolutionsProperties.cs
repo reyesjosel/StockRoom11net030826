@@ -27,8 +27,6 @@ namespace StockRoom11net
         // Injected EF Core services
         private ITableEmployeeService _employeesService;
 
-        ScanDocumentsAddressGroup scanDocumentsAddressGroup_Default = new ScanDocumentsAddressGroup();
-
         public bool IsInstallationMode;
 
         FileAttributes _fileAttributes = new FileAttributes();
@@ -352,10 +350,6 @@ namespace StockRoom11net
 
             InitializeConvertFilesFrontThisLocationTab();
 
-            InitializePeerToPeerManagementTab();
-
-            //  customTabControlSetting.DisplayStyle = TabStyle.None;
-
             Init_USB_BarCode();
         }
 
@@ -487,14 +481,6 @@ namespace StockRoom11net
                 checkBox_ShowWarningsNotifications.Checked = Settings.Default.NotificationsShowWarnings;
                 trackBar_Interval.Value = Settings.Default.IntervalTrackBar_Value;
                 TimeUnitName = Settings.Default.IntervalTimeUnitName;
-
-                MessageDebugPositionString = @"checkBoxSaveEachTimeTheInformationIsChanged";
-                checkBoxSaveEachTimeTheInformationIsChanged.Checked = Settings.Default.SaveEachTimeTheInformationIsChanged;
-                checkBoxSaveTheInformationByTime.Checked = Settings.Default.SaveTheInformationByTime;
-                checkBoxSaveTheInformationWhenTheUserSaves.Checked = Settings.Default.SaveTheInformationWhenTheUserSave;
-                radioButtonEvery5minutes.Checked = Settings.Default.Every5minutes;
-                radioButtonEvery15minutes.Checked = Settings.Default.Every15minutes;
-                radioButtonEvery30minutes.Checked = Settings.Default.Every30minutes;
             }
             catch (Exception error)
             {
@@ -517,13 +503,6 @@ namespace StockRoom11net
             Settings.Default.NotificationsShowWarnings = checkBox_ShowWarningsNotifications.Checked;
             Settings.Default.NotificationsShowEmails = checkBox_ShowEmailsNotifications.Checked;
             Settings.Default.NotificationsShowDataBaseUpDate = checkBox_ShowDataBaseUpdateNotifications.Checked;
-
-            Settings.Default.SaveEachTimeTheInformationIsChanged = checkBoxSaveEachTimeTheInformationIsChanged.Checked;
-            Settings.Default.SaveTheInformationByTime = checkBoxSaveTheInformationByTime.Checked;
-            Settings.Default.SaveTheInformationWhenTheUserSave = checkBoxSaveTheInformationWhenTheUserSaves.Checked;
-            Settings.Default.Every5minutes = radioButtonEvery5minutes.Checked;
-            Settings.Default.Every15minutes = radioButtonEvery15minutes.Checked;
-            Settings.Default.Every30minutes = radioButtonEvery30minutes.Checked;
 
             Settings.Default.IntervalReadingNotifications = (trackBar_Interval.Value * TimeUnit);
             Settings.Default.IntervalTrackBar_Value = trackBar_Interval.Value;
@@ -906,11 +885,6 @@ namespace StockRoom11net
                     {
                         break;
                     }
-                case "   System Compatibility":
-                    {
-                        Initialize_SystemCompatibility();
-                        break;
-                    }
             }
         }
 
@@ -1184,7 +1158,6 @@ namespace StockRoom11net
             }
         }
 
-
         void ContextMenuStrip_Opening(object sender, System.ComponentModel.CancelEventArgs e)
         {
             _contextMenuStrip.Items.Clear();
@@ -1234,9 +1207,7 @@ namespace StockRoom11net
             //Settings.Default.Save();
 
             Node_RecognizedDevicesSystem.Nodes.Remove(treeViewApplicationsSetting.SelectedNode);
-
         }
-
 
         void InformationSystemTimer_Tick(object sender, EventArgs e)
         {
@@ -1257,13 +1228,7 @@ namespace StockRoom11net
             firstProcessTimer.Stop();
             InformationTimer.Stop();
 
-            InformationTimer = null;
-
-            richTextBox_FirstInstalation.AppendText("The installation manager will check for necessary installed components....." +
-                                                                 Environment.NewLine);
-
-            richTextBox_FirstInstalation.AppendText("Getting system information" + Environment.NewLine);
-            richTextBox_FirstInstalation.AppendText(SystemInformation);
+            InformationTimer = null;           
         }
 
         void InformationProcessorTimer_Tick(object sender, EventArgs e)
@@ -1286,12 +1251,6 @@ namespace StockRoom11net
             InformationTimer.Stop();
 
             InformationTimer = null;
-
-            richTextBox_FirstInstalation.AppendText("The installation manager will check for necessary installed components....." +
-                                                                 Environment.NewLine);
-
-            richTextBox_FirstInstalation.AppendText("Getting processor information" + Environment.NewLine);
-            richTextBox_FirstInstalation.AppendText(ProcessorInformation);
         }
 
         void InformationLogicalTimer_Tick(object sender, EventArgs e)
@@ -1314,12 +1273,6 @@ namespace StockRoom11net
             InformationTimer.Stop();
 
             InformationTimer = null;
-
-            richTextBox_FirstInstalation.AppendText("The installation manager will check for necessary installed components....." +
-                                                                 Environment.NewLine);
-
-            richTextBox_FirstInstalation.AppendText("Getting logical disk information" + Environment.NewLine);
-            richTextBox_FirstInstalation.AppendText(LogicalDiskInformation);
         }
 
         void InformationVideoTimer_Tick(object sender, EventArgs e)
@@ -1342,12 +1295,6 @@ namespace StockRoom11net
             InformationTimer.Stop();
 
             InformationTimer = null;
-
-            richTextBox_FirstInstalation.AppendText("The installation manager will check for necessary installed components....." +
-                                                                 Environment.NewLine);
-
-            richTextBox_FirstInstalation.AppendText("Getting video controller information" + Environment.NewLine);
-            richTextBox_FirstInstalation.AppendText(VideoControllerInformation);
         }
 
 
@@ -1898,20 +1845,6 @@ namespace StockRoom11net
             InstallationLogNode.ImageIndex = 3;
             firstProcessTimer.Stop();
             InformationTimer.Stop();
-
-            richTextBox_FirstInstalation.AppendText("The installation manager will check for necessary installed components....." +
-                                                                 Environment.NewLine);
-
-            richTextBox_FirstInstalation.AppendText("Getting system information" + Environment.NewLine);
-            richTextBox_FirstInstalation.AppendText(SystemInformation);
-            richTextBox_FirstInstalation.AppendText("Getting processor information" + Environment.NewLine);
-            richTextBox_FirstInstalation.AppendText(ProcessorInformation);
-            richTextBox_FirstInstalation.AppendText("Getting logical disk information" + Environment.NewLine);
-            richTextBox_FirstInstalation.AppendText(LogicalDiskInformation);
-            richTextBox_FirstInstalation.AppendText("Getting video controller information" + Environment.NewLine);
-            richTextBox_FirstInstalation.AppendText(VideoControllerInformation);
-            //richTextBox_FirstInstalation.AppendText("Getting application installed information" + Environment.NewLine);
-            //richTextBox_FirstInstalation.AppendText(AppInstalled);
         }
 
         void UpDateNode(TreeNode node, string text)
@@ -2078,204 +2011,6 @@ namespace StockRoom11net
 
         #endregion"First Installation"
 
-        #region"Security & Lock System Folder."
-
-        void button_Lock_Click(object sender, EventArgs e)
-        {
-            // Dim text1 as string = ".{2559a1f2-21d7-11d4-bdaf-00c04f60b9f0}"
-            // Shell("cmd /c" & "ren " & TextBox1.Text & " " & TextBox2.Text & Text1)
-            // Shell("cmd /c" & "attrib +s +h " & TextBox1.Text & ".{2559a1f2-21d7-11d4-bdaf-00c04f60b9f0}\*.*" & " /S /D")
-            // Shell("cmd /c" & "attrib +s +h " & TextBox1.Text & ".{2559a1f2-21d7-11d4-bdaf-00c04f60b9f0}" & " /S /D")
-
-            if (string.IsNullOrWhiteSpace(pathkey))
-                return;
-
-            DirectoryInfo d = new DirectoryInfo(pathkey);
-            string selectedpath = d.Parent.FullName + "\\" + d.Name;
-
-            if (pathkey.LastIndexOf(".{") == -1)
-            {
-                string status = ".{2559a1f2-21d7-11d4-bdaf-00c04f60b9f0}";
-
-                FileSystemExt.DirectoryRename(pathkey, d.Parent.FullName + "\\" + d.Name + status);
-                pathkey = d.Parent.FullName + "\\" + d.Name + status;
-
-                try
-                {
-                    File.SetAttributes(pathkey, _fileAttributes);
-                }
-                catch (Exception error)
-                {
-                    MessageBox.Show(new Form() { TopMost = true }, @"Message related to this error is " + error.Message,
-                                 @"Security & Lock System Folder has generated an error.", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-            }
-        }
-
-        void button_UnLock_Click(object sender, EventArgs e)
-        {
-            if (string.IsNullOrEmpty(pathkey))
-                return;
-
-            if (pathkey.LastIndexOf(".{") == -1)
-                return;
-
-            DirectoryInfo p = new DirectoryInfo(pathkey);
-
-            FileSystemExt.DirectoryRename(pathkey, p.Parent.FullName + "\\" + "Test");
-            pathkey = p.Parent.FullName + "\\" + "Test";
-
-            try
-            {
-                File.SetAttributes(pathkey, _fileAttributes);
-            }
-            catch (Exception error)
-            {
-                MessageBox.Show(new Form() { TopMost = true }, @"Message related to this error is " + error.Message,
-                                 @"Security & Lock System Folder has generated an error.", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
-        void button_Delete_Click(object sender, EventArgs e)
-        {
-            if (string.IsNullOrEmpty(pathkey))
-                return;
-
-            DirectoryInfo d = new DirectoryInfo(pathkey);
-
-            if (d.Exists)
-            {
-                d.Delete(true);
-                pathkey = "";
-            }
-        }
-
-        string pathkey
-        {
-            get
-            {
-                return comboBox_SecurityLockFolder.Text;
-            }
-            set
-            {
-                comboBox_SecurityLockFolder.Text = value;
-            }
-        }
-
-        void button_Browser_Click(object sender, EventArgs e)
-        {
-            FolderBrowserDialog _folderBrower = new FolderBrowserDialog();
-
-            _folderBrower.ShowDialog();
-
-            if (DialogResult == DialogResult.Abort)
-                return;
-
-            if (string.IsNullOrEmpty(_folderBrower.SelectedPath))
-                return;
-
-            pathkey = _folderBrower.SelectedPath;
-            _fileAttributes = File.GetAttributes(pathkey);
-
-            if (_fileAttributes.HasFlag(FileAttributes.Hidden))
-                checkBox_Hidden.Checked = true;
-            else
-                checkBox_Hidden.Checked = false;
-
-            if (_fileAttributes.HasFlag(FileAttributes.System))
-                checkBox_System.Checked = true;
-            else
-                checkBox_System.Checked = false;
-
-            if (_fileAttributes.HasFlag(FileAttributes.ReadOnly))
-                checkBox_ReadOnly.Checked = true;
-            else
-                checkBox_ReadOnly.Checked = false;
-        }
-
-        void ProjectsViewer_Load(object sender, EventArgs e)
-        {
-            comboBox_SecurityLockFolder.Text = "";
-
-            // C:\Users\Owner\Documents
-
-            DirectoryInfo d = new DirectoryInfo(@"C:\Users\Owner\Documents");
-
-            //ExtensionsToSearch.SelectMany(pattern => d.EnumerateFiles("*." + pattern, SearchOption.TopDirectoryOnly).Where(fileInfo => Path.GetExtension(fileInfo.FullName) == "." + pattern ))
-
-            //var collection = (pattern => d.EnumerateFiles("*." + pattern, SearchOption.TopDirectoryOnly).Where(fileInfo => Path.GetExtension(fileInfo.FullName) == "." + pattern));
-
-
-            //foreach (var itemEFtableTreeView in collection)
-            //{
-            //    Console.WriteLine(itemEFtableTreeView);
-            //}
-        }
-
-        public static Dictionary<DirectoryInfo, List<DirectoryInfo>> BuildTree(string path)
-        {
-            Dictionary<DirectoryInfo, List<DirectoryInfo>> temptree = new Dictionary<DirectoryInfo, List<DirectoryInfo>>();
-            //If you need to filter the results edit the search string
-            foreach (DirectoryInfo dir in new DirectoryInfo(path).GetDirectories("*", SearchOption.TopDirectoryOnly))
-            {
-                temptree.Add(dir, dir.GetDirectories("*", SearchOption.TopDirectoryOnly).ToList());
-            }
-
-            return temptree;
-        }
-        public Dictionary<DirectoryInfo, List<DirectoryInfo>> BuildTreeLinq(string path)
-        {
-            Dictionary<DirectoryInfo, List<DirectoryInfo>> temptree =
-                (from dir in new DirectoryInfo(path).EnumerateDirectories("*", SearchOption.TopDirectoryOnly)
-                 select dir).ToDictionary(x => x, x => x.GetDirectories("*", SearchOption.TopDirectoryOnly).ToList());
-
-            return temptree;
-        }
-
-
-
-
-        void checkBox_Hidden_CheckedChanged(object sender, EventArgs e)
-        {
-            if (string.IsNullOrWhiteSpace(pathkey))
-                return;
-
-            if (checkBox_Hidden.Checked)
-                _fileAttributes = FileSystemExt.AddAttribute(_fileAttributes, FileAttributes.Hidden);
-            else
-                _fileAttributes = FileSystemExt.RemoveAttribute(_fileAttributes, FileAttributes.Hidden);
-
-            File.SetAttributes(pathkey, _fileAttributes);
-        }
-
-        void checkBox_System_CheckedChanged(object sender, EventArgs e)
-        {
-            if (string.IsNullOrWhiteSpace(pathkey))
-                return;
-
-            if (checkBox_System.Checked)
-                _fileAttributes = FileSystemExt.AddAttribute(_fileAttributes, FileAttributes.System);
-            else
-                _fileAttributes = FileSystemExt.RemoveAttribute(_fileAttributes, FileAttributes.System);
-
-            File.SetAttributes(pathkey, _fileAttributes);
-        }
-
-        void checkBox_ReadOnly_CheckedChanged(object sender, EventArgs e)
-        {
-            if (string.IsNullOrWhiteSpace(pathkey))
-                return;
-
-            if (checkBox_ReadOnly.Checked)
-                _fileAttributes = FileSystemExt.AddAttribute(_fileAttributes, FileAttributes.ReadOnly);
-            else
-                _fileAttributes = FileSystemExt.RemoveAttribute(_fileAttributes, FileAttributes.ReadOnly);
-
-            File.SetAttributes(pathkey, _fileAttributes);
-        }
-
-        #endregion"Security & Lock System Folder."
-
         string TimeUnitName = "seconds";
         int TimeUnit = 1000;
         void TrackBar_Interval_ValueChanged(object sender, EventArgs e)
@@ -2308,95 +2043,116 @@ namespace StockRoom11net
                                         trackBar_Interval.Value + " " + TimeUnitName + ".";
         }
 
-        #region"Registering a DLL"
-
-        void button_BrowserDLL_Click(object sender, EventArgs e)
-        {
-            using (var openfile = new OpenFileDialog
-            {
-                Title = @"Please found any DLL file to register.",
-                FileName = "",
-                Filter = @"DLL File (*.dll)|*.dll",
-                DefaultExt = "(*.dll)|*.dll"
-            }
-                 )
-            {
-                if (openfile.ShowDialog(this) == DialogResult.Cancel)
-                    return;
-
-                var fileName = Path.GetFileNameWithoutExtension(openfile.FileName);
-                var fileExt = Path.GetExtension(openfile.FileName);
-                var filePath = Path.GetDirectoryName(openfile.FileName);
-
-                textBox_BrowsedDLL.Text = openfile.FileName;
-            }
-        }
-
-        void button_RegisterDLL_Click(object sender, EventArgs e)
-        {
-            //   using (Registrar registrar = new Registrar(textBox_BrowsedDLL.Text))
-            //   {
-            //       registrar.RegisterComDLL();
-            //return base.Execute();
-            //   }
-        }
-
-
-
-
-
-        #endregion"Registering a DLL"
-
-        #region"System Compatibility"
-
-        void Initialize_SystemCompatibility()
-        {
-            checkBox_SupportDoubleBuffering.Checked = Settings.Default.DataGridViewDrawDoubleBuffering;
-        }
-
-        void checkBox_SupportDoubleBuffering_CheckedChanged(object sender, EventArgs e)
-        {
-            Settings.Default.DataGridViewDrawDoubleBuffering = checkBox_SupportDoubleBuffering.Checked;
-        }
-
-        #endregion"System Compatibility"
-
         #region"DocumentationBehaviorTab"
 
         /// <summary>
-        /// Used to now the checked radioButton.
+        /// In WinForms, RadioButton controls automatically form a mutually-exclusive group based on
+        /// their direct parent container — you don't need to write grouping logic yourself as long as
+        /// they share a common parent that doesn't itself contain unrelated radio buttons you want excluded.
+        /// Put each set of radio buttons you want mutually exclusive inside its own GroupBox or Panel or
+        /// If you truly can't use containers (e.g., GroupBox or Panel), you can manage manually
         /// </summary>
-        List<RadioButton> DocumentationBehaviorOptions = new List<RadioButton>();
+        List<RadioButton> documentationBehaviorRadioButtons = new List<RadioButton>();
 
+        /// <summary>
+        /// Initializes the documentation behavior tab with event handlers
+        /// for each radio button to update the settings based on user selection.
+        /// </summary>
         void InitializeDocumentationBehaviorTab()
         {
-            //Use the Tag property to mark a enum index.
-            radioButton_SpecifiedDocument.AutoCheck = false;
-            DocumentationBehaviorOptions.Add(radioButton_SpecifiedDocument);
-            radioButton_SpecifiedDocument.Tag = 1;// MyCode.DocumentationBehavior.SpecifiedDocument;
+            //Utilities.DocumentationBehavior.DefaultDocument;
+            radioButton_DefaultDocument.Click += RadioButton_CheckedChanged;
+            radioButton_DefaultDocument.TabIndex = (int)Utilities.DocumentationBehavior.DefaultDocument;
+            documentationBehaviorRadioButtons.Add(radioButton_DefaultDocument);
+
+            // Utilities.DocumentationBehavior.SpecifiedDocument;
             radioButton_SpecifiedDocument.Click += RadioButton_CheckedChanged;
+            radioButton_SpecifiedDocument.TabIndex = (int)Utilities.DocumentationBehavior.SpecifiedDocument;
+            documentationBehaviorRadioButtons.Add(radioButton_SpecifiedDocument);
 
-            radioButton_LastRevision.AutoCheck = false;
-            DocumentationBehaviorOptions.Add(radioButton_LastRevision);
-            radioButton_LastRevision.Tag = 2;// MyCode.DocumentationBehavior.LastRevision;
-            radioButton_LastRevision.Click += RadioButton_CheckedChanged;
+            // Utilities.DocumentationBehavior.LastRevision;
+            radioButton_TheLastRevision.Click += RadioButton_CheckedChanged;
+            radioButton_TheLastRevision.TabIndex = (int)Utilities.DocumentationBehavior.LastRevision;
+            documentationBehaviorRadioButtons.Add(radioButton_TheLastRevision);
 
-            radioButton_AllVersionsFound.AutoCheck = false;
-            DocumentationBehaviorOptions.Add(radioButton_AllVersionsFound);
-            radioButton_AllVersionsFound.Tag = 3;// MyCode.DocumentationBehavior.AllVersionsFound;
+            // Utilities.DocumentationBehavior.AllVersionsFound;
             radioButton_AllVersionsFound.Click += RadioButton_CheckedChanged;
+            radioButton_AllVersionsFound.TabIndex = (int)Utilities.DocumentationBehavior.AllVersionsFound;
+            documentationBehaviorRadioButtons.Add(radioButton_AllVersionsFound);
 
-            radioButton_Last2Versions.AutoCheck = false;
-            DocumentationBehaviorOptions.Add(radioButton_Last2Versions);
-            radioButton_Last2Versions.Tag = 4;// MyCode.DocumentationBehavior.Last2Versions;
-            radioButton_Last2Versions.Click += RadioButton_CheckedChanged;
+            // Utilities.DocumentationBehavior.LastTwoVersions;
+            radioButton_LastTwoVersions.Click += RadioButton_CheckedChanged;
+            radioButton_LastTwoVersions.TabIndex = (int)Utilities.DocumentationBehavior.LastTwoVersions;
+            documentationBehaviorRadioButtons.Add(radioButton_LastTwoVersions);
 
-            checkBox_PdfViewer.Checked = Settings.Default.PdfViewer;
+            // Utilities.DocumentationBehavior.DoNotShowDocuments;
+            radioButton_NotDocumentToShow.Click += RadioButton_CheckedChanged;
+            radioButton_NotDocumentToShow.TabIndex = (int)Utilities.DocumentationBehavior.DoNotShowDocuments;
+            documentationBehaviorRadioButtons.Add(radioButton_NotDocumentToShow);
 
-            radioButton_NoDocumentsToShow.AutoCheck = false;
-            DocumentationBehaviorOptions.Add(radioButton_NoDocumentsToShow);
-            radioButton_NoDocumentsToShow.Tag = 6; //MyCode.DocumentationBehavior.NoDocumentsExist;
-            radioButton_NoDocumentsToShow.Click += RadioButton_CheckedChanged;
+            // Set the initial checked state based on the saved settings
+            foreach (var rb in documentationBehaviorRadioButtons)
+            {
+                if(rb.TabIndex == Settings.Default.DocumentationBehavior)
+                {
+                    rb.Checked = true;
+                    break;
+                }
+            }
+        }
+
+        void RadioButton_CheckedChanged(object? sender, EventArgs e)
+        {
+            if (sender is RadioButton rb && rb.Checked)
+            {
+                Settings.Default.DocumentationBehavior = rb.TabIndex;
+
+                foreach (var other in documentationBehaviorRadioButtons)
+                {
+                    if (other != rb)
+                        other.Checked = false;
+                }
+            }
+        }
+
+        void InitializeDocumentationBehaviorProperties()
+        {
+            InitializeDocumentsAddressGroup();
+
+            MessageDebugPositionString = @"DocumentationBehavior switch";
+            switch ((Utilities.DocumentationBehavior)Settings.Default.DocumentationBehavior)
+            {
+                case Utilities.DocumentationBehavior.DefaultDocument:
+                    {
+                        radioButton_DefaultDocument.Checked = true;
+                        break;
+                    }
+                case Utilities.DocumentationBehavior.SpecifiedDocument:
+                    {
+                        radioButton_SpecifiedDocument.Checked = true;
+                        break;
+                    }
+                case Utilities.DocumentationBehavior.LastRevision:
+                    {
+                        radioButton_TheLastRevision.Checked = true;
+                        break;
+                    }
+                case Utilities.DocumentationBehavior.AllVersionsFound:
+                    {
+                        radioButton_AllVersionsFound.Checked = true;
+                        break;
+                    }
+                case Utilities.DocumentationBehavior.LastTwoVersions:
+                    {
+                        radioButton_LastTwoVersions.Checked = true;
+                        break;
+                    }
+                case Utilities.DocumentationBehavior.DoNotShowDocuments:
+                    {
+                        radioButton_NotDocumentToShow.Checked = true;
+                        break;
+                    }
+            };
         }
 
         void InitializeDocumentsAddressGroup()
@@ -2407,69 +2163,6 @@ namespace StockRoom11net
             documentsAddressGroupNew.Dock = DockStyle.Fill;
 
             grouper_DefinedAddressDocumentation.Invalidate();
-        }
-
-        void InitializeDocumentationBehaviorProperties()
-        {
-            InitializeDocumentsAddressGroup();
-
-            MessageDebugPositionString = @"DocumentationBehavior switch";
-            switch ((Utilities.DocumentationBehavior)Settings.Default.DocumentationBehavior)
-            {
-                case Utilities.DocumentationBehavior.SpecifiedDocument:
-                    {
-                        radioButton_SpecifiedDocument.Checked = true;
-                        break;
-                    }
-                case Utilities.DocumentationBehavior.LastRevision:
-                    {
-                        radioButton_LastRevision.Checked = true;
-                        break;
-                    }
-                case Utilities.DocumentationBehavior.AllVersionsFound:
-                    {
-                        radioButton_AllVersionsFound.Checked = true;
-                        break;
-                    }
-                case Utilities.DocumentationBehavior.Last2Versions:
-                    {
-                        radioButton_Last2Versions.Checked = true;
-                        break;
-                    }
-                case Utilities.DocumentationBehavior.NoDocumentsExist:
-                    {
-                        radioButton_NoDocumentsToShow.Checked = true;
-                        break;
-                    }
-            }
-            ;
-
-        }
-
-        void RadioButton_CheckedChanged(object sender, EventArgs e)
-        {
-            var rb = (sender as RadioButton);
-
-            if (!rb.Checked)
-            {
-                foreach (RadioButton option in DocumentationBehaviorOptions)
-                {
-                    if (option == rb)
-                    {
-                        rb.Checked = true;
-                        Settings.Default.DocumentationBehavior = (int)rb.Tag;
-                        continue;
-                    }
-
-                    option.Checked = false;
-                }
-            }
-        }
-
-        void CheckBox_PdfViewer_CheckedChanged(object sender, EventArgs e)
-        {
-            Settings.Default.PdfViewer = checkBox_PdfViewer.Checked;
-            Settings.Default.Save();
         }
 
         #endregion"DocumentationBehaviorTab"
@@ -2491,45 +2184,6 @@ namespace StockRoom11net
 
 
         #endregion"ConvertFilesFrontThisLocationTab"
-
-        #region"Peer To Peer Management"
-
-        void InitializePeerToPeerManagementTab()
-        {
-            checkBox_IsSuperPeer.Checked = Settings.Default.IsSuperPeer;
-            textBox_NgrokUtilityPath.Text = Settings.Default.NgrokUtilityPath;
-        }
-
-        void checkBox_IsSuperPeer_CheckedChanged(object sender, EventArgs e)
-        {
-            Settings.Default.IsSuperPeer = checkBox_IsSuperPeer.Checked;
-        }
-
-        void button_BrowserNgrokUtilityPath_Click(object sender, EventArgs e)
-        {
-            using (OpenFileDialog openfile = new OpenFileDialog
-            {
-                Title = @"Please found the Ngrok.exe utility file.",
-                FileName = "Ngrok.exe",
-                Filter = null,
-                DefaultExt = "(*.exe)|*.exe"
-            })
-            {
-                if (openfile.ShowDialog(this) == DialogResult.Cancel)
-                    return;
-
-                textBox_NgrokUtilityPath.Text = openfile.FileName.Replace(Settings.Default.DataBaseAddress, "");
-                Settings.Default.NgrokUtilityPath = textBox_NgrokUtilityPath.Text;
-            }
-        }
-
-        #endregion"Peer To Peer Management"
-
-
-        private void TabPage_RegisterDLL_Click(object sender, EventArgs e)
-        {
-
-        }
 
         private void ComboBox_ApplicationDepartmentName_TextChanged(object sender, EventArgs e)
         {

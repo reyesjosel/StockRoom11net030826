@@ -59,7 +59,7 @@ namespace StockRoom11net
         // # 1 ... Declare the event in the control class
         // put some information to Properties Manager.
         [Category("Controls Events")]
-        [Description("DataSheet file name.")]
+        [Description("dataSheet_File file name.")]
         public event TreeViewUpdateEventHandler TreeViewUpdate;
 
         // # 4 ... Declare the protected virtual methods for
@@ -194,15 +194,15 @@ namespace StockRoom11net
         // # 1 ... Declare the event in the control class
         // put some information to Properties Manager.
         [Category("Controls Events")]
-        [Description("DataSheet file name.")]
-        public event Custom_Events_Args.ActiveDataSheet_EventHandler ActiveDataSheet;
+        [Description("dataSheet_File file name.")]
+        public event Custom_Events_Args.ActiveDataSheet_EventHandler ActiveDataSheet1;
 
         // # 4 ... Declare the protected virtual methods for
         // this events, in this procedure we calling the event itself.
         public void On_ActiveDataSheet(ActiveDataSheet_EventArgs e)
         {
             // Notify Subscribers
-            ActiveDataSheet?.Invoke(this, e);
+            ActiveDataSheet1?.Invoke(this, e);
         }
 
         #endregion"Active_DataSheet"
@@ -212,7 +212,7 @@ namespace StockRoom11net
         // # 1 ... Declare the event in the control class
         // put some information to Properties Manager.
         [Category("Controls Events")]
-        [Description("DataSheet file name.")]
+        [Description("dataSheet_File file name.")]
         public event Custom_Events_Args.Node_PDF_EventHandler Node_PDF;
 
         // # 4 ... Declare the protected virtual methods for
@@ -352,6 +352,7 @@ namespace StockRoom11net
         public Orders_Process _ordersProcess;
         public Pdf_explorer _nodePDF;
         public Pdf_explorer _pdfWindowForm;
+
         //  public ImportExcel _importExcel;
         //  public ProjectsViewer _projectsViewerForm;
         //  public CalendarViewer _calendarViewerForm;
@@ -372,7 +373,7 @@ namespace StockRoom11net
 
         /// <summary>
         /// If installation o setting on first day is done go true,
-        /// it is initialized in SolutionsBaseLoad();
+        /// it is initialized in <see cref="SolutionsBaseLoad()"/>;
         /// </summary>
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public static bool IsDoneInstallation { get; set; }
@@ -424,8 +425,7 @@ namespace StockRoom11net
                 dockPanel.Dock = DockStyle.Fill;
                 dockPanel.Theme = vS2005Theme;
                 dockPanel.ShowDocumentIcon = true;
-
-                InitializeDocumentationBehaviorTimer(1);
+                
                 ResumeLayout(false);
 
                 InitializeStatusBarProccess();
@@ -501,9 +501,13 @@ namespace StockRoom11net
             }
         }
 
-        public void Solutions_Temple_Shown(object sender, EventArgs e)
+        public async void Solutions_Temple_Shown(object sender, EventArgs e)
         {
+            _iappService.ActiveDataSheet += DocumentationBehaviorProcessor;
+
             InitializeProperties();
+
+            InitializeDocumentationBehaviorProcess();
 
             InitSolutionsTemple(@"Solution Temple.");
 
@@ -524,10 +528,8 @@ namespace StockRoom11net
             InitializeToolStrip();
             DropDownButton_Informations_Initialize();
 
-            InitializeDocumentationBehaviorProcess();
-
-            // Show StockRoom form.
-            // Because is the most used form.
+           // InitializeDocumentationBehaviorProcess();
+                        
             InitStockRoom(@"Inventory Control");
         }
 
@@ -819,6 +821,15 @@ namespace StockRoom11net
             ProcessWaitingTaskList();
             CloseAllDocumentViewer();
             InitializeDocumentationBehaviorProcess();
+
+            // Move the focus back to the StockRoom panel, since
+            // InitializeDocumentationBehaviorProcess() may open/re-dock Pdf_explorer
+            // viewers which can steal focus away from the StockRoom form.
+            if (_stockRoomForm != null && _stockRoomForm.Pane != null)
+            {
+                _stockRoomForm.Pane.SetContentIndex(_stockRoomForm, 0);
+                _stockRoomForm.Activate();
+            }
         }
 
         #endregion"Solutions Properties."
@@ -1029,7 +1040,7 @@ namespace StockRoom11net
         //F3
         void ToolStripMenuItem_GPSDataSheet_Click(object sender, EventArgs e)
         {
-            InitOrdersProcess("GPS DataSheet Test.");
+            InitOrdersProcess("GPS dataSheet_File Test.");
         }
         //F4
 
@@ -1911,9 +1922,16 @@ namespace StockRoom11net
                 Volume = _speechSynthesizerBaseVolume,
                 Rate = _speechSynthesizerBaseRate
             };
+
+            _iappService.SpeechSynthesizerBase += SpeechSynthesizerBaseSpeak;
         }
 
         public void SpeechSynthesizerBaseSpeak(object sender, Custom_Events_Args.SpeechSynthesizerBase_EventArgs e)
+        {
+            SpeechSynthesizerBaseSpeak(e);
+        }
+
+        public void SpeechSynthesizerBaseSpeak(Custom_Events_Args.SpeechSynthesizerBase_EventArgs e)
         {
             SpeechSynthesizerBase.SpeakAsync(e.Text);
         }
@@ -2064,6 +2082,26 @@ namespace StockRoom11net
                     {
                         Tags.NewLine("Initialized StockRoom ( Inventory Control ) application at " + DateTime.Now),
                     }));
+            
+
+            int intentCount = 10;
+
+            // Wait until the installation is done before showing the StockRoom form
+            // This ensures that the form is only displayed after all necessary setup is complete
+            // and the first currentRow event at dataGridView_StockRoom can be processed correctly.
+            while (_iappService.DataSheetFactoryIsBusy)
+            {
+                Task.Delay(100).Wait();
+                intentCount--;
+
+                if(intentCount == 0)
+                {
+                    MessageBox.Show("Initialization of StockRoom form is taking longer than expected." +
+                                    " Please check the installation process.",
+                                    "Initialization Delay", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    break;
+                }
+            }
 
             if (dockPanel.DocumentStyle == DocumentStyle.SystemMdi)
             {
@@ -2073,6 +2111,11 @@ namespace StockRoom11net
             else
             {
                 _stockRoomForm.Show(dockPanel);
+                // we set the content index to 0 to make sure that the StockRoom form is the first tab in its pane.
+                if (_stockRoomForm.Pane != null)
+                {
+                    _stockRoomForm.Pane.SetContentIndex(_stockRoomForm, 0);
+                }
             }
         }
 
@@ -2482,10 +2525,10 @@ namespace StockRoom11net
             if (_nodePDF == null)
                 return;
 
-            if (_lastNodePdf.Contains(e.DataSheet))
+            if (_lastNodePdf.Contains(e.DataSheet_File))
                 return;
 
-            _lastNodePdf = e.DataSheet;
+            _lastNodePdf = e.DataSheet_File;
             On_Node_PDF(e);
         }
 
@@ -2952,38 +2995,30 @@ namespace StockRoom11net
         /// <summary>
         /// List of Pdf_explorer form opened by Documentation Behavior Process.
         /// </summary>
-       // List<PDFjs_explorer> openedPDF_Documents = new List<PDFjs_explorer>();
+        List<Pdf_explorer> openedPDF_Documents = new List<Pdf_explorer>();
 
         List<FileDirectoryModel> DocumentScanned = new List<FileDirectoryModel>();
-
-        System.Windows.Forms.Timer _docFactoryTimer;
-        void InitializeDocumentationBehaviorTimer(int interval)
-        {
-            _docFactoryTimer = new System.Windows.Forms.Timer
-            {
-                Interval = interval
-            };
-            _docFactoryTimer.Tick += _docFactoryTimer_Tick;
-            _docFactoryTimer.Stop();
-        }
-
+       
+        /// <summary>
+        /// Initialize the documentation behavior process, check if the application has
+        /// been installed, and start the documentation behavior timer if it has been installed.
+        /// </summary>
         void InitializeDocumentationBehaviorProcess()
         {
+            // Set the DataSheetFactoryIsBusy property to true to prevent other processes from
+            // accessing the data sheet factory while the documentation behavior process is running.
+            _iappService.DataSheetFactoryIsBusy = true;
+
+            // If the installation first date is 1/1/2000, it means that the application has
+            // not been installed yet, so we do not start the documentation behavior process.
             if (Settings.Default.InstallationFirstDate == DateTime.Parse("1/1/2000"))
                 return;
-
-            _docFactoryTimer.Start();
-        }
-
-        void _docFactoryTimer_Tick(object sender, EventArgs e)
-        {
-            _docFactoryTimer.Stop();
 
             if (_solutionPropertiesForm != null)
                 return;
 
             InitializeDocumentationBehavior();
-        }
+        } 
 
         /// <summary>
         /// Initialize the documentation behavior process, test the DocumentationBehavior setting property
@@ -2995,72 +3030,48 @@ namespace StockRoom11net
 
             switch (_documentationBehavior)
             {
+                case Utilities.DocumentationBehavior.DefaultDocument:
+                    {
+                        PdfViewerFactory();
+                        break;
+                    }
                 case Utilities.DocumentationBehavior.SpecifiedDocument:
                     {
                         if (_pdf_explorer_Success)
-                            PdfViewerFactory("", null);
-                        if (_pdf_explorer_Success)
-                            PdfViewerFactory("", null);
-                        if (_pdf_explorer_Success)
-                            PdfViewerFactory("", null);
-                        if (_pdf_explorer_Success)
-                            PdfViewerFactory("", null);
-                        if (_pdf_explorer_Success)
-                            PdfViewerFactory("", null);
-                        if (_pdf_explorer_Success)
-                            PdfViewerFactory("", null);
-                        if (_pdf_explorer_Success)
-                            PdfViewerFactory("", null);
-                        if (_pdf_explorer_Success)
-                            PdfViewerFactory("", null);
-                        if (_pdf_explorer_Success)
-                            PdfViewerFactory("", null);
-                        if (_pdf_explorer_Success)
-                            PdfViewerFactory("", null);
+                            PdfViewerFactory();
                         break;
                     }
                 case Utilities.DocumentationBehavior.LastRevision:
                     {
-                        PdfViewerFactory("LastRevision", null);
+                        PdfViewerFactory();
                         break;
                     }
                 case Utilities.DocumentationBehavior.AllVersionsFound:
                     {
                         if (_pdf_explorer_Success)
-                            PdfViewerFactory("", null);
+                            PdfViewerFactory();
                         if (_pdf_explorer_Success)
-                            PdfViewerFactory("", null);
+                            PdfViewerFactory();
                         if (_pdf_explorer_Success)
-                            PdfViewerFactory("", null);
+                            PdfViewerFactory();
                         if (_pdf_explorer_Success)
-                            PdfViewerFactory("", null);
+                            PdfViewerFactory();
                         if (_pdf_explorer_Success)
-                            PdfViewerFactory("", null);
-                        if (_pdf_explorer_Success)
-                            PdfViewerFactory("", null);
-                        if (_pdf_explorer_Success)
-                            PdfViewerFactory("", null);
-                        if (_pdf_explorer_Success)
-                            PdfViewerFactory("", null);
-                        if (_pdf_explorer_Success)
-                            PdfViewerFactory("", null);
-                        if (_pdf_explorer_Success)
-                            PdfViewerFactory("", null);
-
+                            PdfViewerFactory();
                         break;
                     }
-                case Utilities.DocumentationBehavior.Last2Versions:
+                case Utilities.DocumentationBehavior.LastTwoVersions:
                     {
-                        PdfViewerFactory("", null);
-                        PdfViewerFactory("", null);
+                        PdfViewerFactory();
+                        PdfViewerFactory();
                         break;
                     }
                 case Utilities.DocumentationBehavior.BrowserForAnVersion:
                     {
-                        PdfViewerFactory("", null);
+                        PdfViewerFactory();
                         break;
                     }
-                case Utilities.DocumentationBehavior.NoDocumentsExist:
+                case Utilities.DocumentationBehavior.DoNotShowDocuments:
                     {
                         break;
                     }
@@ -3069,41 +3080,44 @@ namespace StockRoom11net
             LoadComplete();
         }
 
+        /// <summary>
+        /// Load/Dock all the opened PDF viewers in the dockPanel, if DocumentStyle is SystemMdi, set the MdiParent to this form.
+        /// Then activate the first document in the tablist, if it contains "StockRoom Inventory" in the TabText.
+        /// </summary>
         void LoadComplete()
         {
             SuspendLayout();
 
             #region"PdfViewer"
-            /*
+            
             if (dockPanel.DocumentStyle == DocumentStyle.SystemMdi)
             {
-                foreach (PDFjs_explorer documentViewer in openedPDF_Documents)
+                foreach (Pdf_explorer documentViewer in openedPDF_Documents)
                 {
-                    //documentViewer.MdiParent = this;
-                    //documentViewer.Show();
+                    documentViewer.MdiParent = this;
+                    documentViewer.Show();
                 }
             }
             else
             {
-                foreach (PDFjs_explorer documentViewer in openedPDF_Documents)
+                foreach (Pdf_explorer documentViewer in openedPDF_Documents)
                 {
-                    //documentViewer.Show(dockPanel, DockState.Document);
+                    documentViewer.Show(dockPanel, DockState.Document);
                 }
             }
-            */
+
             #endregion"PdfViewer"
 
-            foreach (IDockContent document in dockPanel.DocumentsToArray())
-            {
-                if (document.DockHandler.TabText.Contains("Inventory Control"))
-                {
-                    document.DockHandler.Activate();
-                }
-            }
+            _iappService.DataSheetFactoryIsBusy = false;
 
             ResumeLayout();
         }
-
+        
+        /// <summary>
+        /// Process the documentation behavior based on the active data sheet event arguments.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="ActiveDataSheet_EventArgs"/> instance containing the event data.</param>
         void DocumentationBehaviorProcessor(object sender, ActiveDataSheet_EventArgs e)
         {
             ResetDocumentsViewerProcess();
@@ -3114,6 +3128,11 @@ namespace StockRoom11net
 
             switch (_documentationBehavior)
             {
+                case Utilities.DocumentationBehavior.DefaultDocument:
+                    {
+                        DefaultDocumentProcess(e);
+                        break;
+                    }
                 case Utilities.DocumentationBehavior.SpecifiedDocument:
                     {
                         SpecifiedDocumentProcess(e);
@@ -3129,9 +3148,9 @@ namespace StockRoom11net
                         AllVersionsFoundProcess(e);
                         break;
                     }
-                case Utilities.DocumentationBehavior.Last2Versions:
+                case Utilities.DocumentationBehavior.LastTwoVersions:
                     {
-                        Last2VersionsProcess(e);
+                        LastTwoVersionsProcess(e);
                         break;
                     }
                 case Utilities.DocumentationBehavior.BrowserForAnVersion:
@@ -3139,36 +3158,72 @@ namespace StockRoom11net
                         BrowserForAnVersionProcess(e);
                         break;
                     }
-                case Utilities.DocumentationBehavior.NoDocumentsExist:
+                case Utilities.DocumentationBehavior.DoNotShowDocuments:
                     {
+                        DoNotShowDocumentsProcess(e);
                         break;
                     }
             }
         }
 
+        #region"Process DocumentationBehavior options"
+
         /// <summary>
-        /// if DataSheet_File column contains a file name out ext, we add
-        /// Settings.Default.DataBaseAddress + DataSheet_File + ext .pdf
+        /// The default Document will be open. The value of PartNumber column will be used
+        /// to search for the document. All other document behavior options will be ignored.
+        /// The default document will be opened in the first PDF viewer.
         /// </summary>
-        void SpecifiedDocumentProcess(ActiveDataSheet_EventArgs e)
+        void DefaultDocumentProcess(ActiveDataSheet_EventArgs e)
         {
-            if (e.DataSheet == null)
+            if (e.PartNumber == null)
                 return;
 
-            if (e.DataSheet.Length > 3)
+            if (e.PartNumber.Length > 3)
             {
-                if (!_lastDataSheet.Contains(e.DataSheet))
+                // TODO: Check all possible locations for the document, 
+                SpecifiedDocumentProcess(e);
+                return;
+
+                if (!IsDocumentViewerOpened(e.DataSheet_FullPath))
                 {
-                    _lastDataSheet = e.DataSheet;
+                    _lastDataSheet = e.DataSheet_FullPath;
                     ProcessDataSheet(e);
                 }
             }
             else
             {
-                if (!_lastDataSheet.Contains("No Data Sheet Found"))
+                if (!_lastDataSheet.Contains("No Data Sheet Found") && !IsDocumentViewerOpened("No Data Sheet Found.pdf"))
                 {
                     _lastDataSheet = "No Data Sheet Found";
-                    // ProcessDataSheet(new ActiveDataSheet_EventArgs("",e.PartNumber, "No Data Sheet Found.pdf"));
+                    ProcessDataSheet(new ActiveDataSheet_EventArgs("", e.PartNumber, "No Data Sheet Found.pdf"));
+                }
+            }
+        }
+
+        /// <summary>
+        /// if DataSheet_File column contains a file name out ext, we add the ext
+        /// to the file name and search for the file in the DataBaseAddress folder.
+        /// Settings.Default.DataBaseAddress + DataSheet_File + ext .pdf
+        /// </summary>
+        void SpecifiedDocumentProcess(ActiveDataSheet_EventArgs e)
+        {
+            if (e.DataSheet_File == null)
+                return;
+
+            if (e.DataSheet_File.Length > 3)
+            {
+                if (!IsDocumentViewerOpened(e.DataSheet_File))
+                {
+                    _lastDataSheet = e.DataSheet_File;
+                    ProcessDataSheet(e);
+                }
+            }
+            else
+            {
+                if (!_lastDataSheet.Contains("No Data Sheet Found") && !IsDocumentViewerOpened("No Data Sheet Found.pdf"))
+                {
+                    _lastDataSheet = "No Data Sheet Found";
+                    ProcessDataSheet(new ActiveDataSheet_EventArgs("",e.PartNumber, "No Data Sheet Found.pdf"));
                 }
             }
         }
@@ -3178,7 +3233,7 @@ namespace StockRoom11net
             SpecifiedDocumentProcess(e);
         }
 
-        void Last2VersionsProcess(ActiveDataSheet_EventArgs e)
+        void LastTwoVersionsProcess(ActiveDataSheet_EventArgs e)
         {
             SpecifiedDocumentProcess(e);
         }
@@ -3202,48 +3257,36 @@ namespace StockRoom11net
             }
         }
 
+        /// <summary>
+        /// Process the documentation behavior for browsing a specific version based on the active data sheet event arguments.
+        /// </summary>
+        /// <param name="e">The <see cref="ActiveDataSheet_EventArgs"/> instance containing the event data.</param>
         void BrowserForAnVersionProcess(ActiveDataSheet_EventArgs e)
         {
             SpecifiedDocumentProcess(e);
         }
 
+        void DoNotShowDocumentsProcess(ActiveDataSheet_EventArgs e)
+        {
+            SpecifiedDocumentProcess(e);
+        }
+
+        #endregion"End process DocumentationBehavior options"
+
         /// <summary>
-        /// Created a new PDF document viewer, be possible assign a TabName and dataSheet file.
+        /// Creates a new instance of the Pdf_explorer form and adds it to the list of opened PDF documents.
         /// </summary>
-        /// <param name="tabName">Text to be show in Tab text.</param>
-        /// <param name="dataSheetFileName">DataSheet file to be opened, null if no file to open.</param>
-        void PdfViewerFactory(string tabName, string dataSheetFileName)
+        void PdfViewerFactory()
         {
             try
             {
-                /*
-                MessageDebugPosition = "var documentViewer = new Pdf_explorer";
-                var documentViewer = new PDFjs_explorer
+                Pdf_explorer documentViewer = _serviceProvider.GetRequiredService<Pdf_explorer>();
                 {
-                   // Text = tabName,
-                    Index = openedPDF_Documents.Count,
-                    CurrentEmployeesLogIn = CurrentEmployeesLogIn,
-                    SetDataSheet = null
-                };
+                    Text = "";
+                }
 
-                
-                if (documentViewer.DialogResult == DialogResult.Cancel)//An error has been found in the initialization.
-                {
-                    _pdf_explorer_Success = false;
-                    using (var form = new Form { TopMost = true })
-                    {
-                        MessageBox.Show(form, @"Break code at position " + MessageDebugPosition +
-                                              @"Interop.PDFXCviewAxLib.dll file needs to be copied.",
-                                              @"Solutions_TempleClass fail in DocumentViewerFactory()",
-                                              MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    }
-                    return;
-                }*/
-
-                MessagePositionString = "DocumentViewerFactory() -> documentViewer.SpeechSynthesizerBase +=";
-                //   documentViewer.CloseButtonVisible = false;
-
-                //   openedPDF_Documents.Add(documentViewer);
+                documentViewer.CloseButtonVisible = false;
+                openedPDF_Documents.Add(documentViewer);
             }
             catch (Exception error)
             {
@@ -3276,7 +3319,7 @@ namespace StockRoom11net
                         return;
 
                     _indexOpenedPdfDocuments++;
-                    //  openedPDF_Documents[_indexOpenedPdfDocuments].SetDataSheet = new ActiveDataSheet_EventArgs( document.Name, document.FullName, document.FullName);
+                    openedPDF_Documents[_indexOpenedPdfDocuments].DataSheet_File_FullPath = document.FullName;
                 }
 
                 if (_indexOpenedPdfDocuments > 0)
@@ -3294,33 +3337,37 @@ namespace StockRoom11net
         }
 
         void ClearTabTextSetNoDataSheet()
-        {
-            /*
+        {            
             if (openedPDF_Documents.Count == 0)
                 return;
 
             while (_indexOpenedPdfDocuments > -1)
             {
                 string emptyDataSheetAddress = Settings.Default.DataBaseAddress + "\\DataSheets\\";
-                openedPDF_Documents[_indexOpenedPdfDocuments].SetDataSheet = new ActiveDataSheet_EventArgs("", emptyDataSheetAddress, "No Empty Data Sheet.pdf"); ;
+                openedPDF_Documents[_indexOpenedPdfDocuments].DataSheet_File_FullPath = Path.Combine(emptyDataSheetAddress, "No Empty Data Sheet.pdf");
                 _indexOpenedPdfDocuments--;
-            }
-            */
+            }            
         }
 
         void CloseAllDocumentViewer()
-        {
-            /*
-            foreach (PDFjs_explorer documentViewer in openedPDF_Documents)
+        {            
+            foreach (Pdf_explorer documentViewer in openedPDF_Documents)
             {
-                //documentViewer.Close();
+                documentViewer.Close();
             }
 
             openedPDF_Documents.Clear();
+            _pdfWindowForm?.Close();            
+        }
 
-            _pdfWindowForm?.Close();
-
-            */
+        bool IsDocumentViewerOpened(string dataSheetFileName)
+        {
+            foreach (Pdf_explorer documentViewer in openedPDF_Documents)
+            {
+                if (documentViewer.DataSheet_File_FullPath == dataSheetFileName)
+                    return true;
+            }
+            return false;
         }
 
         void ProcessDataSheet(ActiveDataSheet_EventArgs e)
@@ -3330,14 +3377,14 @@ namespace StockRoom11net
 
             try
             {
-                if (e.DataSheet.Contains(";"))
-                    dataSheetFiles.AddRange(e.DataSheet.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries));
+                if (e.DataSheet_File.Contains(";"))
+                    dataSheetFiles.AddRange(e.DataSheet_File.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries));
                 else
-                    dataSheetFiles.Add(e.DataSheet);
+                    dataSheetFiles.Add(e.DataSheet_File);
 
                 foreach (string strFileName in dataSheetFiles)
                 {
-                    _defaultDataSheetFile = new FileInfo(Path.Combine(e.DefaultPath, strFileName.Trim()));
+                    _defaultDataSheetFile = new FileInfo(e.DataSheet_FullPath);
 
                     if (strFileName.Contains("#pag"))
                     {
@@ -3346,35 +3393,40 @@ namespace StockRoom11net
                         {
                             string pageToOpen = strFileName.Substring(indexOf);
                             string fileName = strFileName.Remove(indexOf);
-                            _defaultDataSheetFile = new FileInfo(Path.Combine(e.DefaultPath, fileName.Trim()));
+                            _defaultDataSheetFile = new FileInfo(fileName);
                         }
                     }
-                    /*
+                    
                     if (_defaultDataSheetFile.Exists)
                     {
                         _indexOpenedPdfDocuments++;
 
                         if (_indexOpenedPdfDocuments < openedPDF_Documents.Count)
                         {
-                            openedPDF_Documents[_indexOpenedPdfDocuments].SetDataSheet = new ActiveDataSheet_EventArgs(e.PartNumber, e.DefaultPath, strFileName);
-                            OnStatusBarMessage(new StatusBarMessage_EventArgs("The specified file " + e.DataSheet + " was found...", Resources.OK));
+                            openedPDF_Documents[_indexOpenedPdfDocuments].DataSheet_File_FullPath = _defaultDataSheetFile.FullName;
+                            OnStatusBarMessage(new StatusBarMessage_EventArgs("The specified file " + e.DataSheet_File +
+                                                                              " was found...", Resources.OK));
                         }
                         else
                         {                            
-                            OnStatusBarMessage(new StatusBarMessage_EventArgs("Cannot open more documents, Setting Document Behavior", Resources.OK));
+                            OnStatusBarMessage(new StatusBarMessage_EventArgs("Cannot open more documents," +
+                                                                              " Setting Document Behavior", Resources.OK));
                         }
                     }
                     else
                     {
-                        openedPDF_Documents[_indexOpenedPdfDocuments].SetDataSheet = new ActiveDataSheet_EventArgs("", e.DefaultPath, "No Empty Data Sheet.pdf");
-                        OnStatusBarMessage(new StatusBarMessage_EventArgs("The specified file " + e.DataSheet + " was not found...", Resources.ErrorIcon));
-                    }    
-                    */
+                        foreach (Pdf_explorer documentViewer in openedPDF_Documents)
+                        {
+                                documentViewer.DataSheet_File_FullPath = e.DefaultPath + "\\DataSheets\\No Empty Data Sheet.pdf";
+                                OnStatusBarMessage(new StatusBarMessage_EventArgs("The specified file " + e.DataSheet_File +
+                                                          " was not found, but it is already opened...", Resources.ErrorIcon));
+                        }                        
+                    }                    
                 }
             }
             catch (Exception ex)
             {
-                OnStatusBarMessage(new StatusBarMessage_EventArgs("The file name " + e.DataSheet + " has an error " + ex.Message, Resources.ErrorIcon));
+                OnStatusBarMessage(new StatusBarMessage_EventArgs("The file name " + e.DataSheet_File + " has an error " + ex.Message, Resources.ErrorIcon));
             }
         }
 

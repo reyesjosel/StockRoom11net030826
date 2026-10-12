@@ -475,7 +475,7 @@ namespace StockRoom11net
             ToolStripMenuItem_GPSDataSheet.Name = "ToolStripMenuItem_GPSDataSheet";
             ToolStripMenuItem_GPSDataSheet.ShortcutKeys = Keys.F3;
             ToolStripMenuItem_GPSDataSheet.Size = new Size(294, 26);
-            ToolStripMenuItem_GPSDataSheet.Text = "GPS DataSheet";
+            ToolStripMenuItem_GPSDataSheet.Text = "GPS dataSheet_File";
             ToolStripMenuItem_GPSDataSheet.Click += ToolStripMenuItem_GPSDataSheet_Click;
             // 
             // ToolStripMenuItem_LocationAndLayout

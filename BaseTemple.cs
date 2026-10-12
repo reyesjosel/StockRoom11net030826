@@ -479,7 +479,7 @@ namespace StockRoom11net
         public string _textMessage = "";
 
         /// <summary>
-        /// Keep the last DataSheet serviced,
+        /// Keep the last dataSheet_File serviced,
         /// if the next datasheet is same, return.
         /// </summary>
         public string _lastDataSheet = "";

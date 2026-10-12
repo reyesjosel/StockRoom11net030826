@@ -109,6 +109,17 @@
     <None Remove="SeedData\Resources.zip" />
   </ItemGroup>
   <ItemGroup>
+    <COMReference Include="PDFXCviewAxLib">
+      <VersionMinor>0</VersionMinor>
+      <VersionMajor>1</VersionMajor>
+      <Guid>2e19d395-7974-480b-9e28-cf1d7536983f</Guid>
+      <Lcid>0</Lcid>
+      <WrapperTool>tlbimp</WrapperTool>
+      <Isolated>false</Isolated>
+      <EmbedInteropTypes>true</EmbedInteropTypes>
+    </COMReference>
+  </ItemGroup>
+  <ItemGroup>
     <Content Include="Properties\ReleaseDate.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
@@ -184,9 +195,6 @@
   <ItemGroup>
     <Reference Include="CodeVendor.Controls">
       <HintPath>D:\My_C#_Example\CodeVendor Grouper\Grouper\bin\Release\net11.0-windows\CodeVendor.Controls.dll</HintPath>
-    </Reference>
-    <Reference Include="Interop.PDFXCviewAxLib">
-      <HintPath>bin\Debug\net11.0-windows\Interop.PDFXCviewAxLib.dll</HintPath>
     </Reference>
     <Reference Include="ObjectListView">
       <HintPath>D:\My_C#_Example\ObjectListView\ObjectListView-main2022\ObjectListView-main2022\Demo\bin\Release\net8.0-windows\ObjectListView.dll</HintPath>

@@ -1,23 +1,31 @@
-﻿using StockRoom11net.Properties;
+﻿using Microsoft.Web.WebView2.WinForms;
+using PDFXCviewAxLib;
+using StockRoom11net.Controls;
+using StockRoom11net.Controls.EmployeeInformation;
+using StockRoom11net.Controls.ResourcesCache;
+using StockRoom11net.Data.Services;
+using StockRoom11net.Properties;
+using System.ComponentModel;
 using System.Diagnostics;
+using System.Numerics.Colors;
 using System.Runtime.InteropServices;
 using WinFormsUI.Docking;
+using static StockRoom11net.Controls.Custom_Events_Args;
 using ActiveDataSheet_EventArgs = StockRoom11net.Controls.Custom_Events_Args.ActiveDataSheet_EventArgs;
 using Resources = StockRoom11net.Properties.Resources;
-using System.ComponentModel;
-using StockRoom11net.Controls.EmployeeInformation;
-using StockRoom11net.Controls;
 
 
 namespace StockRoom11net
 {
     public partial class Pdf_explorer : DockContent
-    { 
+    {
+        // Injected EF Core services
+        private readonly IAppService _iappService;
+
         string MessageDebugPosition;
         string _lastDataSheet;
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public int Index { get; set; }
-
 
         EmployeeInformation _currentEmployeesLogIn;
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
@@ -36,21 +44,19 @@ namespace StockRoom11net
             }
         }
 
-
-
         /// <summary>
         /// Default datasheet file, 
         /// </summary>
         FileInfo _defaultDataSheetFile;
-        ActiveDataSheet_EventArgs _dataSheet;
+        string _dataSheet_File_FullPath;
 
         /// <summary>
         /// Set the fileName where the control will luck.
         /// </summary>
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public ActiveDataSheet_EventArgs SetDataSheet
+        public string DataSheet_File_FullPath
         {
-            get { return _dataSheet; }
+            get { return _dataSheet_File_FullPath; }
             set
             {
                 try
@@ -58,10 +64,11 @@ namespace StockRoom11net
                     if (value == null)
                     {
                         ClearPDF_Viewer();
+                        _dataSheet_File_FullPath = _defaultDataSheetFile.FullName;
                         return;
                     }
 
-                    _dataSheet = value;
+                    _dataSheet_File_FullPath = value;
 
                     if (InvokeRequired)
                     {
@@ -93,7 +100,14 @@ namespace StockRoom11net
         void ProcessDataSheet()
         {
             MessageDebugPosition = "Set_data_sheet();";
-            string _ext = Path.GetExtension(_dataSheet?.DataSheet).ToLower();
+            
+            if(string.IsNullOrEmpty(_dataSheet_File_FullPath))
+            {
+                ClearPDF_Viewer();
+                return;
+            }
+
+            string _ext = Path.GetExtension(_dataSheet_File_FullPath).ToLower();
 
             switch (_ext)
             {
@@ -114,78 +128,35 @@ namespace StockRoom11net
                     }
             }
 
-            Text = Path.GetFileName(_dataSheet?.DataSheet);
-            ToolTipText = _dataSheet?.DataSheet;
+            Text = Path.GetFileName(_dataSheet_File_FullPath);
+            ToolTipText = _dataSheet_File_FullPath;
             Set_data_sheet();
         }
-
-        public void ActiveDataSheet_EventHandler(object sender, ActiveDataSheet_EventArgs e)
-        {
-            SetDataSheet = e;
-        }
+               
 
         public string PdfFile = "";
+        WebView2 webView2;
 
-        const int SwpNomove = 0x0002;
-        const int SwpNosize = 0x0001;
-        //private IntPtr HWND_TOPMOST = new IntPtr(-1);
-        const uint TopmostFlags = SwpNomove | SwpNosize;
-
-        [DllImport("user32.dll", SetLastError = true)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        static extern bool SetWindowPos(IntPtr hWnd, int hWndInsertAfter, int x, int y, int cx, int cy, int uFlags);
-
-        // And in the Form Load event, you need to call the SetWindowPos() function like this.
-        // SetWindowPos(this.Handle, HWND_TOPMOST, 0, 0, 0, 0, TOPMOST_FLAGS);
-
-        //AxPDFXCviewAxLib.AxCoPDFXCpreview axCoPDFXCpreview;
-
-        public Pdf_explorer()
+        public Pdf_explorer(IAppService iappService)
         {
             try
             {
                 InitializeComponent();
-          /*      
-                MessageDebugPosition = "xCoPDFXCpreview = new AxPDFXCviewAxLib";
-                axCoPDFXCpreview = new AxPDFXCviewAxLib.AxCoPDFXCpreview();
-                
-                ((System.ComponentModel.ISupportInitialize)(axCoPDFXCpreview)).BeginInit();
-                // 
-                // axCoPDFXCpreview
-                // 
-                axCoPDFXCpreview.Dock = DockStyle.Fill;
-                axCoPDFXCpreview.Enabled = true;
-                axCoPDFXCpreview.Location = new Point(0, 0);
-                axCoPDFXCpreview.Name = "axCoPDFXCpreview";
-             // axCoPDFXCpreview.OcxState = (AxHost.State)resources.GetObject("axCoPDFXCpreview.OcxState");
-                axCoPDFXCpreview.Size = new Size(969, 546);
-                axCoPDFXCpreview.TabIndex = 0;
-                Controls.Add(this.axCoPDFXCpreview);
-                ((System.ComponentModel.ISupportInitialize)(axCoPDFXCpreview)).EndInit();
-                */
 
-                /*
-                AppDomain.CurrentDomain.AssemblyResolve += (Object sender, ResolveEventArgs args) =>
+                _iappService = iappService ?? throw new ArgumentNullException(nameof(iappService));
+
+                webView2 = new WebView2
                 {
-                    String thisExe = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name;
-                    System.Reflection.AssemblyName embeddedAssembly = new System.Reflection.AssemblyName(args.Name);
-                    String resourceName = thisExe + "." + embeddedAssembly.Name + ".dll";
-
-                    using (var stream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName))
-                    {
-                        Byte[] assemblyData = new Byte[stream.Length];
-                        stream.Read(assemblyData, 0, assemblyData.Length);
-                        return System.Reflection.Assembly.Load(assemblyData);
-                    }
+                    Dock = DockStyle.Fill
                 };
-                */
+                Controls.Add(webView2);
 
                 MessageDebugPosition = "ClearPDF_Viewer()";
                 ClearPDF_Viewer();
                 TabPageContextMenuStrip = contextMenuStripPdfViewer;
 
                 MessageDebugPosition = "_defaultDataSheetFile = new FileInfo";
-                _defaultDataSheetFile = new FileInfo(Settings.Default.DataBaseAddress + "\\DataSheets\\" + "No Data Sheet Found.PDF");
+                _defaultDataSheetFile = new FileInfo(Settings.Default.DataBaseAddress + "\\DataSheets\\" + "No Empty Data Sheet.PDF");
             }
             catch (Exception error)
             {
@@ -195,8 +166,6 @@ namespace StockRoom11net
             }
             return;
         }
-
-
 
         void Open_tool_strip_button_click(object sender, EventArgs e)
         {
@@ -210,7 +179,7 @@ namespace StockRoom11net
             {
                 if (openFileDialogStockRoomManager.ShowDialog(this).Equals(DialogResult.OK))
                 {
-                    //      axCoPDFXCpreview.Src = openFileDialogStockRoomManager.FileName;
+                    LoadPdf(openFileDialogStockRoomManager.FileName);
                 }
             }
         }
@@ -225,13 +194,8 @@ namespace StockRoom11net
                 Icon = Resources.Empy_Icon;
                 Text = "";
 
-                _lastDataSheet = "";
-                /*
-                if(axCoPDFXCpreview != null)
-                    axCoPDFXCpreview.Src = Settings.Default.DataBaseAddress + "\\DataSheets\\" + "No Empty Data Sheet.PDF";
-                else
-                    axCoPDFXCpreview = new AxPDFXCviewAxLib.AxCoPDFXCpreview();
-                */
+                _lastDataSheet = _defaultDataSheetFile.FullName;
+                DataSheet_File_FullPath = _defaultDataSheetFile.FullName;
             }
             catch (Exception error)
             {
@@ -260,11 +224,12 @@ namespace StockRoom11net
 
             toolStripMenuItem_OpenContainingFolder.Click += ToolStripMenuItem_OpenContainingFolder_Click;
         }
+        
         void ContextMenuStripPdfViewer_Opening(object sender, System.ComponentModel.CancelEventArgs e)
         {
             try
             {
-                if (_dataSheet == null)
+                if (string.IsNullOrEmpty(_dataSheet_File_FullPath))
                 {   //No dataSheets file, no containing folder.
                     e.Cancel = true;
                     return;
@@ -313,8 +278,6 @@ namespace StockRoom11net
             }
         }
 
-
-
         void Pdf_explorer_shown(object sender, EventArgs e)
         {
             if (Text.Contains("Open Dialog"))
@@ -332,21 +295,20 @@ namespace StockRoom11net
                         try
                         {
                             var dataSheetFile = new FileInfo(openFileDialogSchematic.FileName);
-                            /*
+                            
                             if (dataSheetFile.Exists)
                             {
                                 _lastDataSheet = dataSheetFile.Name;
-                                axCoPDFXCpreview.Src = dataSheetFile.FullName;
+                                LoadPdf(dataSheetFile.FullName);
                                 Text = dataSheetFile.Name;
                             }
                             else
                             {
                                 _lastDataSheet = "";
                                 Text = @"No Data Sheet Found";
-                                axCoPDFXCpreview.Src = Settings.Default.DataBaseAddress + "\\DataSheets\\" +
-                                                       "No Data Sheet Found.PDF";
-                               
-                            }*/
+                                LoadPdf(_defaultDataSheetFile.FullName);
+
+                            }
                         }
                         catch (Exception)
                         {
@@ -362,21 +324,18 @@ namespace StockRoom11net
         void Set_data_sheet()
         {
             try
-            {
-                //    if (axCoPDFXCpreview == null)
-                //        return;
-
+            { 
                 string pageToOpen = "";
-                _defaultDataSheetFile = new FileInfo(Path.Combine(_dataSheet.DefaultPath, _dataSheet.DataSheet.Trim()));
+                _defaultDataSheetFile = new FileInfo(_dataSheet_File_FullPath);
 
-                if (_dataSheet.DataSheet.Contains("#pag"))
+                if (_dataSheet_File_FullPath.Contains("#pag"))
                 {
-                    int indexOf = _dataSheet.DataSheet.IndexOf("#", StringComparison.Ordinal);
-                    if (_dataSheet.DataSheet.Length > indexOf)
+                    int indexOf = _dataSheet_File_FullPath.IndexOf("#", StringComparison.Ordinal);
+                    if (_dataSheet_File_FullPath.Length > indexOf)
                     {
-                        pageToOpen = _dataSheet.DataSheet.Substring(indexOf);
-                        string fileName = _dataSheet.DataSheet.Remove(indexOf);
-                        _defaultDataSheetFile = new FileInfo(Path.Combine(_dataSheet.DefaultPath, fileName.Trim()));
+                        pageToOpen = _dataSheet_File_FullPath.Substring(indexOf);
+                        string fileName = _dataSheet_File_FullPath.Remove(indexOf);
+                        _defaultDataSheetFile = new FileInfo(fileName);
                     }
                 }
 
@@ -387,16 +346,15 @@ namespace StockRoom11net
 
                     if (pageToOpen.Length == 0)
                     {
-                        //                  _defaultDataSheetFile.FullName "D:\\ProductionManagement\\DataSheets\\1N5819.pdf"
-                        //                  On_StatusBarMessage(new StatusBarMessage_EventArgs("PDF dataSheet loaded " + dataSheetName.Trim()));
-                        //            axCoPDFXCpreview.Src = _defaultDataSheetFile.FullName.Trim();
+                        //_defaultDataSheetFile.FullName "D:\\ProductionManagement\\DataSheets\\1N5819.pdf";
+                        LoadPdf(_dataSheet_File_FullPath);
                     }
                     else
                     {
                         pageToOpen = pageToOpen.Replace("#", "/A#");  //"/A#"; ":"
 
-                        //                 On_StatusBarMessage(new StatusBarMessage_EventArgs("PDF dataSheet loaded " + _defaultDataSheetFile.Name + pageToOpen));
-                        //          axCoPDFXCpreview.Src = _defaultDataSheetFile.FullName + pageToOpen;
+                        //On_StatusBarMessage(new StatusBarMessage_EventArgs("PDF dataSheet loaded " + _defaultDataSheetFile.Name + pageToOpen));
+                        LoadPdf(_dataSheet_File_FullPath + pageToOpen);
                     }
                 }
                 else
@@ -406,9 +364,8 @@ namespace StockRoom11net
                     _lastDataSheet = "";
                     Icon = Resources.Empy_Icon;
                     Text = @"No Data Sheet Found";
-
-                    //              On_StatusBarMessage(new StatusBarMessage_EventArgs("No Data Sheet Found..."));
-                    //          axCoPDFXCpreview.Src = Settings.Default.DataBaseAddress + "\\DataSheets\\" + "No Data Sheet Found.PDF";
+                    _dataSheet_File_FullPath = Settings.Default.DataBaseAddress + "\\DataSheets\\" + "No Empty Data Sheet.PDF";
+                    LoadPdf(_dataSheet_File_FullPath);
                 }
 
             }
@@ -424,10 +381,25 @@ namespace StockRoom11net
             }
         }
 
+        private async void LoadPdf(string path)
+        {
+            await webView2.EnsureCoreWebView2Async();
+            webView2.CoreWebView2.Navigate(new Uri(path).AbsoluteUri + "#toolbar=0");
+            // Optional: hide the toolbar -> new Uri(path).AbsoluteUri + "#toolbar=0"
+
+            // controls the DockPanel tab caption
+            string _tabText = Path.GetFileName(path);
+            if (_tabText.Contains("No Empty Data Sheet"))
+            {
+                TabText = " ";
+                Icon = Resources.Empy_Icon;
+            }
+            else
+                TabText = _tabText;
+        }
+
         void Pdf_explorer_form_closing(object sender, FormClosingEventArgs e)
         {
-            //     axCoPDFXCpreview.Dispose();
-
             Dispose(true);
         }
 
@@ -436,10 +408,8 @@ namespace StockRoom11net
             MessageDebugPosition = "ClearPDF_Viewer()";
             Text = "";
             Icon = Resources.Empy_Icon;
-            _dataSheet = null;
             _lastDataSheet = Settings.Default.DataBaseAddress + "\\DataSheets\\" + "No Empty Data Sheet.PDF";
-            //    if (axCoPDFXCpreview != null)
-            //        axCoPDFXCpreview.Src = Settings.Default.DataBaseAddress + "\\DataSheets\\" + "No Empty Data Sheet.PDF";
+            _dataSheet_File_FullPath = _lastDataSheet;
         }
     }
 }

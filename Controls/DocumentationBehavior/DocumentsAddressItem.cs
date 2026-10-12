@@ -26,12 +26,6 @@ namespace StockRoom11net.Controls.DocumentationBehavior
         /// SettingValue value contains the address or path of this setting.
         /// </summary>
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        /// <summary>
-        /// Value of DocumentsAddressItem, it's store as ("PdfDoc" + "ID" + SpliterCharacter + "AccessLevel" + SpliterCharacter + 
-        /// "Description" + SpliterCharacter + "SettingAddressPath"  + SpliterCharacter + "DocumentsExtensionAcepted";)
-        /// ID value contains 5 digit (12345), AccessLevel value can be (Public or Private), Description value is any description about this setting,
-        /// SettingValue value contains the address or path of this setting.
-        /// </summary>
         public string DocumentsAddressSet
         {
             get
@@ -126,9 +120,6 @@ namespace StockRoom11net.Controls.DocumentationBehavior
         /// ID value contains 5 digit (12345), it is specific to each DocumentsAddressItem.
         /// </summary>
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        /// <summary>
-        /// ID value contains 5 digit (12345), it is specific to each DocumentsAddressItem.
-        /// </summary>
         public int ID { get; set; }
 
         /// <summary>
@@ -136,18 +127,12 @@ namespace StockRoom11net.Controls.DocumentationBehavior
         /// The possible value are Public or Private.
         /// </summary>
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        /// <summary>
-        /// Return a string specifying the accessLevel.
-        /// The possible value are Public or Private.
-        /// </summary>
         public string AccessLevel { get; set; }
+
         /// <summary>
         /// Return true if AccessLevel is Private.
         /// </summary>
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        /// <summary>
-        /// Return true if AccessLevel is Private.
-        /// </summary>
         public bool IsAccessLevelPrivate
         {
             get
@@ -160,13 +145,11 @@ namespace StockRoom11net.Controls.DocumentationBehavior
 
             private set { }
         }
+
         /// <summary>
         /// Return true if AccessLevel is Public.
         /// </summary>
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        /// <summary>
-        /// Return true if AccessLevel is Public.
-        /// </summary>
         public bool IsAccessLevelPublic
         {
             get
@@ -394,7 +377,6 @@ namespace StockRoom11net.Controls.DocumentationBehavior
             }
         }
 
-
         public DocumentsAddressItem(string documentsAddressSet)
         {
             try
@@ -458,7 +440,6 @@ namespace StockRoom11net.Controls.DocumentationBehavior
             }
         }
 
-
         void this_VisibleChanged(object sender, EventArgs e)
         {
             if (Visible)
@@ -471,13 +452,13 @@ namespace StockRoom11net.Controls.DocumentationBehavior
 
         }
 
-        void this_MouseClick(object sender, MouseEventArgs e)
+        void this_MouseClick(object? sender, MouseEventArgs e)
         {
             On_MouseClick_Event(new MouseClick_EventArgs());
         }
 
         Control _parent;
-        void this_MouseEnter(object sender, EventArgs e)
+        void this_MouseEnter(object? sender, EventArgs e)
         {
             // since we haven't been added to a control at creation...
             if (_parent == null)
@@ -489,7 +470,7 @@ namespace StockRoom11net.Controls.DocumentationBehavior
             On_MouseEnter_Event(new MouseEnter_EventArgs());
         }
 
-        void this_MouseLeave(object sender, EventArgs e)
+        void this_MouseLeave(object? sender, EventArgs e)
         {
             var pos = PointToClient(Cursor.Position);
             if (!ClientRectangle.Contains(pos))
@@ -508,7 +489,5 @@ namespace StockRoom11net.Controls.DocumentationBehavior
         {
             return DocumentsAddressSet;
         }
-
-
     }
 }

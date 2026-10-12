@@ -1189,6 +1189,8 @@ namespace StockRoom11net
                     // Force-commit any cell still in edit mode before reading values.
                     _bindingSourceStockRoomVal.EndEdit();
 
+                    // Collect only the rows that were actually changed, using the <b>PartNumbers</b> from the event args.
+                    // Items are type <b>Table_StockRoom</b>, which is the entity type for the StockRoom table.
                     var dirtyItems = await _tableStockRoomService.GetStockRoomsByPartNumbersAsync(e.DirtyDataGridViewPartNumbers);
 
                     foreach (var item in dirtyItems)
@@ -1474,7 +1476,7 @@ namespace StockRoom11net
             //  _currentColumnActive = CurrentDataColumnActive(e.ColumnIndex);
         }
 
-        void DataGridViewExtended_StockRoom_CellDoubleClick_Event(object? sender, CellDoubleClick_EventArgs e)
+        async void DataGridViewExtended_StockRoom_CellDoubleClick_Event(object? sender, CellDoubleClick_EventArgs e)
         {
             if (_employeesService.CurrentEmployeeLogIn.IsUser)
             {
@@ -1521,7 +1523,20 @@ namespace StockRoom11net
                         fileList += diskFileName + ";";   // ← use fileList (string) instead of listFileNames (object)
                     }
 
+                    fileList = fileList.TrimEnd(';'); // Remove the trailing semicolon
                     dataGridViewExtended.CurrentRowViewActive["DataSheet_File"] = fileList;
+
+                    var dirtyItem = await _tableStockRoomService.GetStockRoomByPartNumberAsync(dataSheetPartNumber);
+                    if(dirtyItem == null)
+                    {
+                        MessageBox.Show($"Could not find the stock room item for PartNumber {dataSheetPartNumber}.", "Error",
+                                        MessageBoxButtons.OK, MessageBoxIcon.Error);                        
+                    }
+                    else
+                    {
+                        dirtyItem.DataSheet_File = fileList;
+                        await _unitOfWork.TableStockRoomRepository.UpdateAsync(dirtyItem, CancellationToken.None);
+                    }
 
                     dataGridViewExtended._dataGridView.EndEdit();
                     DataSheetProcess();
@@ -1676,13 +1691,13 @@ namespace StockRoom11net
                 return;
 
             MessageDebugPosition = "DataSheetProcess()";
-            string dataSheetInfo = dataGridViewExtended.CurrentRowViewActive["DataSheet_File"]?.ToString();
+            string dataSheet_File = dataGridViewExtended.CurrentRowViewActive["DataSheet_File"]?.ToString();
 
-            if (dataSheetInfo == null || string.IsNullOrEmpty(dataSheetInfo) || string.IsNullOrWhiteSpace(dataSheetInfo))
-                dataSheetInfo = "";
+            if (dataSheet_File == null || string.IsNullOrEmpty(dataSheet_File) || string.IsNullOrWhiteSpace(dataSheet_File))
+                dataSheet_File = "";
 
             MessageDebugPosition = "DataSheetProcess() -> DocumentationBehavior";
-            _iappService.On_ActiveDataSheet(new ActiveDataSheet_EventArgs(dataGridViewExtended.CurrentPartNumber, Settings.Default.DataBaseAddress + "\\DataSheets\\", dataSheetInfo));
+            _iappService.On_ActiveDataSheet(new ActiveDataSheet_EventArgs(dataGridViewExtended.CurrentPartNumber, Settings.Default.DataBaseAddress, dataSheet_File));
         }
 
         void WhoUsesThisProcess(CurrentRowMouseEnterEventArgs e)

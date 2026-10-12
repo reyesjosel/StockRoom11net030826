@@ -71,7 +71,7 @@ namespace StockRoom11net
                 InitializeComponent();
                
 
-                //Provider=Microsoft.Jet.OLEDB.4.0;Data Source="X:\ProductionManagement\ReelRecord DataSheet.mdb"
+                //Provider=Microsoft.Jet.OLEDB.4.0;Data Source="X:\ProductionManagement\ReelRecord dataSheet_File.mdb"
                 DataBaseConnectionString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + Path.Combine(Settings.Default.DataBaseAddress, "ReelRecord.mdb");
                 ReelRecord_ConnectionString = new OleDbConnection(DataBaseConnectionString);
 
@@ -564,7 +564,7 @@ namespace StockRoom11net
                 using (var form1 = new Form { TopMost = true })
                 {
                     MessageBox.Show(form1, @"Message related to this error is " + error.Message,
-                                           @"ReelRecord DataSheet has generated an error.",
+                                           @"ReelRecord dataSheet_File has generated an error.",
                                            MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }

@@ -29,11 +29,18 @@ namespace StockRoom11net
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
-            // Ensure the SQLite database directory exists (or ask the user to
-            // choose a location) BEFORE the DbContext/connection string is
-            // registered, otherwise SQLite Error 14 ("unable to open database
-            // file") is thrown when the connection is first opened.
-            EnsureDatabaseLocation();
+            // If the installation first date is 1/1/2000 and dataBaseFileName is "NoSetYet.sqlite", it means that the
+            // application has not been installed yet, so we do not start the documentation behavior process.
+            var dataBaseFileName = Properties.Settings.Default.DataBaseName;
+            var installationFirstDate = Properties.Settings.Default.InstallationFirstDate;
+            if (dataBaseFileName == "NoSetYet.sqlite" && installationFirstDate == DateTime.Parse("1/1/2000"))
+            {
+                // Ensure the SQLite database directory exists (or ask the user to
+                // choose a location) BEFORE the DbContext/connection string is
+                // registered, otherwise SQLite Error 14 ("unable to open database
+                // file") is thrown when the connection is first opened.
+                EnsureDatabaseLocation();
+            }
 
             var _appHost = Host.CreateDefaultBuilder()
                 .ConfigureServices((context, services) =>
@@ -51,6 +58,7 @@ namespace StockRoom11net
                     services.AddTransient<StockRoom_Inventory>();
                     services.AddTransient<SolutionsProperties>();
                     services.AddTransient<Employees_Management>();
+                    services.AddTransient<Pdf_explorer>();
                 })
                 .Build();
 

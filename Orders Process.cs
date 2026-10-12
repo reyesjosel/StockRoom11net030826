@@ -44,7 +44,7 @@ namespace StockRoom11net
                     using (var form1 = new Form { TopMost = true })
                     {
                         MessageBox.Show(form1, @"Message related to this error is " + error.Message,
-                                               @"GPS DataSheet Test has generated an error.",
+                                               @"GPS dataSheet_File Test has generated an error.",
                                                MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                 }
@@ -60,8 +60,8 @@ namespace StockRoom11net
                 InitializeComponent();
 
             //    table_GPSDataSheetAdapter = new GPS_DataSheetTableAdapter();
-                //Provider=Microsoft.Jet.OLEDB.4.0;Data Source="X:\ProductionManagement\GPS DataSheet.mdb"
-                DataBaseConnectionString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + Path.Combine(Settings.Default.DataBaseAddress, "GPS DataSheet.mdb");
+                //Provider=Microsoft.Jet.OLEDB.4.0;Data Source="X:\ProductionManagement\GPS dataSheet_File.mdb"
+                DataBaseConnectionString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + Path.Combine(Settings.Default.DataBaseAddress, "GPS dataSheet_File.mdb");
                 GPS_DataSheetConnectionString = new OleDbConnection(DataBaseConnectionString);
 
                 GPS_DataSheetConnectionString.Open();
@@ -77,7 +77,7 @@ namespace StockRoom11net
                 using (var form1 = new Form { TopMost = true })
                 {
                     MessageBox.Show(form1, @"Message related to this error is " + error.Message,
-                                           @"GPS DataSheet has generated an error.",
+                                           @"GPS dataSheet_File has generated an error.",
                                            MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }

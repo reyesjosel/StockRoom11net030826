@@ -120,69 +120,33 @@ namespace StockRoom11net
             button_AddNew = new Button();
             panel1 = new Panel();
             PicturesBox_Image = new PictureBox();
-            tabPageSave_Options = new TabPage();
-            grouper6 = new CodeVendor.Controls.Grouper();
-            richTextBox3 = new RichTextBox();
-            richTextBox2 = new RichTextBox();
-            checkBoxSaveTheInformationWhenTheUserSaves = new CheckBox();
-            checkBoxSaveTheInformationByTime = new CheckBox();
-            checkBoxSaveEachTimeTheInformationIsChanged = new CheckBox();
-            grouper5 = new CodeVendor.Controls.Grouper();
-            radioButtonEvery30minutes = new RadioButton();
-            radioButtonEvery15minutes = new RadioButton();
-            radioButtonEvery5minutes = new RadioButton();
-            tabPage_InstallationLog = new TabPage();
-            richTextBox_FirstInstalation = new RichTextBox();
-            tabPage_SecurityLockFolder = new TabPage();
-            grouper_SecurityLockFolder = new CodeVendor.Controls.Grouper();
-            panel2 = new Panel();
-            flowLayoutPanel1 = new FlowLayoutPanel();
-            comboBox_SecurityLockFolder = new ComboBox();
-            button_Browser = new Button();
-            grouper_SecurityLockFolderButtons = new CodeVendor.Controls.Grouper();
-            button_Lock = new Button();
-            button_UnLock = new Button();
-            grouper_Properties = new CodeVendor.Controls.Grouper();
-            checkBox_Hidden = new CheckBox();
-            button_Delete = new Button();
-            checkBox_ReadOnly = new CheckBox();
-            checkBox_System = new CheckBox();
-            tabPage_RegisterDLL = new TabPage();
-            grouper9 = new CodeVendor.Controls.Grouper();
-            textBox_BrowsedDLL = new TextBox();
-            button_BrowserDLL = new Button();
-            button_UnregisterDLL = new Button();
-            button_RegisterDLL = new Button();
-            tabPage_SystemCompatibility = new TabPage();
-            grouper10 = new CodeVendor.Controls.Grouper();
-            checkBox_SupportDoubleBuffering = new CheckBox();
-            label_SupportDoubleBuffering = new Label();
             tabPage_Documentation = new TabPage();
             grouper_DocumentationBehavior = new CodeVendor.Controls.Grouper();
-            grouper_NoDocumentsToShow = new CodeVendor.Controls.Grouper();
-            richTextBox_NoDocumentsToShow = new RichTextBox();
-            panel_NoDocumentsToShow = new Panel();
-            radioButton_NoDocumentsToShow = new RadioButton();
-            grouper_Last2Versions = new CodeVendor.Controls.Grouper();
-            richTextBox4 = new RichTextBox();
-            panel3 = new Panel();
-            numericUpDown1 = new NumericUpDown();
-            radioButton_Last2Versions = new RadioButton();
-            label_Versions = new Label();
-            grouper_AllVersionsFound = new CodeVendor.Controls.Grouper();
-            richTextBox_AllVersionsFound = new RichTextBox();
+            panel_NotDocumentToShow = new Panel();
+            richTextBox_NotDocumentToShow = new RichTextBox();
+            panel16 = new Panel();
+            radioButton_NotDocumentToShow = new RadioButton();
+            panel_LastTwoVersions = new Panel();
+            richTextBox_LastTwoVersions = new RichTextBox();
+            panel15 = new Panel();
+            radioButton_LastTwoVersions = new RadioButton();
             panel_AllVersionsFound = new Panel();
+            richTextBox_AllVersionsFound = new RichTextBox();
+            panel13 = new Panel();
             radioButton_AllVersionsFound = new RadioButton();
-            grouper_LastRevision = new CodeVendor.Controls.Grouper();
-            richTextBox_LastRevision = new RichTextBox();
-            panel_LastRevision = new Panel();
-            radioButton_LastRevision = new RadioButton();
-            grouper_SpecifiedDocument = new CodeVendor.Controls.Grouper();
-            richTextBox_SpecifiedDocument = new RichTextBox();
+            panel_TheLastRevision = new Panel();
+            richTextBox_TheLastRevision = new RichTextBox();
+            panel12 = new Panel();
+            radioButton_TheLastRevision = new RadioButton();
             panel_SpecifiedDocument = new Panel();
+            richTextBox_SpecifiedDocument = new RichTextBox();
+            panel10 = new Panel();
             radioButton_SpecifiedDocument = new RadioButton();
+            panel_DefaultDocument = new Panel();
+            richTextBox_DefaultDocument = new RichTextBox();
+            panel18 = new Panel();
+            radioButton_DefaultDocument = new RadioButton();
             grouper_BrowserVersion = new CodeVendor.Controls.Grouper();
-            checkBox_PdfViewer = new CheckBox();
             richTextBox5 = new RichTextBox();
             tabPage_SearchForPDFFileWithin = new TabPage();
             grouper_DefinedAddressDocumentation = new CodeVendor.Controls.Grouper();
@@ -198,16 +162,6 @@ namespace StockRoom11net
             grouper_ConvertFilesFrontThisLocationInformation = new CodeVendor.Controls.Grouper();
             richTextBox7 = new RichTextBox();
             panel_ScanTheseFoltherForInformation = new Panel();
-            tabPage_PeerToPeerManagement = new TabPage();
-            grouper_P2PsettingUtilityPath = new CodeVendor.Controls.Grouper();
-            label_NgrokPath = new Label();
-            checkBox_IsSuperPeer = new CheckBox();
-            button_BrowserNgrokUtilityPath = new Button();
-            textBox_NgrokUtilityPath = new TextBox();
-            panel9 = new Panel();
-            grouper_P2PManagement = new CodeVendor.Controls.Grouper();
-            richTextBox_P2PInfomation = new RichTextBox();
-            panel8 = new Panel();
             tabControlExtendBase = new CustomTabControl();
             grouper_ButtonSaveCancel = new CodeVendor.Controls.Grouper();
             button_Save_Exit = new Button();
@@ -240,33 +194,14 @@ namespace StockRoom11net
             flowLayoutPanel_AddNewPrintHelpsButton.SuspendLayout();
             panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)PicturesBox_Image).BeginInit();
-            tabPageSave_Options.SuspendLayout();
-            grouper6.SuspendLayout();
-            grouper5.SuspendLayout();
-            tabPage_InstallationLog.SuspendLayout();
-            tabPage_SecurityLockFolder.SuspendLayout();
-            grouper_SecurityLockFolder.SuspendLayout();
-            panel2.SuspendLayout();
-            flowLayoutPanel1.SuspendLayout();
-            grouper_SecurityLockFolderButtons.SuspendLayout();
-            grouper_Properties.SuspendLayout();
-            tabPage_RegisterDLL.SuspendLayout();
-            grouper9.SuspendLayout();
-            tabPage_SystemCompatibility.SuspendLayout();
-            grouper10.SuspendLayout();
             tabPage_Documentation.SuspendLayout();
             grouper_DocumentationBehavior.SuspendLayout();
-            grouper_NoDocumentsToShow.SuspendLayout();
-            panel_NoDocumentsToShow.SuspendLayout();
-            grouper_Last2Versions.SuspendLayout();
-            panel3.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)numericUpDown1).BeginInit();
-            grouper_AllVersionsFound.SuspendLayout();
+            panel_NotDocumentToShow.SuspendLayout();
+            panel_LastTwoVersions.SuspendLayout();
             panel_AllVersionsFound.SuspendLayout();
-            grouper_LastRevision.SuspendLayout();
-            panel_LastRevision.SuspendLayout();
-            grouper_SpecifiedDocument.SuspendLayout();
+            panel_TheLastRevision.SuspendLayout();
             panel_SpecifiedDocument.SuspendLayout();
+            panel_DefaultDocument.SuspendLayout();
             grouper_BrowserVersion.SuspendLayout();
             tabPage_SearchForPDFFileWithin.SuspendLayout();
             grouper_DefinedAddressDocumentation.SuspendLayout();
@@ -274,9 +209,6 @@ namespace StockRoom11net
             tabPage_ConvertFilesFrontThisLocation.SuspendLayout();
             grouper_ConvertFilesFrontThisLocation.SuspendLayout();
             grouper_ConvertFilesFrontThisLocationInformation.SuspendLayout();
-            tabPage_PeerToPeerManagement.SuspendLayout();
-            grouper_P2PsettingUtilityPath.SuspendLayout();
-            grouper_P2PManagement.SuspendLayout();
             grouper_ButtonSaveCancel.SuspendLayout();
             SuspendLayout();
             // 
@@ -457,15 +389,9 @@ namespace StockRoom11net
             customTabControlSetting.Controls.Add(tabPageApplicationSetting);
             customTabControlSetting.Controls.Add(tabPageNotificationsOptions);
             customTabControlSetting.Controls.Add(tabPageUSB_DeviceUtility);
-            customTabControlSetting.Controls.Add(tabPageSave_Options);
-            customTabControlSetting.Controls.Add(tabPage_InstallationLog);
-            customTabControlSetting.Controls.Add(tabPage_SecurityLockFolder);
-            customTabControlSetting.Controls.Add(tabPage_RegisterDLL);
-            customTabControlSetting.Controls.Add(tabPage_SystemCompatibility);
             customTabControlSetting.Controls.Add(tabPage_Documentation);
             customTabControlSetting.Controls.Add(tabPage_SearchForPDFFileWithin);
             customTabControlSetting.Controls.Add(tabPage_ConvertFilesFrontThisLocation);
-            customTabControlSetting.Controls.Add(tabPage_PeerToPeerManagement);
             customTabControlSetting.DisplayStyle = TabStyle.Chrome;
             customTabControlSetting.Dock = DockStyle.Fill;
             customTabControlSetting.HotTrack = true;
@@ -805,7 +731,7 @@ namespace StockRoom11net
             tabPageNotificationsOptions.Margin = new Padding(16, 11, 16, 11);
             tabPageNotificationsOptions.Name = "tabPageNotificationsOptions";
             tabPageNotificationsOptions.Padding = new Padding(16, 11, 16, 11);
-            tabPageNotificationsOptions.Size = new Size(1092, 625);
+            tabPageNotificationsOptions.Size = new Size(1092, 629);
             tabPageNotificationsOptions.TabIndex = 1;
             tabPageNotificationsOptions.Text = "   Notifycations Options";
             tabPageNotificationsOptions.UseVisualStyleBackColor = true;
@@ -831,7 +757,7 @@ namespace StockRoom11net
             grouper2.ShadowColor = Color.DarkGray;
             grouper2.ShadowControl = false;
             grouper2.ShadowThickness = 3;
-            grouper2.Size = new Size(1060, 603);
+            grouper2.Size = new Size(1060, 607);
             grouper2.TabIndex = 9;
             // 
             // panel7
@@ -843,7 +769,7 @@ namespace StockRoom11net
             panel7.Location = new Point(343, 50);
             panel7.Margin = new Padding(16, 11, 16, 11);
             panel7.Name = "panel7";
-            panel7.Size = new Size(689, 536);
+            panel7.Size = new Size(689, 540);
             panel7.TabIndex = 18;
             // 
             // grouper_Notifycations
@@ -868,7 +794,7 @@ namespace StockRoom11net
             grouper_Notifycations.ShadowColor = Color.DarkGray;
             grouper_Notifycations.ShadowControl = false;
             grouper_Notifycations.ShadowThickness = 3;
-            grouper_Notifycations.Size = new Size(689, 197);
+            grouper_Notifycations.Size = new Size(689, 201);
             grouper_Notifycations.TabIndex = 11;
             // 
             // checkBox_ShowEmailsNotifications
@@ -877,7 +803,7 @@ namespace StockRoom11net
             checkBox_ShowEmailsNotifications.Location = new Point(32, 150);
             checkBox_ShowEmailsNotifications.Margin = new Padding(16, 11, 16, 11);
             checkBox_ShowEmailsNotifications.Name = "checkBox_ShowEmailsNotifications";
-            checkBox_ShowEmailsNotifications.Size = new Size(212, 24);
+            checkBox_ShowEmailsNotifications.Size = new Size(209, 25);
             checkBox_ShowEmailsNotifications.TabIndex = 14;
             checkBox_ShowEmailsNotifications.Text = "Show Emails notifications.";
             checkBox_ShowEmailsNotifications.UseVisualStyleBackColor = true;
@@ -888,7 +814,7 @@ namespace StockRoom11net
             checkBox_ShowDataBaseUpdateNotifications.Location = new Point(32, 58);
             checkBox_ShowDataBaseUpdateNotifications.Margin = new Padding(16, 11, 16, 11);
             checkBox_ShowDataBaseUpdateNotifications.Name = "checkBox_ShowDataBaseUpdateNotifications";
-            checkBox_ShowDataBaseUpdateNotifications.Size = new Size(291, 24);
+            checkBox_ShowDataBaseUpdateNotifications.Size = new Size(280, 25);
             checkBox_ShowDataBaseUpdateNotifications.TabIndex = 13;
             checkBox_ShowDataBaseUpdateNotifications.Text = "Show DataBase update notifications.";
             checkBox_ShowDataBaseUpdateNotifications.UseVisualStyleBackColor = true;
@@ -899,7 +825,7 @@ namespace StockRoom11net
             checkBox_ShowWarningsNotifications.Location = new Point(32, 104);
             checkBox_ShowWarningsNotifications.Margin = new Padding(16, 11, 16, 11);
             checkBox_ShowWarningsNotifications.Name = "checkBox_ShowWarningsNotifications";
-            checkBox_ShowWarningsNotifications.Size = new Size(232, 24);
+            checkBox_ShowWarningsNotifications.Size = new Size(230, 25);
             checkBox_ShowWarningsNotifications.TabIndex = 12;
             checkBox_ShowWarningsNotifications.Text = "Show Warnings notifications.";
             checkBox_ShowWarningsNotifications.UseVisualStyleBackColor = true;
@@ -965,7 +891,7 @@ namespace StockRoom11net
             grouper4.CustomGroupBoxColor = Color.White;
             grouper4.Dock = DockStyle.Bottom;
             grouper4.GroupTitle = "Interval between each reading of notifications.";
-            grouper4.Location = new Point(0, 336);
+            grouper4.Location = new Point(0, 340);
             grouper4.Margin = new Padding(1, 14, 1, 1);
             grouper4.Name = "grouper4";
             grouper4.Padding = new Padding(48, 90, 48, 71);
@@ -1049,7 +975,7 @@ namespace StockRoom11net
             panel6.Location = new Point(28, 50);
             panel6.Margin = new Padding(16, 11, 16, 11);
             panel6.Name = "panel6";
-            panel6.Size = new Size(315, 536);
+            panel6.Size = new Size(315, 540);
             panel6.TabIndex = 17;
             // 
             // label1
@@ -1069,7 +995,7 @@ namespace StockRoom11net
             checkBox_EnableSendReceiveNotifycations.Location = new Point(16, 48);
             checkBox_EnableSendReceiveNotifycations.Margin = new Padding(16, 11, 16, 11);
             checkBox_EnableSendReceiveNotifycations.Name = "checkBox_EnableSendReceiveNotifycations";
-            checkBox_EnableSendReceiveNotifycations.Size = new Size(280, 24);
+            checkBox_EnableSendReceiveNotifycations.Size = new Size(272, 25);
             checkBox_EnableSendReceiveNotifycations.TabIndex = 13;
             checkBox_EnableSendReceiveNotifycations.Text = "Enable Receive/Send Notifycations.";
             checkBox_EnableSendReceiveNotifycations.UseVisualStyleBackColor = true;
@@ -1081,7 +1007,7 @@ namespace StockRoom11net
             checkBox_SetIntervalReadNotifications.Location = new Point(16, 94);
             checkBox_SetIntervalReadNotifications.Margin = new Padding(16, 11, 16, 11);
             checkBox_SetIntervalReadNotifications.Name = "checkBox_SetIntervalReadNotifications";
-            checkBox_SetIntervalReadNotifications.Size = new Size(286, 24);
+            checkBox_SetIntervalReadNotifications.Size = new Size(285, 25);
             checkBox_SetIntervalReadNotifications.TabIndex = 15;
             checkBox_SetIntervalReadNotifications.Text = "Set the interval reading Notifications.";
             checkBox_SetIntervalReadNotifications.UseVisualStyleBackColor = true;
@@ -1093,7 +1019,7 @@ namespace StockRoom11net
             tabPageUSB_DeviceUtility.Location = new Point(4, 4);
             tabPageUSB_DeviceUtility.Margin = new Padding(16, 11, 16, 11);
             tabPageUSB_DeviceUtility.Name = "tabPageUSB_DeviceUtility";
-            tabPageUSB_DeviceUtility.Size = new Size(1092, 625);
+            tabPageUSB_DeviceUtility.Size = new Size(1092, 629);
             tabPageUSB_DeviceUtility.TabIndex = 2;
             tabPageUSB_DeviceUtility.Text = "   USB Device Utility";
             tabPageUSB_DeviceUtility.UseVisualStyleBackColor = true;
@@ -1115,7 +1041,7 @@ namespace StockRoom11net
             // 
             splitContainer1.Panel2.Controls.Add(grouper_AddNewPrintHelpsButtons);
             splitContainer1.Panel2.Controls.Add(panel1);
-            splitContainer1.Size = new Size(1092, 625);
+            splitContainer1.Size = new Size(1092, 629);
             splitContainer1.SplitterDistance = 179;
             splitContainer1.SplitterWidth = 14;
             splitContainer1.TabIndex = 1;
@@ -1150,7 +1076,7 @@ namespace StockRoom11net
             grouper_AddNewPrintHelpsButtons.ShadowColor = Color.DarkGray;
             grouper_AddNewPrintHelpsButtons.ShadowControl = false;
             grouper_AddNewPrintHelpsButtons.ShadowThickness = 3;
-            grouper_AddNewPrintHelpsButtons.Size = new Size(1088, 161);
+            grouper_AddNewPrintHelpsButtons.Size = new Size(1088, 165);
             grouper_AddNewPrintHelpsButtons.TabIndex = 17;
             // 
             // flowLayoutPanel_AddNewPrintHelpsButton
@@ -1161,7 +1087,7 @@ namespace StockRoom11net
             flowLayoutPanel_AddNewPrintHelpsButton.Controls.Add(button_PrintHelps);
             flowLayoutPanel_AddNewPrintHelpsButton.Controls.Add(button_AddNew);
             flowLayoutPanel_AddNewPrintHelpsButton.Dock = DockStyle.Bottom;
-            flowLayoutPanel_AddNewPrintHelpsButton.Location = new Point(36, 40);
+            flowLayoutPanel_AddNewPrintHelpsButton.Location = new Point(36, 44);
             flowLayoutPanel_AddNewPrintHelpsButton.Margin = new Padding(0);
             flowLayoutPanel_AddNewPrintHelpsButton.Name = "flowLayoutPanel_AddNewPrintHelpsButton";
             flowLayoutPanel_AddNewPrintHelpsButton.Padding = new Padding(0, 2, 0, 0);
@@ -1218,7 +1144,7 @@ namespace StockRoom11net
             panel1.AutoScrollMinSize = new Size(750, 200);
             panel1.Controls.Add(PicturesBox_Image);
             panel1.Dock = DockStyle.Bottom;
-            panel1.Location = new Point(0, 161);
+            panel1.Location = new Point(0, 165);
             panel1.Margin = new Padding(16, 11, 16, 11);
             panel1.Name = "panel1";
             panel1.Size = new Size(1088, 267);
@@ -1236,510 +1162,6 @@ namespace StockRoom11net
             PicturesBox_Image.TabIndex = 1;
             PicturesBox_Image.TabStop = false;
             // 
-            // tabPageSave_Options
-            // 
-            tabPageSave_Options.Controls.Add(grouper6);
-            tabPageSave_Options.Controls.Add(grouper5);
-            tabPageSave_Options.Location = new Point(4, 4);
-            tabPageSave_Options.Margin = new Padding(16, 11, 16, 11);
-            tabPageSave_Options.Name = "tabPageSave_Options";
-            tabPageSave_Options.Size = new Size(1092, 625);
-            tabPageSave_Options.TabIndex = 3;
-            tabPageSave_Options.Text = "   Save Options";
-            tabPageSave_Options.UseVisualStyleBackColor = true;
-            // 
-            // grouper6
-            // 
-            grouper6.BackgroundColor = SystemColors.Control;
-            grouper6.BackgroundGradientColor = Color.White;
-            grouper6.BackgroundGradientMode = CodeVendor.Controls.Grouper.GroupBoxGradientMode.None;
-            grouper6.BorderColor = Color.Black;
-            grouper6.BorderThickness = 1F;
-            grouper6.Controls.Add(richTextBox3);
-            grouper6.Controls.Add(richTextBox2);
-            grouper6.Controls.Add(checkBoxSaveTheInformationWhenTheUserSaves);
-            grouper6.Controls.Add(checkBoxSaveTheInformationByTime);
-            grouper6.Controls.Add(checkBoxSaveEachTimeTheInformationIsChanged);
-            grouper6.CustomGroupBoxColor = Color.White;
-            grouper6.Dock = DockStyle.Fill;
-            grouper6.GroupTitle = "Save Options.";
-            grouper6.Location = new Point(0, 0);
-            grouper6.Margin = new Padding(28, 17, 28, 17);
-            grouper6.Name = "grouper6";
-            grouper6.Padding = new Padding(25);
-            grouper6.PaintGroupBox = false;
-            grouper6.RoundCorners = 10;
-            grouper6.ShadowColor = Color.DarkGray;
-            grouper6.ShadowControl = false;
-            grouper6.ShadowThickness = 3;
-            grouper6.Size = new Size(1092, 331);
-            grouper6.TabIndex = 17;
-            // 
-            // richTextBox3
-            // 
-            richTextBox3.Location = new Point(20, 134);
-            richTextBox3.Margin = new Padding(16, 11, 16, 11);
-            richTextBox3.Name = "richTextBox3";
-            richTextBox3.ReadOnly = true;
-            richTextBox3.Size = new Size(436, 110);
-            richTextBox3.TabIndex = 19;
-            richTextBox3.Text = "   The user is responsible for keeping the information, the system will alert if you have information to save on exit process.";
-            // 
-            // richTextBox2
-            // 
-            richTextBox2.Location = new Point(488, 134);
-            richTextBox2.Margin = new Padding(16, 11, 16, 11);
-            richTextBox2.Name = "richTextBox2";
-            richTextBox2.ReadOnly = true;
-            richTextBox2.Size = new Size(562, 155);
-            richTextBox2.TabIndex = 0;
-            richTextBox2.Text = "   Whenever the information changes, the system will automatically save the information.";
-            // 
-            // checkBoxSaveTheInformationWhenTheUserSaves
-            // 
-            checkBoxSaveTheInformationWhenTheUserSaves.AutoSize = true;
-            checkBoxSaveTheInformationWhenTheUserSaves.Checked = true;
-            checkBoxSaveTheInformationWhenTheUserSaves.CheckState = CheckState.Checked;
-            checkBoxSaveTheInformationWhenTheUserSaves.Location = new Point(30, 88);
-            checkBoxSaveTheInformationWhenTheUserSaves.Margin = new Padding(16, 11, 16, 11);
-            checkBoxSaveTheInformationWhenTheUserSaves.Name = "checkBoxSaveTheInformationWhenTheUserSaves";
-            checkBoxSaveTheInformationWhenTheUserSaves.Size = new Size(327, 24);
-            checkBoxSaveTheInformationWhenTheUserSaves.TabIndex = 18;
-            checkBoxSaveTheInformationWhenTheUserSaves.Text = "Save the information when the user saves.";
-            checkBoxSaveTheInformationWhenTheUserSaves.UseVisualStyleBackColor = true;
-            // 
-            // checkBoxSaveTheInformationByTime
-            // 
-            checkBoxSaveTheInformationByTime.AutoSize = true;
-            checkBoxSaveTheInformationByTime.Location = new Point(30, 42);
-            checkBoxSaveTheInformationByTime.Margin = new Padding(16, 11, 16, 11);
-            checkBoxSaveTheInformationByTime.Name = "checkBoxSaveTheInformationByTime";
-            checkBoxSaveTheInformationByTime.Size = new Size(343, 24);
-            checkBoxSaveTheInformationByTime.TabIndex = 17;
-            checkBoxSaveTheInformationByTime.Text = "Save the information by time, set the interval.";
-            checkBoxSaveTheInformationByTime.UseVisualStyleBackColor = true;
-            // 
-            // checkBoxSaveEachTimeTheInformationIsChanged
-            // 
-            checkBoxSaveEachTimeTheInformationIsChanged.AutoSize = true;
-            checkBoxSaveEachTimeTheInformationIsChanged.Location = new Point(662, 88);
-            checkBoxSaveEachTimeTheInformationIsChanged.Margin = new Padding(16, 11, 16, 11);
-            checkBoxSaveEachTimeTheInformationIsChanged.Name = "checkBoxSaveEachTimeTheInformationIsChanged";
-            checkBoxSaveEachTimeTheInformationIsChanged.Size = new Size(332, 24);
-            checkBoxSaveEachTimeTheInformationIsChanged.TabIndex = 14;
-            checkBoxSaveEachTimeTheInformationIsChanged.Text = "Save each time the information is changed.";
-            checkBoxSaveEachTimeTheInformationIsChanged.UseVisualStyleBackColor = true;
-            // 
-            // grouper5
-            // 
-            grouper5.BackgroundColor = SystemColors.Control;
-            grouper5.BackgroundGradientColor = Color.White;
-            grouper5.BackgroundGradientMode = CodeVendor.Controls.Grouper.GroupBoxGradientMode.None;
-            grouper5.BorderColor = Color.Black;
-            grouper5.BorderThickness = 1F;
-            grouper5.Controls.Add(radioButtonEvery30minutes);
-            grouper5.Controls.Add(radioButtonEvery15minutes);
-            grouper5.Controls.Add(radioButtonEvery5minutes);
-            grouper5.CustomGroupBoxColor = Color.White;
-            grouper5.Dock = DockStyle.Bottom;
-            grouper5.GroupTitle = "";
-            grouper5.Location = new Point(0, 331);
-            grouper5.Margin = new Padding(1, 14, 1, 1);
-            grouper5.Name = "grouper5";
-            grouper5.Padding = new Padding(28, 48, 28, 17);
-            grouper5.PaintGroupBox = false;
-            grouper5.RoundCorners = 10;
-            grouper5.ShadowColor = Color.DarkGray;
-            grouper5.ShadowControl = false;
-            grouper5.ShadowThickness = 3;
-            grouper5.Size = new Size(1092, 294);
-            grouper5.TabIndex = 16;
-            // 
-            // radioButtonEvery30minutes
-            // 
-            radioButtonEvery30minutes.AutoSize = true;
-            radioButtonEvery30minutes.Location = new Point(85, 219);
-            radioButtonEvery30minutes.Margin = new Padding(16, 11, 16, 11);
-            radioButtonEvery30minutes.Name = "radioButtonEvery30minutes";
-            radioButtonEvery30minutes.Size = new Size(151, 25);
-            radioButtonEvery30minutes.TabIndex = 2;
-            radioButtonEvery30minutes.Text = "Every 30 minutes.";
-            radioButtonEvery30minutes.UseVisualStyleBackColor = true;
-            // 
-            // radioButtonEvery15minutes
-            // 
-            radioButtonEvery15minutes.AutoSize = true;
-            radioButtonEvery15minutes.Location = new Point(85, 138);
-            radioButtonEvery15minutes.Margin = new Padding(16, 11, 16, 11);
-            radioButtonEvery15minutes.Name = "radioButtonEvery15minutes";
-            radioButtonEvery15minutes.Size = new Size(151, 25);
-            radioButtonEvery15minutes.TabIndex = 1;
-            radioButtonEvery15minutes.Text = "Every 15 minutes.";
-            radioButtonEvery15minutes.UseVisualStyleBackColor = true;
-            // 
-            // radioButtonEvery5minutes
-            // 
-            radioButtonEvery5minutes.AutoSize = true;
-            radioButtonEvery5minutes.Location = new Point(85, 59);
-            radioButtonEvery5minutes.Margin = new Padding(16, 11, 16, 11);
-            radioButtonEvery5minutes.Name = "radioButtonEvery5minutes";
-            radioButtonEvery5minutes.Size = new Size(142, 25);
-            radioButtonEvery5minutes.TabIndex = 0;
-            radioButtonEvery5minutes.Text = "Every 5 minutes.";
-            radioButtonEvery5minutes.UseVisualStyleBackColor = true;
-            // 
-            // tabPage_InstallationLog
-            // 
-            tabPage_InstallationLog.Controls.Add(richTextBox_FirstInstalation);
-            tabPage_InstallationLog.Location = new Point(4, 4);
-            tabPage_InstallationLog.Margin = new Padding(16, 11, 16, 11);
-            tabPage_InstallationLog.Name = "tabPage_InstallationLog";
-            tabPage_InstallationLog.Size = new Size(1092, 625);
-            tabPage_InstallationLog.TabIndex = 4;
-            tabPage_InstallationLog.Text = "   Installation Log";
-            tabPage_InstallationLog.UseVisualStyleBackColor = true;
-            // 
-            // richTextBox_FirstInstalation
-            // 
-            richTextBox_FirstInstalation.Dock = DockStyle.Fill;
-            richTextBox_FirstInstalation.Location = new Point(0, 0);
-            richTextBox_FirstInstalation.Margin = new Padding(16, 11, 16, 11);
-            richTextBox_FirstInstalation.Name = "richTextBox_FirstInstalation";
-            richTextBox_FirstInstalation.Size = new Size(1092, 625);
-            richTextBox_FirstInstalation.TabIndex = 0;
-            richTextBox_FirstInstalation.Text = "";
-            // 
-            // tabPage_SecurityLockFolder
-            // 
-            tabPage_SecurityLockFolder.Controls.Add(grouper_SecurityLockFolder);
-            tabPage_SecurityLockFolder.Controls.Add(grouper_Properties);
-            tabPage_SecurityLockFolder.Location = new Point(4, 4);
-            tabPage_SecurityLockFolder.Margin = new Padding(12, 2, 12, 2);
-            tabPage_SecurityLockFolder.Name = "tabPage_SecurityLockFolder";
-            tabPage_SecurityLockFolder.Size = new Size(1092, 625);
-            tabPage_SecurityLockFolder.TabIndex = 5;
-            tabPage_SecurityLockFolder.Text = "   Security & Lock System Folder";
-            tabPage_SecurityLockFolder.UseVisualStyleBackColor = true;
-            // 
-            // grouper_SecurityLockFolder
-            // 
-            grouper_SecurityLockFolder.BackgroundColor = SystemColors.ButtonHighlight;
-            grouper_SecurityLockFolder.BackgroundGradientColor = Color.DarkGray;
-            grouper_SecurityLockFolder.BackgroundGradientMode = CodeVendor.Controls.Grouper.GroupBoxGradientMode.Vertical;
-            grouper_SecurityLockFolder.BorderColor = Color.Black;
-            grouper_SecurityLockFolder.BorderThickness = 1F;
-            grouper_SecurityLockFolder.Controls.Add(panel2);
-            grouper_SecurityLockFolder.Controls.Add(grouper_SecurityLockFolderButtons);
-            grouper_SecurityLockFolder.CustomGroupBoxColor = Color.White;
-            grouper_SecurityLockFolder.Dock = DockStyle.Top;
-            grouper_SecurityLockFolder.GroupTitle = "Security & Lock System Folder.";
-            grouper_SecurityLockFolder.Location = new Point(0, 0);
-            grouper_SecurityLockFolder.Margin = new Padding(1, 14, 1, 1);
-            grouper_SecurityLockFolder.Name = "grouper_SecurityLockFolder";
-            grouper_SecurityLockFolder.Padding = new Padding(113, 97, 113, 71);
-            grouper_SecurityLockFolder.PaintGroupBox = false;
-            grouper_SecurityLockFolder.RoundCorners = 10;
-            grouper_SecurityLockFolder.ShadowColor = Color.DarkGray;
-            grouper_SecurityLockFolder.ShadowControl = false;
-            grouper_SecurityLockFolder.ShadowThickness = 3;
-            grouper_SecurityLockFolder.Size = new Size(1092, 303);
-            grouper_SecurityLockFolder.TabIndex = 15;
-            // 
-            // panel2
-            // 
-            panel2.Controls.Add(flowLayoutPanel1);
-            panel2.Dock = DockStyle.Top;
-            panel2.Location = new Point(113, 97);
-            panel2.Margin = new Padding(0);
-            panel2.Name = "panel2";
-            panel2.Size = new Size(866, 86);
-            panel2.TabIndex = 20;
-            // 
-            // flowLayoutPanel1
-            // 
-            flowLayoutPanel1.Controls.Add(comboBox_SecurityLockFolder);
-            flowLayoutPanel1.Controls.Add(button_Browser);
-            flowLayoutPanel1.Dock = DockStyle.Fill;
-            flowLayoutPanel1.Location = new Point(0, 0);
-            flowLayoutPanel1.Margin = new Padding(0);
-            flowLayoutPanel1.Name = "flowLayoutPanel1";
-            flowLayoutPanel1.Size = new Size(866, 86);
-            flowLayoutPanel1.TabIndex = 0;
-            // 
-            // comboBox_SecurityLockFolder
-            // 
-            comboBox_SecurityLockFolder.FormattingEnabled = true;
-            comboBox_SecurityLockFolder.Items.AddRange(new object[] { "Folder to be lock, hidde or readOnly properties changed." });
-            comboBox_SecurityLockFolder.Location = new Point(12, 2);
-            comboBox_SecurityLockFolder.Margin = new Padding(12, 2, 12, 2);
-            comboBox_SecurityLockFolder.Name = "comboBox_SecurityLockFolder";
-            comboBox_SecurityLockFolder.Size = new Size(1965, 29);
-            comboBox_SecurityLockFolder.TabIndex = 18;
-            // 
-            // button_Browser
-            // 
-            button_Browser.Location = new Point(12, 35);
-            button_Browser.Margin = new Padding(12, 2, 12, 2);
-            button_Browser.Name = "button_Browser";
-            button_Browser.Size = new Size(433, 71);
-            button_Browser.TabIndex = 19;
-            button_Browser.Text = "Browser";
-            button_Browser.UseVisualStyleBackColor = true;
-            button_Browser.Click += button_Browser_Click;
-            // 
-            // grouper_SecurityLockFolderButtons
-            // 
-            grouper_SecurityLockFolderButtons.BackgroundColor = SystemColors.ButtonHighlight;
-            grouper_SecurityLockFolderButtons.BackgroundGradientColor = Color.DarkGray;
-            grouper_SecurityLockFolderButtons.BackgroundGradientMode = CodeVendor.Controls.Grouper.GroupBoxGradientMode.Vertical;
-            grouper_SecurityLockFolderButtons.BorderColor = Color.Black;
-            grouper_SecurityLockFolderButtons.BorderThickness = 1F;
-            grouper_SecurityLockFolderButtons.Controls.Add(button_Lock);
-            grouper_SecurityLockFolderButtons.Controls.Add(button_UnLock);
-            grouper_SecurityLockFolderButtons.CustomGroupBoxColor = Color.White;
-            grouper_SecurityLockFolderButtons.Dock = DockStyle.Bottom;
-            grouper_SecurityLockFolderButtons.GroupTitle = "";
-            grouper_SecurityLockFolderButtons.Location = new Point(113, 52);
-            grouper_SecurityLockFolderButtons.Margin = new Padding(1, 14, 1, 1);
-            grouper_SecurityLockFolderButtons.Name = "grouper_SecurityLockFolderButtons";
-            grouper_SecurityLockFolderButtons.Padding = new Padding(113, 71, 113, 71);
-            grouper_SecurityLockFolderButtons.PaintGroupBox = false;
-            grouper_SecurityLockFolderButtons.RoundCorners = 10;
-            grouper_SecurityLockFolderButtons.ShadowColor = Color.DarkGray;
-            grouper_SecurityLockFolderButtons.ShadowControl = false;
-            grouper_SecurityLockFolderButtons.ShadowThickness = 3;
-            grouper_SecurityLockFolderButtons.Size = new Size(866, 180);
-            grouper_SecurityLockFolderButtons.TabIndex = 17;
-            // 
-            // button_Lock
-            // 
-            button_Lock.Location = new Point(55, 58);
-            button_Lock.Margin = new Padding(12, 2, 12, 2);
-            button_Lock.Name = "button_Lock";
-            button_Lock.Size = new Size(315, 90);
-            button_Lock.TabIndex = 17;
-            button_Lock.Text = "Lock";
-            button_Lock.UseVisualStyleBackColor = true;
-            button_Lock.Click += button_Lock_Click;
-            // 
-            // button_UnLock
-            // 
-            button_UnLock.Location = new Point(400, 58);
-            button_UnLock.Margin = new Padding(12, 2, 12, 2);
-            button_UnLock.Name = "button_UnLock";
-            button_UnLock.Size = new Size(315, 90);
-            button_UnLock.TabIndex = 18;
-            button_UnLock.Text = "UnLock";
-            button_UnLock.UseVisualStyleBackColor = true;
-            button_UnLock.Click += button_UnLock_Click;
-            // 
-            // grouper_Properties
-            // 
-            grouper_Properties.BackgroundColor = SystemColors.ButtonHighlight;
-            grouper_Properties.BackgroundGradientColor = Color.DarkGray;
-            grouper_Properties.BackgroundGradientMode = CodeVendor.Controls.Grouper.GroupBoxGradientMode.Vertical;
-            grouper_Properties.BorderColor = Color.Black;
-            grouper_Properties.BorderThickness = 1F;
-            grouper_Properties.Controls.Add(checkBox_Hidden);
-            grouper_Properties.Controls.Add(button_Delete);
-            grouper_Properties.Controls.Add(checkBox_ReadOnly);
-            grouper_Properties.Controls.Add(checkBox_System);
-            grouper_Properties.CustomGroupBoxColor = Color.White;
-            grouper_Properties.GroupTitle = "Folder Properties.";
-            grouper_Properties.Location = new Point(53, 330);
-            grouper_Properties.Margin = new Padding(1, 14, 1, 1);
-            grouper_Properties.Name = "grouper_Properties";
-            grouper_Properties.Padding = new Padding(113, 76, 113, 71);
-            grouper_Properties.PaintGroupBox = false;
-            grouper_Properties.RoundCorners = 10;
-            grouper_Properties.ShadowColor = Color.DarkGray;
-            grouper_Properties.ShadowControl = false;
-            grouper_Properties.ShadowThickness = 3;
-            grouper_Properties.Size = new Size(868, 228);
-            grouper_Properties.TabIndex = 16;
-            // 
-            // checkBox_Hidden
-            // 
-            checkBox_Hidden.AutoSize = true;
-            checkBox_Hidden.Location = new Point(24, 41);
-            checkBox_Hidden.Margin = new Padding(16, 11, 16, 11);
-            checkBox_Hidden.Name = "checkBox_Hidden";
-            checkBox_Hidden.Size = new Size(174, 25);
-            checkBox_Hidden.TabIndex = 15;
-            checkBox_Hidden.Text = "FileAttributes.Hidden";
-            checkBox_Hidden.UseVisualStyleBackColor = true;
-            checkBox_Hidden.CheckedChanged += checkBox_Hidden_CheckedChanged;
-            // 
-            // button_Delete
-            // 
-            button_Delete.Location = new Point(452, 78);
-            button_Delete.Margin = new Padding(12, 2, 12, 2);
-            button_Delete.Name = "button_Delete";
-            button_Delete.Size = new Size(315, 90);
-            button_Delete.TabIndex = 19;
-            button_Delete.Text = "Delete";
-            button_Delete.UseVisualStyleBackColor = true;
-            button_Delete.Click += button_Delete_Click;
-            // 
-            // checkBox_ReadOnly
-            // 
-            checkBox_ReadOnly.AutoSize = true;
-            checkBox_ReadOnly.Location = new Point(129, 251);
-            checkBox_ReadOnly.Margin = new Padding(16, 11, 16, 11);
-            checkBox_ReadOnly.Name = "checkBox_ReadOnly";
-            checkBox_ReadOnly.Size = new Size(192, 25);
-            checkBox_ReadOnly.TabIndex = 14;
-            checkBox_ReadOnly.Text = "FileAttributes.ReadOnly";
-            checkBox_ReadOnly.UseVisualStyleBackColor = true;
-            checkBox_ReadOnly.CheckedChanged += checkBox_ReadOnly_CheckedChanged;
-            // 
-            // checkBox_System
-            // 
-            checkBox_System.AutoSize = true;
-            checkBox_System.Location = new Point(24, 87);
-            checkBox_System.Margin = new Padding(16, 11, 16, 11);
-            checkBox_System.Name = "checkBox_System";
-            checkBox_System.Size = new Size(175, 25);
-            checkBox_System.TabIndex = 11;
-            checkBox_System.Text = "FileAttributes.System";
-            checkBox_System.UseVisualStyleBackColor = true;
-            checkBox_System.CheckedChanged += checkBox_System_CheckedChanged;
-            // 
-            // tabPage_RegisterDLL
-            // 
-            tabPage_RegisterDLL.Controls.Add(grouper9);
-            tabPage_RegisterDLL.Location = new Point(4, 4);
-            tabPage_RegisterDLL.Margin = new Padding(16, 11, 16, 11);
-            tabPage_RegisterDLL.Name = "tabPage_RegisterDLL";
-            tabPage_RegisterDLL.Size = new Size(1092, 625);
-            tabPage_RegisterDLL.TabIndex = 6;
-            tabPage_RegisterDLL.Text = "   Register a DLL";
-            tabPage_RegisterDLL.UseVisualStyleBackColor = true;
-            tabPage_RegisterDLL.Click += TabPage_RegisterDLL_Click;
-            // 
-            // grouper9
-            // 
-            grouper9.BackgroundColor = SystemColors.ButtonHighlight;
-            grouper9.BackgroundGradientColor = Color.DarkGray;
-            grouper9.BackgroundGradientMode = CodeVendor.Controls.Grouper.GroupBoxGradientMode.Vertical;
-            grouper9.BorderColor = Color.Black;
-            grouper9.BorderThickness = 1F;
-            grouper9.Controls.Add(textBox_BrowsedDLL);
-            grouper9.Controls.Add(button_BrowserDLL);
-            grouper9.Controls.Add(button_UnregisterDLL);
-            grouper9.Controls.Add(button_RegisterDLL);
-            grouper9.CustomGroupBoxColor = Color.White;
-            grouper9.Dock = DockStyle.Top;
-            grouper9.GroupTitle = "";
-            grouper9.Location = new Point(0, 0);
-            grouper9.Margin = new Padding(1, 14, 1, 1);
-            grouper9.Name = "grouper9";
-            grouper9.Padding = new Padding(113, 71, 113, 71);
-            grouper9.PaintGroupBox = false;
-            grouper9.RoundCorners = 10;
-            grouper9.ShadowColor = Color.DarkGray;
-            grouper9.ShadowControl = false;
-            grouper9.ShadowThickness = 3;
-            grouper9.Size = new Size(1092, 517);
-            grouper9.TabIndex = 18;
-            // 
-            // textBox_BrowsedDLL
-            // 
-            textBox_BrowsedDLL.Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            textBox_BrowsedDLL.Location = new Point(38, 62);
-            textBox_BrowsedDLL.Margin = new Padding(16, 11, 16, 11);
-            textBox_BrowsedDLL.Name = "textBox_BrowsedDLL";
-            textBox_BrowsedDLL.Size = new Size(2975, 26);
-            textBox_BrowsedDLL.TabIndex = 20;
-            // 
-            // button_BrowserDLL
-            // 
-            button_BrowserDLL.Location = new Point(3151, 76);
-            button_BrowserDLL.Margin = new Padding(12, 2, 12, 2);
-            button_BrowserDLL.Name = "button_BrowserDLL";
-            button_BrowserDLL.Size = new Size(556, 90);
-            button_BrowserDLL.TabIndex = 17;
-            button_BrowserDLL.Text = "Browser DLL";
-            button_BrowserDLL.UseVisualStyleBackColor = true;
-            button_BrowserDLL.Click += button_BrowserDLL_Click;
-            // 
-            // button_UnregisterDLL
-            // 
-            button_UnregisterDLL.Location = new Point(3151, 350);
-            button_UnregisterDLL.Margin = new Padding(12, 2, 12, 2);
-            button_UnregisterDLL.Name = "button_UnregisterDLL";
-            button_UnregisterDLL.Size = new Size(560, 90);
-            button_UnregisterDLL.TabIndex = 19;
-            button_UnregisterDLL.Text = "Unregister a DLL";
-            button_UnregisterDLL.UseVisualStyleBackColor = true;
-            // 
-            // button_RegisterDLL
-            // 
-            button_RegisterDLL.Location = new Point(2567, 350);
-            button_RegisterDLL.Margin = new Padding(12, 2, 12, 2);
-            button_RegisterDLL.Name = "button_RegisterDLL";
-            button_RegisterDLL.Size = new Size(560, 90);
-            button_RegisterDLL.TabIndex = 18;
-            button_RegisterDLL.Text = "Register a DLL";
-            button_RegisterDLL.UseVisualStyleBackColor = true;
-            button_RegisterDLL.Click += button_RegisterDLL_Click;
-            // 
-            // tabPage_SystemCompatibility
-            // 
-            tabPage_SystemCompatibility.Controls.Add(grouper10);
-            tabPage_SystemCompatibility.Location = new Point(4, 4);
-            tabPage_SystemCompatibility.Margin = new Padding(16, 11, 16, 11);
-            tabPage_SystemCompatibility.Name = "tabPage_SystemCompatibility";
-            tabPage_SystemCompatibility.Size = new Size(1092, 625);
-            tabPage_SystemCompatibility.TabIndex = 7;
-            tabPage_SystemCompatibility.Text = "   System Compatibility";
-            tabPage_SystemCompatibility.UseVisualStyleBackColor = true;
-            // 
-            // grouper10
-            // 
-            grouper10.BackgroundColor = SystemColors.ButtonHighlight;
-            grouper10.BackgroundGradientColor = Color.DarkGray;
-            grouper10.BackgroundGradientMode = CodeVendor.Controls.Grouper.GroupBoxGradientMode.Vertical;
-            grouper10.BorderColor = Color.Black;
-            grouper10.BorderThickness = 1F;
-            grouper10.Controls.Add(checkBox_SupportDoubleBuffering);
-            grouper10.Controls.Add(label_SupportDoubleBuffering);
-            grouper10.CustomGroupBoxColor = Color.White;
-            grouper10.Dock = DockStyle.Top;
-            grouper10.GroupTitle = "";
-            grouper10.Location = new Point(0, 0);
-            grouper10.Margin = new Padding(1, 14, 1, 1);
-            grouper10.Name = "grouper10";
-            grouper10.Padding = new Padding(113, 71, 113, 71);
-            grouper10.PaintGroupBox = false;
-            grouper10.RoundCorners = 10;
-            grouper10.ShadowColor = Color.DarkGray;
-            grouper10.ShadowControl = false;
-            grouper10.ShadowThickness = 3;
-            grouper10.Size = new Size(1092, 517);
-            grouper10.TabIndex = 19;
-            // 
-            // checkBox_SupportDoubleBuffering
-            // 
-            checkBox_SupportDoubleBuffering.AutoSize = true;
-            checkBox_SupportDoubleBuffering.Location = new Point(1785, 97);
-            checkBox_SupportDoubleBuffering.Margin = new Padding(16, 11, 16, 11);
-            checkBox_SupportDoubleBuffering.Name = "checkBox_SupportDoubleBuffering";
-            checkBox_SupportDoubleBuffering.Size = new Size(15, 14);
-            checkBox_SupportDoubleBuffering.TabIndex = 1;
-            checkBox_SupportDoubleBuffering.UseVisualStyleBackColor = true;
-            checkBox_SupportDoubleBuffering.CheckedChanged += checkBox_SupportDoubleBuffering_CheckedChanged;
-            // 
-            // label_SupportDoubleBuffering
-            // 
-            label_SupportDoubleBuffering.AutoSize = true;
-            label_SupportDoubleBuffering.Location = new Point(129, 100);
-            label_SupportDoubleBuffering.Margin = new Padding(16, 0, 16, 0);
-            label_SupportDoubleBuffering.Name = "label_SupportDoubleBuffering";
-            label_SupportDoubleBuffering.Size = new Size(414, 21);
-            label_SupportDoubleBuffering.TabIndex = 0;
-            label_SupportDoubleBuffering.Text = "The system support DoubleBuffering on drawing controls?";
-            // 
             // tabPage_Documentation
             // 
             tabPage_Documentation.AutoScroll = true;
@@ -1748,14 +1170,13 @@ namespace StockRoom11net
             tabPage_Documentation.Margin = new Padding(16, 11, 16, 11);
             tabPage_Documentation.Name = "tabPage_Documentation";
             tabPage_Documentation.Padding = new Padding(21, 14, 21, 14);
-            tabPage_Documentation.Size = new Size(1092, 625);
+            tabPage_Documentation.Size = new Size(1092, 629);
             tabPage_Documentation.TabIndex = 8;
             tabPage_Documentation.Text = "   Documentation";
             tabPage_Documentation.UseVisualStyleBackColor = true;
             // 
             // grouper_DocumentationBehavior
             // 
-            grouper_DocumentationBehavior.AutoScroll = true;
             grouper_DocumentationBehavior.AutoSize = true;
             grouper_DocumentationBehavior.AutoSizeMode = AutoSizeMode.GrowAndShrink;
             grouper_DocumentationBehavior.BackgroundColor = SystemColors.Control;
@@ -1763,11 +1184,12 @@ namespace StockRoom11net
             grouper_DocumentationBehavior.BackgroundGradientMode = CodeVendor.Controls.Grouper.GroupBoxGradientMode.None;
             grouper_DocumentationBehavior.BorderColor = Color.Black;
             grouper_DocumentationBehavior.BorderThickness = 1F;
-            grouper_DocumentationBehavior.Controls.Add(grouper_NoDocumentsToShow);
-            grouper_DocumentationBehavior.Controls.Add(grouper_Last2Versions);
-            grouper_DocumentationBehavior.Controls.Add(grouper_AllVersionsFound);
-            grouper_DocumentationBehavior.Controls.Add(grouper_LastRevision);
-            grouper_DocumentationBehavior.Controls.Add(grouper_SpecifiedDocument);
+            grouper_DocumentationBehavior.Controls.Add(panel_NotDocumentToShow);
+            grouper_DocumentationBehavior.Controls.Add(panel_LastTwoVersions);
+            grouper_DocumentationBehavior.Controls.Add(panel_AllVersionsFound);
+            grouper_DocumentationBehavior.Controls.Add(panel_TheLastRevision);
+            grouper_DocumentationBehavior.Controls.Add(panel_SpecifiedDocument);
+            grouper_DocumentationBehavior.Controls.Add(panel_DefaultDocument);
             grouper_DocumentationBehavior.Controls.Add(grouper_BrowserVersion);
             grouper_DocumentationBehavior.CustomGroupBoxColor = Color.White;
             grouper_DocumentationBehavior.Dock = DockStyle.Fill;
@@ -1775,398 +1197,377 @@ namespace StockRoom11net
             grouper_DocumentationBehavior.Location = new Point(21, 14);
             grouper_DocumentationBehavior.Margin = new Padding(1, 14, 1, 1);
             grouper_DocumentationBehavior.Name = "grouper_DocumentationBehavior";
-            grouper_DocumentationBehavior.Padding = new Padding(113, 71, 113, 71);
+            grouper_DocumentationBehavior.Padding = new Padding(8, 25, 8, 8);
             grouper_DocumentationBehavior.PaintGroupBox = false;
             grouper_DocumentationBehavior.RoundCorners = 10;
             grouper_DocumentationBehavior.ShadowColor = Color.DarkGray;
             grouper_DocumentationBehavior.ShadowControl = false;
             grouper_DocumentationBehavior.ShadowThickness = 3;
-            grouper_DocumentationBehavior.Size = new Size(1050, 597);
+            grouper_DocumentationBehavior.Size = new Size(1050, 601);
             grouper_DocumentationBehavior.TabIndex = 20;
             // 
-            // grouper_NoDocumentsToShow
+            // panel_NotDocumentToShow
             // 
-            grouper_NoDocumentsToShow.BackgroundColor = SystemColors.Control;
-            grouper_NoDocumentsToShow.BackgroundGradientColor = Color.Gainsboro;
-            grouper_NoDocumentsToShow.BackgroundGradientMode = CodeVendor.Controls.Grouper.GroupBoxGradientMode.Vertical;
-            grouper_NoDocumentsToShow.BorderColor = Color.Gainsboro;
-            grouper_NoDocumentsToShow.BorderThickness = 1F;
-            grouper_NoDocumentsToShow.Controls.Add(richTextBox_NoDocumentsToShow);
-            grouper_NoDocumentsToShow.Controls.Add(panel_NoDocumentsToShow);
-            grouper_NoDocumentsToShow.CustomGroupBoxColor = Color.White;
-            grouper_NoDocumentsToShow.Dock = DockStyle.Top;
-            grouper_NoDocumentsToShow.GroupTitle = "";
-            grouper_NoDocumentsToShow.Location = new Point(113, 1856);
-            grouper_NoDocumentsToShow.Margin = new Padding(1, 14, 1, 1);
-            grouper_NoDocumentsToShow.Name = "grouper_NoDocumentsToShow";
-            grouper_NoDocumentsToShow.Padding = new Padding(28, 50, 28, 17);
-            grouper_NoDocumentsToShow.PaintGroupBox = false;
-            grouper_NoDocumentsToShow.RoundCorners = 10;
-            grouper_NoDocumentsToShow.ShadowColor = Color.DarkGray;
-            grouper_NoDocumentsToShow.ShadowControl = false;
-            grouper_NoDocumentsToShow.ShadowThickness = 3;
-            grouper_NoDocumentsToShow.Size = new Size(807, 284);
-            grouper_NoDocumentsToShow.TabIndex = 26;
+            panel_NotDocumentToShow.Controls.Add(richTextBox_NotDocumentToShow);
+            panel_NotDocumentToShow.Controls.Add(panel16);
+            panel_NotDocumentToShow.Controls.Add(radioButton_NotDocumentToShow);
+            panel_NotDocumentToShow.Dock = DockStyle.Top;
+            panel_NotDocumentToShow.Location = new Point(8, 425);
+            panel_NotDocumentToShow.Margin = new Padding(0);
+            panel_NotDocumentToShow.MinimumSize = new Size(10, 10);
+            panel_NotDocumentToShow.Name = "panel_NotDocumentToShow";
+            panel_NotDocumentToShow.Padding = new Padding(5);
+            panel_NotDocumentToShow.Size = new Size(1034, 60);
+            panel_NotDocumentToShow.TabIndex = 32;
             // 
-            // richTextBox_NoDocumentsToShow
+            // richTextBox_NotDocumentToShow
             // 
-            richTextBox_NoDocumentsToShow.BorderStyle = BorderStyle.None;
-            richTextBox_NoDocumentsToShow.Dock = DockStyle.Fill;
-            richTextBox_NoDocumentsToShow.Font = new Font("Microsoft Sans Serif", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            richTextBox_NoDocumentsToShow.Location = new Point(973, 50);
-            richTextBox_NoDocumentsToShow.Margin = new Padding(16, 11, 16, 11);
-            richTextBox_NoDocumentsToShow.Name = "richTextBox_NoDocumentsToShow";
-            richTextBox_NoDocumentsToShow.ReadOnly = true;
-            richTextBox_NoDocumentsToShow.Size = new Size(0, 217);
-            richTextBox_NoDocumentsToShow.TabIndex = 1;
-            richTextBox_NoDocumentsToShow.Text = "\n               On this options the system will not show any Document. It's the defaul and normal beahavior of the system.";
+            richTextBox_NotDocumentToShow.BackColor = Color.LightGoldenrodYellow;
+            richTextBox_NotDocumentToShow.BorderStyle = BorderStyle.None;
+            richTextBox_NotDocumentToShow.Dock = DockStyle.Fill;
+            richTextBox_NotDocumentToShow.Font = new Font("Microsoft Sans Serif", 12F);
+            richTextBox_NotDocumentToShow.Location = new Point(230, 5);
+            richTextBox_NotDocumentToShow.Margin = new Padding(16, 11, 16, 11);
+            richTextBox_NotDocumentToShow.Name = "richTextBox_NotDocumentToShow";
+            richTextBox_NotDocumentToShow.ReadOnly = true;
+            richTextBox_NotDocumentToShow.Size = new Size(799, 50);
+            richTextBox_NotDocumentToShow.TabIndex = 32;
+            richTextBox_NotDocumentToShow.Text = "               On this options the system will not show any Document. It's the defaul and normal beahavior of the system.";
             // 
-            // panel_NoDocumentsToShow
+            // panel16
             // 
-            panel_NoDocumentsToShow.Controls.Add(radioButton_NoDocumentsToShow);
-            panel_NoDocumentsToShow.Dock = DockStyle.Left;
-            panel_NoDocumentsToShow.Location = new Point(28, 50);
-            panel_NoDocumentsToShow.Margin = new Padding(16, 11, 16, 11);
-            panel_NoDocumentsToShow.MinimumSize = new Size(873, 0);
-            panel_NoDocumentsToShow.Name = "panel_NoDocumentsToShow";
-            panel_NoDocumentsToShow.Size = new Size(945, 217);
-            panel_NoDocumentsToShow.TabIndex = 2;
+            panel16.BackColor = Color.LightGoldenrodYellow;
+            panel16.Dock = DockStyle.Left;
+            panel16.Location = new Point(205, 5);
+            panel16.Margin = new Padding(0);
+            panel16.MinimumSize = new Size(25, 10);
+            panel16.Name = "panel16";
+            panel16.Size = new Size(25, 50);
+            panel16.TabIndex = 30;
             // 
-            // radioButton_NoDocumentsToShow
+            // radioButton_NotDocumentToShow
             // 
-            radioButton_NoDocumentsToShow.AutoCheck = false;
-            radioButton_NoDocumentsToShow.AutoSize = true;
-            radioButton_NoDocumentsToShow.Font = new Font("Microsoft Sans Serif", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            radioButton_NoDocumentsToShow.Location = new Point(16, 71);
-            radioButton_NoDocumentsToShow.Margin = new Padding(16, 11, 16, 11);
-            radioButton_NoDocumentsToShow.Name = "radioButton_NoDocumentsToShow";
-            radioButton_NoDocumentsToShow.Size = new Size(160, 20);
-            radioButton_NoDocumentsToShow.TabIndex = 0;
-            radioButton_NoDocumentsToShow.Tag = "1";
-            radioButton_NoDocumentsToShow.Text = "Not Document to Show";
-            radioButton_NoDocumentsToShow.UseVisualStyleBackColor = true;
+            radioButton_NotDocumentToShow.AutoSize = true;
+            radioButton_NotDocumentToShow.Dock = DockStyle.Left;
+            radioButton_NotDocumentToShow.Font = new Font("Microsoft Sans Serif", 12F);
+            radioButton_NotDocumentToShow.Location = new Point(5, 5);
+            radioButton_NotDocumentToShow.Margin = new Padding(16, 11, 16, 11);
+            radioButton_NotDocumentToShow.MinimumSize = new Size(200, 0);
+            radioButton_NotDocumentToShow.Name = "radioButton_NotDocumentToShow";
+            radioButton_NotDocumentToShow.Size = new Size(200, 50);
+            radioButton_NotDocumentToShow.TabIndex = 31;
+            radioButton_NotDocumentToShow.Tag = "2";
+            radioButton_NotDocumentToShow.Text = "Not Document to Show";
+            radioButton_NotDocumentToShow.UseVisualStyleBackColor = true;
             // 
-            // grouper_Last2Versions
+            // panel_LastTwoVersions
             // 
-            grouper_Last2Versions.BackgroundColor = SystemColors.Control;
-            grouper_Last2Versions.BackgroundGradientColor = Color.Gainsboro;
-            grouper_Last2Versions.BackgroundGradientMode = CodeVendor.Controls.Grouper.GroupBoxGradientMode.Vertical;
-            grouper_Last2Versions.BorderColor = Color.Gainsboro;
-            grouper_Last2Versions.BorderThickness = 1F;
-            grouper_Last2Versions.Controls.Add(richTextBox4);
-            grouper_Last2Versions.Controls.Add(panel3);
-            grouper_Last2Versions.CustomGroupBoxColor = Color.White;
-            grouper_Last2Versions.Dock = DockStyle.Top;
-            grouper_Last2Versions.GroupTitle = "";
-            grouper_Last2Versions.Location = new Point(113, 1476);
-            grouper_Last2Versions.Margin = new Padding(1, 14, 1, 1);
-            grouper_Last2Versions.Name = "grouper_Last2Versions";
-            grouper_Last2Versions.Padding = new Padding(28, 50, 28, 17);
-            grouper_Last2Versions.PaintGroupBox = false;
-            grouper_Last2Versions.RoundCorners = 10;
-            grouper_Last2Versions.ShadowColor = Color.DarkGray;
-            grouper_Last2Versions.ShadowControl = false;
-            grouper_Last2Versions.ShadowThickness = 3;
-            grouper_Last2Versions.Size = new Size(807, 380);
-            grouper_Last2Versions.TabIndex = 24;
+            panel_LastTwoVersions.Controls.Add(richTextBox_LastTwoVersions);
+            panel_LastTwoVersions.Controls.Add(panel15);
+            panel_LastTwoVersions.Controls.Add(radioButton_LastTwoVersions);
+            panel_LastTwoVersions.Dock = DockStyle.Top;
+            panel_LastTwoVersions.Location = new Point(8, 365);
+            panel_LastTwoVersions.Margin = new Padding(0);
+            panel_LastTwoVersions.MinimumSize = new Size(10, 10);
+            panel_LastTwoVersions.Name = "panel_LastTwoVersions";
+            panel_LastTwoVersions.Padding = new Padding(5);
+            panel_LastTwoVersions.Size = new Size(1034, 60);
+            panel_LastTwoVersions.TabIndex = 31;
             // 
-            // richTextBox4
+            // richTextBox_LastTwoVersions
             // 
-            richTextBox4.BorderStyle = BorderStyle.None;
-            richTextBox4.Dock = DockStyle.Fill;
-            richTextBox4.Font = new Font("Microsoft Sans Serif", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            richTextBox4.Location = new Point(973, 50);
-            richTextBox4.Margin = new Padding(16, 11, 16, 11);
-            richTextBox4.Name = "richTextBox4";
-            richTextBox4.ReadOnly = true;
-            richTextBox4.Size = new Size(0, 313);
-            richTextBox4.TabIndex = 1;
-            richTextBox4.Text = "";
+            richTextBox_LastTwoVersions.BackColor = Color.LightGoldenrodYellow;
+            richTextBox_LastTwoVersions.BorderStyle = BorderStyle.None;
+            richTextBox_LastTwoVersions.Dock = DockStyle.Fill;
+            richTextBox_LastTwoVersions.Font = new Font("Microsoft Sans Serif", 12F);
+            richTextBox_LastTwoVersions.Location = new Point(230, 5);
+            richTextBox_LastTwoVersions.Margin = new Padding(16, 11, 16, 11);
+            richTextBox_LastTwoVersions.Name = "richTextBox_LastTwoVersions";
+            richTextBox_LastTwoVersions.ReadOnly = true;
+            richTextBox_LastTwoVersions.Size = new Size(799, 50);
+            richTextBox_LastTwoVersions.TabIndex = 32;
+            richTextBox_LastTwoVersions.Text = "               On this options the system will not show any Document. It's the defaul and normal beahavior of the system.";
             // 
-            // panel3
+            // panel15
             // 
-            panel3.Controls.Add(numericUpDown1);
-            panel3.Controls.Add(radioButton_Last2Versions);
-            panel3.Controls.Add(label_Versions);
-            panel3.Dock = DockStyle.Left;
-            panel3.Location = new Point(28, 50);
-            panel3.Margin = new Padding(16, 11, 16, 11);
-            panel3.MinimumSize = new Size(873, 0);
-            panel3.Name = "panel3";
-            panel3.Size = new Size(945, 313);
-            panel3.TabIndex = 2;
+            panel15.BackColor = Color.LightGoldenrodYellow;
+            panel15.Dock = DockStyle.Left;
+            panel15.Location = new Point(205, 5);
+            panel15.Margin = new Padding(0);
+            panel15.MinimumSize = new Size(25, 10);
+            panel15.Name = "panel15";
+            panel15.Size = new Size(25, 50);
+            panel15.TabIndex = 30;
             // 
-            // numericUpDown1
+            // radioButton_LastTwoVersions
             // 
-            numericUpDown1.Font = new Font("Microsoft Sans Serif", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            numericUpDown1.Location = new Point(292, 119);
-            numericUpDown1.Margin = new Padding(16, 11, 16, 11);
-            numericUpDown1.Maximum = new decimal(new int[] { 99, 0, 0, 0 });
-            numericUpDown1.Minimum = new decimal(new int[] { 2, 0, 0, 0 });
-            numericUpDown1.Name = "numericUpDown1";
-            numericUpDown1.Size = new Size(201, 22);
-            numericUpDown1.TabIndex = 1;
-            numericUpDown1.Value = new decimal(new int[] { 2, 0, 0, 0 });
-            // 
-            // radioButton_Last2Versions
-            // 
-            radioButton_Last2Versions.AutoCheck = false;
-            radioButton_Last2Versions.AutoSize = true;
-            radioButton_Last2Versions.Font = new Font("Microsoft Sans Serif", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            radioButton_Last2Versions.Location = new Point(28, 119);
-            radioButton_Last2Versions.Margin = new Padding(16, 11, 16, 11);
-            radioButton_Last2Versions.Name = "radioButton_Last2Versions";
-            radioButton_Last2Versions.Size = new Size(50, 20);
-            radioButton_Last2Versions.TabIndex = 0;
-            radioButton_Last2Versions.Tag = "4";
-            radioButton_Last2Versions.Text = "Last";
-            radioButton_Last2Versions.UseVisualStyleBackColor = true;
-            // 
-            // label_Versions
-            // 
-            label_Versions.AutoSize = true;
-            label_Versions.Location = new Point(484, 132);
-            label_Versions.Margin = new Padding(16, 0, 16, 0);
-            label_Versions.Name = "label_Versions";
-            label_Versions.Size = new Size(73, 21);
-            label_Versions.TabIndex = 2;
-            label_Versions.Text = " Versions";
-            // 
-            // grouper_AllVersionsFound
-            // 
-            grouper_AllVersionsFound.BackgroundColor = SystemColors.Control;
-            grouper_AllVersionsFound.BackgroundGradientColor = Color.Gainsboro;
-            grouper_AllVersionsFound.BackgroundGradientMode = CodeVendor.Controls.Grouper.GroupBoxGradientMode.Vertical;
-            grouper_AllVersionsFound.BorderColor = Color.Gainsboro;
-            grouper_AllVersionsFound.BorderThickness = 1F;
-            grouper_AllVersionsFound.Controls.Add(richTextBox_AllVersionsFound);
-            grouper_AllVersionsFound.Controls.Add(panel_AllVersionsFound);
-            grouper_AllVersionsFound.CustomGroupBoxColor = Color.White;
-            grouper_AllVersionsFound.Dock = DockStyle.Top;
-            grouper_AllVersionsFound.GroupTitle = "";
-            grouper_AllVersionsFound.Location = new Point(113, 1081);
-            grouper_AllVersionsFound.Margin = new Padding(1, 14, 1, 1);
-            grouper_AllVersionsFound.Name = "grouper_AllVersionsFound";
-            grouper_AllVersionsFound.Padding = new Padding(28, 50, 28, 17);
-            grouper_AllVersionsFound.PaintGroupBox = false;
-            grouper_AllVersionsFound.RoundCorners = 10;
-            grouper_AllVersionsFound.ShadowColor = Color.DarkGray;
-            grouper_AllVersionsFound.ShadowControl = false;
-            grouper_AllVersionsFound.ShadowThickness = 3;
-            grouper_AllVersionsFound.Size = new Size(807, 395);
-            grouper_AllVersionsFound.TabIndex = 23;
-            // 
-            // richTextBox_AllVersionsFound
-            // 
-            richTextBox_AllVersionsFound.BorderStyle = BorderStyle.None;
-            richTextBox_AllVersionsFound.Dock = DockStyle.Fill;
-            richTextBox_AllVersionsFound.Font = new Font("Microsoft Sans Serif", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            richTextBox_AllVersionsFound.Location = new Point(973, 50);
-            richTextBox_AllVersionsFound.Margin = new Padding(16, 11, 16, 11);
-            richTextBox_AllVersionsFound.Name = "richTextBox_AllVersionsFound";
-            richTextBox_AllVersionsFound.ReadOnly = true;
-            richTextBox_AllVersionsFound.Size = new Size(0, 328);
-            richTextBox_AllVersionsFound.TabIndex = 1;
-            richTextBox_AllVersionsFound.Text = "";
+            radioButton_LastTwoVersions.AutoSize = true;
+            radioButton_LastTwoVersions.Dock = DockStyle.Left;
+            radioButton_LastTwoVersions.Font = new Font("Microsoft Sans Serif", 12F);
+            radioButton_LastTwoVersions.Location = new Point(5, 5);
+            radioButton_LastTwoVersions.Margin = new Padding(16, 11, 16, 11);
+            radioButton_LastTwoVersions.MinimumSize = new Size(200, 0);
+            radioButton_LastTwoVersions.Name = "radioButton_LastTwoVersions";
+            radioButton_LastTwoVersions.Size = new Size(200, 50);
+            radioButton_LastTwoVersions.TabIndex = 31;
+            radioButton_LastTwoVersions.Tag = "2";
+            radioButton_LastTwoVersions.Text = "Last Two Versions";
+            radioButton_LastTwoVersions.UseVisualStyleBackColor = true;
             // 
             // panel_AllVersionsFound
             // 
+            panel_AllVersionsFound.Controls.Add(richTextBox_AllVersionsFound);
+            panel_AllVersionsFound.Controls.Add(panel13);
             panel_AllVersionsFound.Controls.Add(radioButton_AllVersionsFound);
-            panel_AllVersionsFound.Dock = DockStyle.Left;
-            panel_AllVersionsFound.Location = new Point(28, 50);
-            panel_AllVersionsFound.Margin = new Padding(16, 11, 16, 11);
-            panel_AllVersionsFound.MinimumSize = new Size(873, 0);
+            panel_AllVersionsFound.Dock = DockStyle.Top;
+            panel_AllVersionsFound.Location = new Point(8, 305);
+            panel_AllVersionsFound.Margin = new Padding(0);
+            panel_AllVersionsFound.MinimumSize = new Size(10, 10);
             panel_AllVersionsFound.Name = "panel_AllVersionsFound";
-            panel_AllVersionsFound.Size = new Size(945, 328);
-            panel_AllVersionsFound.TabIndex = 2;
+            panel_AllVersionsFound.Padding = new Padding(5);
+            panel_AllVersionsFound.Size = new Size(1034, 60);
+            panel_AllVersionsFound.TabIndex = 30;
+            // 
+            // richTextBox_AllVersionsFound
+            // 
+            richTextBox_AllVersionsFound.BackColor = Color.LightGoldenrodYellow;
+            richTextBox_AllVersionsFound.BorderStyle = BorderStyle.None;
+            richTextBox_AllVersionsFound.Dock = DockStyle.Fill;
+            richTextBox_AllVersionsFound.Font = new Font("Microsoft Sans Serif", 12F);
+            richTextBox_AllVersionsFound.Location = new Point(230, 5);
+            richTextBox_AllVersionsFound.Margin = new Padding(16, 11, 16, 11);
+            richTextBox_AllVersionsFound.Name = "richTextBox_AllVersionsFound";
+            richTextBox_AllVersionsFound.ReadOnly = true;
+            richTextBox_AllVersionsFound.Size = new Size(799, 50);
+            richTextBox_AllVersionsFound.TabIndex = 32;
+            richTextBox_AllVersionsFound.Text = "";
+            // 
+            // panel13
+            // 
+            panel13.BackColor = Color.LightGoldenrodYellow;
+            panel13.Dock = DockStyle.Left;
+            panel13.Location = new Point(205, 5);
+            panel13.Margin = new Padding(0);
+            panel13.MinimumSize = new Size(25, 10);
+            panel13.Name = "panel13";
+            panel13.Size = new Size(25, 50);
+            panel13.TabIndex = 30;
             // 
             // radioButton_AllVersionsFound
             // 
-            radioButton_AllVersionsFound.AutoCheck = false;
             radioButton_AllVersionsFound.AutoSize = true;
-            radioButton_AllVersionsFound.Font = new Font("Microsoft Sans Serif", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            radioButton_AllVersionsFound.Location = new Point(16, 123);
+            radioButton_AllVersionsFound.Dock = DockStyle.Left;
+            radioButton_AllVersionsFound.Font = new Font("Microsoft Sans Serif", 12F);
+            radioButton_AllVersionsFound.Location = new Point(5, 5);
             radioButton_AllVersionsFound.Margin = new Padding(16, 11, 16, 11);
+            radioButton_AllVersionsFound.MinimumSize = new Size(200, 0);
             radioButton_AllVersionsFound.Name = "radioButton_AllVersionsFound";
-            radioButton_AllVersionsFound.Size = new Size(137, 20);
-            radioButton_AllVersionsFound.TabIndex = 0;
-            radioButton_AllVersionsFound.Tag = "3";
+            radioButton_AllVersionsFound.Size = new Size(200, 50);
+            radioButton_AllVersionsFound.TabIndex = 31;
+            radioButton_AllVersionsFound.Tag = "2";
             radioButton_AllVersionsFound.Text = "All Versions Found";
             radioButton_AllVersionsFound.UseVisualStyleBackColor = true;
             // 
-            // grouper_LastRevision
+            // panel_TheLastRevision
             // 
-            grouper_LastRevision.BackgroundColor = SystemColors.Control;
-            grouper_LastRevision.BackgroundGradientColor = Color.Gainsboro;
-            grouper_LastRevision.BackgroundGradientMode = CodeVendor.Controls.Grouper.GroupBoxGradientMode.Vertical;
-            grouper_LastRevision.BorderColor = Color.Gainsboro;
-            grouper_LastRevision.BorderThickness = 1F;
-            grouper_LastRevision.Controls.Add(richTextBox_LastRevision);
-            grouper_LastRevision.Controls.Add(panel_LastRevision);
-            grouper_LastRevision.CustomGroupBoxColor = Color.White;
-            grouper_LastRevision.Dock = DockStyle.Top;
-            grouper_LastRevision.GroupTitle = "";
-            grouper_LastRevision.Location = new Point(113, 765);
-            grouper_LastRevision.Margin = new Padding(1, 14, 1, 1);
-            grouper_LastRevision.Name = "grouper_LastRevision";
-            grouper_LastRevision.Padding = new Padding(28, 50, 28, 17);
-            grouper_LastRevision.PaintGroupBox = false;
-            grouper_LastRevision.RoundCorners = 10;
-            grouper_LastRevision.ShadowColor = Color.DarkGray;
-            grouper_LastRevision.ShadowControl = false;
-            grouper_LastRevision.ShadowThickness = 3;
-            grouper_LastRevision.Size = new Size(807, 316);
-            grouper_LastRevision.TabIndex = 22;
+            panel_TheLastRevision.Controls.Add(richTextBox_TheLastRevision);
+            panel_TheLastRevision.Controls.Add(panel12);
+            panel_TheLastRevision.Controls.Add(radioButton_TheLastRevision);
+            panel_TheLastRevision.Dock = DockStyle.Top;
+            panel_TheLastRevision.Location = new Point(8, 245);
+            panel_TheLastRevision.Margin = new Padding(0);
+            panel_TheLastRevision.MinimumSize = new Size(10, 10);
+            panel_TheLastRevision.Name = "panel_TheLastRevision";
+            panel_TheLastRevision.Padding = new Padding(5);
+            panel_TheLastRevision.Size = new Size(1034, 60);
+            panel_TheLastRevision.TabIndex = 29;
             // 
-            // richTextBox_LastRevision
+            // richTextBox_TheLastRevision
             // 
-            richTextBox_LastRevision.BorderStyle = BorderStyle.None;
-            richTextBox_LastRevision.Dock = DockStyle.Fill;
-            richTextBox_LastRevision.Font = new Font("Microsoft Sans Serif", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            richTextBox_LastRevision.Location = new Point(973, 50);
-            richTextBox_LastRevision.Margin = new Padding(16, 11, 16, 11);
-            richTextBox_LastRevision.Name = "richTextBox_LastRevision";
-            richTextBox_LastRevision.ReadOnly = true;
-            richTextBox_LastRevision.Size = new Size(0, 249);
-            richTextBox_LastRevision.TabIndex = 1;
-            richTextBox_LastRevision.Text = "";
+            richTextBox_TheLastRevision.BackColor = Color.LightGoldenrodYellow;
+            richTextBox_TheLastRevision.BorderStyle = BorderStyle.None;
+            richTextBox_TheLastRevision.Dock = DockStyle.Fill;
+            richTextBox_TheLastRevision.Font = new Font("Microsoft Sans Serif", 12F);
+            richTextBox_TheLastRevision.Location = new Point(230, 5);
+            richTextBox_TheLastRevision.Margin = new Padding(16, 11, 16, 11);
+            richTextBox_TheLastRevision.Name = "richTextBox_TheLastRevision";
+            richTextBox_TheLastRevision.ReadOnly = true;
+            richTextBox_TheLastRevision.Size = new Size(799, 50);
+            richTextBox_TheLastRevision.TabIndex = 32;
+            richTextBox_TheLastRevision.Text = "";
             // 
-            // panel_LastRevision
+            // panel12
             // 
-            panel_LastRevision.Controls.Add(radioButton_LastRevision);
-            panel_LastRevision.Dock = DockStyle.Left;
-            panel_LastRevision.Location = new Point(28, 50);
-            panel_LastRevision.Margin = new Padding(16, 11, 16, 11);
-            panel_LastRevision.MinimumSize = new Size(873, 0);
-            panel_LastRevision.Name = "panel_LastRevision";
-            panel_LastRevision.Size = new Size(945, 249);
-            panel_LastRevision.TabIndex = 2;
+            panel12.BackColor = Color.LightGoldenrodYellow;
+            panel12.Dock = DockStyle.Left;
+            panel12.Location = new Point(205, 5);
+            panel12.Margin = new Padding(0);
+            panel12.MinimumSize = new Size(25, 10);
+            panel12.Name = "panel12";
+            panel12.Size = new Size(25, 50);
+            panel12.TabIndex = 30;
             // 
-            // radioButton_LastRevision
+            // radioButton_TheLastRevision
             // 
-            radioButton_LastRevision.AutoCheck = false;
-            radioButton_LastRevision.AutoSize = true;
-            radioButton_LastRevision.Font = new Font("Microsoft Sans Serif", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            radioButton_LastRevision.Location = new Point(16, 90);
-            radioButton_LastRevision.Margin = new Padding(16, 11, 16, 11);
-            radioButton_LastRevision.Name = "radioButton_LastRevision";
-            radioButton_LastRevision.Size = new Size(133, 20);
-            radioButton_LastRevision.TabIndex = 0;
-            radioButton_LastRevision.Tag = "2";
-            radioButton_LastRevision.Text = "The Last Revision";
-            radioButton_LastRevision.UseVisualStyleBackColor = true;
-            // 
-            // grouper_SpecifiedDocument
-            // 
-            grouper_SpecifiedDocument.BackgroundColor = SystemColors.Control;
-            grouper_SpecifiedDocument.BackgroundGradientColor = Color.Gainsboro;
-            grouper_SpecifiedDocument.BackgroundGradientMode = CodeVendor.Controls.Grouper.GroupBoxGradientMode.Vertical;
-            grouper_SpecifiedDocument.BorderColor = Color.Gainsboro;
-            grouper_SpecifiedDocument.BorderThickness = 1F;
-            grouper_SpecifiedDocument.Controls.Add(richTextBox_SpecifiedDocument);
-            grouper_SpecifiedDocument.Controls.Add(panel_SpecifiedDocument);
-            grouper_SpecifiedDocument.CustomGroupBoxColor = Color.White;
-            grouper_SpecifiedDocument.Dock = DockStyle.Top;
-            grouper_SpecifiedDocument.GroupTitle = "";
-            grouper_SpecifiedDocument.Location = new Point(113, 509);
-            grouper_SpecifiedDocument.Margin = new Padding(1, 14, 1, 1);
-            grouper_SpecifiedDocument.Name = "grouper_SpecifiedDocument";
-            grouper_SpecifiedDocument.Padding = new Padding(28, 50, 28, 17);
-            grouper_SpecifiedDocument.PaintGroupBox = false;
-            grouper_SpecifiedDocument.RoundCorners = 10;
-            grouper_SpecifiedDocument.ShadowColor = Color.DarkGray;
-            grouper_SpecifiedDocument.ShadowControl = false;
-            grouper_SpecifiedDocument.ShadowThickness = 3;
-            grouper_SpecifiedDocument.Size = new Size(807, 256);
-            grouper_SpecifiedDocument.TabIndex = 21;
-            // 
-            // richTextBox_SpecifiedDocument
-            // 
-            richTextBox_SpecifiedDocument.BorderStyle = BorderStyle.None;
-            richTextBox_SpecifiedDocument.Dock = DockStyle.Fill;
-            richTextBox_SpecifiedDocument.Font = new Font("Microsoft Sans Serif", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            richTextBox_SpecifiedDocument.Location = new Point(973, 50);
-            richTextBox_SpecifiedDocument.Margin = new Padding(16, 11, 16, 11);
-            richTextBox_SpecifiedDocument.Name = "richTextBox_SpecifiedDocument";
-            richTextBox_SpecifiedDocument.ReadOnly = true;
-            richTextBox_SpecifiedDocument.Size = new Size(0, 189);
-            richTextBox_SpecifiedDocument.TabIndex = 1;
-            richTextBox_SpecifiedDocument.Text = "\tOn this options the system will luck in column Data_Sheet if a specified document exist, if the document is found it's show into the tap Document.";
+            radioButton_TheLastRevision.AutoSize = true;
+            radioButton_TheLastRevision.Dock = DockStyle.Left;
+            radioButton_TheLastRevision.Font = new Font("Microsoft Sans Serif", 12F);
+            radioButton_TheLastRevision.Location = new Point(5, 5);
+            radioButton_TheLastRevision.Margin = new Padding(16, 11, 16, 11);
+            radioButton_TheLastRevision.MinimumSize = new Size(200, 0);
+            radioButton_TheLastRevision.Name = "radioButton_TheLastRevision";
+            radioButton_TheLastRevision.Size = new Size(200, 50);
+            radioButton_TheLastRevision.TabIndex = 31;
+            radioButton_TheLastRevision.Tag = "2";
+            radioButton_TheLastRevision.Text = "The Last Revision";
+            radioButton_TheLastRevision.UseVisualStyleBackColor = true;
             // 
             // panel_SpecifiedDocument
             // 
+            panel_SpecifiedDocument.Controls.Add(richTextBox_SpecifiedDocument);
+            panel_SpecifiedDocument.Controls.Add(panel10);
             panel_SpecifiedDocument.Controls.Add(radioButton_SpecifiedDocument);
-            panel_SpecifiedDocument.Dock = DockStyle.Left;
-            panel_SpecifiedDocument.Location = new Point(28, 50);
-            panel_SpecifiedDocument.Margin = new Padding(16, 11, 16, 11);
-            panel_SpecifiedDocument.MinimumSize = new Size(873, 0);
+            panel_SpecifiedDocument.Dock = DockStyle.Top;
+            panel_SpecifiedDocument.Location = new Point(8, 185);
+            panel_SpecifiedDocument.Margin = new Padding(0);
+            panel_SpecifiedDocument.MinimumSize = new Size(250, 0);
             panel_SpecifiedDocument.Name = "panel_SpecifiedDocument";
-            panel_SpecifiedDocument.Size = new Size(945, 189);
-            panel_SpecifiedDocument.TabIndex = 2;
+            panel_SpecifiedDocument.Padding = new Padding(5);
+            panel_SpecifiedDocument.Size = new Size(1034, 60);
+            panel_SpecifiedDocument.TabIndex = 27;
+            // 
+            // richTextBox_SpecifiedDocument
+            // 
+            richTextBox_SpecifiedDocument.BackColor = Color.LightGoldenrodYellow;
+            richTextBox_SpecifiedDocument.BorderStyle = BorderStyle.None;
+            richTextBox_SpecifiedDocument.Dock = DockStyle.Fill;
+            richTextBox_SpecifiedDocument.Font = new Font("Microsoft Sans Serif", 12F);
+            richTextBox_SpecifiedDocument.Location = new Point(230, 5);
+            richTextBox_SpecifiedDocument.Margin = new Padding(0);
+            richTextBox_SpecifiedDocument.Name = "richTextBox_SpecifiedDocument";
+            richTextBox_SpecifiedDocument.ReadOnly = true;
+            richTextBox_SpecifiedDocument.Size = new Size(799, 50);
+            richTextBox_SpecifiedDocument.TabIndex = 3;
+            richTextBox_SpecifiedDocument.Text = "\tOn this options the system will luck in column Data_Sheet if a specified document exist, if the document is found it's show into the tap Document.";
+            // 
+            // panel10
+            // 
+            panel10.BackColor = Color.LightGoldenrodYellow;
+            panel10.Dock = DockStyle.Left;
+            panel10.Location = new Point(205, 5);
+            panel10.Margin = new Padding(0);
+            panel10.MinimumSize = new Size(25, 10);
+            panel10.Name = "panel10";
+            panel10.Size = new Size(25, 50);
+            panel10.TabIndex = 29;
             // 
             // radioButton_SpecifiedDocument
             // 
-            radioButton_SpecifiedDocument.AutoCheck = false;
             radioButton_SpecifiedDocument.AutoSize = true;
-            radioButton_SpecifiedDocument.Font = new Font("Microsoft Sans Serif", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            radioButton_SpecifiedDocument.Location = new Point(16, 59);
-            radioButton_SpecifiedDocument.Margin = new Padding(16, 11, 16, 11);
+            radioButton_SpecifiedDocument.Dock = DockStyle.Left;
+            radioButton_SpecifiedDocument.Font = new Font("Microsoft Sans Serif", 12F);
+            radioButton_SpecifiedDocument.Location = new Point(5, 5);
+            radioButton_SpecifiedDocument.Margin = new Padding(0);
+            radioButton_SpecifiedDocument.MinimumSize = new Size(200, 0);
             radioButton_SpecifiedDocument.Name = "radioButton_SpecifiedDocument";
-            radioButton_SpecifiedDocument.Size = new Size(146, 20);
-            radioButton_SpecifiedDocument.TabIndex = 0;
+            radioButton_SpecifiedDocument.Size = new Size(200, 50);
+            radioButton_SpecifiedDocument.TabIndex = 2;
             radioButton_SpecifiedDocument.Tag = "1";
             radioButton_SpecifiedDocument.Text = "Specified Document";
             radioButton_SpecifiedDocument.UseVisualStyleBackColor = true;
             // 
+            // panel_DefaultDocument
+            // 
+            panel_DefaultDocument.Controls.Add(richTextBox_DefaultDocument);
+            panel_DefaultDocument.Controls.Add(panel18);
+            panel_DefaultDocument.Controls.Add(radioButton_DefaultDocument);
+            panel_DefaultDocument.Dock = DockStyle.Top;
+            panel_DefaultDocument.Location = new Point(8, 125);
+            panel_DefaultDocument.Margin = new Padding(0);
+            panel_DefaultDocument.MinimumSize = new Size(10, 10);
+            panel_DefaultDocument.Name = "panel_DefaultDocument";
+            panel_DefaultDocument.Padding = new Padding(5);
+            panel_DefaultDocument.Size = new Size(1034, 60);
+            panel_DefaultDocument.TabIndex = 33;
+            // 
+            // richTextBox_DefaultDocument
+            // 
+            richTextBox_DefaultDocument.BackColor = Color.LightGoldenrodYellow;
+            richTextBox_DefaultDocument.BorderStyle = BorderStyle.None;
+            richTextBox_DefaultDocument.Dock = DockStyle.Fill;
+            richTextBox_DefaultDocument.Font = new Font("Microsoft Sans Serif", 12F);
+            richTextBox_DefaultDocument.Location = new Point(230, 5);
+            richTextBox_DefaultDocument.Margin = new Padding(16, 11, 16, 11);
+            richTextBox_DefaultDocument.Name = "richTextBox_DefaultDocument";
+            richTextBox_DefaultDocument.ReadOnly = true;
+            richTextBox_DefaultDocument.Size = new Size(799, 50);
+            richTextBox_DefaultDocument.TabIndex = 32;
+            richTextBox_DefaultDocument.Text = "               On this options the system will not show any Document. It's the defaul and normal beahavior of the system.";
+            // 
+            // panel18
+            // 
+            panel18.BackColor = Color.LightGoldenrodYellow;
+            panel18.Dock = DockStyle.Left;
+            panel18.Location = new Point(205, 5);
+            panel18.Margin = new Padding(0);
+            panel18.MinimumSize = new Size(25, 10);
+            panel18.Name = "panel18";
+            panel18.Size = new Size(25, 50);
+            panel18.TabIndex = 30;
+            // 
+            // radioButton_DefaultDocument
+            // 
+            radioButton_DefaultDocument.AutoSize = true;
+            radioButton_DefaultDocument.Dock = DockStyle.Left;
+            radioButton_DefaultDocument.Font = new Font("Microsoft Sans Serif", 12F);
+            radioButton_DefaultDocument.Location = new Point(5, 5);
+            radioButton_DefaultDocument.Margin = new Padding(16, 11, 16, 11);
+            radioButton_DefaultDocument.MinimumSize = new Size(200, 0);
+            radioButton_DefaultDocument.Name = "radioButton_DefaultDocument";
+            radioButton_DefaultDocument.Size = new Size(200, 50);
+            radioButton_DefaultDocument.TabIndex = 31;
+            radioButton_DefaultDocument.Tag = "2";
+            radioButton_DefaultDocument.Text = "Default Document";
+            radioButton_DefaultDocument.UseVisualStyleBackColor = true;
+            // 
             // grouper_BrowserVersion
             // 
-            grouper_BrowserVersion.BackgroundColor = SystemColors.Control;
-            grouper_BrowserVersion.BackgroundGradientColor = Color.Gainsboro;
+            grouper_BrowserVersion.BackgroundColor = SystemColors.ControlLight;
+            grouper_BrowserVersion.BackgroundGradientColor = Color.LightGray;
             grouper_BrowserVersion.BackgroundGradientMode = CodeVendor.Controls.Grouper.GroupBoxGradientMode.Vertical;
             grouper_BrowserVersion.BorderColor = Color.Gainsboro;
             grouper_BrowserVersion.BorderThickness = 1F;
-            grouper_BrowserVersion.Controls.Add(checkBox_PdfViewer);
             grouper_BrowserVersion.Controls.Add(richTextBox5);
             grouper_BrowserVersion.CustomGroupBoxColor = Color.White;
             grouper_BrowserVersion.Dock = DockStyle.Top;
             grouper_BrowserVersion.GroupTitle = "";
-            grouper_BrowserVersion.Location = new Point(113, 71);
+            grouper_BrowserVersion.Location = new Point(8, 25);
             grouper_BrowserVersion.Margin = new Padding(1, 14, 1, 1);
+            grouper_BrowserVersion.MaximumSize = new Size(0, 200);
+            grouper_BrowserVersion.MinimumSize = new Size(0, 100);
             grouper_BrowserVersion.Name = "grouper_BrowserVersion";
-            grouper_BrowserVersion.Padding = new Padding(28, 50, 28, 17);
+            grouper_BrowserVersion.Padding = new Padding(8, 18, 8, 8);
             grouper_BrowserVersion.PaintGroupBox = false;
             grouper_BrowserVersion.RoundCorners = 10;
             grouper_BrowserVersion.ShadowColor = Color.DarkGray;
             grouper_BrowserVersion.ShadowControl = false;
             grouper_BrowserVersion.ShadowThickness = 3;
-            grouper_BrowserVersion.Size = new Size(807, 438);
+            grouper_BrowserVersion.Size = new Size(1034, 100);
             grouper_BrowserVersion.TabIndex = 25;
-            // 
-            // checkBox_PdfViewer
-            // 
-            checkBox_PdfViewer.AutoSize = true;
-            checkBox_PdfViewer.Location = new Point(169, 196);
-            checkBox_PdfViewer.Margin = new Padding(16, 11, 16, 11);
-            checkBox_PdfViewer.Name = "checkBox_PdfViewer";
-            checkBox_PdfViewer.Size = new Size(109, 25);
-            checkBox_PdfViewer.TabIndex = 3;
-            checkBox_PdfViewer.Text = "PDF Viewer";
-            checkBox_PdfViewer.UseVisualStyleBackColor = true;
-            checkBox_PdfViewer.CheckedChanged += CheckBox_PdfViewer_CheckedChanged;
             // 
             // richTextBox5
             // 
             richTextBox5.BackColor = Color.LightGoldenrodYellow;
             richTextBox5.BorderStyle = BorderStyle.None;
             richTextBox5.DetectUrls = false;
-            richTextBox5.Dock = DockStyle.Right;
-            richTextBox5.Font = new Font("Microsoft Sans Serif", 11F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            richTextBox5.Location = new Point(-3216, 50);
+            richTextBox5.Dock = DockStyle.Fill;
+            richTextBox5.Font = new Font("Microsoft Sans Serif", 12F);
+            richTextBox5.Location = new Point(8, 18);
             richTextBox5.Margin = new Padding(16, 11, 16, 11);
             richTextBox5.Name = "richTextBox5";
             richTextBox5.ReadOnly = true;
             richTextBox5.ShortcutsEnabled = false;
-            richTextBox5.Size = new Size(3995, 371);
+            richTextBox5.Size = new Size(1018, 74);
             richTextBox5.TabIndex = 2;
             richTextBox5.Text = "\tDo not check the checkbox, the application will use the internal PDF viewer.\nIf you check the checkbox, the application will use the default Windows PDF viewer";
             // 
@@ -2196,19 +1597,19 @@ namespace StockRoom11net
             grouper_DefinedAddressDocumentation.BorderThickness = 2F;
             grouper_DefinedAddressDocumentation.Controls.Add(documentsAddressGroup_SearchForPDFfileWithin);
             grouper_DefinedAddressDocumentation.CustomGroupBoxColor = Color.White;
-            grouper_DefinedAddressDocumentation.Dock = DockStyle.Top;
+            grouper_DefinedAddressDocumentation.Dock = DockStyle.Fill;
             grouper_DefinedAddressDocumentation.GroupTitle = "Search for PDF file within";
-            grouper_DefinedAddressDocumentation.Location = new Point(0, 395);
+            grouper_DefinedAddressDocumentation.Location = new Point(0, 150);
             grouper_DefinedAddressDocumentation.Margin = new Padding(1, 14, 1, 14);
-            grouper_DefinedAddressDocumentation.MinimumSize = new Size(2529, 297);
+            grouper_DefinedAddressDocumentation.MinimumSize = new Size(250, 300);
             grouper_DefinedAddressDocumentation.Name = "grouper_DefinedAddressDocumentation";
-            grouper_DefinedAddressDocumentation.Padding = new Padding(28, 71, 28, 17);
+            grouper_DefinedAddressDocumentation.Padding = new Padding(8, 14, 8, 8);
             grouper_DefinedAddressDocumentation.PaintGroupBox = false;
             grouper_DefinedAddressDocumentation.RoundCorners = 10;
             grouper_DefinedAddressDocumentation.ShadowColor = Color.DarkGray;
             grouper_DefinedAddressDocumentation.ShadowControl = false;
             grouper_DefinedAddressDocumentation.ShadowThickness = 3;
-            grouper_DefinedAddressDocumentation.Size = new Size(2529, 489);
+            grouper_DefinedAddressDocumentation.Size = new Size(1092, 475);
             grouper_DefinedAddressDocumentation.TabIndex = 26;
             // 
             // documentsAddressGroup_SearchForPDFfileWithin
@@ -2216,11 +1617,11 @@ namespace StockRoom11net
             documentsAddressGroup_SearchForPDFfileWithin.AutoSize = true;
             documentsAddressGroup_SearchForPDFfileWithin.AutoSizeMode = AutoSizeMode.GrowAndShrink;
             documentsAddressGroup_SearchForPDFfileWithin.Dock = DockStyle.Fill;
-            documentsAddressGroup_SearchForPDFfileWithin.Location = new Point(28, 71);
+            documentsAddressGroup_SearchForPDFfileWithin.Location = new Point(8, 14);
             documentsAddressGroup_SearchForPDFfileWithin.Margin = new Padding(21, 17, 21, 17);
-            documentsAddressGroup_SearchForPDFfileWithin.MinimumSize = new Size(2529, 401);
+            documentsAddressGroup_SearchForPDFfileWithin.MinimumSize = new Size(250, 250);
             documentsAddressGroup_SearchForPDFfileWithin.Name = "documentsAddressGroup_SearchForPDFfileWithin";
-            documentsAddressGroup_SearchForPDFfileWithin.Size = new Size(2529, 401);
+            documentsAddressGroup_SearchForPDFfileWithin.Size = new Size(1076, 453);
             documentsAddressGroup_SearchForPDFfileWithin.TabIndex = 24;
             // 
             // panel_Space2
@@ -2229,11 +1630,11 @@ namespace StockRoom11net
             panel_Space2.AutoSizeMode = AutoSizeMode.GrowAndShrink;
             panel_Space2.BackColor = Color.Transparent;
             panel_Space2.Dock = DockStyle.Top;
-            panel_Space2.Location = new Point(0, 362);
+            panel_Space2.Location = new Point(0, 138);
             panel_Space2.Margin = new Padding(16, 11, 16, 11);
-            panel_Space2.MinimumSize = new Size(1685, 33);
+            panel_Space2.MinimumSize = new Size(250, 12);
             panel_Space2.Name = "panel_Space2";
-            panel_Space2.Size = new Size(1685, 33);
+            panel_Space2.Size = new Size(1092, 12);
             panel_Space2.TabIndex = 27;
             // 
             // grouper_SearchForPDFfileWithin
@@ -2247,16 +1648,16 @@ namespace StockRoom11net
             grouper_SearchForPDFfileWithin.CustomGroupBoxColor = Color.White;
             grouper_SearchForPDFfileWithin.Dock = DockStyle.Top;
             grouper_SearchForPDFfileWithin.GroupTitle = "Information about Search for PDF file within";
-            grouper_SearchForPDFfileWithin.Location = new Point(0, 33);
+            grouper_SearchForPDFfileWithin.Location = new Point(0, 12);
             grouper_SearchForPDFfileWithin.Margin = new Padding(1, 14, 1, 1);
             grouper_SearchForPDFfileWithin.Name = "grouper_SearchForPDFfileWithin";
-            grouper_SearchForPDFfileWithin.Padding = new Padding(55, 97, 55, 33);
+            grouper_SearchForPDFfileWithin.Padding = new Padding(8, 28, 8, 8);
             grouper_SearchForPDFfileWithin.PaintGroupBox = false;
             grouper_SearchForPDFfileWithin.RoundCorners = 10;
             grouper_SearchForPDFfileWithin.ShadowColor = Color.DarkGray;
             grouper_SearchForPDFfileWithin.ShadowControl = false;
             grouper_SearchForPDFfileWithin.ShadowThickness = 3;
-            grouper_SearchForPDFfileWithin.Size = new Size(1092, 329);
+            grouper_SearchForPDFfileWithin.Size = new Size(1092, 126);
             grouper_SearchForPDFfileWithin.TabIndex = 29;
             // 
             // richTextBox_SearchForPDFfileWithin
@@ -2265,10 +1666,10 @@ namespace StockRoom11net
             richTextBox_SearchForPDFfileWithin.BorderStyle = BorderStyle.None;
             richTextBox_SearchForPDFfileWithin.Dock = DockStyle.Fill;
             richTextBox_SearchForPDFfileWithin.Font = new Font("Microsoft Sans Serif", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            richTextBox_SearchForPDFfileWithin.Location = new Point(55, 97);
+            richTextBox_SearchForPDFfileWithin.Location = new Point(8, 28);
             richTextBox_SearchForPDFfileWithin.Margin = new Padding(16, 11, 16, 11);
             richTextBox_SearchForPDFfileWithin.Name = "richTextBox_SearchForPDFfileWithin";
-            richTextBox_SearchForPDFfileWithin.Size = new Size(982, 199);
+            richTextBox_SearchForPDFfileWithin.Size = new Size(1076, 90);
             richTextBox_SearchForPDFfileWithin.TabIndex = 29;
             richTextBox_SearchForPDFfileWithin.Text = "\tSpecifies these folder where the system will search for PDF files containing in the name the PartNumber in question.";
             // 
@@ -2280,9 +1681,9 @@ namespace StockRoom11net
             panel_Space_SearchForPDFfileWithin.Dock = DockStyle.Top;
             panel_Space_SearchForPDFfileWithin.Location = new Point(0, 0);
             panel_Space_SearchForPDFfileWithin.Margin = new Padding(16, 11, 16, 11);
-            panel_Space_SearchForPDFfileWithin.MinimumSize = new Size(1685, 33);
+            panel_Space_SearchForPDFfileWithin.MinimumSize = new Size(250, 12);
             panel_Space_SearchForPDFfileWithin.Name = "panel_Space_SearchForPDFfileWithin";
-            panel_Space_SearchForPDFfileWithin.Size = new Size(1685, 33);
+            panel_Space_SearchForPDFfileWithin.Size = new Size(1092, 12);
             panel_Space_SearchForPDFfileWithin.TabIndex = 30;
             // 
             // tabPage_ConvertFilesFrontThisLocation
@@ -2294,7 +1695,7 @@ namespace StockRoom11net
             tabPage_ConvertFilesFrontThisLocation.Location = new Point(4, 4);
             tabPage_ConvertFilesFrontThisLocation.Margin = new Padding(16, 11, 16, 11);
             tabPage_ConvertFilesFrontThisLocation.Name = "tabPage_ConvertFilesFrontThisLocation";
-            tabPage_ConvertFilesFrontThisLocation.Size = new Size(1092, 625);
+            tabPage_ConvertFilesFrontThisLocation.Size = new Size(1092, 629);
             tabPage_ConvertFilesFrontThisLocation.TabIndex = 10;
             tabPage_ConvertFilesFrontThisLocation.Text = "   Convert files front this location";
             tabPage_ConvertFilesFrontThisLocation.UseVisualStyleBackColor = true;
@@ -2313,29 +1714,29 @@ namespace StockRoom11net
             grouper_ConvertFilesFrontThisLocation.CustomGroupBoxColor = Color.White;
             grouper_ConvertFilesFrontThisLocation.Dock = DockStyle.Top;
             grouper_ConvertFilesFrontThisLocation.GroupTitle = "Scan these folther for...";
-            grouper_ConvertFilesFrontThisLocation.Location = new Point(0, 395);
+            grouper_ConvertFilesFrontThisLocation.Location = new Point(0, 138);
             grouper_ConvertFilesFrontThisLocation.Margin = new Padding(1, 14, 1, 14);
-            grouper_ConvertFilesFrontThisLocation.MinimumSize = new Size(2529, 833);
+            grouper_ConvertFilesFrontThisLocation.MinimumSize = new Size(250, 250);
             grouper_ConvertFilesFrontThisLocation.Name = "grouper_ConvertFilesFrontThisLocation";
-            grouper_ConvertFilesFrontThisLocation.Padding = new Padding(28, 71, 28, 17);
+            grouper_ConvertFilesFrontThisLocation.Padding = new Padding(10, 14, 10, 10);
             grouper_ConvertFilesFrontThisLocation.PaintGroupBox = false;
             grouper_ConvertFilesFrontThisLocation.RoundCorners = 10;
             grouper_ConvertFilesFrontThisLocation.ShadowColor = Color.DarkGray;
             grouper_ConvertFilesFrontThisLocation.ShadowControl = false;
             grouper_ConvertFilesFrontThisLocation.ShadowThickness = 3;
-            grouper_ConvertFilesFrontThisLocation.Size = new Size(2529, 833);
+            grouper_ConvertFilesFrontThisLocation.Size = new Size(1092, 518);
             grouper_ConvertFilesFrontThisLocation.TabIndex = 31;
             // 
             // scanDocumentsAddressGroup_Default
             // 
             scanDocumentsAddressGroup_Default.AutoSize = true;
             scanDocumentsAddressGroup_Default.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            scanDocumentsAddressGroup_Default.Dock = DockStyle.Top;
-            scanDocumentsAddressGroup_Default.Location = new Point(28, 71);
+            scanDocumentsAddressGroup_Default.Dock = DockStyle.Fill;
+            scanDocumentsAddressGroup_Default.Location = new Point(10, 14);
             scanDocumentsAddressGroup_Default.Margin = new Padding(21, 17, 21, 17);
-            scanDocumentsAddressGroup_Default.MinimumSize = new Size(2529, 729);
+            scanDocumentsAddressGroup_Default.MinimumSize = new Size(250, 250);
             scanDocumentsAddressGroup_Default.Name = "scanDocumentsAddressGroup_Default";
-            scanDocumentsAddressGroup_Default.Size = new Size(2529, 729);
+            scanDocumentsAddressGroup_Default.Size = new Size(1072, 494);
             scanDocumentsAddressGroup_Default.TabIndex = 0;
             // 
             // panel_ScanTheseFoltherFor
@@ -2344,11 +1745,11 @@ namespace StockRoom11net
             panel_ScanTheseFoltherFor.AutoSizeMode = AutoSizeMode.GrowAndShrink;
             panel_ScanTheseFoltherFor.BackColor = Color.Transparent;
             panel_ScanTheseFoltherFor.Dock = DockStyle.Top;
-            panel_ScanTheseFoltherFor.Location = new Point(0, 362);
+            panel_ScanTheseFoltherFor.Location = new Point(0, 118);
             panel_ScanTheseFoltherFor.Margin = new Padding(16, 11, 16, 11);
-            panel_ScanTheseFoltherFor.MinimumSize = new Size(1685, 33);
+            panel_ScanTheseFoltherFor.MinimumSize = new Size(250, 20);
             panel_ScanTheseFoltherFor.Name = "panel_ScanTheseFoltherFor";
-            panel_ScanTheseFoltherFor.Size = new Size(1685, 33);
+            panel_ScanTheseFoltherFor.Size = new Size(1092, 20);
             panel_ScanTheseFoltherFor.TabIndex = 32;
             // 
             // grouper_ConvertFilesFrontThisLocationInformation
@@ -2365,13 +1766,13 @@ namespace StockRoom11net
             grouper_ConvertFilesFrontThisLocationInformation.Location = new Point(0, 33);
             grouper_ConvertFilesFrontThisLocationInformation.Margin = new Padding(1, 14, 1, 1);
             grouper_ConvertFilesFrontThisLocationInformation.Name = "grouper_ConvertFilesFrontThisLocationInformation";
-            grouper_ConvertFilesFrontThisLocationInformation.Padding = new Padding(55, 97, 55, 33);
+            grouper_ConvertFilesFrontThisLocationInformation.Padding = new Padding(10, 25, 10, 10);
             grouper_ConvertFilesFrontThisLocationInformation.PaintGroupBox = false;
             grouper_ConvertFilesFrontThisLocationInformation.RoundCorners = 10;
             grouper_ConvertFilesFrontThisLocationInformation.ShadowColor = Color.DarkGray;
             grouper_ConvertFilesFrontThisLocationInformation.ShadowControl = false;
             grouper_ConvertFilesFrontThisLocationInformation.ShadowThickness = 3;
-            grouper_ConvertFilesFrontThisLocationInformation.Size = new Size(1092, 329);
+            grouper_ConvertFilesFrontThisLocationInformation.Size = new Size(1092, 85);
             grouper_ConvertFilesFrontThisLocationInformation.TabIndex = 33;
             // 
             // richTextBox7
@@ -2380,10 +1781,10 @@ namespace StockRoom11net
             richTextBox7.BorderStyle = BorderStyle.None;
             richTextBox7.Dock = DockStyle.Fill;
             richTextBox7.Font = new Font("Microsoft Sans Serif", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            richTextBox7.Location = new Point(55, 97);
+            richTextBox7.Location = new Point(10, 25);
             richTextBox7.Margin = new Padding(16, 11, 16, 11);
             richTextBox7.Name = "richTextBox7";
-            richTextBox7.Size = new Size(982, 199);
+            richTextBox7.Size = new Size(1072, 50);
             richTextBox7.TabIndex = 29;
             richTextBox7.Text = "";
             // 
@@ -2395,146 +1796,10 @@ namespace StockRoom11net
             panel_ScanTheseFoltherForInformation.Dock = DockStyle.Top;
             panel_ScanTheseFoltherForInformation.Location = new Point(0, 0);
             panel_ScanTheseFoltherForInformation.Margin = new Padding(16, 11, 16, 11);
-            panel_ScanTheseFoltherForInformation.MinimumSize = new Size(1685, 33);
+            panel_ScanTheseFoltherForInformation.MinimumSize = new Size(250, 33);
             panel_ScanTheseFoltherForInformation.Name = "panel_ScanTheseFoltherForInformation";
-            panel_ScanTheseFoltherForInformation.Size = new Size(1685, 33);
+            panel_ScanTheseFoltherForInformation.Size = new Size(1092, 33);
             panel_ScanTheseFoltherForInformation.TabIndex = 34;
-            // 
-            // tabPage_PeerToPeerManagement
-            // 
-            tabPage_PeerToPeerManagement.Controls.Add(grouper_P2PsettingUtilityPath);
-            tabPage_PeerToPeerManagement.Controls.Add(panel9);
-            tabPage_PeerToPeerManagement.Controls.Add(grouper_P2PManagement);
-            tabPage_PeerToPeerManagement.Controls.Add(panel8);
-            tabPage_PeerToPeerManagement.Location = new Point(4, 4);
-            tabPage_PeerToPeerManagement.Margin = new Padding(16, 11, 16, 11);
-            tabPage_PeerToPeerManagement.Name = "tabPage_PeerToPeerManagement";
-            tabPage_PeerToPeerManagement.Size = new Size(1092, 625);
-            tabPage_PeerToPeerManagement.TabIndex = 11;
-            tabPage_PeerToPeerManagement.Text = "   Peer To Peer Management";
-            tabPage_PeerToPeerManagement.UseVisualStyleBackColor = true;
-            // 
-            // grouper_P2PsettingUtilityPath
-            // 
-            grouper_P2PsettingUtilityPath.BackgroundColor = SystemColors.Control;
-            grouper_P2PsettingUtilityPath.BackgroundGradientColor = Color.White;
-            grouper_P2PsettingUtilityPath.BackgroundGradientMode = CodeVendor.Controls.Grouper.GroupBoxGradientMode.None;
-            grouper_P2PsettingUtilityPath.BorderColor = Color.Black;
-            grouper_P2PsettingUtilityPath.BorderThickness = 1F;
-            grouper_P2PsettingUtilityPath.Controls.Add(label_NgrokPath);
-            grouper_P2PsettingUtilityPath.Controls.Add(checkBox_IsSuperPeer);
-            grouper_P2PsettingUtilityPath.Controls.Add(button_BrowserNgrokUtilityPath);
-            grouper_P2PsettingUtilityPath.Controls.Add(textBox_NgrokUtilityPath);
-            grouper_P2PsettingUtilityPath.CustomGroupBoxColor = Color.White;
-            grouper_P2PsettingUtilityPath.Dock = DockStyle.Top;
-            grouper_P2PsettingUtilityPath.GroupTitle = "Department Name.";
-            grouper_P2PsettingUtilityPath.Location = new Point(0, 467);
-            grouper_P2PsettingUtilityPath.Margin = new Padding(1);
-            grouper_P2PsettingUtilityPath.Name = "grouper_P2PsettingUtilityPath";
-            grouper_P2PsettingUtilityPath.Padding = new Padding(113, 86, 113, 71);
-            grouper_P2PsettingUtilityPath.PaintGroupBox = false;
-            grouper_P2PsettingUtilityPath.RoundCorners = 10;
-            grouper_P2PsettingUtilityPath.ShadowColor = Color.DarkGray;
-            grouper_P2PsettingUtilityPath.ShadowControl = false;
-            grouper_P2PsettingUtilityPath.ShadowThickness = 3;
-            grouper_P2PsettingUtilityPath.Size = new Size(1092, 341);
-            grouper_P2PsettingUtilityPath.TabIndex = 36;
-            // 
-            // label_NgrokPath
-            // 
-            label_NgrokPath.AutoSize = true;
-            label_NgrokPath.Location = new Point(129, 196);
-            label_NgrokPath.Margin = new Padding(16, 0, 16, 0);
-            label_NgrokPath.Name = "label_NgrokPath";
-            label_NgrokPath.Size = new Size(136, 21);
-            label_NgrokPath.TabIndex = 2;
-            label_NgrokPath.Text = "Ngrok Utility Path:";
-            // 
-            // checkBox_IsSuperPeer
-            // 
-            checkBox_IsSuperPeer.AutoSize = true;
-            checkBox_IsSuperPeer.Location = new Point(731, 94);
-            checkBox_IsSuperPeer.Margin = new Padding(16, 11, 16, 11);
-            checkBox_IsSuperPeer.Name = "checkBox_IsSuperPeer";
-            checkBox_IsSuperPeer.Size = new Size(111, 25);
-            checkBox_IsSuperPeer.TabIndex = 35;
-            checkBox_IsSuperPeer.Text = "IsSuperPeer";
-            checkBox_IsSuperPeer.UseVisualStyleBackColor = true;
-            checkBox_IsSuperPeer.CheckedChanged += checkBox_IsSuperPeer_CheckedChanged;
-            // 
-            // button_BrowserNgrokUtilityPath
-            // 
-            button_BrowserNgrokUtilityPath.Location = new Point(3259, 183);
-            button_BrowserNgrokUtilityPath.Margin = new Padding(16, 11, 16, 11);
-            button_BrowserNgrokUtilityPath.Name = "button_BrowserNgrokUtilityPath";
-            button_BrowserNgrokUtilityPath.Size = new Size(357, 79);
-            button_BrowserNgrokUtilityPath.TabIndex = 4;
-            button_BrowserNgrokUtilityPath.Text = "Browser...";
-            button_BrowserNgrokUtilityPath.UseVisualStyleBackColor = true;
-            button_BrowserNgrokUtilityPath.Click += button_BrowserNgrokUtilityPath_Click;
-            // 
-            // textBox_NgrokUtilityPath
-            // 
-            textBox_NgrokUtilityPath.Location = new Point(731, 186);
-            textBox_NgrokUtilityPath.Margin = new Padding(16, 11, 16, 11);
-            textBox_NgrokUtilityPath.Name = "textBox_NgrokUtilityPath";
-            textBox_NgrokUtilityPath.Size = new Size(2479, 29);
-            textBox_NgrokUtilityPath.TabIndex = 3;
-            textBox_NgrokUtilityPath.Text = "  Not set to any";
-            // 
-            // panel9
-            // 
-            panel9.Dock = DockStyle.Top;
-            panel9.Location = new Point(0, 434);
-            panel9.Margin = new Padding(0);
-            panel9.Name = "panel9";
-            panel9.Size = new Size(1092, 33);
-            panel9.TabIndex = 38;
-            // 
-            // grouper_P2PManagement
-            // 
-            grouper_P2PManagement.BackgroundColor = SystemColors.Info;
-            grouper_P2PManagement.BackgroundGradientColor = Color.DarkGray;
-            grouper_P2PManagement.BackgroundGradientMode = CodeVendor.Controls.Grouper.GroupBoxGradientMode.None;
-            grouper_P2PManagement.BorderColor = Color.Black;
-            grouper_P2PManagement.BorderThickness = 1F;
-            grouper_P2PManagement.Controls.Add(richTextBox_P2PInfomation);
-            grouper_P2PManagement.CustomGroupBoxColor = Color.White;
-            grouper_P2PManagement.Dock = DockStyle.Top;
-            grouper_P2PManagement.GroupTitle = "Peer to Peer Management";
-            grouper_P2PManagement.Location = new Point(0, 33);
-            grouper_P2PManagement.Margin = new Padding(1);
-            grouper_P2PManagement.Name = "grouper_P2PManagement";
-            grouper_P2PManagement.Padding = new Padding(55, 97, 55, 33);
-            grouper_P2PManagement.PaintGroupBox = false;
-            grouper_P2PManagement.RoundCorners = 10;
-            grouper_P2PManagement.ShadowColor = Color.DarkGray;
-            grouper_P2PManagement.ShadowControl = false;
-            grouper_P2PManagement.ShadowThickness = 3;
-            grouper_P2PManagement.Size = new Size(1092, 401);
-            grouper_P2PManagement.TabIndex = 34;
-            // 
-            // richTextBox_P2PInfomation
-            // 
-            richTextBox_P2PInfomation.BackColor = SystemColors.Info;
-            richTextBox_P2PInfomation.BorderStyle = BorderStyle.None;
-            richTextBox_P2PInfomation.Dock = DockStyle.Fill;
-            richTextBox_P2PInfomation.Font = new Font("Microsoft Sans Serif", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            richTextBox_P2PInfomation.Location = new Point(55, 97);
-            richTextBox_P2PInfomation.Margin = new Padding(16, 11, 16, 11);
-            richTextBox_P2PInfomation.Name = "richTextBox_P2PInfomation";
-            richTextBox_P2PInfomation.Size = new Size(982, 271);
-            richTextBox_P2PInfomation.TabIndex = 29;
-            richTextBox_P2PInfomation.Text = "";
-            // 
-            // panel8
-            // 
-            panel8.Dock = DockStyle.Top;
-            panel8.Location = new Point(0, 0);
-            panel8.Margin = new Padding(0);
-            panel8.Name = "panel8";
-            panel8.Size = new Size(1092, 33);
-            panel8.TabIndex = 37;
             // 
             // tabControlExtendBase
             // 
@@ -2649,46 +1914,22 @@ namespace StockRoom11net
             flowLayoutPanel_AddNewPrintHelpsButton.ResumeLayout(false);
             panel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)PicturesBox_Image).EndInit();
-            tabPageSave_Options.ResumeLayout(false);
-            grouper6.ResumeLayout(false);
-            grouper6.PerformLayout();
-            grouper5.ResumeLayout(false);
-            grouper5.PerformLayout();
-            tabPage_InstallationLog.ResumeLayout(false);
-            tabPage_SecurityLockFolder.ResumeLayout(false);
-            grouper_SecurityLockFolder.ResumeLayout(false);
-            panel2.ResumeLayout(false);
-            flowLayoutPanel1.ResumeLayout(false);
-            grouper_SecurityLockFolderButtons.ResumeLayout(false);
-            grouper_Properties.ResumeLayout(false);
-            grouper_Properties.PerformLayout();
-            tabPage_RegisterDLL.ResumeLayout(false);
-            grouper9.ResumeLayout(false);
-            grouper9.PerformLayout();
-            tabPage_SystemCompatibility.ResumeLayout(false);
-            grouper10.ResumeLayout(false);
-            grouper10.PerformLayout();
             tabPage_Documentation.ResumeLayout(false);
             tabPage_Documentation.PerformLayout();
             grouper_DocumentationBehavior.ResumeLayout(false);
-            grouper_NoDocumentsToShow.ResumeLayout(false);
-            panel_NoDocumentsToShow.ResumeLayout(false);
-            panel_NoDocumentsToShow.PerformLayout();
-            grouper_Last2Versions.ResumeLayout(false);
-            panel3.ResumeLayout(false);
-            panel3.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)numericUpDown1).EndInit();
-            grouper_AllVersionsFound.ResumeLayout(false);
+            panel_NotDocumentToShow.ResumeLayout(false);
+            panel_NotDocumentToShow.PerformLayout();
+            panel_LastTwoVersions.ResumeLayout(false);
+            panel_LastTwoVersions.PerformLayout();
             panel_AllVersionsFound.ResumeLayout(false);
             panel_AllVersionsFound.PerformLayout();
-            grouper_LastRevision.ResumeLayout(false);
-            panel_LastRevision.ResumeLayout(false);
-            panel_LastRevision.PerformLayout();
-            grouper_SpecifiedDocument.ResumeLayout(false);
+            panel_TheLastRevision.ResumeLayout(false);
+            panel_TheLastRevision.PerformLayout();
             panel_SpecifiedDocument.ResumeLayout(false);
             panel_SpecifiedDocument.PerformLayout();
+            panel_DefaultDocument.ResumeLayout(false);
+            panel_DefaultDocument.PerformLayout();
             grouper_BrowserVersion.ResumeLayout(false);
-            grouper_BrowserVersion.PerformLayout();
             tabPage_SearchForPDFFileWithin.ResumeLayout(false);
             tabPage_SearchForPDFFileWithin.PerformLayout();
             grouper_DefinedAddressDocumentation.ResumeLayout(false);
@@ -2699,10 +1940,6 @@ namespace StockRoom11net
             grouper_ConvertFilesFrontThisLocation.ResumeLayout(false);
             grouper_ConvertFilesFrontThisLocation.PerformLayout();
             grouper_ConvertFilesFrontThisLocationInformation.ResumeLayout(false);
-            tabPage_PeerToPeerManagement.ResumeLayout(false);
-            grouper_P2PsettingUtilityPath.ResumeLayout(false);
-            grouper_P2PsettingUtilityPath.PerformLayout();
-            grouper_P2PManagement.ResumeLayout(false);
             grouper_ButtonSaveCancel.ResumeLayout(false);
             ResumeLayout(false);
         }
@@ -2710,159 +1947,114 @@ namespace StockRoom11net
         #endregion
 
         private CustomTabControl tabControlExtendBase = new CustomTabControl();
-        private System.Windows.Forms.Label label_DepartmentName;
-        private System.Windows.Forms.TextBox textBox_DataBaseAddress;
-        private System.Windows.Forms.Label label_DataBaseAddress;
         private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog;
-        private System.Windows.Forms.Button button_BrowserDataBase;
         private System.Windows.Forms.Button button_Save_Exit;
         private System.Windows.Forms.Button button_Cancel;
         private CodeVendor.Controls.Grouper grouper_ButtonSaveCancel;
-        private CodeVendor.Controls.Grouper grouper2;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.CheckBox checkBox_ShowWarningsNotifications;
-        private System.Windows.Forms.CheckBox checkBox_ShowMyOwnNotifications;
-        private System.Windows.Forms.CheckBox checkBox_EnableSendReceiveNotifycations;
-        private CodeVendor.Controls.Grouper grouper_Notifycations;
-        private System.Windows.Forms.CheckBox checkBox_SendMyOwnNotifications;
         private System.Windows.Forms.SplitContainer splitContainerSetting;
-        private System.Windows.Forms.CustomTabControl customTabControlSetting;
-        private System.Windows.Forms.TabPage tabPageApplicationSetting;
-        private System.Windows.Forms.TabPage tabPageNotificationsOptions;
         private System.Windows.Forms.TreeView treeViewApplicationsSetting;
-        private System.Windows.Forms.TextBox textBoxApplicationHTMLtemples;
-        private System.Windows.Forms.Button button_ApplicationHTMLtemples;
-        private System.Windows.Forms.Label labelApplicationHTMLtemples;
-        private System.Windows.Forms.TabPage tabPageUSB_DeviceUtility;
         private System.Windows.Forms.ImageList imageListDrag;
         private System.Windows.Forms.ContextMenuStrip _contextMenuStrip;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_Deleted_USB;
-        private System.Windows.Forms.RichTextBox richTextBox1;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_ClearDevices;
-        private System.Windows.Forms.PictureBox PicturesBox_Image;
-        private System.Windows.Forms.SplitContainer splitContainer1;
-        private System.Windows.Forms.Panel panel1;
-        private CodeVendor.Controls.Grouper grouper3;
-        private System.Windows.Forms.CheckBox checkBox_ShowEmailsNotifications;
-        private System.Windows.Forms.CheckBox checkBox_ShowDataBaseUpdateNotifications;
-        private System.Windows.Forms.TabPage tabPageSave_Options;
-        private CodeVendor.Controls.Grouper grouper6;
-        private System.Windows.Forms.CheckBox checkBoxSaveTheInformationByTime;
-        private CodeVendor.Controls.Grouper grouper5;
-        private System.Windows.Forms.CheckBox checkBoxSaveEachTimeTheInformationIsChanged;
-        private System.Windows.Forms.RichTextBox richTextBox2;
-        private System.Windows.Forms.RadioButton radioButtonEvery30minutes;
-        private System.Windows.Forms.RadioButton radioButtonEvery15minutes;
-        private System.Windows.Forms.RadioButton radioButtonEvery5minutes;
-        private System.Windows.Forms.RichTextBox richTextBox3;
-        private System.Windows.Forms.CheckBox checkBoxSaveTheInformationWhenTheUserSaves;
-        private CodeVendor.Controls.Grouper grouper_AddNewPrintHelpsButtons;
-        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel_AddNewPrintHelpsButton;
-        private System.Windows.Forms.Button button_AddNew;
-        private System.Windows.Forms.Button button_Adjustment;
-        private System.Windows.Forms.Button button_RemoveScanner;
-        private System.Windows.Forms.Button button_PrintHelps;
-        private System.Windows.Forms.TabPage tabPage_InstallationLog;
-        private System.Windows.Forms.RichTextBox richTextBox_FirstInstalation;
-        private System.Windows.Forms.TabPage tabPage_SecurityLockFolder;
-        private CodeVendor.Controls.Grouper grouper_SecurityLockFolder;
-        private CodeVendor.Controls.Grouper grouper_Properties;
-        private System.Windows.Forms.CheckBox checkBox_ReadOnly;
-        private System.Windows.Forms.CheckBox checkBox_System;
-        private System.Windows.Forms.CheckBox checkBox_Hidden;
-        private CodeVendor.Controls.Grouper grouper_SecurityLockFolderButtons;
-        private System.Windows.Forms.Button button_Lock;
-        private System.Windows.Forms.Button button_Delete;
-        private System.Windows.Forms.Button button_UnLock;
-        private System.Windows.Forms.ComboBox comboBox_SecurityLockFolder;
-        private System.Windows.Forms.Panel panel2;
-        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
-        private System.Windows.Forms.Button button_Browser;
-        private System.Windows.Forms.CheckBox checkBox_SetIntervalReadNotifications;
-        private CodeVendor.Controls.Grouper grouper4;
-        private System.Windows.Forms.Label label_IntervalSetTo;
-        private System.Windows.Forms.TrackBar trackBar_Interval;
-        private System.Windows.Forms.RadioButton radioButton_Hours;
-        private System.Windows.Forms.RadioButton radioButton_Minutes;
-        private System.Windows.Forms.RadioButton radioButton_secund;
-        private CodeVendor.Controls.Grouper grouper_ArgsToInitializarApp;
-        private CodeVendor.Controls.Grouper grouper7;
-        private CodeVendor.Controls.Grouper grouper_DepartProperties;
-        private System.Windows.Forms.RadioButton radioButton2;
-        private System.Windows.Forms.RadioButton radioButton1;
-        private System.Windows.Forms.TabPage tabPage_RegisterDLL;
-        private CodeVendor.Controls.Grouper grouper9;
-        private System.Windows.Forms.TextBox textBox_BrowsedDLL;
-        private System.Windows.Forms.Button button_BrowserDLL;
-        private System.Windows.Forms.Button button_UnregisterDLL;
-        private System.Windows.Forms.Button button_RegisterDLL;
-        private System.Windows.Forms.TabPage tabPage_SystemCompatibility;
-        private CodeVendor.Controls.Grouper grouper10;
-        private System.Windows.Forms.CheckBox checkBox_SupportDoubleBuffering;
-        private System.Windows.Forms.Label label_SupportDoubleBuffering;
-        private System.Windows.Forms.ComboBox comboBox_ApplicationDepartmentName;
-        private System.Windows.Forms.TabPage tabPage_Documentation;
-        private CodeVendor.Controls.Grouper grouper_DocumentationBehavior;
-        private CodeVendor.Controls.Grouper grouper_SpecifiedDocument;
-        private System.Windows.Forms.Panel panel_SpecifiedDocument;
-        private System.Windows.Forms.RadioButton radioButton_SpecifiedDocument;
-        private System.Windows.Forms.RichTextBox richTextBox_SpecifiedDocument;
-        private CodeVendor.Controls.Grouper grouper_LastRevision;
-        private System.Windows.Forms.Panel panel_LastRevision;
-        private System.Windows.Forms.RadioButton radioButton_LastRevision;
-        private System.Windows.Forms.RichTextBox richTextBox_LastRevision;
-        private CodeVendor.Controls.Grouper grouper_AllVersionsFound;
-        private System.Windows.Forms.Panel panel_AllVersionsFound;
-        private System.Windows.Forms.RadioButton radioButton_AllVersionsFound;
-        private System.Windows.Forms.RichTextBox richTextBox_AllVersionsFound;
-        private CodeVendor.Controls.Grouper grouper_Last2Versions;
-        private System.Windows.Forms.RichTextBox richTextBox4;
-        private System.Windows.Forms.Panel panel3;
-        private System.Windows.Forms.RadioButton radioButton_Last2Versions;
-        private System.Windows.Forms.NumericUpDown numericUpDown1;
-        private System.Windows.Forms.Label label_Versions;
-        private CodeVendor.Controls.Grouper grouper_BrowserVersion;
-        private CodeVendor.Controls.Grouper grouper_DefinedAddressDocumentation;
-        private StockRoom11net.Controls.DocumentationBehavior.DocumentsAddressGroup documentsAddressGroup_SearchForPDFfileWithin;
-        private System.Windows.Forms.TabPage tabPage_SearchForPDFFileWithin;
-        private System.Windows.Forms.Panel panel_Space2;
-        private CodeVendor.Controls.Grouper grouper_SearchForPDFfileWithin;
-        private System.Windows.Forms.RichTextBox richTextBox_SearchForPDFfileWithin;
-        private System.Windows.Forms.Panel panel_Space_SearchForPDFfileWithin;
-        private System.Windows.Forms.TabPage tabPage_ConvertFilesFrontThisLocation;
-        private CodeVendor.Controls.Grouper grouper_ConvertFilesFrontThisLocation;
-        private System.Windows.Forms.Panel panel_ScanTheseFoltherFor;
-        private CodeVendor.Controls.Grouper grouper_ConvertFilesFrontThisLocationInformation;
-        private System.Windows.Forms.RichTextBox richTextBox7;
-        private System.Windows.Forms.Panel panel_ScanTheseFoltherForInformation;
-        private System.Windows.Forms.Panel panel7;
-        private System.Windows.Forms.Panel panel6;
-        private CodeVendor.Controls.Grouper grouper_InfoArgsToInitializarApp;
-        private System.Windows.Forms.RichTextBox richTextBox_InfoArgsToInitializarApp;
-        private System.Windows.Forms.CheckBox checkBox_CheckInternetAccess;
-        private System.Windows.Forms.CheckBox CheckBox_CreateStartupFolderShortcut;
-        private System.Windows.Forms.CheckBox CheckBox_ShowDesktopShortcut;
-        private System.Windows.Forms.Label label_DescriptionInfo;
-        private System.Windows.Forms.Label label_Description;
-        private System.Windows.Forms.Label label_CompanyInfo;
-        private System.Windows.Forms.Label label_company;
-        private System.Windows.Forms.TabPage tabPage_PeerToPeerManagement;
-        private CodeVendor.Controls.Grouper grouper_P2PManagement;
-        private System.Windows.Forms.RichTextBox richTextBox_P2PInfomation;
-        private System.Windows.Forms.CheckBox checkBox_IsSuperPeer;
-        private CodeVendor.Controls.Grouper grouper_P2PsettingUtilityPath;
-        private System.Windows.Forms.Label label_NgrokPath;
-        private System.Windows.Forms.Button button_BrowserNgrokUtilityPath;
-        private System.Windows.Forms.TextBox textBox_NgrokUtilityPath;
-        private System.Windows.Forms.Panel panel9;
-        private System.Windows.Forms.Panel panel8;
-        private CodeVendor.Controls.Grouper grouper_NoDocumentsToShow;
-        private RichTextBox richTextBox_NoDocumentsToShow;
-        private Panel panel_NoDocumentsToShow;
-        private RadioButton radioButton_NoDocumentsToShow;
-        private CheckBox checkBox_PdfViewer;
-        private RichTextBox richTextBox5;
         private ImageList imageListTreeView;
+        private CustomTabControl customTabControlSetting;
+        private TabPage tabPageApplicationSetting;
+        private CodeVendor.Controls.Grouper grouper7;
+        private RadioButton radioButton2;
+        private RadioButton radioButton1;
+        private CodeVendor.Controls.Grouper grouper_ArgsToInitializarApp;
+        private Label label_DescriptionInfo;
+        private Label label_Description;
+        private Label label_CompanyInfo;
+        private Label label_company;
+        private CheckBox CheckBox_CreateStartupFolderShortcut;
+        private CheckBox CheckBox_ShowDesktopShortcut;
+        private CheckBox checkBox_CheckInternetAccess;
+        private CodeVendor.Controls.Grouper grouper_InfoArgsToInitializarApp;
+        private RichTextBox richTextBox_InfoArgsToInitializarApp;
+        private CodeVendor.Controls.Grouper grouper_DepartProperties;
+        private TextBox textBox_DataBaseAddress;
+        private ComboBox comboBox_ApplicationDepartmentName;
+        private Label label_DataBaseAddress;
+        private Label label_DepartmentName;
+        private TextBox textBoxApplicationHTMLtemples;
+        private Button button_BrowserDataBase;
+        private Button button_ApplicationHTMLtemples;
+        private Label labelApplicationHTMLtemples;
+        private TabPage tabPageNotificationsOptions;
+        private CodeVendor.Controls.Grouper grouper2;
+        private Panel panel7;
+        private CodeVendor.Controls.Grouper grouper_Notifycations;
+        private CheckBox checkBox_ShowEmailsNotifications;
+        private CheckBox checkBox_ShowDataBaseUpdateNotifications;
+        private CheckBox checkBox_ShowWarningsNotifications;
+        private CodeVendor.Controls.Grouper grouper3;
+        private CheckBox checkBox_ShowMyOwnNotifications;
+        private CheckBox checkBox_SendMyOwnNotifications;
+        private CodeVendor.Controls.Grouper grouper4;
+        private Label label_IntervalSetTo;
+        private TrackBar trackBar_Interval;
+        private RadioButton radioButton_Hours;
+        private RadioButton radioButton_Minutes;
+        private RadioButton radioButton_secund;
+        private Panel panel6;
+        private Label label1;
+        private CheckBox checkBox_EnableSendReceiveNotifycations;
+        private CheckBox checkBox_SetIntervalReadNotifications;
+        private TabPage tabPageUSB_DeviceUtility;
+        private SplitContainer splitContainer1;
+        private RichTextBox richTextBox1;
+        private CodeVendor.Controls.Grouper grouper_AddNewPrintHelpsButtons;
+        private FlowLayoutPanel flowLayoutPanel_AddNewPrintHelpsButton;
+        private Button button_Adjustment;
+        private Button button_RemoveScanner;
+        private Button button_PrintHelps;
+        private Button button_AddNew;
+        private Panel panel1;
+        private PictureBox PicturesBox_Image;
+        private TabPage tabPage_Documentation;
+        private CodeVendor.Controls.Grouper grouper_DocumentationBehavior;
+        private Panel panel_NotDocumentToShow;
+        private RichTextBox richTextBox_NotDocumentToShow;
+        private Panel panel16;
+        private RadioButton radioButton_NotDocumentToShow;
+        private Panel panel_LastTwoVersions;
+        private RichTextBox richTextBox_LastTwoVersions;
+        private Panel panel15;
+        private RadioButton radioButton_LastTwoVersions;
+        private Panel panel_AllVersionsFound;
+        private RichTextBox richTextBox_AllVersionsFound;
+        private Panel panel13;
+        private RadioButton radioButton_AllVersionsFound;
+        private Panel panel_TheLastRevision;
+        private RichTextBox richTextBox_TheLastRevision;
+        private Panel panel12;
+        private RadioButton radioButton_TheLastRevision;
+        private Panel panel_SpecifiedDocument;
+        private RichTextBox richTextBox_SpecifiedDocument;
+        private Panel panel10;
+        private RadioButton radioButton_SpecifiedDocument;
+        private Panel panel_DefaultDocument;
+        private RichTextBox richTextBox_DefaultDocument;
+        private Panel panel18;
+        private RadioButton radioButton_DefaultDocument;
+        private CodeVendor.Controls.Grouper grouper_BrowserVersion;
+        private RichTextBox richTextBox5;
+        private TabPage tabPage_SearchForPDFFileWithin;
+        private CodeVendor.Controls.Grouper grouper_DefinedAddressDocumentation;
+        private Controls.DocumentationBehavior.DocumentsAddressGroup documentsAddressGroup_SearchForPDFfileWithin;
+        private CodeVendor.Controls.Grouper grouper_SearchForPDFfileWithin;
+        private RichTextBox richTextBox_SearchForPDFfileWithin;
+        private TabPage tabPage_ConvertFilesFrontThisLocation;
+        private CodeVendor.Controls.Grouper grouper_ConvertFilesFrontThisLocation;
+        private Controls.DocumentationBehavior.ScanDocumentsAddressGroup scanDocumentsAddressGroup_Default;
+        private Panel panel_ScanTheseFoltherFor;
+        private CodeVendor.Controls.Grouper grouper_ConvertFilesFrontThisLocationInformation;
+        private RichTextBox richTextBox7;
+        private Panel panel_ScanTheseFoltherForInformation;
+        private Panel panel_Space2;
+        private Panel panel_Space_SearchForPDFfileWithin;
     }
 }

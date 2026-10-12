@@ -304,35 +304,58 @@ namespace StockRoom11net.Controls
         public enum DocumentationBehavior
         {
             /// <summary>
-            /// Specified Document will be open.
+            /// Default Document will be open.<br/>The value of PartNumber
+            /// column will be used to search for the document.
             /// </summary>
-            [Description("Specified Document will be open.")]
-            SpecifiedDocument = 1,
+            [Description("Default Document will be open.<br/>The value of <b>PartNumber</b>" +
+                         " column will be used to search for the document.")]
+            DefaultDocument = 0,
+
             /// <summary>
-            /// The last document revision will be open.
+            /// Specified Document will be open.<br/>The value of DataSheet_File
+            /// column will be used to search for the document.
             /// </summary>
-            [Description("The last document revision will be open.")]
+            [Description("Specified Document will be open.<br/>The value of <b>DataSheet_File</b>" +
+                         " column will be used to search for the document.")]
+            SpecifiedDocument = 1,
+
+            /// <summary>
+            /// The last document revision will be open.<br/>The value of PartNumber
+            /// column will be used and the last revision will be founded and open.
+            /// </summary>
+            [Description("The last document revision will be open.<br/>The value of <b>PartNumber</b>" +
+                         " column will be used and the last revision will be founded and open.")]
             LastRevision = 2,
             /// <summary>
-            /// All Versions Found will be opens.
+            /// All Versions Found will be opens.<br/>The value of PartNumber
+            /// column will be used and all versions (10) will be founded and open.
             /// </summary>
-            [Description("All Versions Found will be opens.")]
+            [Description("All Versions Found will be opens.<br/>The value of <b>PartNumber</b>" +
+                         " column will be used and all versions (10) will be founded and open.")]
             AllVersionsFound = 3,
+
             /// <summary>
-            /// The last two versions will be opens.
+            /// The last two versions will be opens.<br/>The value of PartNumber
+            /// column will be used and the last two versions (2) will be founded and open.
             /// </summary>
-            [Description("The last two versions will be opens.")]
-            Last2Versions = 4,
+            [Description("The last two versions will be opens.<br/>The value of <b>PartNumber</b>" +
+                         " column will be used and the last two versions (2) will be founded and open.")]
+            LastTwoVersions = 4,
+
             /// <summary>
-            /// The user will be browser for an version.
+            /// The user will be browser for an version.<br/>The value of PartNumber
+            /// column will be used to search for the document.
             /// </summary>
-            [Description("The user will be browser for an version.")]
+            [Description("The user will be browser for an version.<br/>The value of <b>PartNumber</b>" +
+                         " column will be used to search for the document.")]
             BrowserForAnVersion = 5,
+
             /// <summary>
-            /// The user will be browser for an version.
+            /// The user will not see any documents.<br/>
+            /// No document will be open, the user will not see any documents.
             /// </summary>
-            [Description("The user will not see any documents.")]
-            NoDocumentsExist = 6
+            [Description("The user will not see any documents.<br/><b>No document will be open, the user will not see any documents.</b>")]
+            DoNotShowDocuments = 6
         }
 
         public enum NotificationEvents

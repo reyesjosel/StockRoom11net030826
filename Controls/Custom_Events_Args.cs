@@ -432,23 +432,49 @@ namespace StockRoom11net.Controls
         public class ActiveDataSheet_EventArgs : EventArgs
         {
             /// <summary>
-            /// Constructor accepts two string: partNumber and dataSheet file name.
+            /// Constructor accepts one string: dataSheet file name.
+            /// </summary>
+            /// <param name="datasheetFileName"></param>
+            public ActiveDataSheet_EventArgs(string datasheetFileName)
+            {
+                PartNumber = "No_PartNumber";
+                DefaultPath = "No_DefaultPath";
+                DataSheet_File = datasheetFileName;
+            }
+
+            /// <summary>
+            /// Constructor accepts three string: partNumber, defaultpath and dataSheet file name.
             /// </summary>
             /// <param name="partNumber">PartNumber of actual row.</param>
-            /// <param name="datasheet">If actual row contains a datasheet.</param>
-            public ActiveDataSheet_EventArgs(string partNumber, string defaultpath, string datasheet)
+            /// <param name="defaultpath">Default path of the datasheet.</param>
+            /// <param name="datasheetFileName">If actual row contains a datasheet.</param>
+            public ActiveDataSheet_EventArgs(string partNumber, string defaultpath, string datasheetFileName)
             {
                 PartNumber = partNumber;
                 DefaultPath = defaultpath;
-                DataSheet = datasheet;
+                DataSheet_File = datasheetFileName;
             }
 
+            /// <summary>
+            /// Default path to be used to assemble the datasheet file full path.
+            /// could be the path to the project main and will be like:
+            /// "C:\\ProductionManagement\\" or Driver letter + ":\\ProductionManagement\\"
+            /// </summary>
             public string DefaultPath { get; set; }
 
+            /// <summary>
+            /// PartNumber of the current selected row.
+            /// </summary>
             public string PartNumber { get; set; }
 
             string _dataSheetInfo = "";
-            public string DataSheet
+
+            /// <summary>
+            /// If current row contains a datasheet at DataSheet_File, this property contains the datasheet file name.
+            /// It only contains the file name including the extension.
+            /// DataSheetFileName.ext
+            /// </summary>
+            public string DataSheet_File
             {
                 get
                 {
@@ -457,10 +483,41 @@ namespace StockRoom11net.Controls
                 set
                 {
                     if (string.IsNullOrEmpty(value))
-                        _dataSheetInfo = null;
+                        _dataSheetInfo = "";
 
                     _dataSheetInfo = value;
                 }
+            }
+
+            /// <summary>
+            /// If current row contains a datasheet at DataSheet_File, this property contains the datasheet full path.
+            /// It is assembled using the DefaultPath and DataSheet_File properties, will be like:
+            /// Driver letter + ":\\ProductionManagement\\DataSheets\\DataSheetFileName.ext"
+            /// </summary>
+            public string DataSheet_FullPath
+            {
+                get
+                {
+                    if (string.IsNullOrEmpty(DefaultPath))
+                        return "";
+
+                    return DefaultPath + "\\DataSheets\\" + DataSheet_File;
+                }
+            }
+
+            /// <summary>
+            /// It is assembled using the PartNumber property, will be like:
+            /// PartNumber.pdf
+            /// </summary>
+            public string PartNumber_DataSheet_File
+            {
+                get
+                { 
+                     if (string.IsNullOrEmpty(PartNumber))
+                            return "";
+
+                     return PartNumber + ".pdf";
+                }            
             }
         }
 
