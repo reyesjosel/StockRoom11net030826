@@ -105,28 +105,7 @@ namespace StockRoom11net
             {
                 ClearPDF_Viewer();
                 return;
-            }
-
-            string _ext = Path.GetExtension(_dataSheet_File_FullPath).ToLower();
-
-            switch (_ext)
-            {
-                case ".pdf":
-                    {
-                        Icon = Resources.file_pdf;
-                        break;
-                    }
-                case ".doc":
-                    {
-                        Icon = Resources.file_doc;
-                        break;
-                    }
-                case ".docx":
-                    {
-                        Icon = Resources.file_docx;
-                        break;
-                    }
-            }
+            }            
 
             Text = Path.GetFileName(_dataSheet_File_FullPath);
             ToolTipText = _dataSheet_File_FullPath;
@@ -395,7 +374,30 @@ namespace StockRoom11net
                 Icon = Resources.Empy_Icon;
             }
             else
+            {
                 TabText = _tabText;
+
+                string _ext = Path.GetExtension(path).ToLower();
+
+                switch (_ext)
+                {
+                    case ".pdf":
+                        {
+                            Icon = Resources.file_pdf;
+                            break;
+                        }
+                    case ".doc":
+                        {
+                            Icon = Resources.file_doc;
+                            break;
+                        }
+                    case ".docx":
+                        {
+                            Icon = Resources.file_docx;
+                            break;
+                        }
+                }
+            }
         }
 
         void Pdf_explorer_form_closing(object sender, FormClosingEventArgs e)

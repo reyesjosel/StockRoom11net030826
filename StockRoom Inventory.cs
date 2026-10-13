@@ -1418,12 +1418,18 @@ namespace StockRoom11net
             WhoUsesThisProcess(e);
         }
 
+        DataRowView lastDataRowView = null;
         void DataGridViewExtendedInventoryCurrentRowActive(object? sender, CurrentRowActive_EventArgs e)
         {
             try
             {
                 if (dataGridViewExtended.DataSource == _bindingSourceStockRoomTreeViewVal)
                     return;
+
+                if(e.CurrentRowViewActive == null || e.CurrentRowViewActive == lastDataRowView)
+                    return;
+
+                lastDataRowView = e.CurrentRowViewActive;
 
                 // Trim whitespace for accurate comparison, we use spaces in the tab text for alignment, so we need to ignore them.
                 // TODO: We need improve this logic to avoid relying on tab text, maybe use a Tag property or a dedicated state variable.

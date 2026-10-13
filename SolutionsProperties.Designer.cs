@@ -1170,7 +1170,7 @@ namespace StockRoom11net
             tabPage_Documentation.Margin = new Padding(16, 11, 16, 11);
             tabPage_Documentation.Name = "tabPage_Documentation";
             tabPage_Documentation.Padding = new Padding(21, 14, 21, 14);
-            tabPage_Documentation.Size = new Size(1092, 629);
+            tabPage_Documentation.Size = new Size(1092, 625);
             tabPage_Documentation.TabIndex = 8;
             tabPage_Documentation.Text = "   Documentation";
             tabPage_Documentation.UseVisualStyleBackColor = true;
@@ -1203,7 +1203,7 @@ namespace StockRoom11net
             grouper_DocumentationBehavior.ShadowColor = Color.DarkGray;
             grouper_DocumentationBehavior.ShadowControl = false;
             grouper_DocumentationBehavior.ShadowThickness = 3;
-            grouper_DocumentationBehavior.Size = new Size(1050, 601);
+            grouper_DocumentationBehavior.Size = new Size(1050, 597);
             grouper_DocumentationBehavior.TabIndex = 20;
             // 
             // panel_NotDocumentToShow
@@ -1569,7 +1569,7 @@ namespace StockRoom11net
             richTextBox5.ShortcutsEnabled = false;
             richTextBox5.Size = new Size(1018, 74);
             richTextBox5.TabIndex = 2;
-            richTextBox5.Text = "\tDo not check the checkbox, the application will use the internal PDF viewer.\nIf you check the checkbox, the application will use the default Windows PDF viewer";
+            richTextBox5.Text = "";
             // 
             // tabPage_SearchForPDFFileWithin
             // 
@@ -1580,7 +1580,7 @@ namespace StockRoom11net
             tabPage_SearchForPDFFileWithin.Location = new Point(4, 4);
             tabPage_SearchForPDFFileWithin.Margin = new Padding(16, 11, 16, 11);
             tabPage_SearchForPDFFileWithin.Name = "tabPage_SearchForPDFFileWithin";
-            tabPage_SearchForPDFFileWithin.Size = new Size(1092, 625);
+            tabPage_SearchForPDFFileWithin.Size = new Size(1092, 629);
             tabPage_SearchForPDFFileWithin.TabIndex = 9;
             tabPage_SearchForPDFFileWithin.Text = "   Search for PDF file within";
             tabPage_SearchForPDFFileWithin.UseVisualStyleBackColor = true;
@@ -1609,7 +1609,7 @@ namespace StockRoom11net
             grouper_DefinedAddressDocumentation.ShadowColor = Color.DarkGray;
             grouper_DefinedAddressDocumentation.ShadowControl = false;
             grouper_DefinedAddressDocumentation.ShadowThickness = 3;
-            grouper_DefinedAddressDocumentation.Size = new Size(1092, 475);
+            grouper_DefinedAddressDocumentation.Size = new Size(1092, 479);
             grouper_DefinedAddressDocumentation.TabIndex = 26;
             // 
             // documentsAddressGroup_SearchForPDFfileWithin
@@ -1621,7 +1621,7 @@ namespace StockRoom11net
             documentsAddressGroup_SearchForPDFfileWithin.Margin = new Padding(21, 17, 21, 17);
             documentsAddressGroup_SearchForPDFfileWithin.MinimumSize = new Size(250, 250);
             documentsAddressGroup_SearchForPDFfileWithin.Name = "documentsAddressGroup_SearchForPDFfileWithin";
-            documentsAddressGroup_SearchForPDFfileWithin.Size = new Size(1076, 453);
+            documentsAddressGroup_SearchForPDFfileWithin.Size = new Size(1076, 457);
             documentsAddressGroup_SearchForPDFfileWithin.TabIndex = 24;
             // 
             // panel_Space2
