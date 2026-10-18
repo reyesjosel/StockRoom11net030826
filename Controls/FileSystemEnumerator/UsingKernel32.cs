@@ -47,7 +47,13 @@ namespace StockRoom11net.Controls.FileSystemEnumerator
         [DllImport("kernel32.dll")]
         public static extern bool FindClose(IntPtr hFindFile);
 
-
+        /// <summary>
+        /// Recursively enumerates a directory and its subdirectories.
+        /// </summary>
+        /// <param name="currentDir">The directory to enumerate.</param>
+        /// <param name="files">Receives the total number of files found.</param>
+        /// <param name="folders">Receives the total number of subdirectories found.</param>
+        /// <returns>The total size, in bytes, of the files found.</returns>
         public static long RecurseDirectory(FileDirectoryModel currentDir, out int files, out int folders)
         {
             long size = 0;

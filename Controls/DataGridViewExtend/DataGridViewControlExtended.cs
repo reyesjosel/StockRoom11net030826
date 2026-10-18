@@ -3343,26 +3343,22 @@ namespace StockRoom11net.Controls.DataGridViewExtend
         }
 
         /// <summary>
-        /// This is another recursive method that returns the Y-coordinate of 
-        /// the topmost portion of the column header. First, a check is 
-        /// performed to see if the DataGrid caption is visible. If not, the 
-        /// Y-coordinate is set to zero and the method returns. Otherwise, a 
-        /// recursion is performed until the DataGrid hit test determines that 
-        /// the current Y-coordinate value does not fall within the boundaries 
-        /// of a ColumnHeader. 
+        /// Returns the Y-coordinate of the topmost portion of the column header.
+        /// If the starting point is inside a column header, the hit test is used
+        /// to find its top edge. Otherwise, the top of the grid is returned.
         /// </summary>
         public int GetTopmostColumnHeaderYCoordinate(int currentX, int currentY)
         {
-            var hti = HitTest(currentX, currentY);
-            var yCoordinate = currentY;
-
             if (!ColumnHeadersVisible)
-                yCoordinate = 0;
-            else
-                if (hti.Type == DataGridViewHitTestType.ColumnHeader)
-                    yCoordinate = GetTopmostColumnHeaderYCoordinate(currentX, --currentY);
-                else
-                    yCoordinate++;
+                return 0;
+
+            var hti = HitTest(currentX, currentY);
+            if (hti.Type != DataGridViewHitTestType.ColumnHeader)
+                return 0;
+
+            var yCoordinate = currentY;
+            while (yCoordinate > 0 && HitTest(currentX, yCoordinate - 1).Type == DataGridViewHitTestType.ColumnHeader)
+                yCoordinate--;
 
             return yCoordinate;
         }

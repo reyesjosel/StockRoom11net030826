@@ -11,6 +11,8 @@ using StockRoom11net.Data;
 using StockRoom11net.Data.Services;
 using System.Diagnostics;
 using System.IO.Compression;
+using System.Reflection;
+using System.Runtime.CompilerServices;
 using static StockRoom11net.Controls.FileSystemEnumerator.UsingKernel32;
 
 namespace StockRoom11net
@@ -33,13 +35,57 @@ namespace StockRoom11net
             // application has not been installed yet, so we do not start the documentation behavior process.
             var dataBaseFileName = Properties.Settings.Default.DataBaseName;
             var installationFirstDate = Properties.Settings.Default.InstallationFirstDate;
+
+            // The root application folder is authoritative from the DataBaseAddress setting.
+            // Fall back to the connection string's directory if DataBaseAddress is not set.
+            // TODO: Consider validating that the folder name is a valid path and prompting the user if it isn't.
+            var rootDirectory = Properties.Settings.Default.DataBaseAddress; //C:\\NoSetYet / "D:\\ProductionManagement";
+
             if (dataBaseFileName == "NoSetYet.sqlite" && installationFirstDate == DateTime.Parse("1/1/2000"))
             {
                 // Ensure the SQLite database directory exists (or ask the user to
                 // choose a location) BEFORE the DbContext/connection string is
                 // registered, otherwise SQLite Error 14 ("unable to open database
                 // file") is thrown when the connection is first opened.
-                EnsureDatabaseLocation();
+                EnsureDatabaseLocation(rootDirectory);
+            }
+            else
+            {
+                if(!IsFolderStructureComplete(rootDirectory))
+                {
+                    MessageBox.Show($"The application folder structure is incomplete or missing at " + Environment.NewLine +
+                                    $" {rootDirectory}. " + Environment.NewLine + Environment.NewLine +                                    
+                                    $"The installation first date is {installationFirstDate:d} and the" + Environment.NewLine +
+                                    $"database file name is {dataBaseFileName}. " + Environment.NewLine +
+                                    $"This indicates that the application has been installed correctly," + Environment.NewLine +
+                                    $"but the folder structure was deleted by mistake." + Environment.NewLine + Environment.NewLine +
+                                    $"Please ensure that the required subfolders exist:" + Environment.NewLine +
+                                    $" {string.Join(", ", RequiredSubFolders)}.",
+                                    "Application Folder Structure Incomplete",
+                                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                    var result = MessageBox.Show($"Would you like to create the required subfolders now? " + Environment.NewLine +
+                                    $"The application will attempt to create them in {rootDirectory}.",
+                                    "Create Required Subfolders",
+                                    MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+                    if (result == DialogResult.Yes)
+                    {
+                        CreateFolderStructure(rootDirectory);
+                        MessageBox.Show($"The required subfolders have been created in {rootDirectory}.",
+                                        "Subfolders Created",
+                                        MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                    else
+                    {
+                        MessageBox.Show($"The application cannot run without the required folder structure." + Environment.NewLine +
+                                        $"Please create the required subfolders manually and restart the application.",
+                                        "Application Cannot Run",
+                                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+
+                    Environment.Exit(1);
+                }
             }
 
             var _appHost = Host.CreateDefaultBuilder()
@@ -86,6 +132,10 @@ namespace StockRoom11net
             Application.Run(_appHost.Services.GetRequiredService<Solutions_TempleClass>());
         }
 
+        /// <summary>
+        /// Those are required subfolders in the application's folder structure,
+        /// we most validate it exists before the application starts.
+        /// </summary>
         private static readonly string[] RequiredSubFolders = { "LogFile", "Pictures", "Projects", "DataSheets", "Resources" };
 
         /// <summary>
@@ -96,7 +146,7 @@ namespace StockRoom11net
         /// a location to create the structure, then persists the resulting connection
         /// string to user settings so the choice is remembered on subsequent launches.
         /// </summary>
-        private static void EnsureDatabaseLocation()
+        private static void EnsureDatabaseLocation(string rootDirectory)
         {
             // Such as: "data source=D:\ProductionManagement\ProductionInventory.sqlite"
             var connectionString = Properties.Settings.Default.DataBaseConnectionStringSQLite;
@@ -112,10 +162,7 @@ namespace StockRoom11net
                 Properties.Settings.Default.DataBaseName = fileName;
             }
 
-            // The root application folder is authoritative from the DataBaseAddress setting.
-            // Fall back to the connection string's directory if DataBaseAddress is not set.
-            // TODO: Consider validating that the folder name is a valid path and prompting the user if it isn't.
-            var rootDirectory = Properties.Settings.Default.DataBaseAddress; //C:\\NoSetYet / "D:\\ProductionManagement";
+            
             if (string.IsNullOrWhiteSpace(rootDirectory) || rootDirectory == "C:\\NoSetYet")
             {
                 rootDirectory = "C:\\ProductionManagement";

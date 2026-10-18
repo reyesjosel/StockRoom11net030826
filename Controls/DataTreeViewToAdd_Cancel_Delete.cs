@@ -1001,17 +1001,22 @@ namespace StockRoom11net.Controls
                     continue;
 
                 string filePath = Path.Join(Settings.Default.DataBaseAddress, imageName);
+                if(!File.Exists(filePath))
+                {   /*
+                    using (var form = new Form() { TopMost = true })
+                    {
+                        MessageBox.Show(form, @"The image path was not found, " + filePath,
+                                                @"System error, The application will continue without an image.",
+                                                MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }*/
+                    continue;
+                }
 
                 try
                 {
                     Image image = Image.FromFile(filePath);
                     if(image == null)
-                        using (var form = new Form() { TopMost = true })
-                        {
-                            MessageBox.Show(form, @"The image path was not found, " + filePath,
-                                                    @"System error, The application will continue without an image.",
-                                                    MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        }
+                        continue;
 
                     imageListTasks.Images.Add(imageName, image);
                 }

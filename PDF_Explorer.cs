@@ -61,10 +61,15 @@ namespace StockRoom11net
             {
                 try
                 {
-                    if (value == null)
+                    if (value == null || value == "")
                     {
                         ClearPDF_Viewer();
                         _dataSheet_File_FullPath = _defaultDataSheetFile.FullName;
+                        return;
+                    }
+                    
+                    if(_dataSheet_File_FullPath == value)
+                    {
                         return;
                     }
 
@@ -332,7 +337,6 @@ namespace StockRoom11net
                     {
                         pageToOpen = pageToOpen.Replace("#", "/A#");  //"/A#"; ":"
 
-                        //On_StatusBarMessage(new StatusBarMessage_EventArgs("PDF dataSheet loaded " + _defaultDataSheetFile.Name + pageToOpen));
                         LoadPdf(_dataSheet_File_FullPath + pageToOpen);
                     }
                 }
@@ -409,6 +413,7 @@ namespace StockRoom11net
         {
             MessageDebugPosition = "ClearPDF_Viewer()";
             Text = "";
+            TabText = " ";
             Icon = Resources.Empy_Icon;
             _lastDataSheet = Settings.Default.DataBaseAddress + "\\DataSheets\\" + "No Empty Data Sheet.PDF";
             _dataSheet_File_FullPath = _lastDataSheet;

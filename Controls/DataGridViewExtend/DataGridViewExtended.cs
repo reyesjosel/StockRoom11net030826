@@ -66,7 +66,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
             DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
             DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
-            _contextMenuStrip_DataGridView = new ContextMenuStrip(components);
+            _contextMenuStripDataGridView = new ContextMenuStrip(components);
             toolStripTextBox_SearchBy = new ToolStripTextBox();
             toolStripSeparatorSearchBy = new ToolStripSeparator();
             ToolStripMenuItem_GroupByThisColumn = new ToolStripMenuItem();
@@ -161,7 +161,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             panel = new Panel();
             _dataGridView = new DataGridViewControlExtended();
             dataGridViewTextBoxColumn1 = new DataGridViewTextBoxColumn();
-            _contextMenuStrip_DataGridView.SuspendLayout();
+            _contextMenuStripDataGridView.SuspendLayout();
             ((ISupportInitialize)_bindingNavigator).BeginInit();
             _bindingNavigator.SuspendLayout();
             ((ISupportInitialize)_bindingSource).BeginInit();
@@ -169,17 +169,17 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             ((ISupportInitialize)_dataGridView).BeginInit();
             SuspendLayout();
             // 
-            // _contextMenuStrip_DataGridView
+            // _contextMenuStripDataGridView
             // 
-            _contextMenuStrip_DataGridView.BackColor = Color.LightGoldenrodYellow;
-            _contextMenuStrip_DataGridView.ImeMode = ImeMode.On;
-            _contextMenuStrip_DataGridView.Items.AddRange(new ToolStripItem[] { toolStripTextBox_SearchBy, toolStripSeparatorSearchBy, ToolStripMenuItem_GroupByThisColumn, ToolStripMenuItem_RemoveGroup, ToolStripMenuItem_CollapseAll, ToolStripMenuItem_ExpandAll, toolStripSeparator1, ToolStripMenuItem_FilterByThisCell, toolStripMenuItem_Custom_Filter, ToolStripMenuItem_RemoveThisFilter, toolStripSeparator2, ToolStripMenuItem_HideThisColumn, ToolStripMenuItem_FrozenUntilHere, ToolStripMenuItem_changeGraphics, ToolStripMenuItem_Columns, toolStripSeparator3, ToolStripMenuItem_Select_by, toolStripMenuItem_editByColumn, ToolStripMenuItem_UnSelect_all_Rows, toolStripSeparator4, toolStripMenuItem_SortByPDF, ToolStripMenuItem_columnsMaintenance, ToolStripMenuItem_Maintenance, toolStripSeparator8, toolStripMenuItem_UnLocked, toolStripMenuItem_MarkWithNote, toolStripMenuItem_EditThisNote, toolStripMenuItem_RemoveThisNote, toolStripMenuItem_MarkToBeErase, ToolStripMenuItem_TheUserHaveNotRightToEdit, toolStripMenuItem_SearchBy, toolStripMenuItem_PrintCompLabel });
-            _contextMenuStrip_DataGridView.LayoutStyle = ToolStripLayoutStyle.HorizontalStackWithOverflow;
-            _contextMenuStrip_DataGridView.Name = "PreviewDataGridViewContextMenuStrip";
-            _contextMenuStrip_DataGridView.RenderMode = ToolStripRenderMode.Professional;
-            _contextMenuStrip_DataGridView.ShowImageMargin = false;
-            _contextMenuStrip_DataGridView.Size = new Size(257, 708);
-            _contextMenuStrip_DataGridView.Opening += ContextMenuStripDataGridViewOpening;
+            _contextMenuStripDataGridView.BackColor = Color.LightGoldenrodYellow;
+            _contextMenuStripDataGridView.ImeMode = ImeMode.On;
+            _contextMenuStripDataGridView.Items.AddRange(new ToolStripItem[] { toolStripTextBox_SearchBy, toolStripSeparatorSearchBy, ToolStripMenuItem_GroupByThisColumn, ToolStripMenuItem_RemoveGroup, ToolStripMenuItem_CollapseAll, ToolStripMenuItem_ExpandAll, toolStripSeparator1, ToolStripMenuItem_FilterByThisCell, toolStripMenuItem_Custom_Filter, ToolStripMenuItem_RemoveThisFilter, toolStripSeparator2, ToolStripMenuItem_HideThisColumn, ToolStripMenuItem_FrozenUntilHere, ToolStripMenuItem_changeGraphics, ToolStripMenuItem_Columns, toolStripSeparator3, ToolStripMenuItem_Select_by, toolStripMenuItem_editByColumn, ToolStripMenuItem_UnSelect_all_Rows, toolStripSeparator4, toolStripMenuItem_SortByPDF, ToolStripMenuItem_columnsMaintenance, ToolStripMenuItem_Maintenance, toolStripSeparator8, toolStripMenuItem_UnLocked, toolStripMenuItem_MarkWithNote, toolStripMenuItem_EditThisNote, toolStripMenuItem_RemoveThisNote, toolStripMenuItem_MarkToBeErase, ToolStripMenuItem_TheUserHaveNotRightToEdit, toolStripMenuItem_SearchBy, toolStripMenuItem_PrintCompLabel });
+            _contextMenuStripDataGridView.LayoutStyle = ToolStripLayoutStyle.HorizontalStackWithOverflow;
+            _contextMenuStripDataGridView.Name = "PreviewDataGridViewContextMenuStrip";
+            _contextMenuStripDataGridView.RenderMode = ToolStripRenderMode.Professional;
+            _contextMenuStripDataGridView.ShowImageMargin = false;
+            _contextMenuStripDataGridView.Size = new Size(257, 708);
+            _contextMenuStripDataGridView.Opening += ContextMenuStripDataGridViewOpening;
             // 
             // toolStripTextBox_SearchBy
             // 
@@ -236,7 +236,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             ToolStripMenuItem_FilterByThisCell.Name = "ToolStripMenuItem_FilterByThisCell";
             ToolStripMenuItem_FilterByThisCell.Size = new Size(256, 26);
             ToolStripMenuItem_FilterByThisCell.Text = "Filter by this cell";
-            ToolStripMenuItem_FilterByThisCell.Click += Tool_strip_menu_item_filterbythis_cell_click;
+            ToolStripMenuItem_FilterByThisCell.Click += ToolStripMenuItem_FilterbyThisCell_click;
             // 
             // toolStripMenuItem_Custom_Filter
             // 
@@ -626,7 +626,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             // 
             _bindingNavigator.AddNewItem = null;
             _bindingNavigator.BindingSource = _bindingSource;
-            _bindingNavigator.ContextMenuStrip = _contextMenuStrip_DataGridView;
+            _bindingNavigator.ContextMenuStrip = _contextMenuStripDataGridView;
             _bindingNavigator.CountItem = bindingNavigatorCountItem;
             _bindingNavigator.DeleteItem = null;
             _bindingNavigator.ImageScalingSize = new Size(18, 18);
@@ -908,7 +908,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             _dataGridView.CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
             _dataGridView.ClipboardCopyMode = DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             _dataGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
-            _dataGridView.ContextMenuStrip = _contextMenuStrip_DataGridView;
+            _dataGridView.ContextMenuStrip = _contextMenuStripDataGridView;
             _dataGridView.CurrentRowBackgroundColor = Color.DeepSkyBlue;
             _dataGridView.CurrentRowBorderColor = Color.DarkBlue;
             dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
@@ -949,8 +949,8 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             Margin = new Padding(4);
             Name = "DataGridViewExtended";
             Size = new Size(1213, 600);
-            _contextMenuStrip_DataGridView.ResumeLayout(false);
-            _contextMenuStrip_DataGridView.PerformLayout();
+            _contextMenuStripDataGridView.ResumeLayout(false);
+            _contextMenuStripDataGridView.PerformLayout();
             ((ISupportInitialize)_bindingNavigator).EndInit();
             _bindingNavigator.ResumeLayout(false);
             _bindingNavigator.PerformLayout();
@@ -965,7 +965,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
 
         #region"Components"
 
-        private ContextMenuStrip _contextMenuStrip_DataGridView;
+        private ContextMenuStrip _contextMenuStripDataGridView;
         private ToolStripMenuItem ToolStripMenuItem_GroupByThisColumn;
         private ToolStripMenuItem ToolStripMenuItem_RemoveGroup;
         private ToolStripMenuItem ToolStripMenuItem_CollapseAll;
@@ -2959,7 +2959,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
 
         // # 4 ... Declare the protected virtual methods for
         // this events, in this procedure we calling the event itself.
-        void ToolStripMenuItem_Pr_Click(object? sender, EventArgs e)
+        void ContextMenuStripDataGridView_ItemClicked(object? sender, EventArgs e)
         {
             ContextMenuStripItemClicked?.Invoke(this, e);
         }
@@ -3278,7 +3278,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             InitializeSaveUserSettingTimer();
 
             // Set the contextMenuStrip.
-            _dataGridView.ContextMenuStrip = _contextMenuStrip_DataGridView;
+            _dataGridView.ContextMenuStrip = _contextMenuStripDataGridView;
 
             /*
             delaySelectionChanged.Interval = 10;
@@ -3981,6 +3981,8 @@ namespace StockRoom11net.Controls.DataGridViewExtend
         // The variables _currentColumnIndex, CurrentRowIndex, keep the position value of mouse pointer.
         void InitializeContextMenu()
         {
+            _contextMenuStripDataGridView.ItemClicked += ContextMenuStripDataGridView_ItemClicked;
+            
             toolStripMenuItem_Fill_by.Click += ToolStripMenuItem_Fill_by_Click;
             toolStripMenuItem_Replace_by.Click += ToolStripMenuItem_Replace_by_Click;
 
@@ -4081,7 +4083,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
                     ColumnTypeMouseRightClick = _dataGridView.CurrentColumnActive.ValueType.Name;
                 }
 
-                _contextMenuStrip_DataGridView.Items.Clear();
+                _contextMenuStripDataGridView.Items.Clear();
 
                 if (_dataGridView.ColumnCount == 0)
                     return;
@@ -4093,7 +4095,8 @@ namespace StockRoom11net.Controls.DataGridViewExtend
                 
                 if (IsMouseOverBindingNavigator)
                 {
-                   _contextMenuStrip_DataGridView.Items.AddRange(new ToolStripItem[]
+                    _contextMenuStripDataGridView.Name = "BindingNavigator right-Click";
+                    _contextMenuStripDataGridView.Items.AddRange(new ToolStripItem[]
                                                             {
                                                                 toolStripMenuItem_FontStyle_BindingNavegator
                                                             });
@@ -4108,10 +4111,11 @@ namespace StockRoom11net.Controls.DataGridViewExtend
                 // If the user right click on the TopLeftHeaderCell
                 if (_dataGridView.HitTestData.RowIndex == -1 & _dataGridView.HitTestData.ColumnIndex == -1)
                 {
+                    _contextMenuStripDataGridView.Name = "TopLeftHeaderCell right-Click";
                     if (_dataGridView.IsMouseOverTopLeftColumnHeaderCellGlyph)
                     {
                         _dataGridView.SelectAllColumnsHeader(true);
-                        _contextMenuStrip_DataGridView.Items.AddRange(new ToolStripItem[]
+                        _contextMenuStripDataGridView.Items.AddRange(new ToolStripItem[]
                                                               {
                                                                 ToolStripMenuItem_Font_Style,
                                                                 ToolStripMenuItem_Alignment,
@@ -4128,7 +4132,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
                     {
                         // TopLeftHeaderCell was clicked.Show the menu for sort by PDF, because
                         // this is the only column that we have in this project that we can sort by it.
-                        _contextMenuStrip_DataGridView.Items.AddRange(new ToolStripItem[]
+                        _contextMenuStripDataGridView.Items.AddRange(new ToolStripItem[]
                                                               {
                                                                 toolStripMenuItem_SortByPDF,
                                                               });
@@ -4136,13 +4140,13 @@ namespace StockRoom11net.Controls.DataGridViewExtend
                         MessageDebugPosition = "Maintenance.";
                         if (_employeeAccessLevel == AccessLevel.Manager)
                         {
-                            _contextMenuStrip_DataGridView.Items.AddRange(new ToolStripItem[]
+                            _contextMenuStripDataGridView.Items.AddRange(new ToolStripItem[]
                                                                      {
                                                                      ToolStripMenuItem_columnsMaintenance,
                                                                      ToolStripMenuItem_Maintenance
                                                                      });
 
-                            _contextMenuStrip_DataGridView.Items.Add(toolStripSeparator1);
+                            _contextMenuStripDataGridView.Items.Add(toolStripSeparator1);
                         }
                     }
                 }
@@ -4157,6 +4161,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
 
                 if (_dataGridView.HitTestData.ColumnIndex > -1 & _dataGridView.HitTestData.RowIndex == -1)
                 {
+                    _contextMenuStripDataGridView.Name = "ColumnHeader right-Click";
                     // ColumnHeader was clicked.
                     if (_dataGridView.ActiveFilterCollection.TryGetValue(
                         _dataGridView.HitTestData.ColumnIndex, out FilteredHeaderCell? value))
@@ -4167,13 +4172,13 @@ namespace StockRoom11net.Controls.DataGridViewExtend
                     else
                         toolStripMenuItem_SearchBy.Text = "Search by " + ColumnNameMouseRightClick + "..."; ;
 
-                    _contextMenuStrip_DataGridView.Items.Add(toolStripMenuItem_SearchBy);
-                    _contextMenuStrip_DataGridView.Items.Add(toolStripSeparatorSearchBy);
+                    _contextMenuStripDataGridView.Items.Add(toolStripMenuItem_SearchBy);
+                    _contextMenuStripDataGridView.Items.Add(toolStripSeparatorSearchBy);
 
                     //Grouping menu.
                     ToolStripMenuItem_GroupByThisColumn.Text = @"Group by " + _dataGridView.CurrentColumnActive.HeaderText;
 
-                    _contextMenuStrip_DataGridView.Items.AddRange(new[]
+                    _contextMenuStripDataGridView.Items.AddRange(new[]
                                                        {
                                                             ToolStripMenuItem_GroupByThisColumn,
                                                             ToolStripMenuItem_RemoveGroup,
@@ -4181,14 +4186,14 @@ namespace StockRoom11net.Controls.DataGridViewExtend
                                                             ToolStripMenuItem_ExpandAll,
                                                        });
 
-                    _contextMenuStrip_DataGridView.Items.Add(toolStripSeparator1);
+                    _contextMenuStripDataGridView.Items.Add(toolStripSeparator1);
 
                     //Selecting and filtering menu.
-                    _contextMenuStrip_DataGridView.Items.Add(toolStripMenuItem_Custom_Filter);
+                    _contextMenuStripDataGridView.Items.Add(toolStripMenuItem_Custom_Filter);
 
                     if (_employeeAccessLevel == AccessLevel.Manager)
                     {
-                        _contextMenuStrip_DataGridView.Items.Add(toolStripMenuItem_editByColumn);
+                        _contextMenuStripDataGridView.Items.Add(toolStripMenuItem_editByColumn);
                         toolStripMenuItem_editByColumn.DropDownItems.AddRange(new[]
                                                                                 {
                                                                                     toolStripMenuItem_Replace_by,
@@ -4197,29 +4202,29 @@ namespace StockRoom11net.Controls.DataGridViewExtend
                     }
 
                     if (_bindingSource.Filter != "")
-                        _contextMenuStrip_DataGridView.Items.Add(ToolStripMenuItem_RemoveThisFilter);
+                        _contextMenuStripDataGridView.Items.Add(ToolStripMenuItem_RemoveThisFilter);
 
                     if (_dataGridView.AreSelectedRows)
-                        _contextMenuStrip_DataGridView.Items.Add(ToolStripMenuItem_UnSelect_all_Rows);
+                        _contextMenuStripDataGridView.Items.Add(ToolStripMenuItem_UnSelect_all_Rows);
 
-                    _contextMenuStrip_DataGridView.Items.Add(toolStripSeparator3);
+                    _contextMenuStripDataGridView.Items.Add(toolStripSeparator3);
 
                     //Columns setting menu.
                     // If column was Frozen, write UnFrozen.
                     ToolStripMenuItem_FrozenUntilHere.Text = _dataGridView.CurrentColumnActive.Frozen ? @"UnFrozen until here" : @"Frozen until here";
 
-                    _contextMenuStrip_DataGridView.Items.AddRange(new[]
+                    _contextMenuStripDataGridView.Items.AddRange(new[]
                                                      {
                                                          ToolStripMenuItem_HideThisColumn,
                                                          ToolStripMenuItem_FrozenUntilHere,
                                                      });
 
-                    _contextMenuStrip_DataGridView.Items.Add(toolStripSeparator4);
-                    _contextMenuStrip_DataGridView.Items.Add(ToolStripMenuItem_Columns);
+                    _contextMenuStripDataGridView.Items.Add(toolStripSeparator4);
+                    _contextMenuStripDataGridView.Items.Add(ToolStripMenuItem_Columns);
 
                     if (_employeeAccessLevel == AccessLevel.Manager)
                     {
-                        _contextMenuStrip_DataGridView.Items.AddRange(new[]
+                        _contextMenuStripDataGridView.Items.AddRange(new[]
                                                         {
                                                             //ToolStripMenuItem_changeGraphics,
                                                             ToolStripMenuItem_columnsMaintenance,
@@ -4237,6 +4242,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
 
                 if (_dataGridView.HitTestData.ColumnIndex == -1 && _dataGridView.HitTestData.RowIndex >= 0)
                 {
+                    _contextMenuStripDataGridView.Name = "RowHeader right-Click";
                     //If the user click rightClick on different row as CurrentRowActivated,
                     //we need active it's.
                     if (_dataGridView.CurrentRowActived.Index != _dataGridView.HitTestData.RowIndex)
@@ -4251,7 +4257,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
                     // RowHeader was clicked, if user have setting as view mode, return.
                     if (CustomEdit == EditMode.View)
                     {
-                        _contextMenuStrip_DataGridView.Items.AddRange(new[]
+                        _contextMenuStripDataGridView.Items.AddRange(new[]
                                                                  {
                                                                      ToolStripMenuItem_TheUserHaveNotRightToEdit
                                                                  });
@@ -4267,7 +4273,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
                     else
                         toolStripMenuItem_UnLocked.Text = "Lock";
 
-                    _contextMenuStrip_DataGridView.Items.AddRange(new[]
+                    _contextMenuStripDataGridView.Items.AddRange(new[]
                                                                   {
                                                                      toolStripMenuItem_UnLocked
                                                                   });
@@ -4277,13 +4283,13 @@ namespace StockRoom11net.Controls.DataGridViewExtend
                     #region"Mark with Note/Edit this Note/Remove this Note"
 
                     if (CurrentRowStatus.HasNote)
-                        _contextMenuStrip_DataGridView.Items.AddRange(new[]
+                        _contextMenuStripDataGridView.Items.AddRange(new[]
                                                               {
                                                                      toolStripMenuItem_EditThisNote,
                                                                      toolStripMenuItem_RemoveThisNote
                                                                });
                     else
-                        _contextMenuStrip_DataGridView.Items.AddRange(new[] { toolStripMenuItem_MarkWithNote });
+                        _contextMenuStripDataGridView.Items.AddRange(new[] { toolStripMenuItem_MarkWithNote });
 
 
                     #endregion"Mark with Note/Edit this Note/Remove this Note"
@@ -4298,7 +4304,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
                             toolStripMenuItem_MarkToBeErase.Text = "Mark as Unerasable";
                     }
 
-                    _contextMenuStrip_DataGridView.Items.AddRange(new[]
+                    _contextMenuStripDataGridView.Items.AddRange(new[]
                                                                   {
                                                                      toolStripMenuItem_MarkToBeErase
                                                                   });
@@ -4309,7 +4315,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
 
                     if (CustomEdit == EditMode.Delete)
                     {
-                        _contextMenuStrip_DataGridView.Items.AddRange(new[]
+                        _contextMenuStripDataGridView.Items.AddRange(new[]
                                                                  {
                                                                      toolStripMenuItem_PrintCompLabel
                                                                  });
@@ -4327,12 +4333,10 @@ namespace StockRoom11net.Controls.DataGridViewExtend
                 MessageDebugPosition = "Cells right-Click.";
                 if (_dataGridView.HitTestData.ColumnIndex > -1 & _dataGridView.HitTestData.RowIndex > -1)
                 {
-
+                    _contextMenuStripDataGridView.Name = "Cells right-Click";
                     // El Click fue en las Cells. 
                     if (_dataGridView.Columns[_dataGridView.HitTestData.ColumnIndex].Frozen)
-
-                    // If column was Frozen, write UnFrozen.
-                    {
+                    {   // If column was Frozen, write UnFrozen.
                         ToolStripMenuItem_FrozenUntilHere.Text = @"UnFrozen until here";
                     }
                     else
@@ -4350,7 +4354,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
                     ToolStripMenuItem_GroupByThisColumn.Text = @"Group by " + _dataGridView.Columns[_dataGridView.HitTestData.ColumnIndex].HeaderText;
 
                     //Grouping menu.
-                    _contextMenuStrip_DataGridView.Items.AddRange(new ToolStripItem[]
+                    _contextMenuStripDataGridView.Items.AddRange(new ToolStripItem[]
                                                                  {
                                                                      ToolStripMenuItem_GroupByThisColumn,
                                                                      ToolStripMenuItem_RemoveGroup,
@@ -4358,29 +4362,29 @@ namespace StockRoom11net.Controls.DataGridViewExtend
                                                                      ToolStripMenuItem_ExpandAll,
                                                                  });
 
-                    _contextMenuStrip_DataGridView.Items.Add(toolStripSeparator1);
+                    _contextMenuStripDataGridView.Items.Add(toolStripSeparator1);
 
                     //Filtering menu.
-                    _contextMenuStrip_DataGridView.Items.AddRange(new[]
+                    _contextMenuStripDataGridView.Items.AddRange(new[]
                                                                  {
                                                                      ToolStripMenuItem_FilterByThisCell,
                                                                      toolStripMenuItem_Custom_Filter,
                                                                  });
 
                     if (_bindingSource.Filter != "")
-                        _contextMenuStrip_DataGridView.Items.Add(ToolStripMenuItem_RemoveThisFilter);
+                        _contextMenuStripDataGridView.Items.Add(ToolStripMenuItem_RemoveThisFilter);
 
-                    _contextMenuStrip_DataGridView.Items.Add(toolStripSeparator2);
+                    _contextMenuStripDataGridView.Items.Add(toolStripSeparator2);
 
                     //Selecting and filling menu.
-                    _contextMenuStrip_DataGridView.Items.AddRange(new[]
+                    _contextMenuStripDataGridView.Items.AddRange(new[]
                                                                  {
                                                                      ToolStripMenuItem_Select_by
                                                                  });
 
                     if (_employeeAccessLevel == AccessLevel.Manager)
                     {
-                        _contextMenuStrip_DataGridView.Items.AddRange(new[]
+                        _contextMenuStripDataGridView.Items.AddRange(new[]
                                                                  {
                                                                      toolStripMenuItem_Replace_by,
                                                                      toolStripMenuItem_Fill_by,
@@ -4388,12 +4392,12 @@ namespace StockRoom11net.Controls.DataGridViewExtend
                     }
 
                     if (_dataGridView.AreSelectedRows)
-                        _contextMenuStrip_DataGridView.Items.Add(ToolStripMenuItem_UnSelect_all_Rows);
+                        _contextMenuStripDataGridView.Items.Add(ToolStripMenuItem_UnSelect_all_Rows);
                 }
 
                 #endregion"Cells right-Click"
 
-                ContextMenuStripOpening_Click(_contextMenuStrip_DataGridView);
+                ContextMenuStripOpening_Click(_contextMenuStripDataGridView);
             }
             catch (Exception error)
             {
@@ -4453,7 +4457,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
 
             filteredHeader?.RemoveFilter();
 
-            _contextMenuStrip_DataGridView.Hide();
+            _contextMenuStripDataGridView.Hide();
 
             _bindingSource.ResetBindings(false);
         }
@@ -4510,21 +4514,24 @@ namespace StockRoom11net.Controls.DataGridViewExtend
         }
 
         bool hitEnter;
+                
         void ToolStripTextBox_SearchBy_KeyUp(object? sender, KeyEventArgs e)
         {
+            // If the user hit Enter key, we need to close the context menu and hide the tool tip.
             if (e.KeyCode == Keys.Enter)
             {
                 hitEnter = true;
                 _toolTipContextMenu.Hide(toolStripTextBox_SearchBy.TextBox);
                 toolStripTextBox_SearchBy.MouseLeave -= ToolStripTextBox_SearchBy_MouseLeave;
                 toolStripTextBox_SearchBy.Text = "Search by...";
-                _contextMenuStrip_DataGridView.Close();
+                _contextMenuStripDataGridView.Close();
 
                 return;
             }
 
             #region"Format filter base column type."
-            // Save the toolStripTextBox_SearchBy contends into the objet.
+
+            // If the user hit any key, we need to format the filter base on the column type.
             filteredHeader.FilterStringBase = toolStripTextBox_SearchBy.Text;
 
             switch (ColumnTypeMouseRightClick)
@@ -4636,7 +4643,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             SuspendLayout();
 
             toolStripTextBox_SearchBy.Text = toolStripMenuItem_SearchBy.Text;
-            _contextMenuStrip_DataGridView.Items.Insert(0, toolStripTextBox_SearchBy);
+            _contextMenuStripDataGridView.Items.Insert(0, toolStripTextBox_SearchBy);
 
             RemoveAllToolStripBut(toolStripTextBox_SearchBy);
             ProcessSearchByClick();
@@ -4666,7 +4673,11 @@ namespace StockRoom11net.Controls.DataGridViewExtend
         {
             try
             {
-                if (_dataGridView.ActiveFilterCollection.TryGetValue(_dataGridView.HitTestData.ColumnIndex, out FilteredHeaderCell? value))
+                var columnIndex = _dataGridView.HitTestData.ColumnIndex;
+                if (columnIndex < 0 || columnIndex >= _dataGridView.Columns.Count)
+                    throw new InvalidOperationException("A filter can only be created for a valid column.");
+
+                if (_dataGridView.ActiveFilterCollection.TryGetValue(columnIndex, out FilteredHeaderCell? value))
                 {
                     //If in this column a filter was active, show it's value.
                     filteredHeader = value;
@@ -4674,16 +4685,8 @@ namespace StockRoom11net.Controls.DataGridViewExtend
                 }
                 else
                 {
-                    var xCoordinate = GetLeftmostColumnHeaderXCoordinate(_dataGridView.Columns[_dataGridView.HitTestData.ColumnIndex].DisplayIndex);
-                    var yCoordinate = GetTopmostColumnHeaderYCoordinate(_dataGridView.HitTestData.ColumnX, _dataGridView.HitTestData.RowY);
-                    var columnWidth = _dataGridView.DisplayedColumns.First(col => col.DisplayIndex == _dataGridView.Columns[_dataGridView.HitTestData.ColumnIndex].DisplayIndex).Width;
-                    var columnHeight = GetColumnHeight(yCoordinate);
-
-                    var columnRegion = new Rectangle(xCoordinate, yCoordinate, columnWidth, columnHeight);
-
-                    //If this column has not active filter, create a new one....
-                    //filteredHeader = new FilteredHeaderCell(_dataGridView, _dataGridView.ColumnClearFilterIndicator, columnRegion);
-                    filteredHeader = new FilteredHeaderCell(_dataGridView, Resources.FilterClearing);
+                    var column = _dataGridView.Columns[columnIndex];
+                    filteredHeader = new FilteredHeaderCell(_dataGridView, column.HeaderCell, Resources.FilterClearing);
                     filteredHeader.RemovedFilterEvent += FilteredHeader_RemovedFilterEvent;
                     toolStripTextBox_SearchBy.Text = "";
                 }
@@ -4709,7 +4712,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
                         filter.ToolStripTextBox.Font = new Font("Segoe", 9);
                         filter.Dock = DockStyle.Top;
 
-                        _contextMenuStrip_DataGridView.Items.Add(filter);
+                        _contextMenuStripDataGridView.Items.Add(filter);
                     }
                 }
             }
@@ -4727,7 +4730,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
         void RemoveAllToolStripBut(ToolStripItem toolStripItem)
         {
             var itemsToRemove = new List<ToolStripItem>();
-            foreach (ToolStripItem menuStrip in _contextMenuStrip_DataGridView.Items)
+            foreach (ToolStripItem menuStrip in _contextMenuStripDataGridView.Items)
             {
                 if (menuStrip.Name.Contains(toolStripItem.Name))
                     continue;
@@ -4737,7 +4740,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
 
             foreach (ToolStripItem itemRemove in itemsToRemove)
             {
-                _contextMenuStrip_DataGridView.Items.Remove(itemRemove);
+                _contextMenuStripDataGridView.Items.Remove(itemRemove);
             }
         }
 
@@ -5032,7 +5035,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
             _dataGridView.ExpandAll();
         }
 
-        void Tool_strip_menu_item_filterbythis_cell_click(object? sender, EventArgs e)
+        void ToolStripMenuItem_FilterbyThisCell_click(object? sender, EventArgs e)
         {
             if (_dataGridView.CurrentCellMouseHover.Value == null)
             {
@@ -5040,11 +5043,15 @@ namespace StockRoom11net.Controls.DataGridViewExtend
                 return;
             }
 
+            ProcessSearchByClick();
+
             if (_dataGridView.CurrentColumnActive.ValueType.FullName == "System.String")
             {
                 string cellValue = _dataGridView.CurrentCellMouseHover.Value + "";
 
                 ActiveFilter = _dataGridView.CurrentColumnActive.HeaderText + " like '*" + Get_String.EscapeLikeValue(cellValue) + "*'";
+                               
+                toolStripTextBox_SearchBy.Text = cellValue;
             }
 
             if (_dataGridView.CurrentColumnActive.ValueType.FullName == "System.Int32")
@@ -5557,7 +5564,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
 
         void ToolStripMenuItem_Font_Click(object sender, EventArgs e)
         {
-            _contextMenuStrip_DataGridView.Close();
+            _contextMenuStripDataGridView.Close();
             _dataGridView.SelectAllColumnsHeader(false);
 
             //using var fontDialog = new FontPickerDialog.FontPickerDialog(_dataGridViewCellStyle.Font);
@@ -5590,7 +5597,7 @@ namespace StockRoom11net.Controls.DataGridViewExtend
 
         void ToolStripMenuItem_FontStyleBindingNavigator_Click(object sender, EventArgs e)
         {
-            _contextMenuStrip_DataGridView.Close();
+            _contextMenuStripDataGridView.Close();
 
             //using var fontDialog = new FontPickerDialog.FontPickerDialog(_dataGridViewCellStyle.Font);
 

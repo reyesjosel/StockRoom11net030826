@@ -1009,6 +1009,9 @@ namespace StockRoom11net
         /// </summary>
         bool FaultColumnPartNumber;
 
+        ToolStripMenuItem toolStripMenuItem_AddDataSheet;
+        ToolStripMenuItem toolStripMenuItem_DeleteDataSheet;
+
         void Initialize_DataGridView()
         {
             dataGridViewExtended.SuspendLayout();
@@ -1041,10 +1044,227 @@ namespace StockRoom11net
             dataGridViewExtended.StatusBarMessageEvent += (s, e) => _iappService.On_StatusBarMessage(e);
             dataGridViewExtended.LogFileMessage += DataGridViewExtendedInventoryLogFileMessage;
 
+            dataGridViewExtended.ContextMenuStripOpening += GetDataGridViewExtended_ContextMenuStripOpening;
             dataGridViewExtended.ContextMenuStripItemClicked += DataGridViewExtended_ContextMenuStripItemClicked;
             dataGridViewExtended.ContextMenuStripPrintCompLabel += DataGridViewExtended_PrintCompLabel;
 
+            toolStripMenuItem_AddDataSheet = new ToolStripMenuItem("Add DataSheet")
+            {
+                BackColor = Color.LightGoldenrodYellow
+            };
+
+            toolStripMenuItem_DeleteDataSheet = new ToolStripMenuItem("Delete DataSheet")
+            {
+                BackColor = Color.LightGoldenrodYellow
+            };
+
+            toolStripMenuItem_DeleteDataSheet.DropDownItemClicked += (s, e) =>
+            {
+                if (e.ClickedItem is ToolStripMenuItem clickedItem)
+                {
+                    string fileNameToDelete = clickedItem.Text;
+                    DeleteDataSheet(fileNameToDelete);
+                }
+            };
+
             dataGridViewExtended.ResumeLayout();
+        }
+
+        void GetDataGridViewExtended_ContextMenuStripOpening(object? sender, ContextMenuStrip e)
+        {
+            switch (e.Name)
+            {
+                case "DataGridViewExtended right-Click":
+                    {                        
+                        break;
+                    }
+                case "ColumnHeader right-Click":
+                    {                        
+                        break;
+                    }
+                case "RowHeader right-Click":
+                    {                        
+                        break;
+                    }
+                case "Cells right-Click":
+                    {
+                        if(dataGridViewExtended.CurrentColumnActive.Name.Contains("DataSheet_File"))
+                        {
+                            ContextMenu_RemoveUnwanted(e);
+
+                            if (dataGridViewExtended._dataGridView.CurrentCellMouseHover == null ||
+                               dataGridViewExtended._dataGridView.CurrentCellMouseHover.RowIndex != dataGridViewExtended.CurrentRowActive.Index)
+                                return;
+
+                            // Check if the current user is a User or Editor, and if so, show a warning message and return
+                            // No user or editor should be able to add or delete datasheets, only Admins and Managers can do that.
+                            if (_employeesService.CurrentEmployeeLogIn.IsUser || _employeesService.CurrentEmployeeLogIn.IsEditor)
+                            {
+                                // Just return, allowing the user to see the native or default menu
+                                return;
+                            }
+                                                        
+                            e.Items.Clear();
+
+                            // Get the current datasheet file names for the selected row
+                            CurrentDataSheetsFileName();
+                                                        
+                            e.Items.Add(toolStripMenuItem_AddDataSheet);
+
+                            // If there are no datasheet files, we don't want to show the "Delete DataSheet" option,
+                            // as it would be confusing to the user.
+                            if (currentFileNames.Count == 0)
+                                break;
+
+                            ToolStripSeparator toolStripSeparator1 = new ToolStripSeparator();
+                            e.Items.Add(toolStripSeparator1);
+
+                            e.Items.Add(toolStripMenuItem_DeleteDataSheet);
+                            toolStripMenuItem_DeleteDataSheet.DropDownItems.Clear();
+
+                            foreach (string fileName in currentFileNames)
+                            {
+                                ToolStripMenuItem toolStripMenuItem_FileName = new ToolStripMenuItem(fileName)
+                                {
+                                    BackColor = Color.LightGoldenrodYellow
+                                };
+                                toolStripMenuItem_DeleteDataSheet.DropDownItems.Add(toolStripMenuItem_FileName);
+                            }
+                        }
+                        
+                        break;
+                    }
+            }
+        }
+
+        static async void ContextMenu_RemoveUnwanted(ContextMenuStrip e)
+        {
+            if (e != null)
+            {
+                e.Items.Remove(e.Items["toolStripMenuItem_Select_by"]);
+                e.Items.Remove(e.Items["toolStripMenuItem_RemoveGroup"]);
+                e.Items.Remove(e.Items["toolStripMenuItem_CollapseAll"]);
+                e.Items.Remove(e.Items["toolStripMenuItem_ExportToExcel"]);
+                e.Items.Remove(e.Items["toolStripMenuItem_ExportToCSV"]);
+                e.Items.Remove(e.Items["toolStripMenuItem_ExportToPDF"]);
+                e.Items.Remove(e.Items["toolStripMenuItem_ExportToHTML"]);
+                e.Items.Remove(e.Items["toolStripMenuItem_SortByPDF"]);
+                e.Items.Remove(e.Items["toolStripMenuItem_PrintCompLabel"]);
+                e.Items.Remove(e.Items["ToolStripMenuItem_GroupByThisColumn"]);
+                e.Items.Remove(e.Items["ToolStripMenuItem_RemoveGroup"]);
+                e.Items.Remove(e.Items["ToolStripMenuItem_CollaseAll"]);
+                e.Items.Remove(e.Items["ToolStripMenuItem_ExpandAll"]);
+                e.Items.Remove(e.Items["toolStripSeparator1"]);
+                e.Items.Remove(e.Items["toolStripMenuItem_editByColumn"]);
+                e.Items.Remove(e.Items["ToolStripMenuItem_RemovethisFilter"]);
+            }
+        }
+
+        void DataGridViewExtended_ContextMenuStripItemClicked(object? sender, EventArgs e)
+        {
+            if(e is ToolStripItemClickedEventArgs args)
+            {
+                switch (args.ClickedItem.Text)
+                {
+                    case "Add DataSheet":
+                        {
+                            // ItemClicked fires before automatic dismissal; close before opening the modal dialog.
+                            if (args.ClickedItem.Owner is ToolStripDropDown menu)
+                                menu.Close(ToolStripDropDownCloseReason.ItemClicked);
+
+                            AddDataSheet();
+                            break;
+                        }
+                    case "Delete DataSheet":
+                        {
+                            //DeleteDataSheet(args.ClickedItem.Text);
+                            break;
+                        }
+                }
+            }
+        }
+
+        List<string> currentFileNames = new List<string>();
+
+        void CurrentDataSheetsFileName()
+        {
+            if (dataGridViewExtended.CurrentRowActive == null || dataGridViewExtended.CurrentColumnActive == null)
+                return;
+
+            var listFileNames = dataGridViewExtended.CurrentRowViewActive["DataSheet_File"];
+            // Safely convert DBNull or null to empty string
+            string fileList = (listFileNames == DBNull.Value || listFileNames == null)
+                            ? string.Empty
+                            : listFileNames.ToString()!;
+
+            currentFileNames.Clear();
+            currentFileNames.AddRange(fileList.Split(separator, StringSplitOptions.RemoveEmptyEntries));
+        }
+
+        async void AddDataSheet()
+        {
+            using (var directoryFile = new DirectoryFile())
+            {
+                string itemPartNumber = dataGridViewExtended.CurrentPartNumber;
+                // OpenFileDialog and returns an array of selected file names, or null if the user cancels the selection.
+                string[] selectedFileNames = directoryFile.ProcessDataSheetFiles(itemPartNumber, false, false);
+
+                // If the user cancels the selection, selectedFileNames will be null or empty, so we return early.
+                if (selectedFileNames == null || selectedFileNames.Length == 0)
+                {
+                    dataGridViewExtended._dataGridView.EndEdit();
+                    return;
+                }
+
+                // Add the selected file names to the current list, ensuring no duplicates are added.
+                foreach (string strFileName in selectedFileNames)
+                {
+                    string diskFileName = Path.GetFileName(strFileName);
+
+                    if (diskFileName == "")
+                    {
+                        dataGridViewExtended._dataGridView.EndEdit();
+                        return;
+                    }
+
+                    if (!currentFileNames.Contains(diskFileName))
+                    {
+                        currentFileNames.Add(diskFileName);
+                    }
+                }
+
+                SaveDataSheetChanges(itemPartNumber, string.Join(";", currentFileNames));
+            }
+        }
+
+        async void DeleteDataSheet(string fileName)
+        {
+            _ = currentFileNames.Remove(fileName);
+
+            string itemPartNumber = dataGridViewExtended.CurrentPartNumber;
+            SaveDataSheetChanges(itemPartNumber, string.Join(";", currentFileNames));
+        }
+
+        async void SaveDataSheetChanges(string itemPartNumber, string fileList)
+        {
+            // Convert the list back to a semicolon-separated string
+            dataGridViewExtended.CurrentRowViewActive["DataSheet_File"] = fileList;
+
+            var dirtyItem = await _tableStockRoomService.GetStockRoomByPartNumberAsync(itemPartNumber);
+            if (dirtyItem == null)
+            {
+                MessageBox.Show($"Could not find the stock room item for PartNumber {itemPartNumber}.", "Error",
+                                MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            else
+            {
+                dirtyItem.DataSheet_File = fileList;
+                await _unitOfWork.TableStockRoomRepository.UpdateAsync(dirtyItem, CancellationToken.None);
+            }
+
+            dataGridViewExtended._dataGridView.EndEdit();
+            dataGridViewExtended._dataGridView.InvalidateRow(dataGridViewExtended.CurrentRowActive.Index);
+            DataSheetProcess();
         }
 
         async void DataGridViewExtended_UserDeletingRow(object? sender, DataGridViewRowCancelEventArgs e)
@@ -1497,58 +1717,7 @@ namespace StockRoom11net
             #region"DataSheet Input"
 
             if (e.ColumnName.Contains("DataSheet_File"))
-            {
-                var listFileNames = dataGridViewExtended.CurrentRowViewActive["DataSheet_File"];
-
-                // Safely convert DBNull or null to empty string
-                string fileList = (listFileNames == DBNull.Value || listFileNames == null)
-                                ? string.Empty
-                                : listFileNames.ToString()!;
-
-                using (var directoryFile = new DirectoryFile())
-                {
-                    string dataSheetPartNumber = dataGridViewExtended.CurrentPartNumber;
-                    var selectedFileNames = directoryFile.ProcessDataSheetFiles(dataSheetPartNumber, false, false);
-
-                    if (selectedFileNames == null || selectedFileNames.Length == 0)
-                    {
-                        dataGridViewExtended._dataGridView.EndEdit();
-                        return;
-                    }
-
-                    foreach (string strFileName in selectedFileNames)
-                    {
-                        var diskFileName = Path.GetFileName(strFileName);
-
-                        if (diskFileName == "")
-                        {
-                            dataGridViewExtended._dataGridView.EndEdit();
-                            return;
-                        }
-
-                        fileList += diskFileName + ";";   // ← use fileList (string) instead of listFileNames (object)
-                    }
-
-                    fileList = fileList.TrimEnd(';'); // Remove the trailing semicolon
-                    dataGridViewExtended.CurrentRowViewActive["DataSheet_File"] = fileList;
-
-                    var dirtyItem = await _tableStockRoomService.GetStockRoomByPartNumberAsync(dataSheetPartNumber);
-                    if(dirtyItem == null)
-                    {
-                        MessageBox.Show($"Could not find the stock room item for PartNumber {dataSheetPartNumber}.", "Error",
-                                        MessageBoxButtons.OK, MessageBoxIcon.Error);                        
-                    }
-                    else
-                    {
-                        dirtyItem.DataSheet_File = fileList;
-                        await _unitOfWork.TableStockRoomRepository.UpdateAsync(dirtyItem, CancellationToken.None);
-                    }
-
-                    dataGridViewExtended._dataGridView.EndEdit();
-                    DataSheetProcess();
-                    return;
-                }
-            }
+                AddDataSheet();
 
             #endregion"DataSheet Input"
 
@@ -1676,12 +1845,7 @@ namespace StockRoom11net
             Update_Description(dataGridViewExtended.CurrentRowViewActive);
             thumbViewer_Pictures.PathFromPartNumber = dataGridViewExtended.CurrentPartNumber;
         }
-
-        void DataGridViewExtended_ContextMenuStripItemClicked(object? sender, EventArgs e)
-        {
-            throw new NotImplementedException();
-        }
-
+        
         void DataGridViewExtended_PrintCompLabel(object? sender, EventArgs e)
         {
             string partNumber = dataGridViewExtended.CurrentPartNumber;
@@ -1697,13 +1861,19 @@ namespace StockRoom11net
                 return;
 
             MessageDebugPosition = "DataSheetProcess()";
-            string dataSheet_File = dataGridViewExtended.CurrentRowViewActive["DataSheet_File"]?.ToString();
+            string? dataSheet_File = dataGridViewExtended.CurrentRowViewActive["DataSheet_File"]?.ToString();
 
             if (dataSheet_File == null || string.IsNullOrEmpty(dataSheet_File) || string.IsNullOrWhiteSpace(dataSheet_File))
                 dataSheet_File = "";
 
+
+
+
+
+
             MessageDebugPosition = "DataSheetProcess() -> DocumentationBehavior";
-            _iappService.On_ActiveDataSheet(new ActiveDataSheet_EventArgs(dataGridViewExtended.CurrentPartNumber, Settings.Default.DataBaseAddress, dataSheet_File));
+            _iappService.On_ActiveDataSheet(new ActiveDataSheet_EventArgs(dataGridViewExtended.CurrentPartNumber,
+                                                                          Settings.Default.DataBaseAddress, dataSheet_File));
         }
 
         void WhoUsesThisProcess(CurrentRowMouseEnterEventArgs e)
@@ -2106,6 +2276,7 @@ namespace StockRoom11net
         /// An interval of 10 seconds to save user setting if this is modifying the user interface.
         /// </summary>
         System.Windows.Forms.Timer SaveUserSettingTimer;
+        private static readonly char[] separator = new[] { ';' };
 
         /// <summary>
         /// Start the SaveUserSettingTimer to save user setting if this is modifying the user interface,

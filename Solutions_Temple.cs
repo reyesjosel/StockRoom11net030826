@@ -3372,11 +3372,14 @@ namespace StockRoom11net
 
         void ProcessDataSheet(ActiveDataSheet_EventArgs e)
         {
-            FileInfo _defaultDataSheetFile;
+            FileInfo _currentDataSheetFile;
             List<string> dataSheetFiles = new List<string>();
 
             try
             {
+                if(e.DataSheet_File == null || e.DataSheet_File == "")
+                    return;
+
                 if (e.DataSheet_File.Contains(";"))
                     dataSheetFiles.AddRange(e.DataSheet_File.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries));
                 else
@@ -3384,7 +3387,7 @@ namespace StockRoom11net
 
                 foreach (string strFileName in dataSheetFiles)
                 {
-                    _defaultDataSheetFile = new FileInfo(e.DataSheet_FullPath);
+                    _currentDataSheetFile = new FileInfo(Path.Combine(Settings.Default.DataBaseAddress, "DataSheets", strFileName));
 
                     if (strFileName.Contains("#pag"))
                     {
@@ -3393,17 +3396,17 @@ namespace StockRoom11net
                         {
                             string pageToOpen = strFileName.Substring(indexOf);
                             string fileName = strFileName.Remove(indexOf);
-                            _defaultDataSheetFile = new FileInfo(fileName);
+                            _currentDataSheetFile = new FileInfo(fileName);
                         }
                     }
                     
-                    if (_defaultDataSheetFile.Exists)
+                    if (_currentDataSheetFile.Exists)
                     {
                         _indexOpenedPdfDocuments++;
 
                         if (_indexOpenedPdfDocuments < openedPDF_Documents.Count)
                         {
-                            openedPDF_Documents[_indexOpenedPdfDocuments].DataSheet_File_FullPath = _defaultDataSheetFile.FullName;
+                            openedPDF_Documents[_indexOpenedPdfDocuments].DataSheet_File_FullPath = _currentDataSheetFile.FullName;
                             OnStatusBarMessage(new StatusBarMessage_EventArgs("The specified file " + e.DataSheet_File +
                                                                               " was found...", Resources.OK));
                         }
@@ -3419,7 +3422,7 @@ namespace StockRoom11net
                         {
                                 documentViewer.DataSheet_File_FullPath = e.DefaultPath + "\\DataSheets\\No Empty Data Sheet.pdf";
                                 OnStatusBarMessage(new StatusBarMessage_EventArgs("The specified file " + e.DataSheet_File +
-                                                          " was not found, but it is already opened...", Resources.ErrorIcon));
+                                                          " was not found...", Resources.ErrorIcon));
                         }                        
                     }                    
                 }

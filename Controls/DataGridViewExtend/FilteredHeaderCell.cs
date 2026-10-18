@@ -36,12 +36,14 @@ namespace StockRoom11net.Controls.DataGridViewExtend
         readonly DataGridViewControlExtended _dataGridView;
 
         public FilteredHeaderCell(DataGridViewControlExtended dataGridView, Image columnClearFilterIndicator)
+            : this(dataGridView, dataGridView?.LatestMouseOverColumnHeaderCell, columnClearFilterIndicator)
         {
-            if (dataGridView != null)
-            {
-                _dataGridView = dataGridView;
-                _headerCell = _dataGridView.LatestMouseOverColumnHeaderCell;
-            }
+        }
+
+        public FilteredHeaderCell(DataGridViewControlExtended dataGridView, DataGridViewHeaderCell? headerCell, Image columnClearFilterIndicator)
+        {
+            _dataGridView = dataGridView ?? throw new ArgumentNullException(nameof(dataGridView));
+            _headerCell = headerCell ?? throw new ArgumentNullException(nameof(headerCell));
 
             if (columnClearFilterIndicator != null)
             {
@@ -49,25 +51,22 @@ namespace StockRoom11net.Controls.DataGridViewExtend
                 ColumnClearFilterIndicatorSize = columnClearFilterIndicator.Size;
             }
 
-            if (_dataGridView != null)
-            {
-                _dataGridView.EnableHeadersVisualStyles = false;
-                _dataGridView.SelectColumn();
+            _dataGridView.EnableHeadersVisualStyles = false;
+            _dataGridView.SelectColumn();
 
-                _dataGridView.MouseMove += DataGridView_MouseMove;
-                _dataGridView.CellPainting += DataGridView_CellPainting;
-                _dataGridView.ColumnHeaderMouseClick += DataGridView_ColumnHeaderMouseClick;
+            _dataGridView.MouseMove += DataGridView_MouseMove;
+            _dataGridView.CellPainting += DataGridView_CellPainting;
+            _dataGridView.ColumnHeaderMouseClick += DataGridView_ColumnHeaderMouseClick;
 
-                _dataGridView.ActiveFilterCollection.Add(FilteredColumnIndex, this);
-            }
+            _dataGridView.ActiveFilterCollection.Add(FilteredColumnIndex, this);
 
             MouseLocation = new Point(0, 0);
-            
+
             IsClearFilterIndicatorPainted = false;
 
             _foreColor = _headerCell.Style.ForeColor;
             _headerCell.Style.ForeColor = Color.Crimson;
-            _headerCellValueColumnName = _headerCell.Value.ToString();
+            _headerCellValueColumnName = _headerCell.Value?.ToString() ?? string.Empty;
             _headerCell.OwningColumn.SortMode = DataGridViewColumnSortMode.Programmatic;
 
             ColumnClearFilterIndicatorRect = new Rectangle(_headerCell.ContentBounds.X + _headerCell.ContentBounds.Width - 10, _headerCell.ContentBounds.Y + 1, 10, 10);

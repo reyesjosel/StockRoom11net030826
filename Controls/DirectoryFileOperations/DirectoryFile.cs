@@ -273,7 +273,7 @@ namespace StockRoom11net.Controls.DirectoryFileOperations
 
         /// <summary>
         /// Copy a picture file to folder Settings.Default.DataBaseAddress + "\\Picture\\",
-        /// renameDiskFileName, true to rename with fileName, false keep original fileName,
+        /// renameDiskFileName, true to rename with itemPartNumber, false keep original itemPartNumber,
         /// deleteOriginalFile, true to delete the source file, false keep source file.
         /// </summary>
         /// <param name="fileName"></param>
@@ -324,7 +324,7 @@ namespace StockRoom11net.Controls.DirectoryFileOperations
                 catch (Exception except)
                 {
                     MessageBox.Show(new Form() { TopMost = true }, @"Image Error ; " + except.Message,
-                        @"Error in CopyFileToPicture(string fileName), class DirectoryFile.cs", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        @"Error in CopyFileToPicture(string itemPartNumber), class DirectoryFile.cs", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
 
@@ -396,18 +396,18 @@ namespace StockRoom11net.Controls.DirectoryFileOperations
 
         /// <summary>
         /// Process dataSheet_File files to folder Settings.Default.DataBaseAddress + "\\DataSheets\\",
-        /// renameDiskFileName, true to rename with fileName, false keep original fileName,
+        /// renameDiskFileName, true to rename with itemPartNumber, false keep original itemPartNumber,
         /// deleteOriginalFile, true to delete the source file, false keep source file.
         /// </summary>
-        /// <param name="fileName"></param>
-        /// <param name="renameDistFileName"></param>
+        /// <param name="itemPartNumber"></param>
+        /// <param name="renameDiskFileName"></param>
         /// <param name="deleteOriginalFile"></param>
         /// <returns></returns>
-        public string[] ProcessDataSheetFiles(string fileName, bool renameDiskFileName, bool deleteOriginalFile)
+        public string[] ProcessDataSheetFiles(string itemPartNumber, bool renameDiskFileName, bool deleteOriginalFile)
         {
             using (var openfile = new OpenFileDialogExt.OpenFileDialogExt(OpenFileDialogExt.OpenFileDialogExt.DialogViewTypes.List)
             {
-                Title = _title ?? @"Please select a pdf file for " + fileName + ".",
+                Title = _title ?? @"Please select a pdf file for " + itemPartNumber + ".",
                 FileName = "",
                 Multiselect = true,
                 Filter = @"*.pdf|*.pdf",
@@ -415,7 +415,7 @@ namespace StockRoom11net.Controls.DirectoryFileOperations
             })
             {
                 if (openfile.ShowDialog(new Form { TopMost = true }) == DialogResult.Cancel)
-                    return new string[] { };
+                    return Array.Empty<string>();
 
                 try
                 {
@@ -426,7 +426,7 @@ namespace StockRoom11net.Controls.DirectoryFileOperations
                         var diskFileName = Settings.Default.DataBaseAddress + "\\DataSheets\\" + Path.GetFileName(strFileName);
 
                         if (renameDiskFileName)
-                            diskFileName = Settings.Default.DataBaseAddress + "\\DataSheets\\" + fileName + Path.GetExtension(strFileName);
+                            diskFileName = Settings.Default.DataBaseAddress + "\\DataSheets\\" + itemPartNumber + Path.GetExtension(strFileName);
 
                         if (!File.Exists(diskFileName))
                             fileInfo.CopyTo(diskFileName, true);
@@ -440,18 +440,18 @@ namespace StockRoom11net.Controls.DirectoryFileOperations
                 catch (Exception except)
                 {
                     MessageBox.Show(new Form { TopMost = true }, @"DataSheets Error ; " + except.Message,
-                        @"Error in CopyFileToDataSheet(string fileName), class DirectoryFile.cs", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        @"Error in CopyFileToDataSheet(string itemPartNumber), class DirectoryFile.cs", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
 
-            return new string[] { };
+            return Array.Empty<string>();
         }
 
         //DirectoryInfo d = new DirectoryInfo("....");
         //FileInfo[] infos = d.GetFiles();
         //foreach(FileInfo f in infos)
         //{
-        //    File.Move(f.FullName, f.FullName.ToString().Replace("abc_","");
+        //    File.Move(f.FullName, f.FullName.ToString().Replace("abc_",""));
         //}
 
         public bool IsValidPath(string path)
