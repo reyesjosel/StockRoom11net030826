@@ -538,7 +538,7 @@ namespace StockRoom11net
         {
             try
             {
-                _statusBarTimer.Stop();
+                _statusBarTimerCollection.Stop();
                 StopThreadTimerCheckStatusTable();
 
                 _stockRoomForm?.Close();
@@ -2772,10 +2772,29 @@ namespace StockRoom11net
 
         #region"StatusBarMessage"
 
-        int _intervalResetCount;
-        int _intervalCount;
-        System.Windows.Forms.Timer _statusBarTimer;
-        System.Windows.Forms.Timer _statusBarTimerToClear;
+        int _statusBarMessageIntervalCount;
+        int _statusBarMessageIntervalSeed;
+
+        /// <summary>
+        /// Provides the timer used to update the status bar,
+        /// This timer is used to process the messages in the status bar message collection.
+        /// </summary>
+        System.Windows.Forms.Timer _statusBarTimerCollection;
+
+        /// <summary>
+        /// Provides the timer used to show messages in the status bar.
+        /// This timer is used to show the message during a number of
+        /// times and clear the messages after a certain interval.
+        /// </summary>
+        System.Windows.Forms.Timer _statusBarTimerShowMessage;
+
+        /// <summary>
+        /// Gets or stores the status bar messages.
+        /// Collection of messages to be displayed in the status bar.
+        /// For every message in the collection, the _statusBarTimerCollection timer will
+        /// be started and it starts the _statusBarTimerShowMessage timer to show the
+        /// message during a number of times and clear the messages after a certain interval.
+        /// </summary>
         ObservableCollection<StatusBarMessage_EventArgs> _statusBarMessageCollection;
 
         /// <summary>
@@ -2793,22 +2812,22 @@ namespace StockRoom11net
             toolStripStatusLabel_Progress.Text = "";
             toolStripStatusLabel_Message.Text = "";
 
-            _intervalCount = 100;
-            _intervalResetCount = 100;
+            _statusBarMessageIntervalSeed = 100;
+            _statusBarMessageIntervalCount = _statusBarMessageIntervalSeed;
             _statusBarMessageCollection = new ObservableCollection<StatusBarMessage_EventArgs>();
             _statusBarMessageCollection.CollectionChanged += StatusBarMessage_CollectionChanged;
 
-            _statusBarTimer = new System.Windows.Forms.Timer
+            _statusBarTimerCollection = new System.Windows.Forms.Timer
             {
                 Interval = 400
             };
-            _statusBarTimer.Tick += new EventHandler(StatusBarTimer_Tick);
+            _statusBarTimerCollection.Tick += new EventHandler(StatusBarTimerCollection_Tick);
 
-            _statusBarTimerToClear = new System.Windows.Forms.Timer
+            _statusBarTimerShowMessage = new System.Windows.Forms.Timer
             {
                 Interval = 10
             };
-            _statusBarTimerToClear.Tick += new EventHandler(StatusBarTimerToClear_Tick);
+            _statusBarTimerShowMessage.Tick += new EventHandler(StatusBarTimerShowMessage_Tick);
         }
 
         void StatusBarMessage_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
@@ -2816,15 +2835,19 @@ namespace StockRoom11net
             if (e.Action == NotifyCollectionChangedAction.Remove)
                 return;
 
-            if (_statusBarTimer.Enabled)
+            if (_statusBarTimerCollection.Enabled)
                 return;
 
-            _statusBarTimer.Start();
+            // Don't start the timer if there are no messages in the collection.
+            if (_statusBarMessageCollection.Count == 0)
+                return;
+
+            _statusBarTimerCollection.Start();
         }
 
-        void StatusBarTimer_Tick(object? sender, EventArgs e)
+        void StatusBarTimerCollection_Tick(object? sender, EventArgs e)
         {
-            _statusBarTimer.Stop();
+            _statusBarTimerCollection.Stop();
 
             StatusBarMessage_EventArgs message_EventArgs;
             message_EventArgs = _statusBarMessageCollection[0];
@@ -2835,31 +2858,34 @@ namespace StockRoom11net
                 toolStripStatusLabel_Message.Text = message_EventArgs.StatusBarMessage;
             });
 
-            _statusBarMessageCollection.RemoveAt(0);
+            if(_statusBarMessageCollection.Count == 1)
+                _statusBarMessageCollection.Clear();
+            else
+                _statusBarMessageCollection.RemoveAt(0);
 
-            _statusBarTimerToClear.Start();
+            _statusBarTimerShowMessage.Start();
         }
 
-        void StatusBarTimerToClear_Tick(object? sender, EventArgs e)
+        void StatusBarTimerShowMessage_Tick(object? sender, EventArgs e)
         {
-            if (_intervalResetCount > 0)
+            if (_statusBarMessageIntervalCount > 0)
             {
                 if (_mouseInToolStripStatusLabel_Progress)
                     return;
 
-                _intervalResetCount--;
+                _statusBarMessageIntervalCount--;
 
                 if (_statusBarMessageCollection.Count == 0)
-                    toolStripStatusLabel_Progress.Text = "" + _intervalResetCount;
+                    toolStripStatusLabel_Progress.Text = "" + _statusBarMessageIntervalCount;
                 else
-                    toolStripStatusLabel_Progress.Text = _statusBarMessageCollection.Count + " -> " + _intervalResetCount;
+                    toolStripStatusLabel_Progress.Text = _statusBarMessageCollection.Count + " -> " + _statusBarMessageIntervalCount;
 
                 return;
             }
 
-            _intervalResetCount = _intervalCount;
+            _statusBarMessageIntervalCount = _statusBarMessageIntervalSeed;
 
-            _statusBarTimerToClear.Stop();
+            _statusBarTimerShowMessage.Stop();
 
             InvokeOnUiThreadIfRequired(this, () =>
             {
@@ -2868,8 +2894,9 @@ namespace StockRoom11net
                 toolStripStatusLabel_Message.Text = string.Empty;
             });
 
+            // If there are more messages in the collection, start the timer to process them.
             if (_statusBarMessageCollection.Count > 0)
-                _statusBarTimer.Start();
+                _statusBarTimerCollection.Start();
         }
 
         public void OnStatusBarMessage(StatusBarMessage_EventArgs e)
@@ -3405,7 +3432,7 @@ namespace StockRoom11net
                         _indexOpenedPdfDocuments++;
 
                         if (_indexOpenedPdfDocuments < openedPDF_Documents.Count)
-                        {
+                        {                            
                             openedPDF_Documents[_indexOpenedPdfDocuments].DataSheet_File_FullPath = _currentDataSheetFile.FullName;
                             OnStatusBarMessage(new StatusBarMessage_EventArgs("The specified file " + e.DataSheet_File +
                                                                               " was found...", Resources.OK));

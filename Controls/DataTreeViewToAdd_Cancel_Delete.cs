@@ -748,7 +748,6 @@ namespace StockRoom11net.Controls
             olvDataTreeMaster.KeyDown += OlvDataTreeMaster_KeyDown;
             olvDataTreeMaster.Expanding += OlvDataTreeMaster_Expanding;
             olvDataTreeMaster.Expanded += OlvDataTreeMaster_Expanded;
-            olvDataTreeMaster.MouseDown += OlvDataTreeMaster_MouseDown;
             olvDataTreeMaster.MouseClick += OlvDataTreeMaster_MouseClick;
             olvDataTreeMaster.MouseWheel += OlvDataTreeMaster_MouseWheel;
             olvDataTreeMaster.ColumnWidthChanged += OlvDataTreeMaster_ColumnWidthChanged;
@@ -920,7 +919,6 @@ namespace StockRoom11net.Controls
             olvDataTreeMaster.KeyDown -= OlvDataTreeMaster_KeyDown;
             olvDataTreeMaster.Expanding -= OlvDataTreeMaster_Expanding;
             olvDataTreeMaster.Expanded -= OlvDataTreeMaster_Expanded;
-            olvDataTreeMaster.MouseDown -= OlvDataTreeMaster_MouseDown;
             olvDataTreeMaster.MouseClick -= OlvDataTreeMaster_MouseClick;
             olvDataTreeMaster.MouseWheel -= OlvDataTreeMaster_MouseWheel;
             olvDataTreeMaster.ColumnWidthChanged    -= OlvDataTreeMaster_ColumnWidthChanged;
@@ -1624,35 +1622,30 @@ namespace StockRoom11net.Controls
         /// <summary>
         /// Handles the event triggered when the selected index of the ObjectListView data tree changes.
         /// </summary>
-        /// <remarks>This method updates the current data-bound object and its associated properties when
-        /// the selection changes. It ensures that the selected itemEFtableTreeView is valid and processes the selection only if
-        /// certain conditions are met, such as the mouse position being within the bounds of the control or a key press
-        /// triggering the event.</remarks>
+        /// <remarks>An empty selection is represented by _emptyNodeItem and reported regardless of mouse position.
+        /// Selected nodes update the data-bound type and image list before the normal master notification.</remarks>
         /// <param name="sender">The source of the event, typically the ObjectListView control.</param>
         /// <param name="e">An <see cref="EventArgs"/> instance containing the event data.</param>
         public void OlvDataTreeMaster_SelectedIndexChanged(object? sender, EventArgs e)
         {
             try
-            {                
-                Type type = sender.GetType();
-
-                // Check if the mouse is outside the bounds of the control and no key press triggered the event
-                // If so, exit the method early, unless the sender is a CustomTabControl
-                //   if (!(olvDataTreeMaster.Bounds.Contains(PointToClient(MousePosition))) & !keyPressDataTreeList)
-                //       if (!type.Name.Contains("CustomTabControl"))
-                //           return;
-
+            {
                 keyPressDataTreeList = false;
 
-                if (olvDataTreeMaster.SelectedItem == null)
+                var selectedItem = olvDataTreeMaster.SelectedItem;
+                if (selectedItem == null)
+                {
+                    CurrentNodeItem = _emptyNodeItem;
+                    UpDateCurrentSelectedIndex("ByProgram");
                     return;
+                }
 
-                DataBoundObject = olvDataTreeMaster.SelectedItem.RowObject.GetType();
+                DataBoundObject = selectedItem.RowObject.GetType();
                 DataBoundObject_Name = DataBoundObject.Name;
 
                 if (DataBoundObject_Name.Contains("TreeView"))
                 {
-                    Table_Base_TreeView? _currentNodeTBT = olvDataTreeMaster.SelectedItem.RowObject as Table_Base_TreeView;
+                    Table_Base_TreeView? _currentNodeTBT = selectedItem.RowObject as Table_Base_TreeView;
                     if (_currentNodeTBT != null)
                     {
                         // If the current node item is not null and its ID matches the selected node's ID,
@@ -1751,25 +1744,14 @@ namespace StockRoom11net.Controls
 
         void OlvDataTreeMaster_MouseClick(object? sender, MouseEventArgs e)
         {
-            if (olvDataTreeMaster.SelectedItem == null)
-            {
-                CurrentNodeItem = _emptyNodeItem;
-                _bindingSourceTreeView.Position = -1;
-                UpDateCurrentSelectedIndex("Master");
-            }
-        }
+            if (olvDataTreeMaster.HitTest(e.Location).Item != null)
+                return;
 
-        void OlvDataTreeMaster_MouseDown(object? sender, MouseEventArgs e)
-        {
-            if (olvDataTreeMaster.HotCellHitLocation == HitTestLocation.Nothing)
-            {
-                if (_bindingSourceTreeView.Position == -1)
-                    return;
-                olvDataTreeMaster.FocusedItem = null;
-                CurrentNodeItem = _emptyNodeItem;
-                _bindingSourceTreeView.Position = -1;
-                UpDateCurrentSelectedIndex("Master");
-            }
+            olvDataTreeMaster.DeselectAll();
+            olvDataTreeMaster.FocusedItem = null;
+
+            // DeselectAll raises no event if the selection was already empty.
+            OlvDataTreeMaster_SelectedIndexChanged(sender, EventArgs.Empty);
         }
 
         void OlvDataTreeMaster_MouseWheel(object? sender, MouseEventArgs e)

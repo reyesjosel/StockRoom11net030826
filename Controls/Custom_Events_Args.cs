@@ -785,7 +785,7 @@ namespace StockRoom11net.Controls
         // put some information to Properties Manager.
         [Category("Controls Events")]
         [Description("The TreeView data source has been changed")]
-        public static event TreeViewSelectedIndexChangedEventHandler TreeViewSelectedIndexChanged;
+        public static event TreeViewSelectedIndexChangedEventHandler? TreeViewSelectedIndexChanged;
 
         // # 2 ... ***** New Event Declaration. *****
         // Declare the delegates for this event:
@@ -800,7 +800,7 @@ namespace StockRoom11net.Controls
 
             }
 
-            public Table_Base_TreeView CurrentNode { get; set; }
+            public Table_Base_TreeView? CurrentNode { get; set; }
 
         }
 

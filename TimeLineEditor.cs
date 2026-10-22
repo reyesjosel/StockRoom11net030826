@@ -45,6 +45,7 @@ namespace StockRoom11net
         // Injected EF Core services
         private readonly IAppService _iappService;
         private readonly ITimeLineService _itimeLineService;
+        private Action? _timelineReadyHandler;
         private readonly ITableTimeLineService _itableTimeLineService;
         private readonly ITableTimeLineTreeViewService _itableTimeLineTreeViewService;
         private readonly IUnitOfWork _unitOfWork;
@@ -195,7 +196,9 @@ namespace StockRoom11net
 
             // Do NOT call InitializeTimeLineItems on Shown — the BlazorWebView has not rendered yet.
             // Instead, subscribe to TimelineReadyEvent which fires after timelineInterop.create() completes.
-            _itimeLineService.TimelineReadyEvent += async () => await InitializeTimeLineItems();
+            _timelineReadyHandler = () => _ = InitializeTimeLineItems();
+            _itimeLineService.TimelineReadyEvent += _timelineReadyHandler;
+            Disposed += (_, _) => _itimeLineService.TimelineReadyEvent -= _timelineReadyHandler;
 
             Name = "TimeLineEditor";
             dataGridViewExtended.Name = "DGVExt_TimeLine";
@@ -446,8 +449,6 @@ namespace StockRoom11net
            
             splitContainer_Horizontal.SplitterWidth = 3;
             splitContainer_Vertical.SplitterWidth = 3;
-
-            customTabControl_TimeLine.Alignment = TabAlignment.Bottom;
 
             customTabControl_TimeLine.MouseDownResizeGripEvent += CustomTabControl_TimeLine_MouseDownResizeGripEvent;
             customTabControl_TimeLine.MouseUpResizeGripEvent += customTabControl_TimeLine_MouseUpResizeGripEvent;
@@ -1123,14 +1124,8 @@ namespace StockRoom11net
                 // InitialDataJson = JsonSerializer.Serialize(visItems);
 
                 // OnItemsClassName(visItems);       // Construct timeline items with class names and serialize to JSON
-                OnHTMLContents(visItems);           // Construct HTML content for timeline items and serialize to JSON
+                InitialDataJson = OnHTMLContents(visItems); // Construct HTML content for timeline items and serialize to JSON
 
-                // TODO: Consider using a more robust mechanism to ensure that the JS interop is ready before calling InitializeData.
-                await Task.Delay(300);              // Wait for the JS interop to be ready before calling InitializeData
-                                                    // 155ms is the minimun delay where the JS interop is ready, but 300ms
-                                                    // is a safe delay to ensure the JS interop is ready, but you can adjust
-                                                    // this value based on your application's performance and responsiveness.
-                                                    
                 await _itimeLineService.InitializeData(InitialDataJson);
             }
             catch (JSException ex)
@@ -1254,7 +1249,7 @@ namespace StockRoom11net
         /// Seven timeline items are created, each with different HTML content, including text, images,
         /// classNames and links.
         /// </summary>
-        void OnHTMLContents(List<TimeLineItem>? items)
+        string OnHTMLContents(List<TimeLineItem>? items)
         {
             // ✅ Build the HTML content as a C# string instead
             string item1 = "<div>Your content here</div>";
@@ -1307,7 +1302,7 @@ namespace StockRoom11net
             }
 
             // Serialize to JSON
-            InitialDataJson = JsonSerializer.Serialize(items);
+            return JsonSerializer.Serialize(items);
         }
 
 

@@ -39,6 +39,7 @@ namespace StockRoom11net
         // Injected EF Core services
         private readonly IAppService _iappService;
         private readonly ITimeLineService _itimeLineService;
+        private Action? _timelineReadyHandler;
         private readonly IUnitOfWork _unitOfWork;
         private readonly ITableStockRoomService _tableStockRoomService;
         private readonly ITableStockRoomTreeViewService _tableStockRoomTreeViewService;
@@ -367,6 +368,7 @@ namespace StockRoom11net
 
             this.Disposed += (s, e) =>
             {
+                _itimeLineService?.TimelineReadyEvent -= _timelineReadyHandler;
                 SaveUserSettingTimer?.Stop();
                 SaveUserSettingTimer?.Dispose();
             };
@@ -385,7 +387,8 @@ namespace StockRoom11net
 
             // Do NOT call InitializeTimeLineItems on Shown — the BlazorWebView has not rendered yet.
             // Instead, subscribe to TimelineReadyEvent which fires after timelineInterop.create() completes.
-            _itimeLineService.TimelineReadyEvent += async () => await InitializeTimeLineItems();
+            _timelineReadyHandler = () => _ = InitializeTimeLineItems();
+            _itimeLineService.TimelineReadyEvent += _timelineReadyHandler;
 
             Name = "StockRoom_Inventory";
             dataGridViewExtended.Name = "DGVExt_StockRoom";
@@ -720,12 +723,6 @@ namespace StockRoom11net
             {
                 InitialDataJson = JsonSerializer.Serialize(_itimeLineService.OnHTMLContents(125));
 
-                // TODO: Consider using a more robust mechanism to ensure that the JS interop is ready before calling InitializeData.
-                await Task.Delay(300);              // Wait for the JS interop to be ready before calling InitializeData
-                                                    // 155ms is the minimun delay where the JS interop is ready, but 300ms
-                                                    // is a safe delay to ensure the JS interop is ready, but you can adjust
-                                                    // this value based on your application's performance and responsiveness.
-
                 await _itimeLineService.InitializeData(InitialDataJson);
             }
             catch (JSException ex)
@@ -970,7 +967,7 @@ namespace StockRoom11net
                 if (dataGridViewExtended.DataSource == _bindingSourceStockRoomVal)
                 {
                     // ✅ Filter now works because DataSource is a DataView
-                    dataGridViewExtended.CustomFilter = e.CurrentNode.String_Filter;
+                    dataGridViewExtended.CustomFilter = e.CurrentNode.String_Filter?? string.Empty;
                 }
 
                 #region"tabPage_DataTreeViewSetting"
@@ -1865,11 +1862,6 @@ namespace StockRoom11net
 
             if (dataSheet_File == null || string.IsNullOrEmpty(dataSheet_File) || string.IsNullOrWhiteSpace(dataSheet_File))
                 dataSheet_File = "";
-
-
-
-
-
 
             MessageDebugPosition = "DataSheetProcess() -> DocumentationBehavior";
             _iappService.On_ActiveDataSheet(new ActiveDataSheet_EventArgs(dataGridViewExtended.CurrentPartNumber,

@@ -96,7 +96,8 @@ namespace StockRoom11net
 
                     // Legacy Services (can be removed gradually)
                     services.AddSingleton<IAppService, AppService>();
-                    services.AddSingleton<ITimeLineService, TimeLineService>();
+                    services.AddTransient<ITimeLineService, TimeLineService>();
+                    //services.AddSingleton<ITimeLineService, TimeLineService>();
 
                     // Forms
                     services.AddTransient<Solutions_TempleClass>();

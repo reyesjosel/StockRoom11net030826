@@ -109,17 +109,6 @@
     <None Remove="SeedData\Resources.zip" />
   </ItemGroup>
   <ItemGroup>
-    <COMReference Include="PDFXCviewAxLib">
-      <VersionMinor>0</VersionMinor>
-      <VersionMajor>1</VersionMajor>
-      <Guid>2e19d395-7974-480b-9e28-cf1d7536983f</Guid>
-      <Lcid>0</Lcid>
-      <WrapperTool>tlbimp</WrapperTool>
-      <Isolated>false</Isolated>
-      <EmbedInteropTypes>true</EmbedInteropTypes>
-    </COMReference>
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="Properties\ReleaseDate.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>

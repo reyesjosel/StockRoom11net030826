@@ -1,5 +1,4 @@
 ﻿using Microsoft.Web.WebView2.WinForms;
-using PDFXCviewAxLib;
 using StockRoom11net.Controls;
 using StockRoom11net.Controls.EmployeeInformation;
 using StockRoom11net.Controls.ResourcesCache;
@@ -7,8 +6,6 @@ using StockRoom11net.Data.Services;
 using StockRoom11net.Properties;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Numerics.Colors;
-using System.Runtime.InteropServices;
 using WinFormsUI.Docking;
 using static StockRoom11net.Controls.Custom_Events_Args;
 using ActiveDataSheet_EventArgs = StockRoom11net.Controls.Custom_Events_Args.ActiveDataSheet_EventArgs;

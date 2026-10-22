@@ -84,6 +84,7 @@ namespace StockRoom11net
             // 
             // customTabControl_TimeLine
             // 
+            customTabControl_TimeLine.Alignment = TabAlignment.Bottom;
             customTabControl_TimeLine.Controls.Add(tabPage_TimeLine);
             customTabControl_TimeLine.Controls.Add(tabPage_DataTreeViewSetting);
             customTabControl_TimeLine.Controls.Add(tabPage1);
